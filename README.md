@@ -1,1 +1,1 @@
-# ihor.github.io
+# ihor-math.github.io
