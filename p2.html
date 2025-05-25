@@ -379,13 +379,12 @@ question-block details .MathJax {
     .question-block details p {
         font-size: 14px;
         padding: 10px;
+        text-align: justify; /* Вирівнювання по ширині на мобільних */
+        overflow-x: auto;
     }
     .question-block details .MathJax {
         font-size: 1.2em;
-    }
-    .question-block details summary {
-        font-size: 14px;
-        padding: 8px;
+        white-space: nowrap;
     }
 }
 
@@ -393,11 +392,14 @@ question-block details .MathJax {
     .question-block details p {
         font-size: 13px;
         padding: 8px;
-        text-align: center;
+        text-align: justify; /* Вирівнювання по ширині на малих екранах */
+        overflow-x: auto;
     }
     .question-block details .MathJax {
         font-size: 1.1em;
+        white-space: nowrap;
     }
+}
     .question-block details summary {
         font-size: 13px;
         padding: 6px;
