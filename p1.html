@@ -815,30 +815,35 @@
             width: 100%;
         }
         .math-notation-centered {
-            display: block;
-            text-align: center;
-            color: #FFFF00;
-            font-style: italic;
-            font-family: 'Roboto', sans-serif;
-            font-size: inherit;
-            margin: 5px 0;
-            width: 100%;
-            line-height: 1.2; /* Зменшено міжрядковий інтервал для математичного виразу */
-        }
-        mjx-container.math-notation-centered {
-            display: block !important;
-            text-align: center !important;
-            vertical-align: middle !important;
-            white-space: normal !important;
-            line-height: 1.2 !important; /* Зменшено міжрядковий інтервал */
-            font-size: inherit !important;
-            color: #FFFF00 !important;
-        }
-        mjx-container.math-notation-centered * {
-            color: #FFFF00 !important;
-        }
-       
-       @media (max-width: 480px) {
+    display: block;
+    text-align: center;
+    width: 100%;
+    font-size: inherit;
+    margin: 5px 0;
+    line-height: 1.2;
+    color: #560319 !important;
+    font-style: italic;
+    font-family: 'Roboto', sans-serif;
+}
+
+mjx-container.math-notation-centered {
+    display: block !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+    white-space: normal !important;
+    line-height: 1.2 !important;
+    font-size: inherit !important;
+    color: #560319 !important;
+    margin: 5px auto !important;
+    width: auto !important;
+    padding: 0 !important;
+}
+
+mjx-container.math-notation-centered * {
+    color: #560319 !important;
+}
+
+@media (max-width: 480px) {
     .card-front {
         text-align: justify;
         word-wrap: break-word;
@@ -849,34 +854,35 @@
         align-items: center;
         height: 100%;
         line-height: 1.1;
-        font-size: 12px; /* Залишаємо як є */
+        font-size: 12px;
     }
     .card-front span {
         display: block;
         text-align: justify;
         width: 100%;
         line-height: 1.1;
-        font-size: 12px; /* Залишаємо як є */
+        font-size: 12px;
     }
     .card-back {
         text-align: justify;
         word-wrap: break-word;
         overflow-wrap: break-word;
-        font-size: 13px; /* Збільшуємо розмір шрифту для відповідей */
+        font-size: 13px;
         padding: 6px;
         line-height: 1.1;
     }
     .card-back span, .card-back .MathJax {
-        font-size: 13px; /* Збільшуємо розмір шрифту для span та MathJax у відповідях */
+        font-size: 13px;
         line-height: 1.1;
     }
     .math-notation-centered {
         display: block;
         text-align: center;
         width: 100%;
-        font-size: 12px; /* Залишаємо як є для питань */
-        margin: 1px 0;
+        font-size: 12px;
+        margin: 2px 0;
         line-height: 1.1;
+        color: #560319 !important;
     }
     mjx-container.math-notation-centered {
         display: block !important;
@@ -884,11 +890,17 @@
         vertical-align: middle !important;
         white-space: normal !important;
         line-height: 1.1 !important;
-        font-size: 12px !important; /* Залишаємо для питань */
-        color: #FFFF00 !important;
+        font-size: 12px !important;
+        color: #560319 !important;
+        margin: 2px auto !important;
+        width: auto !important;
+        padding: 0 !important;
+    }
+    mjx-container.math-notation-centered * {
+        color: #560319 !important;
     }
     mjx-container {
-        font-size: 13px !important; /* Збільшуємо розмір для MathJax у відповідях */
+        font-size: 13px !important;
     }
 }
     </style>
