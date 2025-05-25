@@ -556,133 +556,143 @@
             100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
         }
         @media (max-width: 768px) {
-            .title-box {
-                margin-top: 40px;
-                padding: 15px 20px;
-            }
-            .title-box h1 {
-                font-size: 24px;
-            }
-            .section-container {
-                flex-direction: column;
-                align-items: center;
-                gap: 20px;
-            }
-            .section {
-                width: 80%;
-                height: 180px;
-            }
-            #theoryModal, #questionsModal, #trainerModal, #videoModal, #videoPlayerModal1, #videoPlayerModal2, #videoPlayerModal3 {
-                top: 2%;
-                left: 2%;
-                width: 96%;
-                height: 96%;
-            }
-            .video-card {
-                width: 260px;
-                height: 150px;
-            }
-            .video-card img {
-                width: 50px;
-                height: 50px;
-            }
-            .video-card h3 {
-                font-size: 16px;
-            }
-            .video-card-container {
-                max-width: 90%;
-                padding: 15px;
-            }
-            .question-block summary {
-                font-size: 18px;
-                padding: 10px;
-            }
-            .question-block details summary {
-                font-size: 14px;
-            }
-            .question-block details p {
-                font-size: 14px;
-            }
-            .trainer-container {
-                width: 95%;
-                padding: 4vw;
-            }
-            .question-circle, .completion-emoji {
-                width: 20vw;
-                height: 20vw;
-                min-width: 70px;
-                min-height: 70px;
-            }
-            .question-circle h3 {
-                font-size: clamp(14px, 3vw, 16px);
-            }
-            .completion-emoji::after {
-                font-size: clamp(30px, 7vw, 40px);
-            }
-            .option {
-                padding: 2.2vw 3.2vw;
-                font-size: clamp(11px, 2.6vw, 13px);
-                min-width: 75px;
-                max-width: 90%;
-            }
-            .options-container {
-                gap: 1.5vw;
-                flex-direction: column;
-                align-items: center;
-            }
-            button {
-                padding: 3vw 5vw;
-                font-size: clamp(12px, 3vw, 14px);
-            }
-            .feedback {
-                font-size: clamp(22px, 5.5vw, 30px);
-                padding: clamp(10px, 3vw, 15px) clamp(15px, 4.5vw, 22px);
-                max-width: 90vw;
-                word-wrap: break-word;
-            }
-            .completion-message {
-                padding: clamp(10px, 3vw, 15px);
-            }
-            .completion-message h2 {
-                font-size: clamp(20px, 4vw, 26px);
-            }
-            .completion-message p {
-                font-size: clamp(16px, 3vw, 20px);
-            }
-            .navigation-buttons {
-                margin: 20px auto;
-                gap: 15px;
-            }
-            .nav-button {
-                font-size: 16px;
-                padding: 10px 20px;
-            }
-            .video-player-container {
-                padding: 15px;
-            }
-            .video-player-container iframe, .video-player-container div {
-                max-height: 300px;
-            }
-        }
-        @media (max-width: 480px) {
-            .title-box {
-                margin-top: 20px;
-                padding: 10px 15px;
-            }
-            .title-box h1 {
-                font-size: 20px;
-            }
-            .section {
-                width: 90%;
-                height: 150px;
-            }
-            .section img {
-                width: 50px;
-                height: 50px;
-            }
-            .section h2 {
-                font-size: 18px;
-            }
+    #question-block-11 {
+        min-height: 120px; /* Збільшуємо мінімальну висоту блоку */
+        padding: 20px; /* Додаємо більше внутрішнього простору */
+    }
+    .title-box {
+        margin-top: 40px;
+        padding: 15px 20px;
+    }
+    .title-box h1 {
+        font-size: 24px;
+    }
+    .section-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+    .section {
+        width: 80%;
+        height: 180px;
+    }
+    #theoryModal, #questionsModal, #trainerModal, #videoModal, #videoPlayerModal1, #videoPlayerModal2, #videoPlayerModal3 {
+        top: 2%;
+        left: 2%;
+        width: 96%;
+        height: 96%;
+    }
+    .video-card {
+        width: 260px;
+        height: 150px;
+    }
+    .video-card img {
+        width: 50px;
+        height: 50px;
+    }
+    .video-card h3 {
+        font-size: 16px;
+    }
+    .video-card-container {
+        max-width: 90%;
+        padding: 15px;
+    }
+    .question-block summary {
+        font-size: 18px;
+        padding: 10px;
+    }
+    .question-block details summary {
+        font-size: 14px;
+    }
+    .question-block details p {
+        font-size: 14px;
+    }
+    .trainer-container {
+        width: 95%;
+        padding: 4vw;
+    }
+    .question-circle, .completion-emoji {
+        width: 20vw;
+        height: 20vw;
+        min-width: 70px;
+        min-height: 70px;
+    }
+    .question-circle h3 {
+        font-size: clamp(14px, 3vw, 16px);
+    }
+    .completion-emoji::after {
+        font-size: clamp(30px, 7vw, 40px);
+    }
+    .option {
+        padding: 2.2vw 3.2vw;
+        font-size: clamp(11px, 2.6vw, 13px);
+        min-width: 75px;
+        max-width: 90%;
+    }
+    .options-container {
+        gap: 1.5vw;
+        flex-direction: column;
+        align-items: center;
+    }
+    button {
+        padding: 3vw 5vw;
+        font-size: clamp(12px, 3vw, 14px);
+    }
+    .feedback {
+        font-size: clamp(22px, 5.5vw, 30px);
+        padding: clamp(10px, 3vw, 15px) clamp(15px, 4.5vw, 22px);
+        max-width: 90vw;
+        word-wrap: break-word;
+    }
+    .completion-message {
+        padding: clamp(10px, 3vw, 15px);
+    }
+    .completion-message h2 {
+        font-size: clamp(20px, 4vw, 26px);
+    }
+    .completion-message p {
+        font-size: clamp(16px, 3vw, 20px);
+    }
+    .navigation-buttons {
+        margin: 20px auto;
+        gap: 15px;
+    }
+    .nav-button {
+        font-size: 16px;
+        padding: 10px 20px;
+    }
+    .video-player-container {
+        padding: 15px;
+    }
+    .video-player-container iframe, .video-player-container div {
+        max-height: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    #question-block-11 {
+        min-height: 140px; /* Ще більша висота для дуже малих екранів */
+        padding: 25px; /* Ще більше простору */
+    }
+    .title-box {
+        margin-top: 20px;
+        padding: 10px 15px;
+    }
+    .title-box h1 {
+        font-size: 20px;
+    }
+    .section {
+        width: 90%;
+        height: 150px;
+    }
+    .section img {
+        width: 50px;
+        height: 50px;
+    }
+    .section h2 {
+        font-size: 18px;
+    }
+}
             #theoryModal .modal-content, #questionsModal .modal-content, #trainerModal .modal-content, #videoModal .modal-content, #videoPlayerModal1 .modal-content, #videoPlayerModal2 .modal-content, #videoPlayerModal3 .modal-content {
                 padding: 10px;
             }
@@ -1070,9 +1080,9 @@ button:disabled {
                     <p>Використовують рівність \( \sqrt{-a} = \sqrt{a} \, i \), де \( a > 0 \).</p>
                 </details>
                 <details>
-    <summary>11. Які корені має рівняння <span style="color: #FFFF00;"> &nbsp;x<sup>2</sup> + 49 = 0&nbsp; </span> у множині комплексних чисел?</summary>
-    <p>\( x_1 = -7i \) і \( x_2 = 7i \), або скорочено: \( x_{1,2} = \pm 7i \).</p>
-</details>
+                    <summary>11. Які корені має рівняння&nbsp; \( x^2 + 49 = 0 \) &nbsp;у множині комплексних чисел?</summary>
+                    <p>\( x_1 = -7i \) і \( x_2 = 7i \), або скорочено: \( x_{1,2} = \pm 7i \).</p>
+                </details>
                 <details>
                     <summary>12. Навести приклад розв’язання квадратного рівняння з від’ємним дискримінантом.</summary>
                     <p>Для \( x^2 - 4x + 29 = 0 \):<br>
