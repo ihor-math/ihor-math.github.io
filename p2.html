@@ -324,7 +324,7 @@
     word-wrap: break-word; /* Перенос слів */
     overflow-wrap: break-word; /* Альтернатива для сучасних браузерів */
 }
-        .question-block summary::before {
+        .question-block summary:before {
             content: '🔹';
             margin-right: 10px;
         }
@@ -355,6 +355,8 @@
     margin: 0;
     word-wrap: break-word;
     overflow-wrap: break-word;
+    text-align: justify; /* Вирівнювання тексту по ширині */
+    overflow-x: auto; /* Дозволяємо прокрутку для довгих формул */
 }
 
 .question-block details .MathJax {
