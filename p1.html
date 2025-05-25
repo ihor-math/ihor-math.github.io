@@ -248,6 +248,9 @@
     font-style: italic;
     color: #006064;
     font-family: 'Roboto', sans-serif;
+    display: inline;
+    white-space: normal;
+    margin: 0 2px; /* Додаємо невеликі відступи з боків */
 }
 
 .card-front .math-notation {
@@ -810,7 +813,16 @@
         overflow-wrap: break-word;
     }
 }
+mjx-container {
+    display: inline !important; /* Примусово вбудовуємо формулу в текст */
+    vertical-align: middle !important;
+    white-space: normal !important;
+}
 
+mjx-container > * {
+    display: inline !important;
+    vertical-align: middle !important;
+}
 
         .math-i {
     color: #f0f0f0;
@@ -820,6 +832,7 @@
     vertical-align: baseline;
     display: inline;
 }
+            
     </style>
 </head>
 <body>
@@ -994,11 +1007,11 @@
                 </div>
             </div>
             <div class="question-card">
-    <div class="card-inner">
-        <div class="card-front">Чому позначення<em class="math-notation">\(i = \sqrt{-1}\)</em> є формальним, а не звичайним коренем?</div>
-        <div class="card-back"><span>Тому що добування кореня з від’ємного числа не визначене у множині дійсних чисел, тому це радше умовне означення, <em class="math-notation">\(i = \sqrt{-1}\)</em>, узгоджене з рівністю <em class="math-notation">\(i^2 = -1\)</em>.</span></div>
-    </div>
-</div>
+                <div class="card-inner">
+                    <div class="card-front">Чому позначення&nbsp; <em class="math-notation">\( i = \sqrt{-1} \)</em>&nbsp; є формальним, а не звичайним коренем?</div>
+                    <div class="card-back"><span>Тому що добування кореня з від’ємного числа не визначене у множині дійсних чисел, тому це радше умовне означення, <em class="math-notation">\( i = \sqrt{-1} \)</em>, узгоджене з рівністю <em class="math-notation">\( i^2 = -1 \)</em>.</span></div>
+                </div>
+            </div>
         </div>
     </div>
 
