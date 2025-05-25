@@ -266,7 +266,7 @@
             margin: 20px auto;
             max-width: 90%;
             width: 100%;
-            height: 150px; /* Збільшено висоту картки, щоб вмістити текст */
+            height: 150px;
             transition: transform 0.3s ease, opacity 0.3s ease;
         }
         #questionsModal[style*="display: flex"] .question-card {
@@ -304,7 +304,7 @@
             border-radius: 15px;
             font-size: clamp(14px, 2.5vw, 16px);
             font-family: 'Lora', serif;
-            line-height: 1.6;
+            line-height: 1.4; /* Зменшено міжрядковий інтервал для всіх карток */
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
@@ -337,7 +337,7 @@
         .card-back span, .card-back .MathJax {
             margin: 0;
             font-size: 1em;
-            line-height: 1.6;
+            line-height: 1.4; /* Зменшено міжрядковий інтервал для задньої сторони */
             color: #FFFFFF;
             display: inline;
         }
@@ -599,11 +599,16 @@
                 font-size: 16px;
             }
             .question-card {
-                height: 120px; /* Збільшено висоту для менших екранів */
+                height: 150px;
             }
             .card-front, .card-back {
-                font-size: 13px;
+                font-size: 12px;
                 padding: 8px;
+                line-height: 1.2; /* Зменшено міжрядковий інтервал для мобільних */
+            }
+            .card-front span {
+                font-size: 12px;
+                line-height: 1.2; /* Зменшено для span */
             }
             .trainer-container {
                 width: 95%;
@@ -707,11 +712,16 @@
                 font-size: 15px;
             }
             .question-card {
-                height: 100px; /* Збільшено висоту для дуже малих екранів */
+                height: 180px;
             }
             .card-front, .card-back {
-                font-size: 12px;
+                font-size: 11px;
                 padding: 6px;
+                line-height: 1.1; /* Ще вужчий міжрядковий інтервал для малих екранів */
+            }
+            .card-front span {
+                font-size: 11px;
+                line-height: 1.1; /* Зменшено для span */
             }
             .card-back .MathJax {
                 font-size: 0.9em;
@@ -801,7 +811,7 @@
             font-weight: 700;
             font-family: 'Lora', serif;
             font-size: clamp(14px, 2.5vw, 16px);
-            line-height: 1.6;
+            line-height: 1.4; /* Зменшено міжрядковий інтервал */
             width: 100%;
         }
         .math-notation-centered {
@@ -813,13 +823,14 @@
             font-size: inherit;
             margin: 5px 0;
             width: 100%;
+            line-height: 1.2; /* Зменшено міжрядковий інтервал для математичного виразу */
         }
         mjx-container.math-notation-centered {
             display: block !important;
             text-align: center !important;
             vertical-align: middle !important;
             white-space: normal !important;
-            line-height: normal !important;
+            line-height: 1.2 !important; /* Зменшено міжрядковий інтервал */
             font-size: inherit !important;
             color: #FFFF00 !important;
         }
@@ -836,17 +847,21 @@
                 justify-content: center;
                 align-items: center;
                 height: 100%;
-                line-height: 1.6;
+                line-height: 1.2;
             }
             .card-front span {
                 display: block;
                 text-align: justify;
                 width: 100%;
+                line-height: 1.2;
             }
             .math-notation-centered {
                 display: block;
                 text-align: center;
                 width: 100%;
+                font-size: 11px;
+                margin: 2px 0;
+                line-height: 1.1; /* Зменшено міжрядковий інтервал */
             }
         }
         @media (max-width: 480px) {
@@ -859,17 +874,21 @@
                 justify-content: center;
                 align-items: center;
                 height: 100%;
-                line-height: 1.6;
+                line-height: 1.1;
             }
             .card-front span {
                 display: block;
                 text-align: justify;
                 width: 100%;
+                line-height: 1.1;
             }
             .math-notation-centered {
                 display: block;
                 text-align: center;
                 width: 100%;
+                font-size: 10px;
+                margin: 1px 0;
+                line-height: 1.0; /* Ще вужчий інтервал для малих екранів */
             }
         }
     </style>
