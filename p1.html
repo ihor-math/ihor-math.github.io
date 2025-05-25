@@ -245,10 +245,16 @@
             color: #003333;
         }
         .math-notation {
-            font-style: italic;
-            color: #006064;
-            font-family: 'Roboto', sans-serif;
-        }
+    font-style: italic;
+    color: #006064;
+    font-family: 'Roboto', sans-serif;
+}
+
+.card-front .math-notation {
+    vertical-align: middle;
+    display: inline-block;
+    font-size: inherit;
+}
         details .math-notation {
             color: #a40000;
         }
@@ -312,7 +318,7 @@
     display: flex;
     align-items: center;
     height: 100%;
-    line-height: normal; /* Нормалізуємо висоту рядка */
+    line-height: normal; /* Додано тут */
 }
 
 .card-front .math-notation {
