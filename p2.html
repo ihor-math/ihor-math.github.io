@@ -252,20 +252,22 @@
         }
         summary {
             font-weight: bold;
-            padding: 10px;
+            padding: 8px;
             background: #802300;
             border-radius: 5px;
             transition: background 0.2s ease;
             font-family: 'Lora', serif;
             color: #FFFF00;
+            font-size: clamp(14px, 3.5vw, 16px);
         }
         summary:hover {
             background: #3d6c1a;
         }
         details p {
-            padding: 0 20px 10px;
+            padding: 0 15px 10px;
             color: #FFFFFF;
-            margin: 10px 0;
+            margin: 8px 0;
+            font-size: clamp(13px, 3vw, 15px);
         }
         .highlight-term {
             padding: 2px 5px;
@@ -288,7 +290,8 @@
         details .math-notation {
             color: #FFFF00;
         }
-        #comparisons, #comparisons p, #comparisons li, #comparisons .highlight-term, #comparisons .math-notation, #comparisons .subsection-title {
+        #comparisons, #comparisons p, #comparisons li, #comparisons .highlight-term, 
+        #comparisons .math-notation, #comparisons .subsection-title {
             color: #FFFFFF !important;
         }
         #comparisons .MathJax {
@@ -299,23 +302,23 @@
             display: block;
             font-weight: bold;
             width: 100%;
+            font-size: clamp(15px, 3.5vw, 17px);
         }
         #comparisons ol {
             list-style-type: none;
             padding-left: 0;
         }
-        /* Нові стилі для questionsModal */
         .question-block {
-            margin: 15px 0;
-            padding: 15px;
+            margin: 10px 0;
+            padding: 10px;
             background: linear-gradient(135deg, #3a7bd5, #3a6073);
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
             cursor: pointer;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         .question-block summary {
-            font-size: 16px;
+            font-size: clamp(14px, 3.5vw, 16px);
             color: #FFFF00;
             background: linear-gradient(135deg, #802300, #5f0000);
             padding: 8px;
@@ -325,123 +328,80 @@
         }
         .question-block summary::before {
             content: '🔹';
-            margin-right: 10px;
+            margin-right: 8px;
         }
         .question-block:hover {
             transform: translateY(-3px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
         }
         .question-block details {
-            margin-top: 10px;
+            margin-top: 8px;
             background: #08457e;
             border-radius: 8px;
         }
         .question-block details summary {
-            font-size: 16px;
+            font-size: clamp(13px, 3vw, 15px);
             color: #FFFFFF;
             background: #006064;
-            padding: 10px;
+            padding: 8px;
             border-radius: 5px;
         }
         .question-block details summary:hover {
             background: #004d4d;
         }
-       .question-block details p {
-    padding: 15px;
-    color: #FFFFFF;
-    font-size: 15px;
-    line-height: 1.6;
-    margin: 0;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-}
-
-.question-block details .MathJax {
-    display: inline-block;
-    vertical-align: middle;
-    max-width: 100%;
-    margin: 0 auto;
-}
-
-@media (max-width: 768px) {
-    .question-block details p {
-        font-size: 14px;
-        padding: 10px;
-    }
-    .question-block details .MathJax {
-        font-size: 1.2em;
-    }
-    .question-block details summary {
-        font-size: 14px;
-        padding: 8px;
-    }
-}
-
-@media (max-width: 480px) {
-    .question-block details p {
-        font-size: 13px;
-        padding: 8px;
-        text-align: center;
-    }
-    .question-block details .MathJax {
-        font-size: 1.1em;
-    }
-    .question-block details summary {
-        font-size: 13px;
-        padding: 6px;
-    }
-}
-        .question-block .MathJax {
-            color: #FFFF00 !important;
+        .question-block details p {
+            padding: 10px;
+            color: #FFFFFF;
+            font-size: clamp(13px, 3vw, 15px);
+            line-height: 1.6;
+            margin: 0;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        .question-block details .MathJax {
+            display: inline-block;
+            vertical-align: middle;
+            max-width: 100%;
+            margin: 0 auto;
+            font-size: clamp(12px, 3vw, 14px);
         }
         .question-block hr {
             border: 0;
             border-top: 1px solid #ffffff33;
-            margin: 10px 0;
+            margin: 8px 0;
         }
         .trainer-container {
-            width: 90%;
+            width: 95%;
             max-width: 800px;
-            padding: 3vw 4vw;
+            padding: 3vw;
             text-align: center;
             background-color: #ffffffc7;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
-            position: relative;
         }
         .question-circle {
-            width: 15vw;
-            height: 15vw;
-            min-width: 80px;
-            min-height: 80px;
-            max-width: 120px;
-            max-height: 120px;
-            margin: 0 auto 3vw;
+            width: clamp(70px, 15vw, 100px);
+            height: clamp(70px, 15vw, 100px);
+            margin: 0 auto 2vw;
             background: linear-gradient(135deg, #800000, #a00000);
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
         }
         .question-circle h3 {
             color: white;
             font-family: 'Lora', serif;
-            font-size: clamp(16px, 2.5vw, 20px);
+            font-size: clamp(14px, 3vw, 16px);
             margin: 0;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
         }
         .completion-emoji {
-            width: 15vw;
-            height: 15vw;
-            min-width: 80px;
-            min-height: 80px;
-            max-width: 120px;
-            max-height: 120px;
-            margin: 0 auto 3vw;
+            width: clamp(70px, 15vw, 100px);
+            height: clamp(70px, 15vw, 100px);
+            margin: 0 auto 2vw;
             border-radius: 50%;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
             border: 2px dashed #ff0000;
             display: flex;
             justify-content: center;
@@ -449,32 +409,27 @@
         }
         .completion-emoji::after {
             content: '🎉';
-            font-size: clamp(40px, 8vw, 60px);
+            font-size: clamp(30px, 6vw, 40px);
             color: #ff0000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
         }
         .options-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 2vw;
+            gap: 1.5vw;
             justify-content: center;
-            margin-bottom: 3vw;
+            margin-bottom: 2vw;
         }
         .option {
-            padding: 1.8vw 2.8vw;
+            padding: 1.5vw 2.5vw;
             border: 1.5px solid #800000;
-            border-radius: 10px;
+            border-radius: 8px;
             background: #fbeaea;
             cursor: pointer;
             transition: background 0.3s, transform 0.2s;
-            font-size: clamp(13px, 2.1vw, 15px);
+            font-size: clamp(12px, 2.5vw, 14px);
             line-height: 1.4;
-            flex: 1 1 auto;
-            min-width: 90px;
-            max-width: 45%;
+            flex: 1 1 45%;
+            min-width: 100px;
         }
         .option:hover {
             background: #f3dada;
@@ -485,13 +440,13 @@
             border-color: #800000;
         }
         button {
-            padding: 2vw 4vw;
-            margin-top: 3vw;
+            padding: 1.5vw 3vw;
+            margin-top: 2vw;
             background-color: #800000;
             color: white;
             border: none;
-            border-radius: 10px;
-            font-size: clamp(14px, 2.5vw, 16px);
+            border-radius: 8px;
+            font-size: clamp(13px, 2.5vw, 15px);
             cursor: pointer;
             transition: background 0.3s;
         }
@@ -499,31 +454,25 @@
             background-color: #5f0000;
         }
         .result {
-            margin-top: 3vw;
-            font-size: clamp(16px, 2.5vw, 18px);
-        }
-        .result-text {
             margin-top: 2vw;
-            font-size: clamp(14px, 2vw, 16px);
+            font-size: clamp(14px, 2.5vw, 16px);
         }
         .feedback {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: clamp(26px, 6.5vw, 38px);
+            font-size: clamp(20px, 5vw, 24px);
             font-family: 'Lora', serif;
             font-weight: 700;
-            padding: clamp(12px, 3.5vw, 18px) clamp(18px, 5.5vw, 28px);
-            border-radius: 15px;
-            border: 2.5px solid;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+            padding: clamp(10px, 3vw, 15px);
+            border-radius: 12px;
+            border: 2px solid;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
             z-index: 1000;
             opacity: 0;
             transition: opacity 0.5s ease, transform 0.5s ease;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
             text-align: center;
-            line-height: 1.2;
         }
         .correct-feedback {
             color: #2e7d32;
@@ -541,31 +490,29 @@
             font-family: 'Lora', serif;
             font-weight: 700;
             color: #1b5e20;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
             background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
-            border: 2.5px solid #1b5e20;
-            border-radius: 15px;
-            padding: clamp(12px, 3vw, 18px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+            border: 2px solid #1b5e20;
+            border-radius: 12px;
+            padding: clamp(10px, 2.5vw, 15px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
             margin: 2vw auto;
             max-width: 90%;
         }
         .completion-message h2 {
-            font-size: clamp(22px, 4.5vw, 30px);
+            font-size: clamp(18px, 4vw, 22px);
             margin: 0 0 1vw;
         }
         .completion-message p {
-            font-size: clamp(18px, 3.5vw, 22px);
+            font-size: clamp(16px, 3.5vw, 18px);
             margin: 0;
         }
         .navigation-buttons {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 15px;
             flex-wrap: wrap;
-            margin: 40px auto;
-            max-width: 1000px;
-            padding: 0 20px;
+            margin: 30px auto;
+            padding: 0 10px;
         }
         .nav-button {
             display: flex;
@@ -573,12 +520,12 @@
             background-color: #2F4F4F;
             color: #FFD700;
             text-decoration: none;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-size: 18px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: clamp(14px, 3.5vw, 16px);
             font-weight: bold;
             transition: all 0.3s ease;
-            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
         }
         .nav-button:hover {
             background-color: #556B2F;
@@ -586,7 +533,7 @@
             transform: scale(1.05);
         }
         .nav-button svg {
-            margin-right: 8px;
+            margin-right: 6px;
             fill: currentColor;
         }
         @keyframes popInOut {
@@ -595,285 +542,85 @@
             80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
             100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
         }
-        @media (max-width: 768px) {
-            .title-box {
-                margin-top: 40px;
-                padding: 15px 20px;
-            }
-            .title-box h1 {
-                font-size: 24px;
-            }
-            .section-container {
-                flex-direction: column;
-                align-items: center;
-                gap: 20px;
-            }
-            .section {
-                width: 80%;
-                height: 180px;
-            }
-            #theoryModal, #questionsModal, #trainerModal, #videoModal, #videoPlayerModal1, #videoPlayerModal2, #videoPlayerModal3 {
-                top: 2%;
-                left: 2%;
-                width: 96%;
-                height: 96%;
-            }
-            .video-card {
-                width: 260px;
-                height: 150px;
-            }
-            .video-card img {
-                width: 50px;
-                height: 50px;
-            }
-            .video-card h3 {
-                font-size: 16px;
-            }
-            .video-card-container {
-                max-width: 90%;
-                padding: 15px;
-            }
-            .question-block summary {
-                font-size: 18px;
-                padding: 10px;
-            }
-            .question-block details summary {
-                font-size: 14px;
-            }
-            .question-block details p {
-                font-size: 14px;
-            }
-            .trainer-container {
-                width: 95%;
-                padding: 4vw;
-            }
-            .question-circle, .completion-emoji {
-                width: 20vw;
-                height: 20vw;
-                min-width: 70px;
-                min-height: 70px;
-            }
-            .question-circle h3 {
-                font-size: clamp(14px, 3vw, 16px);
-            }
-            .completion-emoji::after {
-                font-size: clamp(30px, 7vw, 40px);
-            }
-            .option {
-                padding: 2.2vw 3.2vw;
-                font-size: clamp(11px, 2.6vw, 13px);
-                min-width: 75px;
-                max-width: 90%;
-            }
-            .options-container {
-                gap: 1.5vw;
-                flex-direction: column;
-                align-items: center;
-            }
-            button {
-                padding: 3vw 5vw;
-                font-size: clamp(12px, 3vw, 14px);
-            }
-            .feedback {
-                font-size: clamp(22px, 5.5vw, 30px);
-                padding: clamp(10px, 3vw, 15px) clamp(15px, 4.5vw, 22px);
-                max-width: 90vw;
-                word-wrap: break-word;
-            }
-            .completion-message {
-                padding: clamp(10px, 3vw, 15px);
-            }
-            .completion-message h2 {
-                font-size: clamp(20px, 4vw, 26px);
-            }
-            .completion-message p {
-                font-size: clamp(16px, 3vw, 20px);
-            }
-            .navigation-buttons {
-                margin: 20px auto;
-                gap: 15px;
-            }
-            .nav-button {
-                font-size: 16px;
-                padding: 10px 20px;
-            }
-            .video-player-container {
-                padding: 15px;
-            }
-            .video-player-container iframe, .video-player-container div {
-                max-height: 300px;
-            }
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 2vw;
+            align-items: center;
         }
-        @media (max-width: 480px) {
-            .title-box {
-                margin-top: 20px;
-                padding: 10px 15px;
-            }
-            .title-box h1 {
-                font-size: 20px;
-            }
-            .section {
-                width: 90%;
-                height: 150px;
-            }
-            .section img {
-                width: 50px;
-                height: 50px;
-            }
-            .section h2 {
-                font-size: 18px;
-            }
-            #theoryModal .modal-content, #questionsModal .modal-content, #trainerModal .modal-content, #videoModal .modal-content, #videoPlayerModal1 .modal-content, #videoPlayerModal2 .modal-content, #videoPlayerModal3 .modal-content {
-                padding: 10px;
-            }
-            #theoryModal .modal-header, #questionsModal .modal-header, #trainerModal .modal-header, #videoModal .modal-header, #videoPlayerModal1 .modal-header, #videoPlayerModal2 .modal-header, #videoPlayerModal3 .modal-header {
-                padding: 5px 8px;
-            }
-            #theoryModal .close-btn, #questionsModal .close-btn, #trainerModal .close-btn, #videoModal .close-btn, #videoPlayerModal1 .close-btn, #videoPlayerModal2 .close-btn, #videoPlayerModal3 .close-btn {
-                font-size: 14px;
-                padding: 4px 10px;
-            }
-            .video-card {
-                width: 220px;
-                height: 130px;
-            }
-            .video-card img {
-                width: 40px;
-                height: 40px;
-            }
-            .video-card h3 {
-                font-size: 14px;
-            }
-            .video-card-container {
-                padding: 10px;
-            }
-            .question-block summary {
-                font-size: 16px;
-                padding: 8px;
-            }
-            .question-block details summary {
-                font-size: 13px;
-            }
-            .question-block details p {
-                font-size: 13px;
-            }
-            .question-circle, .completion-emoji {
-                width: 25vw;
-                height: 25vw;
-                min-width: 60px;
-                min-height: 60px;
-            }
-            .completion-emoji::after {
-                font-size: clamp(25px, 6vw, 35px);
-            }
-            .option {
-                font-size: clamp(10px, 2.3vw, 12px);
-                padding: 2.8vw 3.8vw;
-            }
-            .feedback {
-                font-size: clamp(20px, 5vw, 26px);
-                padding: clamp(8px, 2.5vw, 12px) clamp(12px, 4vw, 18px);
-            }
-            .completion-message h2 {
-                font-size: clamp(18px, 3.5vw, 22px);
-            }
-            .completion-message p {
-                font-size: clamp(14px, 3vw, 18px);
-            }
-            .navigation-buttons {
-                margin: 15px auto;
-                gap: 10px;
-            }
-            .nav-button {
-                font-size: 14px;
-                padding: 8px 16px;
-            }
-            .video-player-container {
-                padding: 10px;
-            }
-            .video-player-container iframe, .video-player-container div {
-                max-height: 200px;
-            }
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-.input-container {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-bottom: 3vw;
-    align-items: center;
-}
-.input-group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-.input-group label {
-    font-size: clamp(14px, 2vw, 16px);
-    color: #333;
-    font-family: 'Lora', serif;
-    font-style: italic; /* Додано для косого шрифту */
-}
-.input-group input {
-    padding: 8px;
-    width: 100px;
-    border: 1.5px solid #800000;
-    border-radius: 8px;
-    font-size: clamp(13px, 2vw, 15px);
-    font-family: 'Roboto', sans-serif;
-    transition: border-color 0.3s ease;
-}
-.input-group input:focus {
-    border-color: #5f0000;
-    outline: none;
-}
-button:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-}
-.correct-feedback::before {
-   
-    display: inline-block;
-    margin-right: 10px;
-    font-size: clamp(20px, 4vw, 24px);
-    color: #2e7d32;
-    animation: bounce 0.5s ease;
-}
-.incorrect-feedback::before {
-   
-    display: inline-block;
-    margin-right: 10px;
-    font-size: clamp(20px, 4vw, 24px);
-    color: #d32f2f;
-    animation: shake 0.5s ease;
-}
-@keyframes bounce {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.5); }
-    100% { transform: scale(1); }
-}
-@keyframes shake {
-    0% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    50% { transform: translateX(5px); }
-    75% { transform: translateX(-5px); }
-    100% { transform: translateX(0); }
-}
-            .inline-input {
-    display: inline-block;
-    padding: 5px;
-    width: 60px;
-    border: 1.5px solid #800000;
-    border-radius: 8px;
-    font-size: clamp(13px, 2vw, 15px);
-    font-family: 'Roboto', sans-serif;
-    vertical-align: middle;
-    margin-left: 5px;
-    transition: border-color 0.3s ease;
-}
-.inline-input:focus {
-    border-color: #5f0000;
-    outline: none;
-}
+        .input-group label {
+            font-size: clamp(13px, 2.5vw, 15px);
+            color: #333;
+            font-family: 'Lora', serif;
+            font-style: italic;
+        }
+        .input-group input {
+            padding: 6px;
+            width: 80px;
+            border: 1.5px solid #800000;
+            border-radius: 6px;
+            font-size: clamp(12px, 2.5vw, 14px);
+            font-family: 'Roboto', sans-serif;
+            transition: border-color 0.3s ease;
+        }
+        .input-group input:focus {
+            border-color: #5f0000;
+            outline: none;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .correct-feedback::before {
+            content: '✅';
+            display: inline-block;
+            margin-right: 8px;
+            font-size: clamp(18px, 4vw, 22px);
+            color: #2e7d32;
+            animation: bounce 0.5s ease;
+        }
+        .incorrect-feedback::before {
+            content: '❌';
+            display: inline-block;
+            margin-right: 8px;
+            font-size: clamp(18px, 4vw, 22px);
+            color: #d32f2f;
+            animation: shake 0.5s ease;
+        }
+        @keyframes bounce {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.5); }
+            100% { transform: scale(1); }
+        }
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+        .inline-input {
+            display: inline-block;
+            padding: 4px;
+            width: 60px;
+            border: 1.5px solid #800000;
+            border-radius: 6px;
+            font-size: clamp(12px, 2.5vw, 14px);
+            font-family: 'Roboto', sans-serif;
+            vertical-align: middle;
+            margin-left: 5px;
+            transition: border-color 0.3s ease;
+        }
+        .inline-input:focus {
+            border-color: #5f0000;
+            outline: none;
+        }
         .math-i {
             color: #f0f0f0;
             font-style: italic;
@@ -881,6 +628,218 @@ button:disabled {
             font-size: 1em;
             vertical-align: baseline;
             display: inline;
+        }
+        @media (max-width: 768px) {
+            .title-box {
+                margin: 20px 10px;
+                padding: 15px 20px;
+            }
+            .title-box h1 {
+                font-size: clamp(18px, 4.5vw, 22px);
+            }
+            .section-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+            .section {
+                width: 90%;
+                height: 160px;
+            }
+            .section img {
+                width: 45px;
+                height: 45px;
+            }
+            .section h2 {
+                font-size: clamp(14px, 3.5vw, 16px);
+            }
+            .modal-content {
+                padding: 10px;
+                font-size: clamp(13px, 3vw, 15px);
+            }
+            .close-btn {
+                font-size: clamp(13px, 3vw, 15px);
+                padding: 4px 10px;
+            }
+            .video-card {
+                max-width: 260px;
+                height: 120px;
+            }
+            .video-card img {
+                width: 35px;
+                height: 35px;
+            }
+            .video-card h3 {
+                font-size: clamp(13px, 3.5vw, 15px);
+            }
+            .video-player-container iframe, .video-player-container div {
+                max-height: 300px;
+            }
+            .question-block summary {
+                font-size: clamp(13px, 3.5vw, 15px);
+                padding: 6px;
+            }
+            .question-block details summary {
+                font-size: clamp(12px, 3vw, 14px);
+            }
+            .question-block details p {
+                font-size: clamp(12px, 3vw, 14px);
+            }
+            .trainer-container {
+                width: 98%;
+                padding: 4vw;
+            }
+            .question-circle, .completion-emoji {
+                width: clamp(60px, 20vw, 90px);
+                height: clamp(60px, 20vw, 90px);
+            }
+            .question-circle h3 {
+                font-size: clamp(13px, 3vw, 15px);
+            }
+            .completion-emoji::after {
+                font-size: clamp(25px, 6vw, 35px);
+            }
+            .option {
+                padding: 2vw 3vw;
+                font-size: clamp(11px, 2.5vw, 13px);
+                min-width: 90px;
+                flex: 1 1 100%;
+            }
+            .options-container {
+                flex-direction: column;
+                gap: 1vw;
+            }
+            .feedback {
+                font-size: clamp(18px, 5vw, 22px);
+                padding: clamp(8px, 2.5vw, 12px);
+                max-width: 90vw;
+            }
+            .navigation-buttons {
+                margin: 20px auto;
+                gap: 10px;
+            }
+            .nav-button {
+                font-size: clamp(13px, 3.5vw, 15px);
+                padding: 8px 16px;
+            }
+        }
+        @media (max-width: 480px) {
+            .title-box {
+                margin: 15px 5px;
+                padding: 10px 15px;
+            }
+            .title-box h1 {
+                font-size: clamp(16px, 4.5vw, 20px);
+            }
+            .section {
+                width: 95%;
+                height: 140px;
+            }
+            .section img {
+                width: 40px;
+                height: 40px;
+            }
+            .section h2 {
+                font-size: clamp(13px, 3.5vw, 15px);
+            }
+            .modal-content {
+                padding: 8px;
+                font-size: clamp(12px, 3vw, 14px);
+            }
+            .close-btn {
+                font-size: clamp(12px, 3vw, 14px);
+                padding: 3px 8px;
+            }
+            .video-card {
+                max-width: 220px;
+                height: 110px;
+            }
+            .video-card img {
+                width: 30px;
+                height: 30px;
+            }
+            .video-card h3 {
+                font-size: clamp(12px, 3.5vw, 14px);
+            }
+            .video-player-container iframe, .video-player-container div {
+                max-height: 200px;
+            }
+            .question-block summary {
+                font-size: clamp(12px, 3.5vw, 14px);
+                padding: 5px;
+            }
+            .question-block details summary {
+                font-size: clamp(11px, 3vw, 13px);
+            }
+            .question-block details p {
+                font-size: clamp(11px, 3vw, 13px);
+            }
+            .question-circle, .completion-emoji {
+                width: clamp(50px, 20vw, 80px);
+                height: clamp(50px, 20vw, 80px);
+            }
+            .completion-emoji::after {
+                font-size: clamp(20px, 6vw, 30px);
+            }
+            .option {
+                font-size: clamp(10px, 2.5vw, 12px);
+                padding: 2.5vw 3.5vw;
+            }
+            .feedback {
+                font-size: clamp(16px, 5vw, 20px);
+                padding: clamp(6px, 2.5vw, 10px);
+            }
+            .completion-message h2 {
+                font-size: clamp(16px, 4vw, 20px);
+            }
+            .completion-message p {
+                font-size: clamp(14px, 3.5vw, 16px);
+            }
+            .navigation-buttons {
+                margin: 15px auto;
+                gap: 8px;
+            }
+            .nav-button {
+                font-size: clamp(12px, 3.5vw, 14px);
+                padding: 6px 12px;
+            }
+        }
+        @media (max-width: 360px) {
+            .title-box {
+                padding: 8px 12px;
+            }
+            .title-box h1 {
+                font-size: clamp(14px, 4.5vw, 18px);
+            }
+            .section {
+                width: 98%;
+                height: 120px;
+            }
+            .section img {
+                width: 35px;
+                height: 35px;
+            }
+            .section h2 {
+                font-size: clamp(12px, 3.5vw, 14px);
+            }
+            .video-card {
+                max-width: 200px;
+                height: 100px;
+            }
+            .video-card h3 {
+                font-size: clamp(11px, 3.5vw, 13px);
+            }
+            .video-player-container iframe, .video-player-container div {
+                max-height: 180px;
+            }
+            .question-circle, .completion-emoji {
+                width: clamp(45px, 20vw, 70px);
+                height: clamp(45px, 20vw, 70px);
+            }
+            .option {
+                font-size: clamp(9px, 2.5vw, 11px);
+                padding: 2vw 3vw;
+            }
         }
     </style>
 </head>
@@ -890,19 +849,19 @@ button:disabled {
     </div>
 
     <div class="section-container">
-        <div class="section" id="openTheoryBtn" tabindex="0" role="button" aria-pressed="false" aria-controls="theoryModal">
+        <div class="section" id="openTheoryBtn" tabindex="0" role="button" aria-pressed="false" aria-controls="theoryModal" ontouchstart="">
             <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Книга" />
             <h2>Теоретичні відомості</h2>
         </div>
-        <div class="section" id="openVideoBtn" tabindex="0" role="button" aria-pressed="false" aria-controls="videoModal">
+        <div class="section" id="openVideoBtn" tabindex="0" role="button" aria-pressed="false" aria-controls="videoModal" ontouchstart="">
             <img src="https://img.icons8.com/fluency/96/video.png" alt="Відео" />
             <h2>Відеоматеріали</h2>
         </div>
-        <div class="section" id="openQuestionsBtn" tabindex="0" role="button" aria-pressed="false" aria-controls="questionsModal">
+        <div class="section" id="openQuestionsBtn" tabindex="0" role="button" aria-pressed="false" aria-controls="questionsModal" ontouchstart="">
             <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Картки" />
             <h2>Питання і відповіді</h2>
         </div>
-        <div class="section" id="openTrainerBtn" tabindex="0" role="button" aria-pressed="false" aria-controls="trainerModal">
+        <div class="section" id="openTrainerBtn" tabindex="0" role="button" aria-pressed="false" aria-controls="trainerModal" ontouchstart="">
             <img src="https://img.icons8.com/fluency/96/flash-on.png" alt="Тренажер" />
             <h2>Тренажер</h2>
         </div>
@@ -940,6 +899,31 @@ button:disabled {
                 <p>Наприклад, для комплексного числа <em class="math-notation">\( z = 2.1 - 5i \)</em>:</p>
                 <p><em class="math-notation">\( \text{Re } z = 2.1, \quad \text{Im } z = -5. \)</em></p>
                 <p>Дійсні числа можна вважати комплексними, записуючи їх у вигляді <em class="math-notation">\( a + 0i \)</em>, а уявні числа – у вигляді <em class="math-notation">\( 0 + bi \)</em>.</p>
+            </details>
+            <details id="comparisons">
+                <summary>Порівняння комплексних чисел</summary>
+                <p><strong class="highlight-term">Комплексні числа</strong> <em class="math-notation">\( z_1 = a_1 + b_1 i \)</em> та <em class="math-notation">\( z_2 = a_2 + b_2 i \)</em> порівнюють за кількома основними критеріями. Розглянемо такі випадки:</p>
+                <ol>
+                    <li><span class="subsection-title">1. Рівність комплексних чисел.</span>
+                        <p>Комплексні числа <em class="math-notation">\( z_1 \)</em> і <em class="math-notation">\( z_2 \)</em> рівні, якщо їх дійсні та уявні частини є рівними, тобто:</p>
+                        <p><em class="math-notation">\( a_1 = a_2, \quad b_1 = b_2. \)</em></p>
+                        <p>Наприклад, <em class="math-notation">\( z_1 = 2 + 3i \)</em> і <em class="math-notation">\( z_2 = 2 + 3i \)</em> – рівні комплексні числа, оскільки <em class="math-notation">\( \text{Re } z_1 = \text{Re } z_2 = 2 \)</em> і <em class="math-notation">\( \text{Im } z_1 = \text{Im } z_2 = 3 \)</em>.</p>
+                    </li>
+                    <li><span class="subsection-title">2. Комплексно-спряжені числа.</span>
+                        <p>Два комплексні числа <em class="math-notation">\( z_1 \)</em> і <em class="math-notation">\( z_2 \)</em> є комплексно-спряженими, якщо їх дійсні частини рівні, а уявні частини мають протилежні знаки, тобто:</p>
+                        <p><em class="math-notation">\( a_1 = a_2, \quad b_1 = -b_2. \)</em></p>
+                        <p>Спряжене комплексне число до <em class="math-notation">\( z = a + bi \)</em> позначається як <em class="math-notation">\( \overline{z} \)</em> і записується у вигляді:</p>
+                        <p><em class="math-notation">\( \overline{z} = a - bi. \)</em></p>
+                        <p>Наприклад, <em class="math-notation">\( z = -2 + 3i \)</em> і <em class="math-notation">\( \overline{z} = -2 - 3i \)</em> є комплексно-спряженими числами.</p>
+                    </li>
+                    <li><span class="subsection-title">3. Протилежні комплексні числа.</span>
+                        <p>Комплексні числа <em class="math-notation">\( z_1 \)</em> і <em class="math-notation">\( z_2 \)</em> протилежні, якщо їхні частини мають протилежні знаки, тобто:</p>
+                        <p><em class="math-notation">\( a_1 = -a_2, \quad b_1 = -b_2. \)</em></p>
+                        <p>Протилежне комплексне число до <em class="math-notation">\( z = a + bi \)</em> позначається як <em class="math-notation">\( -z \)</em> і записується у вигляді:</p>
+                        <p><em class="math-notation">\( -z = -a - bi. \)</em></p>
+                        <p>Наприклад, <em class="math-notation">\( z = 2 - 3i \)</em> і <em class="math-notation">\( -z = -2 + 3i \)</em> – протилежні комплексні числа.</p>
+                    </li>
+                </ol>
             </details>
             <details id="comparisons">
                 <summary>Порівняння комплексних чисел</summary>
