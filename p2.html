@@ -312,15 +312,18 @@
             cursor: pointer;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        .question-block summary {
-            font-size: 16px;
-            color: #FFFF00;
-            background: linear-gradient(135deg, #802300, #5f0000);
-            padding: 8px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-        }
+        question-block summary {
+    font-size: 16px;
+    color: #FFFF00;
+    background: linear-gradient(135deg, #802300, #5f0000);
+    padding: 8px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    text-align: justify; /* Вирівнювання тексту по ширині */
+    word-wrap: break-word; /* Перенос слів */
+    overflow-wrap: break-word; /* Альтернатива для сучасних браузерів */
+}
         .question-block summary::before {
             content: '🔹';
             margin-right: 10px;
@@ -354,55 +357,30 @@
     overflow-wrap: break-word;
 }
 
-question-block details .MathJax {
+.question-block details .MathJax {
     display: inline-block;
     vertical-align: middle;
     max-width: 100%;
     margin: 0 auto;
-    white-space: nowrap; /* Формули залишатимуться в рядок */
-}
-
-/* Додаємо горизонтальну прокрутку для довгих формул */
-.question-block details p {
-    padding: 15px;
-    color: #FFFFFF;
-    font-size: 15px;
-    line-height: 1.6;
-    margin: 0;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    text-align: justify; /* Вирівнювання тексту по ширині */
-    overflow-x: auto; /* Дозволяємо прокрутку для довгих формул */
 }
 
 @media (max-width: 768px) {
-    .question-block details p {
-        font-size: 14px;
+    .question-block summary {
+        font-size: 18px;
         padding: 10px;
-        text-align: justify; /* Вирівнювання по ширині на мобільних */
-        overflow-x: auto;
-    }
-    .question-block details .MathJax {
-        font-size: 1.2em;
-        white-space: nowrap;
+        text-align: justify; /* Зберігаємо вирівнювання по ширині */
+        word-wrap: break-word;
+        overflow-wrap: break-word;
     }
 }
 
 @media (max-width: 480px) {
-    .question-block details p {
-        font-size: 13px;
+    .question-block summary {
+        font-size: 16px;
         padding: 8px;
-        text-align: justify; /* Вирівнювання по ширині на малих екранах */
-        overflow-x: auto;
-    }
-    .question-block details .MathJax {
-        font-size: 1.1em;
-        white-space: nowrap;
-    }
-}
-    .question-block details summary {
-        font-size: 13px;
-        padding: 6px;
+        text-align: justify; /* Зберігаємо вирівнювання по ширині */
+        word-wrap: break-word;
+        overflow-wrap: break-word;
     }
 }
         .question-block .MathJax {
