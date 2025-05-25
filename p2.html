@@ -354,11 +354,25 @@
     overflow-wrap: break-word;
 }
 
-.question-block details .MathJax {
+question-block details .MathJax {
     display: inline-block;
     vertical-align: middle;
     max-width: 100%;
     margin: 0 auto;
+    white-space: nowrap; /* Формули залишатимуться в рядок */
+}
+
+/* Додаємо горизонтальну прокрутку для довгих формул */
+.question-block details p {
+    padding: 15px;
+    color: #FFFFFF;
+    font-size: 15px;
+    line-height: 1.6;
+    margin: 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    text-align: justify; /* Вирівнювання тексту по ширині */
+    overflow-x: auto; /* Дозволяємо прокрутку для довгих формул */
 }
 
 @media (max-width: 768px) {
