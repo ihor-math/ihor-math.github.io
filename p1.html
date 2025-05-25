@@ -839,32 +839,43 @@
         }
        
         @media (max-width: 480px) {
-            .card-front {
-                text-align: justify;
-                word-wrap: break-word;
-                overflow-wrap: break-word;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                height: 100%;
-                line-height: 1.1;
-            }
-            .card-front span {
-                display: block;
-                text-align: justify;
-                width: 100%;
-                line-height: 1.1;
-            }
-            .math-notation-centered {
-                display: block;
-                text-align: center;
-                width: 100%;
-                font-size: 10px;
-                margin: 1px 0;
-                line-height: 1.0; /* Ще вужчий інтервал для малих екранів */
-            }
-        }
+    .card-front {
+        text-align: justify;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        line-height: 1.1;
+        font-size: 12px; /* Уніфікований розмір шрифту для всіх карток */
+    }
+    .card-front span {
+        display: block;
+        text-align: justify;
+        width: 100%;
+        line-height: 1.1;
+        font-size: 12px; /* Уніфікований розмір шрифту для span */
+    }
+    .math-notation-centered {
+        display: block;
+        text-align: center;
+        width: 100%;
+        font-size: 12px; /* Уніфікований розмір шрифту для математичних виразів */
+        margin: 1px 0;
+        line-height: 1.1;
+    }
+    mjx-container.math-notation-centered {
+        display: block !important;
+        text-align: center !important;
+        vertical-align: middle !important;
+        white-space: normal !important;
+        line-height: 1.1 !important;
+        font-size: 12px !important; /* Уніфікований розмір для MathJax */
+        color: #FFFF00 !important;
+    }
+}
     </style>
 </head>
 <body>
