@@ -254,9 +254,10 @@
 }
 
 .card-front .math-notation {
-    vertical-align: middle;
-    display: inline-block;
+    vertical-align: baseline; /* Змінюємо на baseline для точнішого вирівнювання */
+    display: inline; /* Змінюємо з inline-block на inline */
     font-size: inherit;
+    line-height: normal;
 }
         details .math-notation {
             color: #a40000;
@@ -814,16 +815,16 @@
     }
 }
 mjx-container {
-    display: inline !important; /* Примусово вбудовуємо формулу в текст */
-    vertical-align: middle !important;
+    display: inline !important;
+    vertical-align: baseline !important; /* Змінюємо на baseline */
     white-space: normal !important;
+    line-height: normal !important;
 }
 
 mjx-container > * {
     display: inline !important;
-    vertical-align: middle !important;
+    vertical-align: baseline !important;
 }
-
         .math-i {
     color: #f0f0f0;
     font-style: italic;
