@@ -301,14 +301,16 @@
             box-sizing: border-box;
         }
         .card-front {
-            background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
-            color: #006064;
-            font-weight: 700;
-            border: 2px solid #80deea;
-            text-align: center;
-            align-items: center;
-            justify-content: center;
-        }
+    background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
+    color: #006064;
+    font-weight: 700;
+    border: 2px solid #80deea;
+    text-align: justify; /* Вирівнювання по ширині */
+    align-items: center;
+    justify-content: center;
+    word-wrap: break-word; /* Перенос слів */
+    overflow-wrap: break-word; /* Альтернатива для сучасних браузерів */
+}
         .card-back {
             background: #006064;
             color: #FFFFFF;
@@ -769,13 +771,13 @@
     </div>
 
     <div class="navigation-buttons">
-        <a class="nav-button" href='tema1.html'>
+        <a class="nav-button" href="/tema1">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                 <path d="M15 18l-6-6 6-6"/>
             </svg>
             До теми 1
         </a>
-        <a class="nav-button" href='index.html'>
+        <a class="nav-button" href="{{ url_for('home') }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                 <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
             </svg>
