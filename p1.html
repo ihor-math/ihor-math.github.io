@@ -1403,6 +1403,11 @@
             openModal(trainerModal, openTrainerBtn);
             renderQuestion();
         });
+            window.addEventListener('load', () => {
+    if (typeof MathJax !== 'undefined') {
+        MathJax.typesetPromise().catch(err => console.error('MathJax error:', err));
+    }
+});
     </script>
 </body>
 </html>
