@@ -305,14 +305,13 @@
     color: #006064;
     font-weight: 700;
     border: 2px solid #80deea;
-    text-align: justify; /* Зміна з center на justify */
-    align-items: center;
-    justify-content: center;
-    word-wrap: break-word; /* Додано для перенесення слів */
-    overflow-wrap: break-word; /* Альтернатива для сучасних браузерів */
-    padding: 10px; /* Для кращого відображення */
+    text-align: justify;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    padding: 10px;
 }
-       .card-back {
+
+.card-back {
     background: #006064;
     color: #FFFFFF;
     transform: rotateY(180deg);
@@ -326,6 +325,28 @@
     overflow-wrap: break-word;
     padding: 10px;
 }
+
+@media (max-width: 768px) {
+    .card-front {
+        text-align: justify;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+    .card-back {
+        text-align: justify;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+}
+
+@media (max-width: 480px) {
+    .card-front {
+        text-align: justify;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+}
+       
         .card-back span, .card-back .MathJax {
             margin: 0;
             font-size: 1em;
@@ -753,21 +774,7 @@
     }
 }
 
-@media (max-width: 768px) {
-    .card-front {
-        text-align: justify;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-    }
-}
 
-@media (max-width: 480px) {
-    .card-front {
-        text-align: justify;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-    }
-}
         .math-i {
     color: #f0f0f0;
     font-style: italic;
