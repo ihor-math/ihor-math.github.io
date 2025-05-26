@@ -324,6 +324,8 @@
     text-align: justify; /* Вирівнювання тексту по ширині */
     word-wrap: break-word; /* Перенос слів */
     overflow-wrap: break-word; /* Альтернатива для сучасних браузерів */
+    overflow-x: auto; /* Додаємо прокрутку для summary */
+    white-space: nowrap; /* Запобігаємо переносу формул у summary */ 
 }
         
         .question-block:hover {
@@ -341,6 +343,8 @@
             background: #006064;
             padding: 10px;
             border-radius: 5px;
+            overflow-x: auto; /* Додаємо прокрутку для вкладених summary */
+    white-space: nowrap; /* Запобігаємо переносу формул */
         }
         .question-block details summary:hover {
             background: #004d4d;
@@ -355,6 +359,8 @@
     overflow-wrap: break-word;
     text-align: justify; /* Вирівнювання тексту по ширині */
     overflow-x: auto; /* Дозволяємо прокрутку для довгих формул */
+    display: block;
+    max-width: 100%;   
 }
 
 .question-block details .MathJax {
@@ -362,6 +368,7 @@
     vertical-align: middle;
     max-width: 100%;
     margin: 0 auto;
+    color: #FFFF00 !important;
 }
 
 @media (max-width: 768px) {
