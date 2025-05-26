@@ -1,372 +1,364 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-    <meta charset="UTF-8">
-    <title>Змістовий модуль 1. Комплексні числа</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(to bottom, #2F4F4F 0%, #9ACD32 50%, #D2B48C 100%);
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            color: #333;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Тема 1: Поняття про комплексні числа</title>
+  <style>
+    body {
+      background: linear-gradient(135deg, #1e3a8a, #bae6fd);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #e0e0ff;
+    }
 
-        header {
-            background-color: #2F4F4F;
-            color: #F0E68C;
-            text-align: center;
-            padding: 30px 20px;
-            font-size: 32px;
-            font-weight: bold;
-            border-bottom: 4px solid #D2B48C;
-        }
+    .header-box {
+      background: linear-gradient(90deg, #1e40af, #38bdf8);
+      color: #f5f5f5;
+      padding: 30px 20px;
+      text-align: center;
+      font-size: 26px;
+      font-weight: bold;
+      border-bottom: 4px solid #fcd34d;
+      border-radius: 0 0 16px 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      user-select: none;
+    }
 
-        main {
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 20px;
-            background-color: rgba(250, 235, 215, 0.95);
-            border-radius: 12px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
 
-        .intro {
-            font-size: 20px;
-            margin-bottom: 15px;
-            font-weight: 600;
-            color: #2F4F4F;
-            text-align: justify;
-        }
+    .plan-title {
+      font-size: 28px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 30px;
+      color: #fcd34d;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      user-select: none;
+    }
 
-        ul.objectives {
-            list-style: none;
-            padding-left: 0;
-            margin-bottom: 30px;
-            font-size: 18px;
-            font-style: italic;
-            text-align: justify;
-        }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+    }
 
-        ul.objectives li {
-            position: relative;
-            padding-left: 40px;
-            margin-bottom: 14px;
-            line-height: 1.5;
-            text-align: justify;
-        }
+    .card {
+      border-radius: 20px;
+      padding: 25px 20px;
+      color: #ffffff;
+      text-align: center;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      user-select: none;
+      height: 150px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      touch-action: manipulation;
+    }
 
-        ul.objectives li::before {
-            content: "👉";
-            position: absolute;
-            left: 0;
-            top: 0;
-            font-size: 22px;
-            color: #800000;
-        }
+    .card a {
+      text-decoration: none;
+      color: inherit;
+      display: contents;
+    }
 
-        .topics a {
-            display: block;
-            background-color: #F0E68C;
-            color: #2F4F4F;
-            text-decoration: none;
-            padding: 15px 20px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            font-size: 18px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
+    .card-number {
+      font-size: 26px;
+      font-weight: bold;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: #f3f4f6;
+      transition: color 0.3s ease;
+    }
 
-        .topics a:hover {
-            background-color: #DAA520;
-            color: white;
-            transform: translateX(5px);
-        }
+    .icon-box {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s ease;
+    }
 
-        .navigation-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin-top: 40px;
-        }
+    .card:nth-child(1) .icon-box {
+      background: #b3e5fc;
+    }
+    .card:nth-child(2) .icon-box {
+      background: #d1c4e9;
+    }
+    .card:nth-child(3) .icon-box {
+      background: #f8bbd0;
+    }
+    .card:nth-child(4) .icon-box {
+      background: #c8e6c9;
+    }
 
-        .nav-button {
-            display: flex;
-            align-items: center;
-            background-color: #2F4F4F;
-            color: #FFD700;
-            text-decoration: none;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-size: 18px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
-        }
+    .icon-svg {
+      width: 22px;
+      height: 22px;
+      fill: #f3f4f6;
+      transition: fill 0.3s ease;
+    }
 
-        .nav-button:hover {
-            background-color: #556B2F;
-            color: #fff;
-            transform: scale(1.05);
-        }
+    .card:hover .icon-box,
+    .card:active .icon-box {
+      background: #fcd34d;
+    }
 
-        .nav-button svg {
-            margin-right: 8px;
-            fill: currentColor;
-        }
+    .card:hover .icon-svg,
+    .card:active .icon-svg {
+      fill: #1e3a8a;
+    }
 
-        @media (max-width: 600px) {
-            header {
-                font-size: 24px;
-                padding: 20px 10px;
-            }
+    .card:hover .card-number,
+    .card:active .card-number {
+      color: #fcd34d;
+    }
 
-            .intro {
-                font-size: 18px;
-            }
+    .card h3 {
+      font-size: 22px;
+      margin: 0;
+      font-weight: 700;
+      user-select: none;
+      color: #f3f4f6;
+      transition: color 0.3s ease;
+      text-decoration: none; /* Усуває підкреслення */
+    }
 
-            ul.objectives li {
-                font-size: 16px;
-                padding-left: 35px;
-            }
+    .card:hover h3,
+    .card:active h3 {
+      color: #fcd34d;
+    }
 
-            .topics a {
-                font-size: 16px;
-                padding: 12px 15px;
-            }
+    .card-content {
+      margin-top: 20px;
+      font-size: 16px;
+      color: #ffffff;
+      text-align: left;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+    }
 
-            .nav-button {
-                font-size: 16px;
-                padding: 10px 20px;
-            }
-        }
-    </style>
+    .card:nth-child(1) { background: linear-gradient(135deg, #0284c7, #22d3ee); }
+    .card:nth-child(2) { background: linear-gradient(135deg, #4f46e5, #7e22ce); }
+    .card:nth-child(3) { background: linear-gradient(135deg, #9333ea, #ec4899); }
+    .card:nth-child(4) { background: linear-gradient(135deg, #059669, #34d399); }
+
+    .navigation-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin: 40px auto;
+      max-width: 1000px;
+      padding: 0 20px;
+    }
+
+    .nav-button {
+      display: flex;
+      align-items: center;
+      background-color: #2F4F4F;
+      color: #FFD700;
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .nav-button:hover {
+      background-color: #556B2F;
+      color: #fff;
+      transform: scale(1.05);
+    }
+
+    .nav-button svg {
+      margin-right: 8px;
+      fill: currentColor;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 20px auto;
+        width: 90%;
+      }
+      .cards {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      .card {
+        padding: 15px;
+        height: 120px;
+      }
+      .header-box {
+        font-size: 22px;
+        padding: 25px 15px;
+      }
+      .plan-title {
+        font-size: 22px;
+        margin-bottom: 20px;
+      }
+      .card h3 {
+        font-size: 18px;
+      }
+      .card-number {
+        font-size: 22px;
+      }
+      .nav-button {
+        font-size: 16px;
+        padding: 10px 20px;
+      }
+      .navigation-buttons {
+        margin: 20px auto;
+        gap: 15px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .container {
+        margin: 10px auto;
+        padding: 15px;
+      }
+      .header-box {
+        font-size: 20px;
+        padding: 20px 10px;
+      }
+      .plan-title {
+        font-size: 20px;
+        margin-bottom: 15px;
+      }
+      .card {
+        padding: 12px;
+        height: 100px;
+      }
+      .card h3 {
+        font-size: 16px;
+      }
+      .card-number {
+        font-size: 20px;
+      }
+      .icon-box {
+        width: 32px;
+        height: 32px;
+      }
+      .icon-svg {
+        width: 18px;
+        height: 18px;
+      }
+      .nav-button {
+        font-size: 14px;
+        padding: 8px 16px;
+      }
+      .navigation-buttons {
+        margin: 15px auto;
+        gap: 10px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <header>
-        Змістовий модуль 1. Комплексні числа
-    </header>
+  <div class="header-box">
+    Тема 1. Поняття про комплексні числа. Алгебраїчна форма. Арифметичні дії. Геометрична інтерпретація.
+  </div>
 
-    <main>
-        <div class="intro">У цьому змістовому модулі ви:</div>
-        <ul class="objectives">
-            <li>дізнаєтеся, що таке комплексні числа та як вони поєднують дійсні та уявні частини;</li>
-            <li>ознайомитеся з алгебраїчною формою комплексних чисел, арифметичними операціями над ними та їхнім геометричним представленням;</li>
-            <li>навчитеся знаходити комплексні корені рівнянь;</li>
-            <li>розглянете тригонометричну й показникову форми запису комплексних чисел і навчитеся виконувати дії в цих формах.</li>
-        </ul>
+  <div class="container">
+    <div class="plan-title">План вивчення:</div>
+    <div class="cards">
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p1') }}" aria-label="Перейти до Поняття про комплексні числа">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <path d="M3 6h18M3 12h10M3 18h14"/>
+              </svg>
+            </div>
+            1
+          </div>
+          <h3>Поняття про комплексні числа</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
 
-        <div class="topics">
-            <a href="/tema1">Тема 1. Поняття про комплексні числа. Алгебраїчна форма. Арифметичні дії. Геометрична інтерпретація.</a>
-            <a href="/tema2">Тема 2. Тригонометрична форма комплексного числа. Арифметичні дії.</a>
-            <a href="/tema3">Тема 3. Показникова форма комплексного числа. Арифметичні дії.</a>
-        </div>
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p2') }}" aria-label="Перейти до Алгебраїчна форма комплексних чисел">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <path d="M3 6h18M3 12h10M3 18h14"/>
+              </svg>
+            </div>
+            2
+          </div>
+          <h3>Алгебраїчна форма комплексних чисел</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
 
-        <div class="navigation-buttons">
-            <a class="nav-button" href="{{ url_for('zmist') }}">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                    <path d="M15 18l-6-6 6-6"/>
-                </svg>
-                До структури курсу
-            </a>
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p3') }}" aria-label="Перейти до Арифметичні дії з комплексними числами">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <path d="M3 6h18M3 12h10M3 18h14"/>
+              </svg>
+            </div>
+            3
+          </div>
+          <h3>Арифметичні дії в алгебраїчній формі</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
 
-            <a class="nav-button" href="{{ url_for('home') }}">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-                </svg>
-                На головну
-            </a>
-        </div>
-    </main>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="uk">
-<head>
-    <meta charset="UTF-8">
-    <title>Змістовий модуль 1. Комплексні числа</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(to bottom, #2F4F4F 0%, #9ACD32 50%, #D2B48C 100%);
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            color: #333;
-        }
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p4') }}" aria-label="Перейти до Геометрична інтерпретація комплексних чисел">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <path d="M12 2v20M2 12h20"/>
+              </svg>
+            </div>
+            4
+          </div>
+          <h3>Геометрична інтерпретація комплексних чисел</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
+    </div>
+  </div>
 
-        header {
-            background-color: #2F4F4F;
-            color: #F0E68C;
-            text-align: center;
-            padding: 30px 20px;
-            font-size: 32px;
-            font-weight: bold;
-            border-bottom: 4px solid #D2B48C;
-        }
+  <div class="navigation-buttons">
+    <a class="nav-button" href="{{ url_for('modul1') }}">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+      До змістового модуля 1
+    </a>
 
-        main {
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 20px;
-            background-color: rgba(250, 235, 215, 0.95);
-            border-radius: 12px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .intro {
-            font-size: 20px;
-            margin-bottom: 15px;
-            font-weight: 600;
-            color: #2F4F4F;
-            text-align: justify;
-        }
-
-        ul.objectives {
-            list-style: none;
-            padding-left: 0;
-            margin-bottom: 30px;
-            font-size: 18px;
-            font-style: italic;
-        }
-
-        ul.objectives li {
-            position: relative;
-            padding-left: 40px;
-            margin-bottom: 14px;
-            line-height: 1.5;
-            text-align: justify; /* ✅ вирівнювання по ширині */
-        }
-
-        ul.objectives li::before {
-            content: "👉";
-            position: absolute;
-            left: 0;
-            top: 0;
-            font-size: 22px;
-            color: #800000;
-        }
-
-        .topics a {
-            display: block;
-            background-color: #F0E68C;
-            color: #2F4F4F;
-            text-decoration: none;
-            padding: 15px 20px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            font-size: 18px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            text-align: justify; /* ✅ вирівнювання по ширині */
-        }
-
-        .topics a:hover {
-            background-color: #DAA520;
-            color: white;
-            transform: translateX(5px);
-        }
-
-        .navigation-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin-top: 40px;
-        }
-
-        .nav-button {
-            display: flex;
-            align-items: center;
-            background-color: #2F4F4F;
-            color: #FFD700;
-            text-decoration: none;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-size: 18px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
-        }
-
-        .nav-button:hover {
-            background-color: #556B2F;
-            color: #fff;
-            transform: scale(1.05);
-        }
-
-        .nav-button svg {
-            margin-right: 8px;
-            fill: currentColor;
-        }
-
-        @media (max-width: 600px) {
-            header {
-                font-size: 24px;
-                padding: 20px 10px;
-            }
-
-            .intro {
-                font-size: 18px;
-            }
-
-            ul.objectives li {
-                font-size: 16px;
-                padding-left: 35px;
-            }
-
-            .topics a {
-                font-size: 16px;
-                padding: 12px 15px;
-            }
-
-            .nav-button {
-                font-size: 16px;
-                padding: 10px 20px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <header>
-        Змістовий модуль 1. Комплексні числа
-    </header>
-
-    <main>
-        <div class="intro">У цьому змістовому модулі ви:</div>
-        <ul class="objectives">
-            <li>дізнаєтеся, що таке комплексні числа та як вони поєднують дійсні та уявні частини;</li>
-            <li>ознайомитеся з алгебраїчною формою комплексних чисел, арифметичними операціями над ними та їхнім геометричним представленням;</li>
-            <li>навчитеся знаходити комплексні корені рівнянь;</li>
-            <li>розглянете тригонометричну й показникову форми запису комплексних чисел і навчитеся виконувати дії в цих формах.</li>
-        </ul>
-
-        <div class="topics">
-            <a href="/tema1">Тема 1. Поняття про комплексні числа. Алгебраїчна форма. Арифметичні дії. Геометрична інтерпретація.</a>
-            <a href="/tema2">Тема 2. Тригонометрична форма комплексного числа. Арифметичні дії.</a>
-            <a href="/tema3">Тема 3. Показникова форма комплексного числа. Арифметичні дії.</a>
-        </div>
-
-        <div class="navigation-buttons">
-            <a class="nav-button" href="{{ url_for('zmist') }}">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                    <path d="M15 18l-6-6 6-6"/>
-                </svg>
-                До структури курсу
-            </a>
-
-            <a class="nav-button" href="{{ url_for('home') }}">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-                </svg>
-                На головну
-            </a>
-        </div>
-    </main>
+    <a class="nav-button" href="{{ url_for('home') }}">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+      </svg>
+      На головну
+    </a>
+  </div>
 </body>
 </html>
