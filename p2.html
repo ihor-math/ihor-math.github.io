@@ -962,34 +962,33 @@ button:disabled {
                     </li>
                 </ol>
             </details>
-            <details>
-                <summary>Корені квадратних рівнянь з комплексними числами</summary>
-                <p>Оскільки для уявної одиниці <em class="math-notation">\( i \)</em> справджується рівність <em class="math-notation">\( i = \sqrt{-1} \)</em>, то для будь-якого додатного числа <em class="math-notation">\( a \)</em> ми маємо, що <em class="math-notation">\( \sqrt{-a} = \sqrt{a} \, i \)</em>, де під <em class="math-notation">\( \sqrt{a} \)</em> мається на увазі додатній (арифметичний) корінь з <em class="math-notation">\( a \)</em>. Наприклад, <em class="math-notation">\( \sqrt{-16} = \sqrt{16} \cdot \sqrt{-1} = 4i \)</em>, <em class="math-notation">\( \sqrt{-25} = \sqrt{25} \cdot \sqrt{-1} = 5i \)</em>, тощо.</p>
-                <p>Це означає, що на множині <strong class="highlight-term">комплексних чисел</strong> можна розв'язувати квадратні рівняння, які не мають розв'язків серед дійсних чисел.</p>
-                <p><strong>Приклад 1.1.</strong> Розв’язати рівняння <em class="math-notation">\( x^2 + 49 = 0 \).</em></p>
-                <p>\( \triangleright \) Щоб знайти його розв'язки, спочатку перенесемо 49 у праву частину рівняння, змінивши знак на протилежний:</p>
-                <p><em class="math-notation">\( x^2 = -49. \)</em></p>
-                <p>Оскільки рівняння <em class="math-notation">\( x^2 = -49 \)</em> не має розв’язків серед дійсних чисел, розв'язуємо його в множині комплексних чисел. Візьмемо квадратний корінь з обох частин рівняння, і отримаємо два корені:</p>
-                <p><em class="math-notation">\( x_1 = -\sqrt{-49}, \quad x_2 = \sqrt{-49}. \)</em></p>
-                <p>З використанням рівності <em class="math-notation">\( \sqrt{-1} = i \)</em> маємо:</p>
-                <p><em class="math-notation">\( x_1 = -\sqrt{-49} = -\sqrt{49} \cdot \sqrt{-1} = -7 \cdot i = -7i, \)</em></p>
-                <p><em class="math-notation">\( x_2 = \sqrt{-49} = \sqrt{49} \cdot \sqrt{-1} = 7 \cdot i = 7i. \)</em></p>
-                <p>Отже, рівняння <em class="math-notation">\( x^2 + 49 = 0 \)</em> має два корені: <em class="math-notation">\( x_1 = -7i \)</em> і <em class="math-notation">\( x_2 = 7i \)</em>.</p>
-                <p>Ці корені є комплексними числами та взаємно спряженими. У множині дійсних чисел для заданого рівняння розв'язків не існує.</p>
-                <p><strong>Примітка.</strong> Скорочений запис двох коренів <em class="math-notation">\( x_1 = -7i \)</em> та <em class="math-notation">\( x_2 = 7i \)</em>:</p>
-                <p><em class="math-notation">\( x_{1,2} = \pm 7i. \)</em> \( \triangleleft \)</p>
-                <p><strong>Приклад 1.2.</strong> Розв’язати рівняння <em class="math-notation">\( x^2 - 4x + 29 = 0 \).</em></p>
-                <p>\( \triangleright \) Знайдемо дискримінант заданого рівняння:</p>
-                <p><em class="math-notation">\( D = b^2 - 4ac = (-4)^2 - 4 \cdot 1 \cdot 29 = 16 - 116 = -100. \)</em></p>
-                <p>Оскільки дискримінант рівняння від’ємний (<em class="math-notation">\( D = -100 \)</em>), рівняння не має розв'язків серед дійсних чисел. Отже, шукаємо корені в множині комплексних чисел.</p>
-                <p>Запишемо корені за формулою:</p>
-                <p><em class="math-notation">\( x_{1,2} = \frac{-b \pm \sqrt{D}}{2a} = \frac{4 \pm \sqrt{-100}}{2}. \)</em></p>
-                <p>Оскільки <em class="math-notation">\( \sqrt{-100} = 10i \)</em>, тоді:</p>
-                <p><em class="math-notation">\( x_{1,2} = \frac{4 \pm 10i}{2} = 2 \pm 5i. \)</em></p>
-                <p>Таким чином, рівняння має два комплексних корені:</p>
-                <p><em class="math-notation">\( x_1 = 2 - 5i \)</em> і <em class="math-notation">\( x_2 = 2 + 5i. \)</em></p>
-                <p><strong>Примітка.</strong> Ці взаємно спряжені корені мають суму 4 і добуток 29, що підтверджує теорему Вієта! Перевірка вимагає знання додавання та множення комплексних чисел, які розглянуті в пункті 3: Арифметичні дії в алгебраїчній формі. \( \triangleleft \)</p>
-            </details>
+                    <details class="complex-roots">
+            <summary>Корені квадратних рівнянь з комплексними числами</summary>
+            <p>Оскільки для уявної одиниці <em class="math-notation">\( i \)</em> справджується рівність <em class="math-notation">\( i = \sqrt{-1} \)</em>, то для будь-якого додатного числа <em class="math-notation">\( a \)</em> ми маємо, що <em class="math-notation">\( \sqrt{-a} = \sqrt{a} \, i \)</em>, де під <em class="math-notation">\( \sqrt{a} \)</em> мається на увазі додатній (арифметичний) корінь з <em class="math-notation">\( a \)</em>. Наприклад, <em class="math-notation">\( \sqrt{-16} = \sqrt{16} \cdot \sqrt{-1} = 4i \)</em>, <em class="math-notation">\( \sqrt{-25} = \sqrt{25} \cdot \sqrt{-1} = 5i \)</em>, тощо.</p>
+            <p>Це означає, що на множині <strong class="highlight-term">комплексних чисел</strong> можна розв'язувати квадратні рівняння, які не мають розв'язків серед дійсних чисел.</p>
+            <p><strong>Приклад 1.1.</strong> Розв’язати рівняння <em class="math-notation">\( x^2 + 49 = 0 \).</em></p>
+            <p>\( \triangleright \) Щоб знайти його розв'язки, спочатку перенесемо 49 у праву частину рівняння, змінивши знак на протилежний:</p>
+            <p><em class="math-notation">\( x^2 = -49. \)</em></p>
+            <p>Оскільки рівняння <em class="math-notation">\( x^2 = -49 \)</em> не має розв’язків серед дійсних чисел, розв'язуємо його в множині комплексних чисел. Візьмемо квадратний корінь з обох частин рівняння, і отримаємо два корені:</p>
+            <p><em class="math-notation">\( x_1 = -\sqrt{-49} = -\sqrt{49} \cdot \sqrt{-1} = -7 \cdot i = -7i, \)</em></p>
+            <p><em class="math-notation">\( x_2 = \sqrt{-49} = \sqrt{49} \cdot \sqrt{-1} = 7 \cdot i = 7i. \)</em></p>
+            <p>Отже, рівняння <em class="math-notation">\( x^2 + 49 = 0 \)</em> має два корені: <em class="math-notation">\( x_1 = -7i \)</em> і <em class="math-notation">\( x_2 = 7i \)</em>.</p>
+            <p>Ці корені є комплексними числами та взаємно спряженими. У множині дійсних чисел для заданого рівняння розв'язків не існує.</p>
+            <p><strong>Примітка.</strong> Скорочений запис двох коренів <em class="math-notation">\( x_1 = -7i \)</em> та <em class="math-notation">\( x_2 = 7i \)</em>:</p>
+            <p><em class="math-notation">\( x_{1,2} = \pm 7i. \)</em> \( \triangleleft \)</p>
+            <p><strong>Приклад 1.2.</strong> Розв’язати рівняння <em class="math-notation">\( x^2 - 4x + 29 = 0 \).</em></p>
+            <p>\( \triangleright \) Знайдемо дискримінант заданого рівняння:</p>
+            <p><em class="math-notation">\( D = b^2 - 4ac = (-4)^2 - 4 \cdot 1 \cdot 29 = 16 - 116 = -100. \)</em></p>
+            <p>Оскільки дискримінант рівняння від’ємний (<em class="math-notation">\( D = -100 \)</em>), рівняння не має розв'язків серед дійсних чисел. Отже, шукаємо корені в множині комплексних чисел.</p>
+            <p>Запишемо корені за формулою:</p>
+            <p><em class="math-notation">\( x_{1,2} = \frac{-b \pm \sqrt{D}}{2a} = \frac{4 \pm \sqrt{-100}}{2}. \)</em></p>
+            <p>Оскільки <em class="math-notation">\( \sqrt{-100} = 10i \)</em>, тоді:</p>
+            <p><em class="math-notation">\( x_{1,2} = \frac{4 \pm 10i}{2} = 2 \pm 5i. \)</em></p>
+            <p>Таким чином, рівняння має два комплексних корені:</p>
+            <p><em class="math-notation">\( x_1 = 2 - 5i \)</em> і <em class="math-notation">\( x_2 = 2 + 5i. \)</em></p>
+            <p><strong>Примітка.</strong> Ці взаємно спряжені корені мають суму 4 і добуток 29, що підтверджує теорему Вієта! Перевірка вимагає знання додавання та множення комплексних чисел, які розглянуті в пункті 3: Арифметичні дії в алгебраїчній формі. \( \triangleleft \)</p>
+        </details>
+
         </div>
     </div>
 
