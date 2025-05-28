@@ -228,6 +228,20 @@
             font-style: italic;
             color: #ffff00;
         }
+        .math-block {
+            background: linear-gradient(135deg, #3b6978, #204051);
+            color: #ffffff;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin: 8px 0;
+        }
+        .math-block mjx-container {
+            color: #ffff00 !important;
+            background: none;
+            padding: 4px;
+            font-size: 100%;
+            border-radius: 4px;
+        }
         .question-block {
             margin: 15px 0;
             padding: 10px;
@@ -399,6 +413,19 @@
                 width: 80px;
                 height: 80px;
             }
+            #theoryModal .modal-content details p {
+                font-size: 14px;
+                line-height: 1.4;
+            }
+            #theoryModal .modal-content details h3 {
+                font-size: 18px;
+            }
+            .math-block {
+                padding: 8px 12px;
+            }
+            .math-block mjx-container {
+                font-size: 90% !important;
+            }
         }
         @media (max-width: 480px) {
             .title-box {
@@ -417,6 +444,19 @@
             .video-card {
                 width: 220px;
                 height: 120px;
+            }
+            #theoryModal .modal-content details p {
+                font-size: 12px;
+                line-height: 1.3;
+            }
+            #theoryModal .modal-content details h3 {
+                font-size: 16px;
+            }
+            .math-block {
+                padding: 6px 10px;
+            }
+            .math-block mjx-container {
+                font-size: 80% !important;
             }
         }
     </style>
@@ -468,56 +508,54 @@
         </div>
         <div class="modal-content">
             <details>
-    <summary>Додавання та віднімання</summary>
-    <h3 style="text-align: center; color: #ecaf53;">Додавання комплексних чисел</h3>
-    <p>Щоб додати два комплексні числа <em class="math-notation">\( z_1 = a_1 + b_1 i \)</em> та <em class="math-notation">\( z_2 = a_2 + b_2 i \)</em> достатньо окремо додати їхні дійсні частини <em class="math-notation">\( (a_1 + a_2) \)</em> та уявні частини <em class="math-notation">\( (b_1 + b_2) \)</em>. Оскільки уявна частина результату помножується на <em class="math-notation">\( i \)</em>, сума має вигляд:</p>
-    <p><em class="math-notation">\( z_1 + z_2 = (a_1 + a_2) + (b_1 + b_2)i. \ (1.2) \)</em></p>
-    <p>Аналогічно, при додаванні більше ніж двох комплексних чисел слід окремо підсумовувати всі дійсні частини та всі уявні частини, отримуючи нове комплексне число.</p>
-    <p><strong>Приклад 1.3.</strong> Виконати додавання комплексних чисел:</p>
-    <p>а) <em class="math-notation">\( (3 + 2i) + (-2 + i) \)</em>;</p>
-    <p>б) <em class="math-notation">\( (2 - i) + (4 - 5i) \)</em>;</p>
-    <p>в) <em class="math-notation">\( (3 + 2i) + (3 - 2i) \)</em>;</p>
-    <p>г) <em class="math-notation">\( (2 - 3i) + (-2 + 3i) \)</em>.</p>
-    <p>\( \triangleright \) Застосуємо правило додавання комплексних чисел та обчислимо наступні суми:</p>
-    <p>а) <em class="math-notation">\( (3 + 2i) + (-2 + i) = (3 + (-2)) + (2 + 1)i = 1 + 3i \)</em>;</p>
-    <p>б) <em class="math-notation">\( (2 - i) + (4 - 5i) = (2 + 4) + (-1 + (-5))i = 6 - 6i \)</em>;</p>
-    <p>в) <em class="math-notation">\( (3 + 2i) + (3 - 2i) = (3 + 3) + (2 + (-2))i = 6 + 0i = 6 \)</em>;</p>
-    <p>г) <em class="math-notation">\( (2 - 3i) + (-2 + 3i) = (2 + (-2)) + (-3 + 3)i = 0 + 0i = 0 \)</em>.     \( \triangleleft \)</p>
-    <p><strong>Зауваження:</strong> Сума протилежних комплексних чисел дорівнює нулю.</p>
-    <h3 style="text-align: center; color: #ecaf53;">Віднімання комплексних чисел</h3>
-    <p>Щоб відняти два комплексні числа <em class="math-notation">\( z_1 = a_1 + b_1 i \)</em> та <em class="math-notation">\( z_2 = a_2 + b_2 i \)</em> достатньо окремо відняти їхні дійсні частини <em class="math-notation">\( (a_1 - a_2) \)</em> та уявні частини <em class="math-notation">\( (b_1 - b_2) \)</em>. Оскільки уявна частина результату помножується на <em class="math-notation">\( i \)</em>, різниця має вигляд:</p>
-    <p><em class="math-notation">\( z_1 - z_2 = (a_1 - a_2) + (b_1 - b_2)i. \ (1.3) \)</em></p>
-    <p>Процес віднімання комплексних чисел схожий на додавання, лише замість додавання використовується дія віднімання для дійсних та уявних частин окремо.</p>
-    <p><strong>Приклад 1.4.</strong> Виконати віднімання комплексних чисел:</p>
-    <p>а) <em class="math-notation">\( (2 + 3i) - (3 - 2i) \)</em>;</p>
-    <p>б) <em class="math-notation">\( (0.3 + 2i) - (0.3 - 3i) \)</em>.</p>
-    <p>\( \triangleright \) Застосуємо правило віднімання комплексних чисел та обчислимо наступні різниці:</p>
-    <p>а) <em class="math-notation">\( (2 + 3i) - (3 - 2i) = (2 - 3) + (3 - (-2))i = -1 + 5i \)</em>;</p>
-    <p>б) <em class="math-notation">\( (0.3 + 2i) - (0.3 - 3i) = (0.3 - 0.3) + (2 - (-3))i = 0 + 5i = 5i \)</em>.
-    \( \triangleleft \)</p>
-    <h3 style="text-align: center; color: #ecaf53;">Змішані дії: додавання та віднімання</h3>
-    <p>Додавання і віднімання комплексних чисел можна виконувати, як додавання і віднімання многочленів: дійсні частини додаються окремо, уявні – окремо.</p>
-    <p><strong>Приклад 1.5.</strong> Виконати дії:</p>
-    <p>а) <em class="math-notation">\( (2 - 3i) + (-8 + 5i) - (3 - 6i) - (-5 - i) \)</em>;</p>
-    <p>б) <em class="math-notation">\( (3.2 - 1.5i) - (0.8 - 1.4i) - (3.8 + i) + (-2.5 - 2.4i) \)</em>.</p>
-    <p>\( \triangleright \) Застосуємо додавання і віднімання комплексних чисел, як додавання і віднімання многочленів:</p>
-    <p>а) <em class="math-notation">\( (2 - 3i) + (-8 + 5i) - (3 - 6i) - (-5 - i) = (2 - 8 - 3 + 5) + (-3 + 5 + 6 + 1)i = -4 + 9i \)</em>;</p>
-    <p>б) <em class="math-notation">\( (3.2 - 1.5i) - (0.8 - 1.4i) - (3.8 + i) + (-2.5 - 2.4i) = (3.2 - 0.8 - 3.8 - 2.5) + (-1.5 + 1.4 - 1 - 2.4)i = -3.9 - 3.5i \)</em>.
-    \( \triangleleft \)</p>
-</details>
+                <summary>Додавання та віднімання</summary>
+                <h3 style="text-align: center; color: #ecaf53;">Додавання комплексних чисел</h3>
+                <p>Щоб додати два комплексні числа <em class="math-notation">\( z_1 = a_1 + b_1 i \)</em> та <em class="math-notation">\( z_2 = a_2 + b_2 i \)</em> достатньо окремо додати їхні дійсні частини <em class="math-notation">\( (a_1 + a_2) \)</em> та уявні частини <em class="math-notation">\( (b_1 + b_2) \)</em>. Оскільки уявна частина результату помножується на <em class="math-notation">\( i \)</em>, сума має вигляд:</p>
+                <p class="math-block"><em class="math-notation">\( z_1 + z_2 = (a_1 + a_2) + (b_1 + b_2)i. \ (1.2) \)</em></p>
+                <p>Аналогічно, при додаванні більше ніж двох комплексних чисел слід окремо підсумовувати всі дійсні частини та всі уявні частини, отримуючи нове комплексне число.</p>
+                <p><strong>Приклад 1.3.</strong> Виконати додавання комплексних чисел:</p>
+                <p class="math-block">а) <em class="math-notation">\( (3 + 2i) + (-2 + i) \)</em>;</p>
+                <p class="math-block">б) <em class="math-notation">\( (2 - i) + (4 - 5i) \)</em>;</p>
+                <p class="math-block">в) <em class="math-notation">\( (3 + 2i) + (3 - 2i) \)</em>;</p>
+                <p class="math-block">г) <em class="math-notation">\( (2 - 3i) + (-2 + 3i) \)</em>.</p>
+                <p>\( \triangleright \) Застосуємо правило додавання комплексних чисел та обчислимо наступні суми:</p>
+                <p class="math-block">а) <em class="math-notation">\( (3 + 2i) + (-2 + i) = (3 + (-2)) + (2 + 1)i = 1 + 3i \)</em>;</p>
+                <p class="math-block">б) <em class="math-notation">\( (2 - i) + (4 - 5i) = (2 + 4) + (-1 + (-5))i = 6 - 6i \)</em>;</p>
+                <p class="math-block">в) <em class="math-notation">\( (3 + 2i) + (3 - 2i) = (3 + 3) + (2 + (-2))i = 6 + 0i = 6 \)</em>;</p>
+                <p class="math-block">г) <em class="math-notation">\( (2 - 3i) + (-2 + 3i) = (2 + (-2)) + (-3 + 3)i = 0 + 0i = 0 \)</em>. \( \triangleleft \)</p>
+                <p><strong>Зауваження:</strong> Сума протилежних комплексних чисел дорівнює нулю.</p>
+                <h3 style="text-align: center; color: #ecaf53;">Віднімання комплексних чисел</h3>
+                <p>Щоб відняти два комплексні числа <em class="math-notation">\( z_1 = a_1 + b_1 i \)</em> та <em class="math-notation">\( z_2 = a_2 + b_2 i \)</em> достатньо окремо відняти їхні дійсні частини <em class="math-notation">\( (a_1 - a_2) \)</em> та уявні частини <em class="math-notation">\( (b_1 - b_2) \)</em>. Оскільки уявна частина результату помножується на <em class="math-notation">\( i \)</em>, різниця має вигляд:</p>
+                <p class="math-block"><em class="math-notation">\( z_1 - z_2 = (a_1 - a_2) + (b_1 - b_2)i. \ (1.3) \)</em></p>
+                <p>Процес віднімання комплексних чисел схожий на додавання, лише замість додавання використовується дія віднімання для дійсних та уявних частин окремо.</p>
+                <p><strong>Приклад 1.4.</strong> Виконати віднімання комплексних чисел:</p>
+                <p class="math-block">а) <em class="math-notation">\( (2 + 3i) - (3 - 2i) \)</em>;</p>
+                <p class="math-block">б) <em class="math-notation">\( (0.3 + 2i) - (0.3 - 3i) \)</em>.</p>
+                <p>\( \triangleright \) Застосуємо правило віднімання комплексних чисел та обчислимо наступні різниці:</p>
+                <p class="math-block">а) <em class="math-notation">\( (2 + 3i) - (3 - 2i) = (2 - 3) + (3 - (-2))i = -1 + 5i \)</em>;</p>
+                <p class="math-block">б) <em class="math-notation">\( (0.3 + 2i) - (0.3 - 3i) = (0.3 - 0.3) + (2 - (-3))i = 0 + 5i = 5i \)</em>. \( \triangleleft \)</p>
+                <h3 style="text-align: center; color: #ecaf53;">Змішані дії: додавання та віднімання</h3>
+                <p>Додавання і віднімання комплексних чисел можна виконувати, як додавання і віднімання многочленів: дійсні частини додаються окремо, уявні – окремо.</p>
+                <p><strong>Приклад 1.5.</strong> Виконати дії:</p>
+                <p class="math-block">а) <em class="math-notation">\( (2 - 3i) + (-8 + 5i) - (3 - 6i) - (-5 - i) \)</em>;</p>
+                <p class="math-block">б) <em class="math-notation">\( (3.2 - 1.5i) - (0.8 - 1.4i) - (3.8 + i) + (-2.5 - 2.4i) \)</em>.</p>
+                <p>\( \triangleright \) Застосуємо додавання і віднімання комплексних чисел, як додавання і віднімання многочленів:</p>
+                <p class="math-block">а) <em class="math-notation">\( (2 + 3i) + (-8 + 5i) - (3 - 6i) - (-5 - i) = (2 - 8 - 3 + 5) + (-3 + 5 + 6 + 1)i = -4 + 9i \)</em>;</p>
+                <p class="math-block">б) <em class="math-notation">\( (3.2 - 1.5i) - (0.8 - 1.4i) - (3.8 + i) + (-2.5 - 2.4i) = (3.2 - 0.8 - 3.8 - 2.5) + (-1.5 + 1.4 - 1 - 2.4)i = -3.9 - 3.5i \)</em>. \( \triangleleft \)</p>
+            </details>
             <details>
                 <summary>Множення</summary>
                 <p>Множення виконується за дистрибутивним законом, враховуючи <em class="math-notation">\( i^2 = -1 \)</em>:</p>
-                <p><em class="math-notation">\( z_1 \cdot z_2 = (a_1 a_2 - b_1 b_2) + (a_1 b_2 + a_2 b_1)i \)</em></p>
+                <p class="math-block"><em class="math-notation">\( z_1 \cdot z_2 = (a_1 a_2 - b_1 b_2) + (a_1 b_2 + a_2 b_1)i \)</em></p>
                 <p><strong>Приклад:</strong> Для \( z_1 = 2 + 3i \), \( z_2 = 1 + i \):</p>
-                <p><em class="math-notation">\( z_1 \cdot z_2 = (2 \cdot 1 - 3 \cdot 1) + (2 \cdot 1 + 1 \cdot 3)i = (2 - 3) + (2 + 3)i = -1 + 5i \)</em></p>
+                <p class="math-block"><em class="math-notation">\( z_1 \cdot z_2 = (2 \cdot 1 - 3 \cdot 1) + (2 \cdot 1 + 1 \cdot 3)i = (2 - 3) + (2 + 3)i = -1 + 5i \)</em></p>
             </details>
             <details>
                 <summary>Ділення</summary>
                 <p>Для ділення <em class="math-notation">\( z_1 / z_2 \)</em> множимо чисельник і знаменник на спряжене знаменника:</p>
-                <p><em class="math-notation">\( \frac{z_1}{z_2} = \frac{(a_1 + b_1 i)(a_2 - b_2 i)}{a_2^2 + b_2^2} \)</em></p>
+                <p class="math-block"><em class="math-notation">\( \frac{z_1}{z_2} = \frac{(a_1 + b_1 i)(a_2 - b_2 i)}{a_2^2 + b_2^2} \)</em></p>
                 <p><strong>Приклад:</strong> Для \( z_1 = 3 + 2i \), \( z_2 = 1 + i \):</p>
-                <p><em class="math-notation">\( \frac{3 + 2i}{1 + i} \cdot \frac{1 - i}{1 - i} = \frac{(3 + 2i)(1 - i)}{1^2 + 1^2} = \frac{3 - 3i + 2i - 2i^2}{2} = \frac{5 - i}{2} = \frac{5}{2} - \frac{1}{2}i \)</em></p>
+                <p class="math-block"><em class="math-notation">\( \frac{3 + 2i}{1 + i} \cdot \frac{1 - i}{1 - i} = \frac{(3 + 2i)(1 - i)}{1^2 + 1^2} = \frac{5 - i}{2} = \frac{5}{2} - \frac{1}{2}i \)</em></p>
             </details>
         </div>
     </div>
@@ -606,189 +644,189 @@
         </div>
     </div>
 
-    <div id="trainerModal">
-        <div class="modal-header">
-            <button class="close-btn" id="closeTrainerBtn">× Закрити</button>
-        </div>
-        <div class="modal-content">
-            <div class="trainer-container" id="trainerContent"></div>
-        </div>
+<div id="trainerModal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeTrainerBtn">× Закрити</button>
     </div>
+    <div class="modal-content">
+        <div class="trainer-container" id="trainerContent"></div>
+    </div>
+</div>
 
-    <script>
-        const openTheoryBtn = document.getElementById('openTheoryBtn');
-        const openVideoBtn = document.getElementById('openVideoBtn');
-        const openQuestionsBtn = document.getElementById('openQuestionsBtn');
-        const openTrainerBtn = document.getElementById('openTrainerBtn');
-        const theoryModal = document.getElementById('theoryModal');
-        const videoModal = document.getElementById('videoModal');
-        const questionsModal = document.getElementById('questionsModal');
-        const trainerModal = document.getElementById('trainerModal');
-        const videoPlayerModal1 = document.getElementById('videoPlayerModal1');
-        const videoPlayerModal2 = document.getElementById('videoPlayerModal2');
-        const videoPlayerModal3 = document.getElementById('videoPlayerModal3');
-        const closeVideoPlayerBtn1 = document.getElementById('closeVideoPlayerBtn1');
-        const closeVideoPlayerBtn2 = document.getElementById('closeVideoPlayerBtn2');
-        const closeVideoPlayerBtn3 = document.getElementById('closeVideoPlayerBtn3');
-        const overlay = document.getElementById('modalOverlay');
-        const closeTheoryBtn = document.getElementById('closeTheoryBtn');
-        const closeVideoBtn = document.getElementById('closeVideoBtn');
-        const closeQuestionsBtn = document.getElementById('closeQuestionsBtn');
-        const closeTrainerBtn = document.getElementById('closeTrainerBtn');
+<script>
+    const openTheoryBtn = document.getElementById('openTheoryBtn');
+    const openVideoBtn = document.getElementById('openVideoBtn');
+    const openQuestionsBtn = document.getElementById('openQuestionsBtn');
+    const openTrainerBtn = document.getElementById('openTrainerBtn');
+    const theoryModal = document.getElementById('theoryModal');
+    const videoModal = document.getElementById('videoModal');
+    const questionsModal = document.getElementById('questionsModal');
+    const trainerModal = document.getElementById('trainerModal');
+    const videoPlayerModal1 = document.getElementById('videoPlayerModal1');
+    const videoPlayerModal2 = document.getElementById('videoPlayerModal2');
+    const videoPlayerModal3 = document.getElementById('videoPlayerModal3');
+    const closeVideoPlayerBtn1 = document.getElementById('closeVideoPlayerBtn1');
+    const closeVideoPlayerBtn2 = document.getElementById('closeVideoPlayerBtn2');
+    const closeVideoPlayerBtn3 = document.getElementById('closeVideoPlayerBtn3');
+    const overlay = document.getElementById('modalOverlay');
+    const closeTheoryBtn = document.getElementById('closeTheoryBtn');
+    const closeVideoBtn = document.getElementById('closeVideoBtn');
+    const closeQuestionsBtn = document.getElementById('closeQuestionsBtn');
+    const closeTrainerBtn = document.getElementById('closeTrainerBtn');
 
-        let player1, player2, player3;
+    let player1, player2, player3;
 
-        function onYouTubeIframeAPIReady() {
-            player1 = new YT.Player('youtubePlayer1', {
-                height: '400',
-                width: '100%',
-                videoId: 'SP-YJe7Vldo', // Замініть на реальний ID
-                playerVars: { 'rel': 0, 'modestbranding': 1 }
-            });
-            player2 = new YT.Player('youtubePlayer2', {
-                height: '400',
-                width: '100%',
-                videoId: 'SP-YJe7Vldo', // Замініть на реальний ID
-                playerVars: { 'rel': 0, 'modestbranding': 1 }
-            });
-            player3 = new YT.Player('youtubePlayer3', {
-                height: '400',
-                width: '100%',
-                videoId: 'SP-YJe7Vldo', // Замініть на реальний ID
-                playerVars: { 'rel': 0, 'modestbranding': 1 }
-            });
-        }
-
-        function openModal(modal) {
-            modal.style.display = 'flex';
-            overlay.style.display = 'block';
-            if (typeof MathJax !== 'undefined') {
-                MathJax.typesetPromise();
-            }
-        }
-
-        function closeModal(modal) {
-            modal.style.display = 'none';
-            overlay.style.display = 'none';
-        }
-
-        openTheoryBtn.addEventListener('click', () => openModal(theoryModal));
-        openVideoBtn.addEventListener('click', () => openModal(videoModal));
-        openQuestionsBtn.addEventListener('click', () => openModal(questionsModal));
-        openTrainerBtn.addEventListener('click', () => openModal(trainerModal));
-
-        closeTheoryBtn.addEventListener('click', () => closeModal(theoryModal));
-        closeVideoBtn.addEventListener('click', () => closeModal(videoModal));
-        closeQuestionsBtn.addEventListener('click', () => closeModal(questionsModal));
-        closeTrainerBtn.addEventListener('click', () => closeModal(trainerModal));
-        closeVideoPlayerBtn1.addEventListener('click', () => closeModal(videoPlayerModal1));
-        closeVideoPlayerBtn2.addEventListener('click', () => closeModal(videoPlayerModal2));
-        closeVideoPlayerBtn3.addEventListener('click', () => closeModal(videoPlayerModal3));
-
-        document.querySelectorAll('.video-card').forEach(card => {
-            card.addEventListener('click', () => {
-                const videoId = card.dataset.video;
-                if (videoId === '1') openModal(videoPlayerModal1);
-                else if (videoId === '2') openModal(videoPlayerModal2);
-                else if (videoId === '3') openModal(videoPlayerModal3);
-            });
+    function onYouTubeIframeAPIReady() {
+        player1 = new YT.Player('youtubePlayer1', {
+            height: '400',
+            width: '100%',
+            videoId: 'SP-YJe7Vldo', // Замініть на реальний ID
+            playerVars: { 'rel': 0, 'modestbranding': 1 }
         });
+        player2 = new YT.Player('youtubePlayer2', {
+            height: '400',
+            width: '100%',
+            videoId: 'SP-YJe7Vldo', // Замініть на реальний ID
+            playerVars: { 'rel': 0, 'modestbranding': 1 }
+        });
+        player3 = new YT.Player('youtubePlayer3', {
+            height: '400',
+            width: '100%',
+            videoId: 'SP-YJe7Vldo', // Замініть на реальний ID
+            playerVars: { 'rel': 0, 'modestbranding': 1 }
+        });
+    }
 
-        const questions = [
-            {
-                type: 'multiple-choice',
-                variants: [
-                    {
-                        question: 'Результат додавання \\( (2 + 3i) + (1 - i) \\) дорівнює',
-                        options: ['3 + 2i', '2 + 4i', '3 + 4i', '1 + 2i'],
-                        correct: '3 + 2i'
-                    }
-                ]
-            },
-            {
-                type: 'multiple-choice',
-                variants: [
-                    {
-                        question: 'Результат множення \\( (1 + i)(1 - i) \\) дорівнює',
-                        options: ['2', '1 + i', '1 - i', '0'],
-                        correct: '2'
-                    }
-                ]
-            }
-        ];
+    function openModal(modal) {
+        modal.style.display = 'flex';
+        overlay.style.display = 'block';
+        if (typeof MathJax !== 'undefined') {
+            MathJax.typesetPromise();
+        }
+    }
 
-        let currentQuestionIndex = 0;
+    function closeModal(modal) {
+        modal.style.display = 'none';
+        overlay.style.display = 'none';
+    }
 
-        function loadQuestion() {
-            const trainerContent = document.getElementById('trainerContent');
-            if (currentQuestionIndex >= questions.length) {
-                trainerContent.innerHTML = `
-                    <div class="completion-emoji"></div>
-                    <div class="completion-message">
-                        <h2>Тренування завершено!</h2>
-                        <p>Молодець!</p>
-                    </div>
-                    <button onclick="resetTrainer()">Спробувати ще раз</button>
-                `;
-                return;
-            }
+    openTheoryBtn.addEventListener('click', () => openModal(theoryModal));
+    openVideoBtn.addEventListener('click', () => openModal(videoModal));
+    openQuestionsBtn.addEventListener('click', () => openModal(questionsModal));
+    openTrainerBtn.addEventListener('click', () => openModal(trainerModal));
 
-            const q = questions[currentQuestionIndex].variants[0];
-            trainerContent.innerHTML = `
-                <div class="question-circle">
-                    <h3>Питання ${currentQuestionIndex + 1}</h3>
-                </div>
-                <p>${q.question}</p>
-                <div class="options-container">
-                    ${q.options.map(opt => `<div class="option">${opt}</div>`).join('')}
-                </div>
-                <button id="submitAnswer" disabled>Перевірити</button>
-                <div class="result"></div>
-            `;
-            if (typeof MathJax !== 'undefined') {
-                MathJax.typesetPromise();
-            }
+    closeTheoryBtn.addEventListener('click', () => closeModal(theoryModal));
+    closeVideoBtn.addEventListener('click', () => closeModal(videoModal));
+    closeQuestionsBtn.addEventListener('click', () => closeModal(questionsModal));
+    closeTrainerBtn.addEventListener('click', () => closeModal(trainerModal));
+    closeVideoPlayerBtn1.addEventListener('click', () => closeModal(videoPlayerModal1));
+    closeVideoPlayerBtn2.addEventListener('click', () => closeModal(videoPlayerModal2));
+    closeVideoPlayerBtn3.addEventListener('click', () => closeModal(videoPlayerModal3));
 
-            document.querySelectorAll('.option').forEach(opt => {
-                opt.addEventListener('click', () => {
-                    document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
-                    opt.classList.add('selected');
-                    document.getElementById('submitAnswer').disabled = false;
-                });
-            });
+    document.querySelectorAll('.video-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const videoId = card.dataset.video;
+            if (videoId === '1') openModal(videoPlayerModal1);
+            else if (videoId === '2') openModal(videoPlayerModal2);
+            else if (videoId === '3') openModal(videoPlayerModal3);
+        });
+    });
 
-            document.getElementById('submitAnswer').addEventListener('click', () => {
-                const feedback = document.createElement('div');
-                feedback.className = 'feedback';
-                if (document.querySelector('.option.selected').textContent === q.correct) {
-                    feedback.className += ' correct-feedback';
-                    feedback.textContent = '✅ Правильно!';
-                    currentQuestionIndex++;
-                } else {
-                    feedback.className += ' incorrect-feedback';
-                    feedback.textContent = '❌ Неправильно';
+    const questions = [
+        {
+            type: 'multiple-choice',
+            variants: [
+                {
+                    question: 'Результат додавання \\( (2 + 3i) + (1 - i) \\) дорівнює',
+                    options: ['3 + 2i', '2 + 4i', '3 + 4i', '1 + 2i'],
+                    correct: '3 + 2i'
                 }
-                document.body.appendChild(feedback);
-                feedback.style.opacity = '1';
-                setTimeout(() => {
-                    feedback.style.opacity = '0';
-                    setTimeout(() => {
-                        feedback.remove();
-                        loadQuestion();
-                    }, 500);
-                }, 1500);
+            ]
+        },
+        {
+            type: 'multiple-choice',
+            variants: [
+                {
+                    question: 'Результат множення \\( (1 + i)(1 - i) \\) дорівнює',
+                    options: ['2', '1 + i', '1 - i', '0'],
+                    correct: '2'
+                }
+            ]
+        }
+    ];
+
+    let currentQuestionIndex = 0;
+
+    function loadQuestion() {
+        const trainerContent = document.getElementById('trainerContent');
+        if (currentQuestionIndex >= questions.length) {
+            trainerContent.innerHTML = `
+                <div class="completion-emoji"></div>
+                <div class="completion-message">
+                    <h2>Тренування завершено!</h2>
+                    <p>Молодець!</p>
+                </div>
+                <button onclick="resetTrainer()">Спробувати ще раз</button>
+            `;
+            return;
+        }
+
+        const q = questions[currentQuestionIndex].variants[0];
+        trainerContent.innerHTML = `
+            <div class="question-circle">
+                <h3>Питання ${currentQuestionIndex + 1}</h3>
+            </div>
+            <p>${q.question}</p>
+            <div class="options-container">
+                ${q.options.map(opt => `<div class="option">${opt}</div>`).join('')}
+            </div>
+            <button id="submitAnswer" disabled>Перевірити</button>
+            <div class="result"></div>
+        `;
+        if (typeof MathJax !== 'undefined') {
+            MathJax.typesetPromise();
+        }
+
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+                opt.classList.add('selected');
+                document.getElementById('submitAnswer').disabled = false;
             });
-        }
-
-        function resetTrainer() {
-            currentQuestionIndex = 0;
-            loadQuestion();
-        }
-
-        openTrainerBtn.addEventListener('click', () => {
-            openModal(trainerModal);
-            loadQuestion();
         });
-    </script>
+
+        document.getElementById('submitAnswer').addEventListener('click', () => {
+            const feedback = document.createElement('div');
+            feedback.className = 'feedback';
+            if (document.querySelector('.option.selected').textContent === q.correct) {
+                feedback.className += ' correct-feedback';
+                feedback.textContent = '✅ Правильно!';
+                currentQuestionIndex++;
+            } else {
+                feedback.className += ' incorrect-feedback';
+                feedback.textContent = '❌ Неправильно';
+            }
+            document.body.appendChild(feedback);
+            feedback.style.opacity = '1';
+            setTimeout(() => {
+                feedback.style.opacity = '0';
+                setTimeout(() => {
+                    feedback.remove();
+                    loadQuestion();
+                }, 500);
+            }, 1500);
+        });
+    }
+
+    function resetTrainer() {
+        currentQuestionIndex = 0;
+        loadQuestion();
+    }
+
+    openTrainerBtn.addEventListener('click', () => {
+        openModal(trainerModal);
+        loadQuestion();
+    });
+</script>
 </body>
 </html>
