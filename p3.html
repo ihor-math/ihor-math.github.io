@@ -218,6 +218,13 @@
             color: #ffffff;
             margin: 8px 0;
         }
+        .addition-subtraction {
+            overflow-x: hidden;
+        }
+        .addition-subtraction > div {
+            display: inline-block;
+            white-space: nowrap;
+        }
         .highlight-term {
             background: #e0f7fa;
             padding: 2px 4px;
@@ -400,15 +407,20 @@
                 height: 80px;
             }
             #theoryModal .modal-content {
-                padding: 10px;
+                padding: 15px;
             }
-            #theoryModal .content details {
+            #theoryModal .modal-content details p {
                 font-size: 15px;
                 line-height: 1.5;
-                min-width: 500px;
             }
             #theoryModal .modal-content details h3 {
                 font-size: 20px;
+            }
+            .addition-subtraction {
+                overflow-x: auto;
+            }
+            .addition-subtraction > div {
+                min-width: 500px;
             }
         }
         @media (max-width: 480px) {
@@ -430,15 +442,17 @@
                 height: 120px;
             }
             #theoryModal .modal-content {
-                padding: 8px;
+                padding: 10px;
             }
-            #theoryModal .modal-content details {
+            #theoryModal .modal-content details p {
                 font-size: 14px;
                 line-height: 1.4;
-                min-width: 400px;
             }
             #theoryModal .modal-content details h3 {
                 font-size: 18px;
+            }
+            .addition-subtraction > div {
+                min-width: 400px;
             }
         }
     </style>
@@ -489,41 +503,43 @@
             <button class="close-btn" id="closeTheoryBtn">× Закрити</button>
         </div>
         <div class="modal-content">
-            <details>
+            <details class="addition-subtraction">
                 <summary>Додавання та віднімання</summary>
-                <h3 style="text-align: center; color: #ecaf53;">Додавання комплексних чисел</h3>
-                <p>Щоб додати два комплексні числа <em class="math-notation">\( z_1 = a_1 + b_1 i \)</em> та <em class="math-notation">\( z_2 = a_2 + b_2 i \)</em> достатньо окремо додати їхні дійсні частини <em class="math-notation">\( (a_1 + a_2) \)</em> та уявні частини <em class="math-notation">\( (b_1 + b_2) \)</em>. Оскільки уявна частина результату помножується на <em class="math-notation">\( i \)</em>, сума має вигляд:</p>
-                <p><em class="math-notation">\( z_1 + z_2 = (a_1 + a_2) + (b_1 + b_2)i. \ (1.2) \)</em></p>
-                <p>Аналогічно, при додаванні більше ніж двох комплексних чисел слід окремо підсумовувати всі дійсні частини та всі уявні частини, отримуючи нове комплексне число.</p>
-                <p><strong>Приклад 1.3.</strong> Виконати додавання комплексних чисел:</p>
-                <p>а) <em class="math-notation">\( (3 + 2i) + (-2 + i) \)</em>;</p>
-                <p>б) <em class="math-notation">\( (2 - i) + (4 - 5i) \)</em>;</p>
-                <p>в) <em class="math-notation">\( (3 + 2i) + (3 - 2i) \)</em>;</p>
-                <p>г) <em class="math-notation">\( (2 - 3i) + (-2 + 3i) \)</em>.</p>
-                <p>\( \triangleright \) Застосуємо правило додавання комплексних чисел та обчислимо наступні суми:</p>
-                <p>а) <em class="math-notation">\( (3 + 2i) + (-2 + i) = (3 + (-2)) + (2 + 1)i = 1 + 3i \)</em>;</p>
-                <p>б) <em class="math-notation">\( (2 - i) + (4 - 5i) = (2 + 4) + (-1 + (-5))i = 6 - 6i \)</em>;</p>
-                <p>в) <em class="math-notation">\( (3 + 2i) + (3 - 2i) = (3 + 3) + (2 + (-2))i = 6 + 0i = 6 \)</em>;</p>
-                <p>г) <em class="math-notation">\( (2 - 3i) + (-2 + 3i) = (2 + (-2)) + (-3 + 3)i = 0 + 0i = 0 \)</em>. \( \triangleleft \)</p>
-                <p><strong>Зауваження:</strong> Сума протилежних комплексних чисел дорівнює нулю.</p>
-                <h3 style="text-align: center; color: #ecaf53;">Віднімання комплексних чисел</h3>
-                <p>Щоб відняти два комплексні числа <em class="math-notation">\( z_1 = a_1 + b_1 i \)</em> та <em class="math-notation">\( z_2 = a_2 + b_2 i \)</em> достатньо окремо відняти їхні дійсні частини <em class="math-notation">\( (a_1 - a_2) \)</em> та уявні частини <em class="math-notation">\( (b_1 - b_2) \)</em>. Оскільки уявна частина результату помножується на <em class="math-notation">\( i \)</em>, різниця має вигляд:</p>
-                <p><em class="math-notation">\( z_1 - z_2 = (a_1 - a_2) + (b_1 - b_2)i. \ (1.3) \)</em></p>
-                <p>Процес віднімання комплексних чисел схожий на додавання, лише замість додавання використовується дія віднімання для дійсних та уявних частин окремо.</p>
-                <p><strong>Приклад 1.4.</strong> Виконати віднімання комплексних чисел:</p>
-                <p>а) <em class="math-notation">\( (2 + 3i) - (3 - 2i) \)</em>;</p>
-                <p>б) <em class="math-notation">\( (0.3 + 2i) - (0.3 - 3i) \)</em>.</p>
-                <p>\( \triangleright \) Застосуємо правило віднімання комплексних чисел та обчислимо наступні різниці:</p>
-                <p>а) <em class="math-notation">\( (2 + 3i) - (3 - 2i) = (2 - 3) + (3 - (-2))i = -1 + 5i \)</em>;</p>
-                <p>б) <em class="math-notation">\( (0.3 + 2i) - (0.3 - 3i) = (0.3 - 0.3) + (2 - (-3))i = 0 + 5i = 5i \)</em>. \( \triangleleft \)</p>
-                <h3 style="text-align: center; color: #ecaf53;">Змішані дії: додавання та віднімання</h3>
-                <p>Додавання і віднімання комплексних чисел можна виконувати, як додавання і віднімання многочленів: дійсні частини додаються окремо, уявні – окремо.</p>
-                <p><strong>Приклад 1.5.</strong> Виконати дії:</p>
-                <p>а) <em class="math-notation">\( (2 + 3i) + (-8 + 5i) - (3 - 6i) - (-5 - i) \)</em>;</p>
-                <p>б) <em class="math-notation">\( (3.2 - 1.5i) - (0.8 - 1.4i) - (3.8 + i) + (-2.5 - 2.4i) \)</em>.</p>
-                <p>\( \triangleright \) Застосуємо додавання і віднімання комплексних чисел, як додавання і віднімання многочленів:</p>
-                <p>а) <em class="math-notation">\( (2 + 3i) + (-8 + 5i) - (3 - 6i) - (-5 - i) = (2 - 8 - 3 + 5) + (-3 + 5 + 6 + 1)i = -4 + 9i \)</em>;</p>
-                <p>б) <em class="math-notation">\( (3.2 - 1.5i) - (0.8 - 1.4i) - (3.8 + i) + (-2.5 - 2.4i) = (3.2 - 0.8 - 3.8 - 2.5) + (-1.5 + 1.4 - 1 - 2.4)i = -3.9 - 3.5i \)</em>. \( \triangleleft \)</p>
+                <div>
+                    <h3 style="text-align: center; color: #ecaf53;">Додавання комплексних чисел</h3>
+                    <p>Щоб додати два комплексні числа <em class="math-notation">\( z_1 = a_1 + b_1 i \)</em> та <em class="math-notation">\( z_2 = a_2 + b_2 i \)</em> достатньо окремо додати їхні дійсні частини <em class="math-notation">\( (a_1 + a_2) \)</em> та уявні частини <em class="math-notation">\( (b_1 + b_2) \)</em>. Оскільки уявна частина результату помножується на <em class="math-notation">\( i \)</em>, сума має вигляд:</p>
+                    <p><em class="math-notation">\( z_1 + z_2 = (a_1 + a_2) + (b_1 + b_2)i. \ (1.2) \)</em></p>
+                    <p>Аналогічно, при додаванні більше ніж двох комплексних чисел слід окремо підсумовувати всі дійсні частини та всі уявні частини, отримуючи нове комплексне число.</p>
+                    <p><strong>Приклад 1.3.</strong> Виконати додавання комплексних чисел:</p>
+                    <p>а) <em class="math-notation">\( (3 + 2i) + (-2 + i) \)</em>;</p>
+                    <p>б) <em class="math-notation">\( (2 - i) + (4 - 5i) \)</em>;</p>
+                    <p>в) <em class="math-notation">\( (3 + 2i) + (3 - 2i) \)</em>;</p>
+                    <p>г) <em class="math-notation">\( (2 - 3i) + (-2 + 3i) \)</em>.</p>
+                    <p>\( \triangleright \) Застосуємо правило додавання комплексних чисел та обчислимо наступні суми:</p>
+                    <p>а) <em class="math-notation">\( (3 + 2i) + (-2 + i) = (3 + (-2)) + (2 + 1)i = 1 + 3i \)</em>;</p>
+                    <p>б) <em class="math-notation">\( (2 - i) + (4 - 5i) = (2 + 4) + (-1 + (-5))i = 6 - 6i \)</em>;</p>
+                    <p>в) <em class="math-notation">\( (3 + 2i) + (3 - 2i) = (3 + 3) + (2 + (-2))i = 6 + 0i = 6 \)</em>;</p>
+                    <p>г) <em class="math-notation">\( (2 - 3i) + (-2 + 3i) = (2 + (-2)) + (-3 + 3)i = 0 + 0i = 0 \)</em>. \( \triangleleft \)</p>
+                    <p><strong>Зауваження:</strong> Сума протилежних комплексних чисел дорівнює нулю.</p>
+                    <h3 style="text-align: center; color: #ecaf53;">Віднімання комплексних чисел</h3>
+                    <p>Щоб відняти два комплексні числа <em class="math-notation">\( z_1 = a_1 + b_1 i \)</em> та <em class="math-notation">\( z_2 = a_2 + b_2 i \)</em> достатньо окремо відняти їхні дійсні частини <em class="math-notation">\( (a_1 - a_2) \)</em> та уявні частини <em class="math-notation">\( (b_1 - b_2) \)</em>. Оскільки уявна частина результату помножується на <em class="math-notation">\( i \)</em>, різниця має вигляд:</p>
+                    <p><em class="math-notation">\( z_1 - z_2 = (a_1 - a_2) + (b_1 - b_2)i. \ (1.3) \)</em></p>
+                    <p>Процес віднімання комплексних чисел схожий на додавання, лише замість додавання використовується дія віднімання для дійсних та уявних частин окремо.</p>
+                    <p><strong>Приклад 1.4.</strong> Виконати віднімання комплексних чисел:</p>
+                    <p>а) <em class="math-notation">\( (2 + 3i) - (3 - 2i) \)</em>;</p>
+                    <p>б) <em class="math-notation">\( (0.3 + 2i) - (0.3 - 3i) \)</em>.</p>
+                    <p>\( \triangleright \) Застосуємо правило віднімання комплексних чисел та обчислимо наступні різниці:</p>
+                    <p>а) <em class="math-notation">\( (2 + 3i) - (3 - 2i) = (2 - 3) + (3 - (-2))i = -1 + 5i \)</em>;</p>
+                    <p>б) <em class="math-notation">\( (0.3 + 2i) - (0.3 - 3i) = (0.3 - 0.3) + (2 - (-3))i = 0 + 5i = 5i \)</em>. \( \triangleleft \)</p>
+                    <h3 style="text-align: center; color: #ecaf53;">Змішані дії: додавання та віднімання</h3>
+                    <p>Додавання і віднімання комплексних чисел можна виконувати, як додавання і віднімання многочленів: дійсні частини додаються окремо, уявні – окремо.</p>
+                    <p><strong>Приклад 1.5.</strong> Виконати дії:</p>
+                    <p>а) <em class="math-notation">\( (2 + 3i) + (-8 + 5i) - (3 - 6i) - (-5 - i) \)</em>;</p>
+                    <p>б) <em class="math-notation">\( (3.2 - 1.5i) - (0.8 - 1.4i) - (3.8 + i) + (-2.5 - 2.4i) \)</em>.</p>
+                    <p>\( \triangleright \) Застосуємо додавання і віднімання комплексних чисел, як додавання і віднімання многочленів:</p>
+                    <p>а) <em class="math-notation">\( (2 + 3i) + (-8 + 5i) - (3 - 6i) - (-5 - i) = (2 - 8 - 3 + 5) + (-3 + 5 + 6 + 1)i = -4 + 9i \)</em>;</p>
+                    <p>б) <em class="math-notation">\( (3.2 - 1.5i) - (0.8 - 1.4i) - (3.8 + i) + (-2.5 - 2.4i) = (3.2 - 0.8 - 3.8 - 2.5) + (-1.5 + 1.4 - 1 - 2.4)i = -3.9 - 3.5i \)</em>. \( \triangleleft \)</p>
+                </div>
             </details>
             <details>
                 <summary>Множення</summary>
@@ -537,7 +553,7 @@
                 <p>Для ділення <em class="math-notation">\( z_1 / z_2 \)</em> множимо чисельник і знаменник на спряжене знаменника:</p>
                 <p><em class="math-notation">\( \frac{z_1}{z_2} = \frac{(a_1 + b_1 i)(a_2 - b_2 i)}{a_2^2 + b_2^2} \)</em></p>
                 <p><strong>Приклад:</strong> Для \( z_1 = 3 + 2i \), \( z_2 = 1 + i \):</p>
-                <p><em class="math-notation">\( \frac{3 + 2i}{1 + i} \cdot \frac{1 - i}{1 - i} = \frac{(3 + 2i)(1 - i)}{1^2 + 1^2} = \frac{3 - 3i + 2i - 2i^2}{2} = \frac{5 - i}{2} = \frac{5}{2} - \frac{1}{2}i \)</em></p>
+                <p><em class="math-notation">\( \frac{3 + 2i}{1 + i} \cdot \frac{1 - i}{1 - i} = \frac{(3 + 2i)( incorporate-s 1) - i}{1^2 + 1} = \frac{3 - 3i + 2i - 2}{2} = \frac{5 - i}{2} = \frac{5}{2} - \frac{1}{2}i \)</em></p>
             </details>
         </div>
     </div>
@@ -603,9 +619,11 @@
         <div class="modal-content">
             <details class="question-block">
                 <summary>Блок 1. Основи арифметики</summary>
-                <details>
-                    <summary>1. Як додають комплексні числа?</summary>
-                    <p>Додають окремо дійсні та уявні частини: \( (a_1 + b_1 i) + (a_2 + b_2 i) = (a_1 + a_2) + (b_1 + b_2)i \).</p>
+                <div>
+                    <details>
+                        <summary>1. Як додають комплексні числа?</summary>
+                        <p>Додають окремо дійсні та уявні частини: \( (a_1 + b_1 i) + (a_2 + b_2 i) = (a_1 + a_2) + (b_1 + b_2)i \).</p>
+                    </div>
                 </details>
                 <details>
                     <summary>2. Як віднімають комплексні числа?</summary>
@@ -662,19 +680,19 @@
             player1 = new YT.Player('youtubePlayer1', {
                 height: '400',
                 width: '100%',
-                videoId: 'SP-YJe7Vldo', // Замініть на реальний ID
+                videoId: 'YOUR_VIDEO_ID_1', // Замініть на реальний ID
                 playerVars: { 'rel': 0, 'modestbranding': 1 }
             });
             player2 = new YT.Player('youtubePlayer2', {
                 height: '400',
                 width: '100%',
-                videoId: 'SP-YJe7Vldo', // Замініть на реальний ID
+                videoId: 'YOUR_VIDEO_ID_2', // Замініть на реальний ID
                 playerVars: { 'rel': 0, 'modestbranding': 1 }
             });
             player3 = new YT.Player('youtubePlayer3', {
                 height: '400',
                 width: '100%',
-                videoId: 'SP-YJe7Vldo', // Замініть на реальний ID
+                videoId: 'YOUR_VIDEO_ID_3', // Замініть на реальний ID
                 playerVars: { 'rel': 0, 'modestbranding': 1 }
             });
         }
@@ -682,8 +700,10 @@
         function openModal(modal) {
             modal.style.display = 'flex';
             overlay.style.display = 'block';
-            if (typeof MathJax !== 'undefined') {
-                MathJax.typesetPromise();
+            if (typeof window.MathJax !== 'undefined') {
+                window.MathJax.typesetPromise().then(() => {
+                    console.log('MathJax rendu correctement');
+                }).catch((err) => console.warn('MathJax rendu échoué:', err));
             }
         }
 
@@ -707,10 +727,14 @@
 
         document.querySelectorAll('.video-card').forEach(card => {
             card.addEventListener('click', () => {
-                const videoId = card.dataset.video;
-                if (videoId === '1') openModal(videoPlayerModal1);
-                else if (videoId === '2') openModal(videoPlayerModal2);
-                else if (videoId === '3') openModal(videoPlayerModal3);
+                const videoId = parseInt(card.dataset.video);
+                if (videoId === 1) {
+                    openModal(videoPlayerModal1);
+                } else if (videoId === 2) {
+                    openModal(videoPlayerModal2);
+                } else if (videoId === 3) {
+                    openModal(videoPlayerModal3);
+                }
             });
         });
 
@@ -720,7 +744,7 @@
                 variants: [
                     {
                         question: 'Результат додавання \\( (2 + 3i) + (1 - i) \\) дорівнює',
-                        options: ['3 + 2i', '2 + 4i', '3 + 4i', '1 + 2i'],
+                        options: ['3 + 2i', '2 + 4i', '1 + 2i', '3 + 4i'],
                         correct: '3 + 2i'
                     }
                 ]
@@ -730,7 +754,7 @@
                 variants: [
                     {
                         question: 'Результат множення \\( (1 + i)(1 - i) \\) дорівнює',
-                        options: ['2', '1 + i', '1 - i', '0'],
+                        options: ['2', '0', '1 + i', '1 - i'],
                         correct: '2'
                     }
                 ]
@@ -750,6 +774,9 @@
                     </div>
                     <button onclick="resetTrainer()">Спробувати ще раз</button>
                 `;
+                if (typeof window.MathJax !== 'undefined') {
+                    window.MathJax.typesetPromise();
+                }
                 return;
             }
 
@@ -765,8 +792,8 @@
                 <button id="submitAnswer" disabled>Перевірити</button>
                 <div class="result"></div>
             `;
-            if (typeof MathJax !== 'undefined') {
-                MathJax.typesetPromise();
+            if (typeof window.MathJax !== 'undefined') {
+                window.MathJax.typesetPromise();
             }
 
             document.querySelectorAll('.option').forEach(opt => {
