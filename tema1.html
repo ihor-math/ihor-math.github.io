@@ -138,6 +138,7 @@
       user-select: none;
       color: #f3f4f6;
       transition: color 0.3s ease;
+      text-decoration: none; /* Усуває підкреслення */
     }
 
     .card:hover h3,
@@ -283,23 +284,22 @@
     <div class="plan-title">План вивчення:</div>
     <div class="cards">
       <div class="card" tabindex="0">
-  <a href="p1.html" aria-label="Перейти до Поняття про комплексні числа">
-    <div class="card-number">
-      <div class="icon-box">
-        <svg class="icon-svg" viewBox="0 0 24 24">
-          <path d="M3 6h18M3 12h10M3 18h14"/>
-        </svg>
+        <a href="{{ url_for('p1') }}" aria-label="Перейти до Поняття про комплексні числа">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <path d="M3 6h18M3 12h10M3 18h14"/>
+              </svg>
+            </div>
+            1
+          </div>
+          <h3>Поняття про комплексні числа</h3>
+          <div class="card-content"></div>
+        </a>
       </div>
-      1
-    </div>
-    <h3>Поняття про комплексні числа</h3>
-    <div class="card-content"></div>
-  </a>
-</div>
-
 
       <div class="card" tabindex="0">
-         <a href="p2.html" aria-label="Перейти до Алгебраїчна форма комплексних чисел">
+        <a href="{{ url_for('p2') }}" aria-label="Перейти до Алгебраїчна форма комплексних чисел">
           <div class="card-number">
             <div class="icon-box">
               <svg class="icon-svg" viewBox="0 0 24 24">
@@ -314,30 +314,33 @@
       </div>
 
       <div class="card" tabindex="0">
-        <a href="p3.html" aria-label="Перейти до Арифметичні дії в алгебраїчній формі">
-        <div class="card-number">
-          <div class="icon-box">
-            <svg class="icon-svg" viewBox="0 0 24 24">
-              <path d="M3 6h18M3 12h10M3 18h14"/>
-            </svg>
+        <a href="{{ url_for('p3') }}" aria-label="Перейти до Арифметичні дії з комплексними числами">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <path d="M3 6h18M3 12h10M3 18h14"/>
+              </svg>
+            </div>
+            3
           </div>
-          3
-        </div>
-        <h3>Арифметичні дії в алгебраїчній формі</h3>
-        <div class="card-content"></div>
+          <h3>Арифметичні дії в алгебраїчній формі</h3>
+          <div class="card-content"></div>
+        </a>
       </div>
 
       <div class="card" tabindex="0">
-        <div class="card-number">
-          <div class="icon-box">
-            <svg class="icon-svg" viewBox="0 0 24 24">
-              <path d="M12 2v20M2 12h20"/>
-            </svg>
+        <a href="{{ url_for('p4') }}" aria-label="Перейти до Геометрична інтерпретація комплексних чисел">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <path d="M12 2v20M2 12h20"/>
+              </svg>
+            </div>
+            4
           </div>
-          4
-        </div>
-        <h3>Геометрична інтерпретація комплексних чисел</h3>
-        <div class="card-content"></div>
+          <h3>Геометрична інтерпретація комплексних чисел</h3>
+          <div class="card-content"></div>
+        </a>
       </div>
     </div>
   </div>
@@ -355,6 +358,7 @@
         <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
       </svg>
       На головну
+
     </a>
   </div>
 </body>
