@@ -363,25 +363,26 @@
             background: #e6bcbc;
             border-color: #800000;
         }
+
         button {
-            padding: 2vw 4vw;
-            margin-top: 3vw;
-            background-color: #800000;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: clamp(14px, 2.5vw, 16px);
-            cursor: pointer;
-            transition: background 0.3s;
-            font-family: 'Roboto', sans-serif;
-        }
-        button:hover {
-            background-color: #5f0000;
-        }
-        button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-        }
+  background-color: #8B0000;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 24px);
+  font-size: clamp(16px, 3vw, 18px);
+  font-family: 'Lora', serif;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+            
+       button:hover:not(:disabled) {
+  background-color: #006400;
+}
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
         .result {
             margin-top: 3vw;
             font-size: clamp(16px, 2.5vw, 18px);
@@ -463,27 +464,57 @@
             background: #ffcdd2;
             border: 2px solid #b71c1c;
         }
-        .input-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 25px 0;
-    width: 100%;
+       .input-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2vw 0;
+  width: 100%;
 }
-       .input-group {
-    display: flex;
-    flex-direction: row; /* Змінено на row для горизонтального розташування */
-    align-items: center; /* Вирівнювання по вертикалі */
-    gap: 12px; /* Відступ між "Відповідь:" і полем */
-    flex-wrap: nowrap; /* Запобігає перенесенню за замовчуванням */
+            
+.input-group {
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 2vw, 20px);
+  font-size: clamp(16px, 3vw, 20px);
+  font-family: 'Lora', serif;
+  font-weight: 500;
+  color: #333;
 }
             .input-group strong {
-    font-family: 'Lora', serif;
-    font-size: clamp(15px, 2.3vw, 17px);
-    color: #800000;
-    white-space: nowrap;
-    font-weight: 700;
+  font-family: 'Lora', serif;
+  font-size: clamp(15px, 2.3vw, 17px);
+  color: #800000;
+  white-space: nowrap;
+  font-weight: 700;
 }
+            
+.input-container input {
+  border-radius: 50px; /* Oval/pill-shaped */
+  border: 2px solid #8B0000; /* Maroon border */
+  padding: 10px 20px; /* Balanced padding */
+  font-size: clamp(16px, 2.5vw, 18px); /* Match font size */
+  font-family: 'Lora', serif; /* Match font */
+  width: clamp(150px, 25vw, 200px); /* Consistent width */
+  outline: none; /* Remove default outline */
+  transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
+  background: linear-gradient(to bottom, #fbeaea, #f5e0e0); /* Gradient background */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+            
+.input-container input:focus {
+  border-color: #006400; /* Green border on focus */
+  transform: scale(1.03); /* Slight scale */
+  box-shadow: 0 0 12px rgba(0, 100, 0, 0.4); /* Green glow */
+  background: #ffffff; /* White background on focus */
+}
+  
+           .input-container input::placeholder {
+  color: #888; /* Subtle placeholder */
+  font-style: italic; /* Distinct placeholder */
+  font-size: clamp(13px, 2.1vw, 15px);
+}
+            
         .input-group label {
             font-family: 'Lora', serif;
             font-size: clamp(14px, 2.5vw, 16px);
@@ -491,18 +522,18 @@
             margin-bottom: 5px;
         }
         .input-group input {
-    padding: 12px 18px;
-    border: 2px solid transparent;
-    border-radius: 10px;
-    background: linear-gradient(to bottom, #fbeaea, #f5e0e0);
-    font-family: 'Lora', serif;
-    font-size: clamp(14px, 2.2vw, 16px);
-    width: clamp(160px, 30vw, 280px);
-    transition: all 0.3s ease;
-    outline: none;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    background-clip: padding-box;
-    border-image: linear-gradient(to right, #800000, #a52a2a) 1;
+  padding: 12px 18px;
+  border: 2px solid transparent;
+  border-radius: 10px; /* Overrides to slightly rounded */
+  background: linear-gradient(to bottom, #fbeaea, #f5e0e0);
+  font-family: 'Lora', serif;
+  font-size: clamp(14px, 2.2vw, 16px);
+  width: clamp(160px, 30vw, 280px);
+  transition: all 0.3s ease;
+  outline: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-clip: padding-box;
+  border-image: linear-gradient(to right, #800000, #a52a2a) 1;
 }
        .input-group input:focus {
     transform: scale(1.03);
@@ -515,6 +546,7 @@
     font-style: italic;
     font-size: clamp(13px, 2.1vw, 15px);
 }
+
         .navigation-buttons {
             display: flex;
             justify-content: center;
@@ -744,17 +776,18 @@
             .input-container {
                 gap: 10px;
             }
+   .input-group {
+        gap: 10px;
+    }
                .input-group label {
                 font-size: clamp(12px, 2.2vw, 14px);
             }
-            .input-group {
-        gap: 10px;
-    }
-    .input-group input {
-        width: clamp(140px, 35vw, 220px);
-        padding: 10px 15px;
-        font-size: clamp(13px, 2.6vw, 15px);
-    }
+           
+    .input-container input {
+    width: clamp(140px, 35vw, 220px);
+    padding: 10px 15px;
+    font-size: clamp(13px, 2.6vw, 15px);
+  }
     .input-group strong {
         font-size: clamp(14px, 2.6vw, 16px);
     }
@@ -911,11 +944,12 @@
         flex-wrap: wrap; /* Дозволяє перенесення на маленьких екранах */
         justify-content: center;
     }
-    .input-group input {
-        width: clamp(120px, 45vw, 200px);
-        padding: 8px 12px;
-        font-size: clamp(12px, 2.9vw, 14px);
-    }
+     .input-container input {
+    width: clamp(120px, 45vw, 200px);
+    padding: 8px 12px;
+    font-size: clamp(12px, 2.9vw, 14px);
+  }
+            
     .input-group strong {
         font-size: clamp(13px, 2.9vw, 15px);
     }
@@ -962,7 +996,7 @@
             </svg>
             До теми 1
         </a>
-        <a class="nav-button" href='index.html'>
+         <a class="nav-button" href='index.html'>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                 <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
             </svg>
@@ -1444,7 +1478,7 @@ correct: '\\(-1 + \\frac{1}{2}i\\)'
 ];
 let currentGroupIndex = 0; // Поточна група питань
 let currentVariantIndex = 0; // Поточний варіант у групі
-let score = 0; // Кількість правильних відповідей
+let selectedVariants = [];
 
 function toggleModal(modal, show) {
   modal.style.display = show ? 'flex' : 'none';
