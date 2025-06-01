@@ -1818,7 +1818,7 @@ function checkInputAnswer() {
     currentGroupIndex++;
     currentVariantIndex = 0;
   } else {
-    feedback.textContent = '❌ Неправильно. Спробуйте ще раз!';
+    feedback.textContent = '❌ Неправильно.';
     feedback.classList.add('incorrect-feedback');
     currentVariantIndex = (currentVariantIndex + 1) % questions[currentGroupIndex].length;
   }
@@ -1848,7 +1848,7 @@ function checkInputTwoFieldsAnswer() {
     currentGroupIndex++;
     currentVariantIndex = 0;
   } else {
-    feedback.textContent = '❌ Неправильно. Спробуйте ще раз!';
+    feedback.textContent = '❌ Неправильно.';
     feedback.classList.add('incorrect-feedback');
     currentVariantIndex = (currentVariantIndex + 1) % questions[currentGroupIndex].length;
   }
