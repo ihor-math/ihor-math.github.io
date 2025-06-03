@@ -2,6 +2,7 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Структура курсу</title>
     <style>
         body {
@@ -85,15 +86,14 @@
             transform: translateY(-3px);
         }
 
-        .home-btn svg {
+        .home-btn img {
             width: 24px;
             height: 24px;
         }
-        /* Адаптація під мобільні пристрої */
-@media (max-width: 600px) {
+       @media (max-width: 600px) {
     .header-box {
-        font-size: 26px;
-        padding: 20px 10px;
+        font-size: 32px;
+        padding: 30px 15px;
     }
 
     .container {
@@ -102,51 +102,53 @@
     }
 
     .module-box {
-        padding: 15px;
-        font-size: 16px;
+        padding: 18px;
+        font-size: 18px;
     }
 
     .module-box a {
-        font-size: 16px;
+        font-size: 17px;
     }
 
     .home-btn a {
-        font-size: 16px;
-        padding: 10px 16px;
+        font-size: 17px;
+        padding: 12px 22px;
     }
 
     .home-btn {
-        margin: 30px auto;
+        margin: 40px auto;
     }
 
-    .home-btn img,
     .home-btn svg {
-        width: 20px;
-        height: 20px;
+        width: 22px;
+        height: 22px;
     }
 }
 
     </style>
 </head>
 <body>
+
     <div class="header-box">Структура курсу</div>
 
     <div class="container">
-        <div class="module-box"><a href="modul1.html">Змістовий модуль 1. Комплексні числа.</a></div>
-        <div class="module-box"><a href="modul2.html">Змістовий модуль 2. Елементи лінійної алгебри.</a></div>
-        <div class="module-box"><a href="modul3.html">Змістовий модуль 3. Елементи векторної алгебри.</a></div>
-        <div class="module-box"><a href="modul4.html">Змістовий модуль 4. Елементи аналітичної геометрії.</a></div>
-        <div class="module-box"><a href="modul5.html">Змістовий модуль 5. Елементи диференціального числення.</a></div>
-        <div class="module-box"><a href="modul6.html">Змістовий модуль 6. Елементи інтегрального числення та диференціальних рівнянь.</a></div>
+        <div class="module-box"><a href="/modul1">Змістовий модуль 1. Комплексні числа.</a></div>
+        <div class="module-box"><a href="/modul2">Змістовий модуль 2. Елементи лінійної алгебри.</a></div>
+        <div class="module-box"><a href="/modul3">Змістовий модуль 3. Елементи векторної алгебри.</a></div>
+        <div class="module-box"><a href="/modul4">Змістовий модуль 4. Елементи аналітичної геометрії.</a></div>
+        <div class="module-box"><a href="/modul5">Змістовий модуль 5. Елементи диференціального числення.</a></div>
+        <div class="module-box"><a href="/modul6">Змістовий модуль 6. Елементи інтегрального числення та диференціальних рівнянь.</a></div>
     </div>
 
-    <div class="home-btn">
-        <a href="index.html">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="gold" viewBox="0 0 24 24">
-                <path d="M12 3l10 9h-3v9h-6v-6h-2v6H5v-9H2z"/>
-            </svg>
-            На головну
-        </a>
-    </div>
+   <div class="home-btn">
+   <a href="index.html">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="gold" viewBox="0 0 24 24">
+            <path d="M12 3l10 9h-3v9h-6v-6h-2v6H5v-9H2z"/>
+        </svg>
+        На головну
+    </a>
+</div>
+
+
 </body>
 </html>
