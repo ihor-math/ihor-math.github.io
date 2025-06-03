@@ -335,7 +335,7 @@
             border-radius: 15px;
             font-size: clamp(14px, 2.5vw, 16px);
             font-family: 'Lora', serif;
-            line-height: 1.4; /* Зменшено міжрядковий інтервал для всіх карток */
+            line-height: 1.4;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
@@ -368,7 +368,7 @@
         .card-back span, .card-back .MathJax {
             margin: 0;
             font-size: 1em;
-            line-height: 1.4; /* Зменшено міжрядковий інтервал для задньої сторони */
+            line-height: 1.4;
             color: #FFFFFF;
             display: inline;
         }
@@ -593,7 +593,7 @@
             80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
             100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
         }
-       @media (max-width: 768px) {
+        @media (max-width: 768px) {
             .title-box {
                 margin-top: 40px;
                 padding: 15px 20px;
@@ -640,11 +640,11 @@
             .card-front, .card-back {
                 font-size: 12px;
                 padding: 8px;
-                line-height: 1.2; /* Зменшено міжрядковий інтервал для мобільних */
+                line-height: 1.2;
             }
             .card-front span {
                 font-size: 12px;
-                line-height: 1.2; /* Зменшено для span */
+                line-height: 1.2;
             }
             .trainer-container {
                 width: 95%;
@@ -706,7 +706,36 @@
             .video-player-container iframe {
                 max-height: 300px;
             }
+            /* Fix for Корені квадратних рівнянь section on mobile */
+            #theoryModal details:nth-child(3) .modal-content {
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch;
+                width: 100%;
+                box-sizing: border-box;
+            }
+            #theoryModal details:nth-child(3) p {
+                white-space: normal !important; /* Allow text to wrap */
+                overflow-x: visible !important;
+                display: block !important;
+                min-width: 0 !important;
+                max-width: 100% !important;
+                word-wrap: break-word !important;
+                overflow-wrap: break-word !important;
+            }
+            #theoryModal details:nth-child(3) p mjx-container {
+                display: inline-block !important;
+                white-space: nowrap !important;
+                vertical-align: middle !important;
+                min-width: auto !important;
+            }
+            /* Ensure the parent container supports scrolling */
+            #theoryModal details:nth-child(3) {
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+                width: 100% !important;
+            }
         }
+            
         @media (max-width: 480px) {
             .title-box {
                 margin-top: 20px;
@@ -753,28 +782,32 @@
             .card-front, .card-back {
                 font-size: 11px;
                 padding: 6px;
-                line-height: 1.1; /* Ще вужчий міжрядковий інтервал для малих екранів */
+                line-height: 1.1;
             }
             .card-front span {
                 font-size: 11px;
-                line-height: 1.1; /* Зменшено для span */
+                line-height: 1.1;
             }
             .card-back .MathJax {
                 font-size: 0.9em;
             }
             .question-circle, .completion-emoji {
-                width: 25vw;
-                height: 25vw;
-                min-width: 60px;
-                min-height: 60px;
+                width: 30vw;
+                height: 30vw;
+                min-width: 70px;
+                min-height: 70px;
+            }
+            .question-circle h3 {
+        font-size: clamp(16px, 3.5vw, 18px);
+    }
+            .option {
+                font-size: clamp(12px, 2.5vw, 14px);
+                padding: 3.5vw 4.5vw;
             }
             .completion-emoji::after {
                 font-size: clamp(25px, 6vw, 35px);
             }
-            .option {
-                font-size: clamp(10px, 2.3vw, 12px);
-                padding: 2.8vw 3.8vw;
-            }
+            
             .feedback {
                 font-size: clamp(20px, 5vw, 26px);
                 padding: clamp(8px, 2.5vw, 12px) clamp(12px, 4vw, 18px);
@@ -817,7 +850,7 @@
     font-size: clamp(14px, 2vw, 16px);
     color: #333;
     font-family: 'Lora', serif;
-    font-style: italic; /* Додано для косого шрифту */
+    font-style: italic;
 }
 .input-group input {
     padding: 8px;
@@ -837,7 +870,6 @@ button:disabled {
     cursor: not-allowed;
 }
 .correct-feedback::before {
-   
     display: inline-block;
     margin-right: 10px;
     font-size: clamp(20px, 4vw, 24px);
@@ -845,7 +877,6 @@ button:disabled {
     animation: bounce 0.5s ease;
 }
 .incorrect-feedback::before {
-   
     display: inline-block;
     margin-right: 10px;
     font-size: clamp(20px, 4vw, 24px);
@@ -929,7 +960,7 @@ button:disabled {
             font-weight: 700;
             font-family: 'Lora', serif;
             font-size: clamp(14px, 2.5vw, 16px);
-            line-height: 1.4; /* Зменшено міжрядковий інтервал */
+            line-height: 1.4;
             width: 100%;
         }
         .math-notation-centered {
@@ -972,25 +1003,25 @@ mjx-container.math-notation-centered * {
         align-items: center;
         height: 100%;
         line-height: 1.1;
-        font-size: 12px;
+        font-size: 14px;
     }
     .card-front span {
         display: block;
         text-align: justify;
         width: 100%;
         line-height: 1.1;
-        font-size: 12px;
+        font-size: 14px;
     }
     .card-back {
         text-align: justify;
         word-wrap: break-word;
         overflow-wrap: break-word;
-        font-size: 13px;
+        font-size: 15px;
         padding: 6px;
         line-height: 1.1;
     }
     .card-back span, .card-back .MathJax {
-        font-size: 13px;
+        font-size: 15px;
         line-height: 1.1;
     }
     .math-notation-centered {
@@ -1018,9 +1049,83 @@ mjx-container.math-notation-centered * {
         color: #560319 !important;
     }
     mjx-container {
-        font-size: 16px !important;
+        font-size: 17px !important;
+    }
+   /* Виправлення для відповіді на 12-й флешкартці на мобільних */
+    #questionsModal .question-card:nth-child(12) .card-back {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        white-space: nowrap !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        text-align: left !important;
+        padding-left: 160px !important; /* Збільшено зсув вправо */
+    }
+
+    #questionsModal .question-card:nth-child(12) .card-back span {
+        display: inline-block !important;
+        white-space: nowrap !important;
+        min-width: max-content !important;
+        margin-left: -20px !important; /* Компенсація зсуву для видимості тексту зліва */
+    }
+
+    #questionsModal .question-card:nth-child(12) .card-back::-webkit-scrollbar {
+        height: 8px !important;
+    }
+
+    #questionsModal .question-card:nth-child(12) .card-back::-webkit-scrollbar-thumb {
+        background-color: #800000 !important;
+        border-radius: 4px !important;
+    }
+
+    #questionsModal .question-card:nth-child(12) .card-back::-webkit-scrollbar-track {
+        background-color: #f0f0f0 !important;
+    }
+
+    /* Забезпечуємо, щоб MathJax рівняння в 12-й флешкартці не заважали прокрутці */
+    #questionsModal .question-card:nth-child(12) .card-back mjx-container {
+        display: inline-block !important;
+        white-space: nowrap !important;
+        vertical-align: middle !important;
     }
 }
+            #comparisons li p {
+            text-align: justify !important;
+        }
+
+        details:nth-child(3) .modal-content p {
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        details:nth-child(3) .modal-content p::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        details:nth-child(3) .modal-content p::-webkit-scrollbar-thumb {
+            background-color: #800000;
+            border-radius: 4px;
+        }
+
+        details:nth-child(3) .modal-content p::-webkit-scrollbar-track {
+            background-color: #f0f0f0;
+        }
+           /* Стилі для назв підпунктів у #comparisons */
+#theoryModal #comparisons .subsection-title {
+    text-align: center;
+    color: #f7ff00 !important;
+    margin: 10px 0;
+    font-family: 'Lora', serif;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Приховування номерів списку */
+#theoryModal #comparisons ol {
+    list-style-type: none;
+    padding-left: 0;
+}
+
     </style>
 </head>
 <body>
@@ -1048,13 +1153,13 @@ mjx-container.math-notation-centered * {
     </div>
 
     <div class="navigation-buttons">
-       <a class="nav-button" href='tema1.html'>
+        <a class="nav-button" href="/tema1">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                 <path d="M15 18l-6-6 6-6"/>
             </svg>
             До теми 1
         </a>
-       <a class="nav-button" href='index.html'>
+        <a class="nav-button" href="{{ url_for('home') }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                 <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
             </svg>
@@ -1081,30 +1186,33 @@ mjx-container.math-notation-centered * {
                 <p>Дійсні числа можна вважати комплексними, записуючи їх у вигляді <em class="math-notation">\( a + 0i \)</em>, а уявні числа – у вигляді <em class="math-notation">\( 0 + bi \)</em>.</p>
             </details>
             <details id="comparisons">
-                <summary>Порівняння комплексних чисел</summary>
-                <p><strong class="highlight-term">Комплексні числа</strong> <em class="math-notation">\( z_1 = a_1 + b_1 i \)</em> та <em class="math-notation">\( z_2 = a_2 + b_2 i \)</em> порівнюють за кількома основними критеріями. Розглянемо такі випадки:</p>
-                <ol>
-                    <li><span class="subsection-title">1. Рівність комплексних чисел.</span>
-                        <p>Комплексні числа <em class="math-notation">\( z_1 \)</em> і <em class="math-notation">\( z_2 \)</em> рівні, якщо їх дійсні та уявні частини є рівними, тобто:</p>
-                        <p><em class="math-notation">\( a_1 = a_2, \quad b_1 = b_2. \)</em></p>
-                        <p>Наприклад, <em class="math-notation">\( z_1 = 2 + 3i \)</em> і <em class="math-notation">\( z_2 = 2 + 3i \)</em> – рівні комплексні числа, оскільки <em class="math-notation">\( \text{Re } z_1 = \text{Re } z_2 = 2 \)</em> і <em class="math-notation">\( \text{Im } z_1 = \text{Im } z_2 = 3 \)</em>.</p>
-                    </li>
-                    <li><span class="subsection-title">2. Комплексно-спряжені числа.</span>
-                        <p>Два комплексні числа <em class="math-notation">\( z_1 \)</em> і <em class="math-notation">\( z_2 \)</em> є комплексно-спряженими, якщо їх дійсні частини рівні, а уявні частини мають протилежні знаки, тобто:</p>
-                        <p><em class="math-notation">\( a_1 = a_2, \quad b_1 = -b_2. \)</em></p>
-                        <p>Спряжене комплексне число до <em class="math-notation">\( z = a + bi \)</em> позначається як <em class="math-notation">\( \overline{z} \)</em> і записується у вигляді:</p>
-                        <p><em class="math-notation">\( \overline{z} = a - bi. \)</em></p>
-                        <p>Наприклад, <em class="math-notation">\( z = -2 + 3i \)</em> і <em class="math-notation">\( \overline{z} = -2 - 3i \)</em> є комплексно-спряженими числами.</p>
-                    </li>
-                    <li><span class="subsection-title">3. Протилежні комплексні числа.</span>
-                        <p>Комплексні числа <em class="math-notation">\( z_1 \)</em> і <em class="math-notation">\( z_2 \)</em> протилежні, якщо їхні частини мають протилежні знаки, тобто:</p>
-                        <p><em class="math-notation">\( a_1 = -a_2, \quad b_1 = -b_2. \)</em></p>
-                        <p>Протилежне комплексне число до <em class="math-notation">\( z = a + bi \)</em> позначається як <em class="math-notation">\( -z \)</em> і записується у вигляді:</p>
-                        <p><em class="math-notation">\( -z = -a - bi. \)</em></p>
-                        <p>Наприклад, <em class="math-notation">\( z = 2 - 3i \)</em> і <em class="math-notation">\( -z = -2 + 3i \)</em> – протилежні комплексні числа.</p>
-                    </li>
-                </ol>
-            </details>
+    <summary>Порівняння комплексних чисел</summary>
+    <p><strong class="highlight-term">Комплексні числа</strong> <em class="math-notation">\( z_1 = a_1 + b_1 i \)</em> та <em class="math-notation">\( z_2 = a_2 + b_2 i \)</em> порівнюють за кількома основними критеріями. Розглянемо такі випадки:</p>
+    <ol>
+        <li>
+            <h3 class="subsection-title">Рівність комплексних чисел</h3>
+            <p>Комплексні числа <em class="math-notation">\( z_1 \)</em> і <em class="math-notation">\( z_2 \)</em> рівні, якщо їх дійсні та уявні частини є рівними, тобто:</p>
+            <p><em class="math-notation">\( a_1 = a_2, \quad b_1 = b_2. \)</em></p>
+            <p>Наприклад, <em class="math-notation">\( z_1 = 2 + 3i \)</em> і <em class="math-notation">\( z_2 = 2 + 3i \)</em> – рівні комплексні числа, оскільки <em class="math-notation">\( \text{Re } z_1 = \text{Re } z_2 = 2 \)</em> і <em class="math-notation">\( \text{Im } z_1 = \text{Im } z_2 = 3 \)</em>.</p>
+        </li>
+        <li>
+            <h3 class="subsection-title">Комплексно-спряжені числа</h3>
+            <p>Два комплексні числа <em class="math-notation">\( z_1 \)</em> і <em class="math-notation">\( z_2 \)</em> є комплексно-спряженими, якщо їх дійсні частини рівні, а уявні частини мають протилежні знаки, тобто:</p>
+            <p><em class="math-notation">\( a_1 = a_2, \quad b_1 = -b_2. \)</em></p>
+            <p>Спряжене комплексне число до <em class="math-notation">\( z = a + bi \)</em> позначається як <em class="math-notation">\( \overline{z} \)</em> і записується у вигляді:</p>
+            <p><em class="math-notation">\( \overline{z} = a - bi. \)</em></p>
+            <p>Наприклад, <em class="math-notation">\( z = -2 + 3i \)</em> і <em class="math-notation">\( \overline{z} = -2 - 3i \)</em> є комплексно-спряженими числами.</p>
+        </li>
+        <li>
+            <h3 class="subsection-title">Протилежні комплексні числа</h3>
+            <p>Комплексні числа <em class="math-notation">\( z_1 \)</em> і <em class="math-notation">\( z_2 \)</em> протилежні, якщо їхні частини мають протилежні знаки, тобто:</p>
+            <p><em class="math-notation">\( a_1 = -a_2, \quad b_1 = -b_2. \)</em></p>
+            <p>Протилежне комплексне число до <em class="math-notation">\( z = a + bi \)</em> позначається як <em class="math-notation">\( -z \)</em> і записується у вигляді:</p>
+            <p><em class="math-notation">\( -z = -a - bi. \)</em></p>
+            <p>Наприклад, <em class="math-notation">\( z = 2 - 3i \)</em> і <em class="math-notation">\( -z = -2 + 3i \)</em> – протилежні комплексні числа.</p>
+        </li>
+    </ol>
+</details>
             <details>
                 <summary>Корені квадратних рівнянь з комплексними числами</summary>
                 <p>Оскільки для уявної одиниці <em class="math-notation">\( i \)</em> справджується рівність <em class="math-notation">\( i = \sqrt{-1} \)</em>, то для будь-якого додатного числа <em class="math-notation">\( a \)</em> ми маємо, що <em class="math-notation">\( \sqrt{-a} = \sqrt{a} \, i \)</em>, де під <em class="math-notation">\( \sqrt{a} \)</em> мається на увазі додатній (арифметичний) корінь з <em class="math-notation">\( a \)</em>. Наприклад, <em class="math-notation">\( \sqrt{-16} = \sqrt{16} \cdot \sqrt{-1} = 4i \)</em>, <em class="math-notation">\( \sqrt{-25} = \sqrt{25} \cdot \sqrt{-1} = 5i \)</em>, тощо.</p>
@@ -1123,7 +1231,7 @@ mjx-container.math-notation-centered * {
                 <p><em class="math-notation">\( x_{1,2} = \pm 7i. \)</em> \( \triangleleft \)</p>
                 <p><strong>Приклад 1.2.</strong> Розв’язати рівняння <em class="math-notation">\( x^2 - 4x + 29 = 0 \).</em></p>
                 <p>\( \triangleright \) Знайдемо дискримінант заданого рівняння:</p>
-                <p><em class="math-notation">\( D = b^2 - 4ac = (-4)^2 - 4 \cdot 1 \cdot 29 = -100. \)</em></p>
+                <p><em class="math-notation">\( D = b^2 - 4ac = (-4)^2 - 4 \cdot 1 \cdot 29 = 16 - 116 = -100. \)</em></p>
                 <p>Оскільки дискримінант рівняння від’ємний (<em class="math-notation">\( D = -100 \)</em>), рівняння не має розв'язків серед дійсних чисел. Отже, шукаємо корені в множині комплексних чисел.</p>
                 <p>Запишемо корені за формулою:</p>
                 <p><em class="math-notation">\( x_{1,2} = \frac{-b \pm \sqrt{D}}{2a} = \frac{4 \pm \sqrt{-100}}{2}. \)</em></p>
@@ -1141,6 +1249,7 @@ mjx-container.math-notation-centered * {
             <button class="close-btn" aria-label="Закрити відео" id="closeVideoBtn">× Закрити</button>
         </div>
         <div class="modal-content">
+            <h2 style="text-align: center; color: #003153;">Оберіть відео</h2>
             <div class="video-card-container">
                 <div class="video-card" data-video="1">
                     <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера" />
@@ -1265,9 +1374,9 @@ mjx-container.math-notation-centered * {
 <div class="question-card">
                 <div class="card-inner">
                     <div class="card-front">12. Навести приклад розв’язання квадратного рівняння з від’ємним дискримінантом.</div>
-                    <div class="card-back"><span> <div style="text-align: center">\( x^2 - 4x + 29 = 0, \)</div><br>
-       <div style="text-align: center"> \( D = b^2 - 4ac = (-4)^2 - 4 \cdot 1 \cdot 29 =  -100, \)</div><br>
-        <div style="text-align: center">\( x_{1,2} = \frac{-b \pm \sqrt{D}}{2a} = \frac{4 \pm \sqrt{-100}}{2} = \frac{4 \pm 10i}{2} = 2 \pm 5i. \)</div></div>
+                    <div class="card-back"><span> \( x^2 - 4x + 29 = 0 \):<br>
+        \( D = b^2 - 4ac = (-4)^2 - 4 \cdot 1 \cdot 29 = 16 - 116 = -100, \)<br>
+        \( x_{1,2} = \frac{-b \pm \sqrt{D}}{2a} = \frac{4 \pm \sqrt{-100}}{2} = \frac{4 \pm 10i}{2} = 2 \pm 5i. \)</div>
                 </div>
             </div>
             </div>
