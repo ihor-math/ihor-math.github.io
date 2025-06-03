@@ -670,14 +670,14 @@
         height: 150px;
     }
  .figure.figure-1-3 {
-        width: 150px;
+        width: 200px;
         height: 150px;
     }
  .figure.figure-1-4,
     .figure.figure-1-5,
     .figure.figure-1-6 {
-        width: 150px;
-        height: 150px;
+        width: 200px;
+        height: 200px;
     }
             .title-box {
                 margin-top: 40px;
@@ -705,6 +705,22 @@
             #theoryModal .modal-content details h3 {
                 font-size: 18px;
             }
+             /* Збільшення шрифту для тексту та заголовків у #theoryModal */
+    #theoryModal .modal-content p {
+        font-size: 18px !important; /* Більший шрифт для тексту */
+        line-height: 1.6; /* Покращує читабельність */
+    }
+
+    #theoryModal .modal-content h3 {
+        font-size: 20px !important; /* Більший шрифт для заголовків */
+    }
+
+    /* Збільшення шрифту для формул MathJax */
+    #theoryModal .modal-content mjx-container {
+        font-size: 18px !important; /* Більший шрифт для формул */
+    }
+            
+
             #theoryModal, #questionsModal, #trainerModal, #videoModal, #videoPlayerModal1, #videoPlayerModal2, #videoPlayerModal3 {
                 top: 2%;
                 left: 2%;
@@ -1080,6 +1096,8 @@
         </a>
     </div>
 
+
+
     <div id="modalOverlay"></div>
 
     <div id="theoryModal">
@@ -1091,7 +1109,7 @@
         <summary>Геометричне представлення комплексних чисел</summary>
         <div>
             <p>У шкільному курсі геометрії ви вивчали, що кожну точку на площині можна однозначно задати парою чисел \( (x, y) \), які є її координатами. Це правило працює в обидва боки: знаючи координати, можна знайти точку, і навпаки – кожній точці на площині відповідає єдина пара чисел \( (x, y) \). Для цього використовують декартову систему координат. Таким чином, будь-якій парі чисел \( (a; b) \) відповідає єдина точка \( M(a; b) \), де \( a \) – абсциса (координата по горизонталі), а \( b \) – ордината (координата по вертикалі).</p>
-            <img src="static/figure1.1.jpg" alt="Рисунок 1.1 - Декартова система координат" class="figure figure-1-1" />
+           <img src="static/figure1.1.jpg" alt="Рисунок 1.1 - Декартова система координат" class="figure figure-1-1" />
             <p>Тепер застосуємо цей підхід до комплексних чисел. Виявляється, що кожному комплексному числу \( z = a + bi \) можна поставити у відповідність точку на площині. При цьому:</p>
             <ul>
                 <li>Число \( a \) (дійсна частина) відкладається по горизонтальній осі \( Ox \), яка називається дійсною віссю.</li>
@@ -1132,7 +1150,7 @@
             <p>який відповідає сумі комплексних чисел \( z_1 + z_2 \) (рис. 1.4).</p>
             <p>Його координати визначаються як:</p>
             <p style="text-align: center;">\( \overrightarrow{OA_3}(a_1 + a_2; b_1 + b_2). \)</p>
-            <img src="static/figure1.4.jpg" alt="Рисунок 1.4 - Додавання комплексних чисел" class="figure figure-1-4" />
+           <img src="static/figure1.4.jpg" alt="Рисунок 1.4 - Додавання комплексних чисел" class="figure figure-1-4" />
             
             <h3 style="text-align: center; color: #FFB6B6;">Віднімання комплексних чисел</h3>
             <p>Оскільки віднімання є оберненою дією до додавання, його також можна представити.</p>
