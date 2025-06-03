@@ -418,7 +418,7 @@ button:disabled {
     display: block;
     text-align: center;
     width: 100%;
-    font-size: clamp(16px, 2.8vw, 18px); /* Збільшений шрифт */
+    font-size: clamp(18px, 3vw, 20px); /* Збільшений шрифт */
     margin: 5px 0;
     line-height: 1.4; /* Збільшено для кращої читабельності */
     color: #560319;
@@ -430,7 +430,7 @@ button:disabled {
     vertical-align: middle !important;
     white-space: nowrap !important;
     line-height: 1.4 !important; /* Збільшено для формул */
-    font-size: clamp(16px, 2.8vw, 18px) !important; /* Збільшений шрифт */
+    font-size: clamp(18px, 3vw, 20px) !important; /* Збільшений шрифт */
     color: #560319 !important;
     margin: 5px auto !important;
     padding: 0 !important;
@@ -608,23 +608,32 @@ button:disabled {
             text-align: center;
             cursor: inherit;
         }
-        .card-front {
-            background: #FFFF00;
-            color: #5c0a0a;
-        }
+       .card-front {
+    background: #e1eac2;
+    color: #863e1d;
+    font-family: 'Lora', serif; /* або 'Georgia', 'Merriweather' */
+    font-size: 16px;
+    padding: 12px;
+    border-radius: 12px;
+}
         .card-back {
-            background: #560319;
-            color: #ffffff;
-            transform: rotateY(180deg);
-            text-align: justify;
-            padding: 20px;
-            overflow: auto;
-            white-space: normal;
-        }
+    background: #304c43;
+    color: #ffffff;
+    transform: rotateY(180deg);
+    text-align: justify;
+    padding: 20px;
+    overflow: auto;
+    white-space: normal;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    border-radius: 12px;
+}
+
         .card-front span {
             display: block;
             text-align: justify;
-            color: #3c1817;
+            color: #863e1d;
             font-weight: 700;
             font-family: 'Lora', serif;
             font-size: clamp(14px, 2.5vw, 16px);
@@ -857,15 +866,15 @@ button:disabled {
             .card-back .MathJax {
                 font-size: 0.9em;
             }
-            .trainer-container {
+                       .trainer-container {
                 padding: 5vw;
             }
             #theoryModal .modal-content {
                 padding: 10px;
             }
             #theoryModal .modal-content details p {
-                font-size: 14px;
-                line-height: 1.4;
+                font-size: 16px;
+                line-height: 1.5;
             }
             #theoryModal .modal-content details h3 {
                 font-size: 16px;
@@ -886,11 +895,14 @@ button:disabled {
                 font-size: 16px;
             }
             .question-circle, .completion-emoji {
-                width: 25vw;
-                height: 25vw;
-                min-width: 60px;
-                min-height: 60px;
+                width: 30vw;
+                height: 30vw;
+                min-width: 70px;
+                min-height: 70px;
             }
+            .question-circle h3 {
+        font-size: clamp(16px, 3.5vw, 18px);
+    }
             .completion-emoji::after {
                 font-size: clamp(25px, 6vw, 35px);
             }
@@ -929,16 +941,17 @@ button:disabled {
                 max-height: 200px;
             }
             .math-notation-centered {
-        font-size: clamp(14px, 2.5vw, 16px); /* Трішки менший, але читабельний */
-        line-height: 1.2;
+        font-size: clamp(15px, 3vw, 17px); /* Збільшиний шрифт формул */
+        line-height: 1.4;
     }
-            mjx-container.math-notation-centered {
-        font-size: clamp(14px, 2.5vw, 16px) !important;
-        line-height: 1.2 !important;
+           mjx-container.math-notation-centered {
+        font-size: clamp(15px, 3vw, 17px) !important; /* Збільшимо шрифт формул */
+        line-height: 1.4 !important;
     }
             mjx-container {
-                font-size: 13px !important;
+                font-size: 16px !important;
             }
+           
                         .input-group label {
                 font-size: clamp(11px, 2vw, 13px);
             }
@@ -964,11 +977,13 @@ button:disabled {
             font-size: 1.2em !important;
         }
         mjx-container:not(:has(mjx-frac)) {
-            font-size: inherit !important;
-        }
+    font-size: 17px !important; /* Збільшимо розмір для всіх формул */
+}
         mjx-frac mjx-num, mjx-frac mjx-den {
             padding: 2px !important;
         }
+             
+            )
     </style>
 </head>
 <body>
@@ -995,7 +1010,7 @@ button:disabled {
         </div>
     </div>
 
-    <div class="navigation-buttons">
+  <div class="navigation-buttons">
         <a class="nav-button" href='tema1.html'>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                 <path d="M15 18l-6-6 6-6"/>
