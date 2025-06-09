@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Геометрія комплексного числа: Радіус-вектор</title>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f0f0f0;
+      margin: 16px;
+      visibility: hidden; /* Приховуємо до завантаження */
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    body.loaded {
+      visibility: visible;
+      opacity: 1;
+    }
+    .fancy-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      text-align: center;
+      background: linear-gradient(135deg, #c58416, #8b0000);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 20px;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+    }
+    canvas {
+      background: #ffffff;
+      margin-top: 10px;
+      outline: none;
+    }
+    .controls {
+      margin-top: 15px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      font-size: 18px;
+      cursor: pointer;
+      border-radius: 6px;
+      background-color: #008080;
+      color: white;
+      border: none;
+    }
+    button:hover {
+      background-color: #006666;
+    }
+    #feedback {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      margin: 0;
+      padding: 15px;
+      border-radius: 8px;
+      max-width: 400px;
+      font-size: 18px;
+      font-weight: bold;
+      display: none;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+    }
+    .feedback-success {
+      background: #d4edda;
+      border: 2px solid #28a745;
+      color: #155724;
+    }
+    .feedback-error {
+      background: #f8d7da;
+      border: 2px solid #dc3545;
+      color: #721c24;
+    }
+    .feedback-warning {
+      background: #fff3cd;
+      border: 2px solid #ffc107;
+      color: #856404;
+    }
+    .complex-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+    }
+    .icon {
+      font-size: 28px;
+      color: #0000ff;
+      animation: pulse 1.5s infinite;
+    }
+    .label-text {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1e3a8a;
+    }
+    .complex-number {
+      display: inline-block;
+      padding: 10px 20px;
+      margin: 10px 0;
+      background: linear-gradient(135deg, #6dd5ed, #2193b0);
+      border-radius: 8px;
+      color: #ffff00;
+      font-size: 24px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .complex-number.rendered {
+      opacity: 1;
+    }
+    .completion-message {
+      display: none;
+      margin: 20px auto;
+      padding: 20px;
+      background: #d4edda;
+      border: 2px solid #28a745;
+      border-radius: 10px;
+      max-width: 400px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #155724;
+    }
+    #yAxisLabel {
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-weight: bold;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.8; }
+    }
+    .close-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 90px;
+      height: 90px;
+      background: linear-gradient(135deg, #ff4444, #cc0000);
+      color: #ffffff;
+      border: none;
+      border-radius: 50%;
+      font-size: 16px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+      transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+      z-index: 2000;
+    }
+    .close-btn:hover {
+      background: linear-gradient(135deg, #cc0000, #ff4444);
+      transform: scale(1.1);
+    }
+    .close-btn:active {
+      transform: scale(0.95);
+    }
+    #completionMessage:not([style*="display: none"]) ~ .close-btn {
+      display: none;
+    }
+    .MathJax {
+      font-size: 1.2em !important;
+      color: #ffff00 !important;
+      font-weight: bold !important;
+    }
+    @media (max-width: 768px) {
+      body {
+        margin: 10px;
+      }
+      .fancy-title {
+        font-size: 1.2rem;
+      }
+      #complexPlane {
+        width: 400px !important;
+        height: 400px !important;
+      }
+      div[style*="position: relative; display: inline-block; margin-top: 20px;"] {
+        margin-top: 10px !important;
+      }
+      #yAxisLabel {
+        top: -15px !important;
+        font-size: 14px !important;
+      }
+      div[style*="bottom: 292px; right: -70px; font-weight: bold;"] {
+        bottom: 180px !important;
+        right: -50px !important;
+        font-size: 14px !important;
+      }
+      .controls button {
+        padding: 8px 15px;
+        font-size: 14px;
+        margin: 3px;
+      }
+      #feedback {
+        font-size: 16px;
+        padding: 12px;
+        max-width: 90%;
+      }
+      .complex-label {
+        gap: 8px;
+      }
+      .icon {
+        font-size: 20px;
+      }
+      .label-text {
+        font-size: 20px;
+      }
+      .complex-number {
+        font-size: 16px;
+        padding: 8px 15px;
+      }
+      .completion-message {
+        font-size: 16px;
+        padding: 15px;
+        max-width: 90%;
+      }
+      .MathJax {
+        font-size: 1em !important;
+        font-weight: bold !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="close-btn" onclick="closeExercise()" aria-label="Закрити та повернутися до сторінки p4">✖ Закрити</button>
+  <h1 class="fancy-title" id="mainTitle">5 чисел – 5 векторів. Почнімо!</h1>
+  <div class="complex-label">
+    <span class="icon">🔹</span>
+    <span class="label-text">Комплексне число 1:</span>
+    <span class="complex-number" id="complexNumber"></span>
+  </div>
+  <div style="position: relative; display: inline-block; margin-top: 20px;">
+    <canvas id="complexPlane" width="600" height="600"></canvas>
+    <div id="yAxisLabel">y (Im z)</div>
+    <div style="position: absolute; bottom: 292px; right: -70px; font-weight: bold;">x (Re z)</div>
+  </div>
+  <div class="controls">
+    <button onclick="checkAnswer()">Перевірити</button>
+    <button onclick="clearCanvas()">Очистити</button>
+  </div>
+  <div id="feedback"></div>
+  <div class="completion-message" id="completionMessage">
+    🎉 Ви завершили завдання 2!<br><br>
+    <button onclick="restartGame()" style="margin-top: 10px; background: #10b981;"> 🔃 Спробувати знову </button>
+    <button onclick="closeExercise()" style="margin-top: 10px; background: #6b7280; margin-left: 10px;">❌ Закрити</button>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("complexPlane");
+    const ctx = canvas.getContext("2d");
+
+    let canvasWidth = window.innerWidth <= 768 ? 400 : 600;
+    let canvasHeight = window.innerWidth <= 768 ? 400 : 600;
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+
+    const origin = { x: canvasWidth / 2, y: canvasHeight / 2 };
+    const scale = window.innerWidth <= 768 ? 20 : 25;
+    let clickedPoint = null;
+
+    const numberSets = [
+      [
+        { number: "10 + 2i", latex: "\\( 10 + 2i \\)", x: 10, y: 2 },
+        { number: "-3 - 5i", latex: "\\( -3 - 5i \\)", x: -3, y: -5 },
+        { number: "4 - 7i", latex: "\\( 4 - 7i \\)", x: 4, y: -7 },
+        { number: "6 + 0i", latex: "\\( 6 + 0i \\)", x: 6, y: 0 },
+        { number: "9i", latex: "\\( 9i \\)", x: 0, y: 9 }
+      ],
+      [
+        { number: "-2 + 2i", latex: "\\( -2 + 2i \\)", x: -2, y: 2 },
+        { number: "5 - 6i", latex: "\\( 5 - 6i \\)", x: 5, y: -6 },
+        { number: "1 + i", latex: "\\( 1 + i \\)", x: 1, y: 1 },
+        { number: "-3 - 6i", latex: "\\( -3 - 6i \\)", x: -3, y: -6 },
+        { number: "-8i", latex: "\\( -8i \\)", x: 0, y: -8 }
+      ],
+      [
+        { number: "3 + 2i", latex: "\\( 3 + 2i \\)", x: 3, y: 2 },
+        { number: "-4 - i", latex: "\\( -4 - i \\)", x: -4, y: -1 },
+        { number: "7 + 5i", latex: "\\( 7 + 5i \\)", x: 7, y: 5 },
+        { number: "-1 - 6i", latex: "\\( -1 - 6i \\)", x: -1, y: -6 },
+        { number: "7i", latex: "\\( 7i \\)", x: 0, y: 7 }
+      ]
+    ];
+
+    let currentSetIndex = 0;
+    let currentNumberIndex = 0;
+    let currentNumbers = numberSets[currentSetIndex];
+
+    function renderMathJax(elementId) {
+      const element = document.getElementById(elementId);
+      if (!element) {
+        console.error(`Element with id '${elementId}' not found!`);
+        return;
+      }
+      element.innerHTML = currentNumbers[currentNumberIndex].latex;
+      console.log(`renderMathJax: Attempting to render for #${elementId}, latex: ${currentNumbers[currentNumberIndex].latex}`);
+      if (window.MathJax) {
+        MathJax.typesetPromise([`#${elementId}`]).then(() => {
+          element.classList.add('rendered');
+          console.log(`renderMathJax: Successfully rendered for #${elementId}`);
+        }).catch(err => console.error(`renderMathJax: Error for #${elementId}:`, err));
+      } else {
+        console.warn(`renderMathJax: MathJax not loaded, retrying for #${elementId}`);
+        setTimeout(() => renderMathJax(elementId), 200);
+      }
+    }
+
+    function drawGrid() {
+      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+      ctx.strokeStyle = "#ccc";
+      ctx.lineWidth = 1;
+      for (let x = 0; x <= canvasWidth; x += scale) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvasHeight);
+        ctx.stroke();
+      }
+      for (let y = 0; y <= canvasHeight; y += scale) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvasWidth, y);
+        ctx.stroke();
+      }
+    }
+
+    function drawAxes() {
+      drawGrid();
+      ctx.beginPath();
+      ctx.moveTo(0, origin.y);
+      ctx.lineTo(canvasWidth, origin.y);
+      ctx.strokeStyle = "#000";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(canvasWidth - 15, origin.y - 7);
+      ctx.lineTo(canvasWidth, origin.y);
+      ctx.lineTo(canvasWidth - 15, origin.y + 7);
+      ctx.fillStyle = "#000";
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(origin.x, 0);
+      ctx.lineTo(origin.x, canvasHeight);
+      ctx.strokeStyle = "#000";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(origin.x - 7, 15);
+      ctx.lineTo(origin.x, 0);
+      ctx.lineTo(origin.x + 7, 15);
+      ctx.fillStyle = "#000";
+      ctx.fill();
+      ctx.font = window.innerWidth <= 768 ? "14px Arial" : "16px Arial";
+      ctx.fillStyle = "#444";
+      for (let i = -11; i <= 11; i++) {
+        if (i !== 0) {
+          ctx.fillText(i, origin.x + i * scale - 10, origin.y + 18);
+          ctx.fillText(-i, origin.x + 10, origin.y + i * scale + 10);
+        }
+      }
+      if (clickedPoint) {
+        ctx.setLineDash([5, 5]);
+        ctx.strokeStyle = "#999";
+        ctx.lineWidth = 1.5;
+        const pointX = origin.x + clickedPoint.x * scale;
+        const pointY = origin.y - clickedPoint.y * scale;
+        ctx.beginPath();
+        ctx.moveTo(pointX, pointY);
+        ctx.lineTo(pointX, origin.y);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(pointX, pointY);
+        ctx.lineTo(origin.x, pointY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    }
+
+    function drawVector(x, y, color) {
+      const pointX = origin.x + x * scale;
+      const pointY = origin.y - y * scale;
+      ctx.beginPath();
+      ctx.moveTo(origin.x, origin.y);
+      ctx.lineTo(pointX, pointY);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      const angle = Math.atan2(pointY - origin.y, pointX - origin.x);
+      const arrowSize = 10;
+      ctx.beginPath();
+      ctx.moveTo(pointX, pointY);
+      ctx.lineTo(
+        pointX - arrowSize * Math.cos(angle - Math.PI / 6),
+        pointY - arrowSize * Math.sin(angle - Math.PI / 6)
+      );
+      ctx.moveTo(pointX, pointY);
+      ctx.lineTo(
+        pointX - arrowSize * Math.cos(angle + Math.PI / 6),
+        pointY - arrowSize * Math.sin(angle + Math.PI / 6)
+      );
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(pointX, pointY, 5, 0, 2 * Math.PI);
+      ctx.fillStyle = color;
+      ctx.fill();
+    }
+
+    function render() {
+      console.log('render: Rendering canvas');
+      drawAxes();
+      if (clickedPoint) {
+        drawVector(clickedPoint.x, clickedPoint.y, "red");
+      }
+    }
+
+    canvas.addEventListener("click", function (event) {
+      const rect = canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      clickedPoint = {
+        x: Math.round((x - origin.x) / scale),
+        y: -Math.round((y - origin.y) / scale)
+      };
+      render();
+    });
+
+    function checkAnswer() {
+      const feedback = document.getElementById("feedback");
+      feedback.style.display = "block";
+      if (!clickedPoint) {
+        feedback.textContent = "Потрібно натиснути на площину!";
+        feedback.className = "feedback-warning";
+        setTimeout(() => {
+          feedback.textContent = "";
+          feedback.style.display = "none";
+        }, 1000);
+        return;
+      }
+      const currentNumber = currentNumbers[currentNumberIndex];
+      if (clickedPoint.x === currentNumber.x && clickedPoint.y === currentNumber.y) {
+        feedback.textContent = "✅ Правильно!";
+        feedback.className = "feedback-success";
+        setTimeout(nextNumber, 1000);
+      } else {
+        feedback.textContent = `❌ Неправильно. Спробувати ще!`;
+        feedback.className = "feedback-error";
+        setTimeout(() => {
+          feedback.textContent = "";
+          feedback.style.display = "none";
+        }, 1000);
+      }
+    }
+
+    function nextNumber() {
+      currentNumberIndex++;
+      if (currentNumberIndex < currentNumbers.length) {
+        const numberText = `Комплексне число ${currentNumberIndex + 1}:`;
+        document.querySelector(".label-text").textContent = numberText;
+        const complexNumberElement = document.getElementById("complexNumber");
+        complexNumberElement.classList.remove('rendered');
+        complexNumberElement.innerHTML = currentNumbers[currentNumberIndex].latex;
+        renderMathJax("complexNumber");
+        clearCanvas();
+      } else {
+        document.getElementById("mainTitle").style.display = "none";
+        document.getElementById("yAxisLabel").style.display = "none";
+        document.querySelector(".close-btn").style.display = "none";
+        document.getElementById("complexPlane").style.display = "none";
+        document.getElementById("completionMessage").style.display = "block";
+        document.querySelector(".controls").style.display = "none";
+        document.getElementById("complexNumber").parentElement.style.display = "none";
+        document.getElementById("feedback").style.display = "none";
+        document.getElementById("feedback").textContent = "";
+      }
+    }
+
+    function clearCanvas() {
+      clickedPoint = null;
+      render();
+      const feedback = document.getElementById("feedback");
+      feedback.textContent = "";
+      feedback.style.display = "none";
+    }
+
+    function restartGame() {
+      currentSetIndex = (currentSetIndex + 1) % numberSets.length;
+      currentNumbers = numberSets[currentSetIndex];
+      currentNumberIndex = 0;
+      const numberText = `Комплексне число ${currentNumberIndex + 1}:`;
+      document.querySelector(".label-text").textContent = numberText;
+      const complexNumberElement = document.getElementById("complexNumber");
+      complexNumberElement.classList.remove('rendered');
+      complexNumberElement.innerHTML = currentNumbers[0].latex;
+      renderMathJax("complexNumber");
+      document.getElementById("completionMessage").style.display = "none";
+      document.getElementById("complexPlane").style.display = "block";
+      document.getElementById("mainTitle").style.display = "block";
+      document.getElementById("yAxisLabel").style.display = "block";
+      document.querySelector(".close-btn").style.display = "flex";
+      document.querySelector(".controls").style.display = "block";
+      document.getElementById("complexNumber").parentElement.style.display = "block";
+      clearCanvas();
+    }
+
+    function closeExercise() {
+      console.log('closeExercise: Початок перенаправлення');
+      const redirectUrl = "{{ url_for('p4') }}?openExamplesModal=true";
+      console.log('closeExercise: URL:', redirectUrl);
+      try {
+        window.location.href = redirectUrl;
+      } catch (e) {
+        console.error('closeExercise: Помилка перенаправлення:', e);
+        alert('Не вдалося повернутися до списку завдань.');
+      }
+    }
+
+    function initializeGame() {
+      console.log('initializeGame: Початок ініціалізації');
+      const elementsToHide = [
+        { id: "completionMessage", display: "none" },
+        { id: "complexPlane", display: "block" },
+        { id: "complexNumber", parent: true, display: "flex" },
+        { id: "mainTitle", display: "block" }
+      ];
+      elementsToHide.forEach(({ id, parent, display }) => {
+        const el = parent ? document.getElementById(id).parentElement : document.getElementById(id);
+        if (el) el.style.display = display;
+        else console.error(`initializeGame: Елемент ${id} не знайдено`);
+      });
+      document.querySelector(".controls").style.display = "block";
+      const complexNumberElement = document.getElementById("complexNumber");
+      if (complexNumberElement) {
+        complexNumberElement.innerHTML = currentNumbers[0].latex;
+        renderMathJax("complexNumber");
+      } else {
+        console.error('initializeGame: Елемент #complexNumber не знайдено');
+      }
+      render();
+      document.body.classList.add('loaded');
+      console.log('initializeGame: Завершено');
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      console.log('DOMContentLoaded: Запуск ініціалізації');
+      initializeGame();
+    });
+  </script>
+</body>
+</html>
