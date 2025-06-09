@@ -512,7 +512,7 @@
 
     function closeExercise() {
       console.log('closeExercise: Початок перенаправлення');
-      const redirectUrl = "{{ url_for('p4') }}?openExamplesModal=true";
+      const redirectUrl = "p4.html?openExamplesModal=true";
       console.log('closeExercise: URL:', redirectUrl);
       try {
         window.location.href = redirectUrl;
