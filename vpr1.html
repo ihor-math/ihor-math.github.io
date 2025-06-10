@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Геометрія комплексного числа</title>
   <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
   <style>
@@ -11,6 +11,7 @@
       text-align: center;
       background: #f0f0f0;
       margin: 16px;
+      touch-action: manipulation;
     }
     .fancy-title {
       font-size: 1.6rem;
@@ -27,6 +28,8 @@
       background: #ffffff;
       margin-top: 10px;
       outline: none;
+      max-width: 100%;
+      display: block; /* Забезпечує коректне відображення */
     }
     .controls {
       margin-top: 15px;
@@ -190,7 +193,7 @@
         font-size: 14px !important;
       }
       .controls button {
-        padding: 8px 15px;
+        padding: 10px 20px;
         font-size: 14px;
         margin: 3px;
       }
@@ -209,8 +212,8 @@
         font-size: 20px;
       }
       .complex-number {
-        font-size: 16px;
-        padding: 8px 15px;
+        font-size: 18px;
+        padding: 10px 20px;
       }
       .completion-message {
         font-size: 16px;
@@ -220,6 +223,54 @@
       .MathJax {
         font-size: 1em !important;
         font-weight: bold !important;
+      }
+      .close-btn {
+        width: 65px;
+        height: 65px;
+        font-size: 14px;
+        top: 10px;
+        right: 10px;
+      }
+    }
+    @media (max-width: 480px) {
+      #complexPlane {
+        width: 400px !important;
+        height: 400px !important;
+      }
+      .fancy-title {
+        font-size: 1rem;
+      }
+      .controls button {
+        padding: 8px 16px;
+        font-size: 12px;
+        max-width: 120px;
+      }
+      .complex-label {
+        gap: 5px;
+      }
+      .icon {
+        font-size: 18px;
+      }
+      .label-text {
+        font-size: 16px;
+      }
+      .complex-number {
+        font-size: 14px;
+        padding: 8px 15px;
+      }
+      .completion-message {
+        font-size: 12px;
+        padding: 8px;
+      }
+      .MathJax {
+        font-size: 0.8em !important;
+      }
+      .close-btn {
+        width: 55px;
+        height: 55px;
+        font-size: 12px;
+        top: 8px;
+        right: 8px;
       }
     }
   </style>
@@ -238,10 +289,9 @@
     <div style="position: absolute; bottom: 292px; right: -70px; font-weight: bold;">x (Re z)</div>
   </div>
   <div class="controls">
-  <button onclick="checkAnswer()">✅ Перевірити</button>
-  <button onclick="clearCanvas()">🗑️ Очистити</button>
-</div>
-
+    <button onclick="checkAnswer()">✅ Перевір</button>
+    <button onclick="clearCanvas()">❄ Очистити</button>
+  </div>
   <div id="feedback"></div>
   <div class="completion-message" id="completionMessage">
     🎉 Ви завершили завдання 1!<br><br>
@@ -253,42 +303,34 @@
     const canvas = document.getElementById("complexPlane");
     const ctx = canvas.getContext("2d");
 
-    let canvasWidth = window.innerWidth <= 768 ? 400 : 600;
-    let canvasHeight = window.innerWidth <= 768 ? 400 : 600;
-    canvas.width = canvasWidth;
-    canvas.height = canvasHeight;
+    let canvasWidth = window.innerWidth <= 640 ? 400 : 600;
+    let canvasHeight = window.innerWidth <= 480 ? 400 : 600;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = canvasWidth * dpr;
+    canvas.height = canvasHeight * dpr;
+    canvas.style.width = canvasWidth + 'px';
+    canvas.style.height = canvasHeight + 'px';
+    ctx.scale(dpr, dpr);
 
     const origin = { x: canvasWidth / 2, y: canvasHeight / 2 };
-    const scale = window.innerWidth <= 768 ? 20 : 25;
+    const scale = window.innerWidth <= 640 ? 20 : 25;
     let clickedPoint = null;
-
-    const numberSets = [
-      [
-        { number: "3 + 5i", latex: "\\( 3 + 5i \\)", x: 3, y: 5 },
-        { number: "2 - 4i", latex: "\\( 2 - 4i \\)", x: 2, y: -4 },
-        { number: "-5 + 2i", latex: "\\( -5 + 2i \\)", x: -5, y: 2 },
-        { number: "-6 - 4i", latex: "\\( -6 - 4i \\)", x: -6, y: -4 },
-        { number: "-5i", latex: "\\( -5i \\)", x: 0, y: -5 }
-      ],
-      [
-        { number: "-4 + 7i", latex: "\\( -4 + 7i \\)", x: -4, y: 7 },
-        { number: "3 - 8i", latex: "\\( 3 - 8i \\)", x: 3, y: -8 },
-        { number: "1 + 2i", latex: "\\( 1 + 2i \\)", x: 1, y: 2 },
-        { number: "-3 - 6i", latex: "\\( -3 - 6i \\)", x: -3, y: -6 },
-        { number: "4i", latex: "\\( 4i \\)", x: 0, y: 4 }
-      ],
-      [
-        { number: "9 - i", latex: "\\( 9 - i \\)", x: 9, y: -1 },
-        { number: "5 + i", latex: "\\( 5 + i \\)", x: 5, y: 1 },
-        { number: "-3 + 8i", latex: "\\( -3 + 8i \\)", x: -3, y: 8 },
-        { number: "-8 - 6i", latex: "\\( -8 - 6i \\)", x: -8, y: -6 },
-        { number: "-2i", latex: "\\( -2i \\)", x: 0, y: -2 }
-      ]
-    ];
-
-    let currentSetIndex = 0;
+    let currentNumbers = [];
     let currentNumberIndex = 0;
-    let currentNumbers = numberSets[currentSetIndex];
+    let lastTouchStartTime = null;
+    let touchCount = 0;
+
+    function generateComplexNumbers() {
+      currentNumbers = [];
+      for (let i = 0; i < 5; i++) {
+        const re = Math.floor(Math.random() * 19) - 9; // [-9, 9]
+        const im = Math.floor(Math.random() * 19) - 9; // [-9, 9]
+        const number = im === 0 ? `${re}` : re === 0 ? `${im}i` : `${re} ${im >= 0 ? '+' : ''} ${im}i`;
+        const latex = `\\( ${number} \\)`;
+        currentNumbers.push({ number, latex, x: re, y: im });
+      }
+      console.log('Generated numbers:', currentNumbers);
+    }
 
     function renderMathJax(elementId) {
       const element = document.getElementById(elementId);
@@ -297,7 +339,7 @@
         return;
       }
       element.innerHTML = currentNumbers[currentNumberIndex].latex;
-      console.log(`renderMathJax: Attempting to render for #${elementId}, latex: ${currentNumbers[currentNumberIndex].latex}`);
+      console.log(`renderMathJax: Rendering for #${elementId}, latex: ${currentNumbers[currentNumberIndex].latex}`);
       if (window.MathJax) {
         MathJax.typesetPromise([`#${elementId}`]).then(() => {
           element.classList.add('rendered');
@@ -328,6 +370,7 @@
     }
 
     function drawAxes() {
+      console.log('drawAxes: Drawing axes with canvasWidth:', canvasWidth, 'canvasHeight:', canvasHeight);
       drawGrid();
       ctx.beginPath();
       ctx.moveTo(0, origin.y);
@@ -353,7 +396,7 @@
       ctx.lineTo(origin.x + 7, 15);
       ctx.fillStyle = "#000";
       ctx.fill();
-      ctx.font = window.innerWidth <= 768 ? "14px Arial" : "16px Arial";
+      ctx.font = window.innerWidth <= 640 ? "14px Arial" : "16px Arial";
       ctx.fillStyle = "#444";
       for (let i = -11; i <= 11; i++) {
         if (i !== 0) {
@@ -394,16 +437,43 @@
       }
     }
 
-    canvas.addEventListener("click", function (event) {
+    function handlePointSelection(event) {
       const rect = canvas.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
-      clickedPoint = {
-        x: Math.round((x - origin.x) / scale),
-        y: -Math.round((y - origin.y) / scale)
-      };
+      const touch = event.type === 'touchend' ? event.changedTouches[0] : event;
+      const x = (touch.clientX - rect.left) / (rect.width / canvasWidth);
+      const y = (touch.clientY - rect.top) / (rect.height / canvasHeight);
+      let adjustedX = Math.round((x - origin.x) / scale);
+      let adjustedY = -Math.round((y - origin.y) / scale);
+      adjustedX = Math.max(-9, Math.min(9, adjustedX));
+      adjustedY = Math.max(-9, Math.min(9, adjustedY));
+      clickedPoint = { x: adjustedX, y: adjustedY };
+      console.log('Clicked point:', clickedPoint, 'Raw coords:', { clientX: touch.clientX, clientY: touch.clientY, rectLeft: rect.left, rectTop: rect.top, dpr, scale, rectWidth: rect.width, canvasWidth });
       render();
-    });
+    }
+
+    function handleTouchStart(event) {
+      if (event.touches.length > 1) {
+        touchCount = event.touches.length;
+        return;
+      }
+      lastTouchStartTime = Date.now();
+      touchCount = 1;
+    }
+
+    function handleTouchEnd(event) {
+      if (touchCount > 1 || !lastTouchStartTime) return;
+      const touchDuration = Date.now() - lastTouchStartTime;
+      if (touchDuration < 300) { // Короткий тап, не зум
+        event.preventDefault(); // Запобігаємо кліку після тапу
+        setTimeout(() => handlePointSelection(event), 100); // Затримка для завершення зуму
+      }
+      lastTouchStartTime = null;
+      touchCount = 0;
+    }
+
+    canvas.addEventListener("click", handlePointSelection);
+    canvas.addEventListener("touchstart", handleTouchStart);
+    canvas.addEventListener("touchend", handleTouchEnd);
 
     function checkAnswer() {
       const feedback = document.getElementById("feedback");
@@ -414,7 +484,7 @@
         setTimeout(() => {
           feedback.textContent = "";
           feedback.style.display = "none";
-        }, 1000); // Зменшено з 2000 до 1000 мс
+        }, 1000);
         return;
       }
       const currentNumber = currentNumbers[currentNumberIndex];
@@ -423,12 +493,13 @@
         feedback.className = "feedback-success";
         setTimeout(nextNumber, 1000);
       } else {
-        feedback.textContent = `❌ Неправильно. Спробувати ще!`;
+        feedback.textContent = "❌ Неправильно. Спробувати ще!";
         feedback.className = "feedback-error";
         setTimeout(() => {
           feedback.textContent = "";
           feedback.style.display = "none";
-        }, 1000); // Зменшено з 2000 до 1000 мс
+          clearCanvas();
+        }, 1000);
       }
     }
 
@@ -464,9 +535,8 @@
     }
 
     function restartGame() {
-      currentSetIndex = (currentSetIndex + 1) % numberSets.length;
-      currentNumbers = numberSets[currentSetIndex];
       currentNumberIndex = 0;
+      generateComplexNumbers();
       const numberText = `Комплексне число ${currentNumberIndex + 1}:`;
       document.querySelector(".label-text").textContent = numberText;
       const complexNumberElement = document.getElementById("complexNumber");
@@ -479,7 +549,7 @@
       document.getElementById("yAxisLabel").style.display = "block";
       document.querySelector(".close-btn").style.display = "flex";
       document.querySelector(".controls").style.display = "block";
-      document.getElementById("complexNumber").parentElement.style.display = "block";
+      document.getElementById("complexNumber").parentElement.style.display = "flex";
       clearCanvas();
     }
 
@@ -497,6 +567,7 @@
 
     function initializeGame() {
       console.log('initializeGame: Початок ініціалізації');
+      generateComplexNumbers();
       const elementsToHide = [
         { id: "completionMessage", display: "none" },
         { id: "complexPlane", display: "block" },
