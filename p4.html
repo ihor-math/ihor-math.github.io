@@ -934,17 +934,22 @@ body.loaded {
         align-items: center;
         gap: 15px;
     }
-
     .exercise-btn {
-        padding: 10px 20px;
+        width: 90%; /* Адаптивна ширина */
+        min-width: 280px;
+        height: 100px; /* Зменшуємо висоту */
+        padding: 10px; /* Зменшуємо відступи */
         font-size: clamp(14px, 2.2vw, 16px);
-        min-width: 120px;
     }
-            .math-formula {
-    font-size: 20px; /* Більший шрифт для формули */
-    color: #FFFFF0; /* Жовтий колір */
-    display: inline-block; /* Для коректного відображення формули */
-}
+    .btn-title {
+        font-size: 20px; /* Зменшуємо шрифт заголовка */
+    }
+    .btn-description {
+        font-size: 16px; /* Зменшуємо шрифт опису */
+    }
+    .math-formula {
+        font-size: 18px; /* Зменшуємо формулу */
+    }
 }
 
         @media (max-width: 480px) {
@@ -1164,9 +1169,20 @@ body.loaded {
     flex-direction: column;
 }
              .exercise-btn {
-        padding: 8px 16px;
+        width: 90%;
+        min-width: 260px;
+        height: 90px; /* Ще менша висота */
+        padding: 8px; /* Ще менші відступи */
         font-size: clamp(12px, 2vw, 14px);
-        min-width: 100px;
+    }
+    .btn-title {
+        font-size: 18px; /* Менший шрифт заголовка */
+    }
+    .btn-description {
+        font-size: 14px; /* Менший шрифт опису */
+    }
+    .math-formula {
+        font-size: 16px; /* Менша формула */
     }
 }
     </style>
