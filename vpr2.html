@@ -11,7 +11,7 @@
       text-align: center;
       background: #f0f0f0;
       margin: 16px;
-      visibility: hidden; /* Приховуємо до завантаження */
+      visibility: hidden;
       opacity: 0;
       transition: opacity 0.3s ease;
     }
@@ -168,7 +168,7 @@
       display: none;
     }
     .MathJax {
-      font-size: 1.2em !important;
+      font-size: 1.1em !important;
       color: #ffff00 !important;
       font-weight: bold !important;
     }
@@ -212,7 +212,7 @@
         font-size: 20px;
       }
       .label-text {
-        font-size: 20px;
+        font-size: 18px;
       }
       .complex-number {
         font-size: 16px;
@@ -244,10 +244,9 @@
     <div style="position: absolute; bottom: 292px; right: -70px; font-weight: bold;">x (Re z)</div>
   </div>
   <div class="controls">
-  <button onclick="checkAnswer()">✅ Перевірити</button>
-  <button onclick="clearCanvas()">🗑️ Очистити</button>
-</div>
-
+    <button onclick="checkAnswer()">✅ Перевірити</button>
+    <button onclick="clearCanvas()">🗑️ Очистити</button>
+  </div>
   <div id="feedback"></div>
   <div class="completion-message" id="completionMessage">
     🎉 Ви завершили завдання 2!<br><br>
@@ -268,33 +267,32 @@
     const scale = window.innerWidth <= 768 ? 20 : 25;
     let clickedPoint = null;
 
-    const numberSets = [
-      [
-        { number: "10 + 2i", latex: "\\( 10 + 2i \\)", x: 10, y: 2 },
-        { number: "-3 - 5i", latex: "\\( -3 - 5i \\)", x: -3, y: -5 },
-        { number: "4 - 7i", latex: "\\( 4 - 7i \\)", x: 4, y: -7 },
-        { number: "6 + 0i", latex: "\\( 6 + 0i \\)", x: 6, y: 0 },
-        { number: "9i", latex: "\\( 9i \\)", x: 0, y: 9 }
-      ],
-      [
-        { number: "-2 + 2i", latex: "\\( -2 + 2i \\)", x: -2, y: 2 },
-        { number: "5 - 6i", latex: "\\( 5 - 6i \\)", x: 5, y: -6 },
-        { number: "1 + i", latex: "\\( 1 + i \\)", x: 1, y: 1 },
-        { number: "-3 - 6i", latex: "\\( -3 - 6i \\)", x: -3, y: -6 },
-        { number: "-8i", latex: "\\( -8i \\)", x: 0, y: -8 }
-      ],
-      [
-        { number: "3 + 2i", latex: "\\( 3 + 2i \\)", x: 3, y: 2 },
-        { number: "-4 - i", latex: "\\( -4 - i \\)", x: -4, y: -1 },
-        { number: "7 + 5i", latex: "\\( 7 + 5i \\)", x: 7, y: 5 },
-        { number: "-1 - 6i", latex: "\\( -1 - 6i \\)", x: -1, y: -6 },
-        { number: "7i", latex: "\\( 7i \\)", x: 0, y: 7 }
-      ]
-    ];
+    function generateRandomComplexNumbers() {
+      const numbers = [];
+      for (let i = 0; i < 5; i++) {
+        const real = Math.floor(Math.random() * 19) - 9; // Від -9 до 9
+        const imag = Math.floor(Math.random() * 19) - 9; // Від -9 до 9
+        let number, latex;
+        if (real === 0 && imag === 0) {
+          number = "0";
+          latex = "\\( 0 \\)";
+        } else if (real === 0) {
+          number = imag >= 0 ? `${imag}i` : `${imag}i`;
+          latex = imag >= 0 ? `\\( ${imag}i \\)` : `\\( ${imag}i \\)`;
+        } else if (imag === 0) {
+          number = `${real}`;
+          latex = `\\( ${real} \\)`;
+        } else {
+          number = imag > 0 ? `${real} + ${imag}i` : `${real} ${imag}i`;
+          latex = imag > 0 ? `\\( ${real} + ${imag}i \\)` : `\\( ${real} ${imag}i \\)`;
+        }
+        numbers.push({ number, latex, x: real, y: imag });
+      }
+      return numbers;
+    }
 
-    let currentSetIndex = 0;
+    let currentNumbers = generateRandomComplexNumbers();
     let currentNumberIndex = 0;
-    let currentNumbers = numberSets[currentSetIndex];
 
     function renderMathJax(elementId) {
       const element = document.getElementById(elementId);
@@ -492,8 +490,7 @@
     }
 
     function restartGame() {
-      currentSetIndex = (currentSetIndex + 1) % numberSets.length;
-      currentNumbers = numberSets[currentSetIndex];
+      currentNumbers = generateRandomComplexNumbers();
       currentNumberIndex = 0;
       const numberText = `Комплексне число ${currentNumberIndex + 1}:`;
       document.querySelector(".label-text").textContent = numberText;
@@ -550,7 +547,7 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-      console.log('DOMContentLoaded: Запуск ініціалізації');
+      console.log('DOMContentLoaded: Запуск ініціалізації Khrushev');
       initializeGame();
     });
   </script>
