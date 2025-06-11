@@ -936,27 +936,23 @@ body.loaded {
                 font-size: clamp(14px, 2.6vw, 16px);
             }
         }
-            .exercise-container {
-        flex-direction: column;
-        align-items: center;
-        gap: 15px;
+           .exercise-btn {
+        width: 100%; /* Адаптивна ширина */
+        min-width: 400px;
+        height: 150px; /* Зменшуємо висоту */
+        padding: 10px; /* Зменшуємо відступи */
+        
     }
-    .exercise-btn {
-        width: 90%; /* Адаптивна ширина */
-        min-width: 300px;
-        height: 100px; /* Зменшуємо висоту */
-        padding: 12px; /* Зменшуємо відступи */
-        font-size: clamp(14px, 2.2vw, 16px);
-    }
-    .btn-title {
-        font-size: 16px; /* Зменшуємо шрифт заголовка */
+     .btn-title {
+        font-size: 18px !important;  /* Менший шрифт заголовка */
     }
     .btn-description {
-        font-size: 12px; /* Зменшуємо шрифт опису */
+        font-size: 16px !important;  /* Менший шрифт опису */
+        text-align: justify;
     }
-    .math-formula {
-        font-size: 14px; /* Зменшуємо формулу */
-    }
+    .math-formula mjx-container {
+  font-size: 16px !important;
+}
 }
 
         @media (max-width: 480px) {
@@ -1175,22 +1171,23 @@ body.loaded {
     overflow: hidden;
     flex-direction: column;
 }
-             .exercise-btn {
+            .exercise-btn {
         width: 90%;
-        min-width: 260px;
-        height: 90px; /* Ще менша висота */
+        min-width: 270px;
+        height: 130px; /* Ще менша висота */
         padding: 8px; /* Ще менші відступи */
-        font-size: clamp(12px, 2vw, 14px);
+        font-size: clamp(14px, 2vw, 16px);
     }
-   .btn-title {
-        font-size: 14px; /* Менший шрифт заголовка */
+    .btn-title {
+        font-size: 18px !important;  /* Менший шрифт заголовка */
     }
     .btn-description {
-        font-size: 12px; /* Менший шрифт опису */
+        font-size: 16px !important;  /* Менший шрифт опису */
+        text-align: justify;
     }
-    .math-formula {
-        font-size: 14px; /* Менша формула */
-    }
+    .math-formula mjx-container {
+  font-size: 16px !important;
+}
 }
     </style>
 </head> 
