@@ -65,7 +65,7 @@
         }
         button {
             padding: 10px 20px;
-            font-size: 16px;
+            font-size: 18px;
             cursor: pointer;
             border-radius: 6px;
             background-color: #008080;
@@ -141,6 +141,15 @@
             color: #ffff00 !important;
             font-weight: bold !important;
         }
+             #xAxisLabel {
+    position: absolute;
+    font-weight: bold;
+    color: #333;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    bottom: 300px; /* На 1 клітинку нижче осі X (~20px) + невеликий відступ */
+    right: -70px; /* Перед стрілкою осі X */
+}
         @media (max-width: 768px) {
             body {
                 margin: 10px;
@@ -151,32 +160,48 @@
             }
             .complex-label {
                 gap: 8px;
+                flex-wrap: wrap;
+                justify-content: center;
             }
             .icon {
-                font-size: 20px;
+                font-size: 18px;
             }
             .label-text {
-                font-size: 16px;
+                font-size: 18px;
             }
             .complex-number {
-                font-size: 14px;
+                font-size: 16px;
                 padding: 6px 12px;
             }
+            .controls {
+                flex-direction: row;
+                flex-wrap: nowrap;
+                gap: 8px;
+                padding: 0 10px;
+            }
             .controls button {
-                padding: 8px 15px;
-                font-size: 14px;
+                padding: 6px 12px;
+                font-size: 12px;
+                flex: 1;
+                min-width: 70px;
+                max-width: 90px;
             }
             #feedback {
-                font-size: 16px;
-                padding: 12px;
+                font-size: 14px;
+                padding: 10px;
                 max-width: 90%;
             }
             #hint {
-                font-size: 16px;
+                font-size: 14px;
             }
             .MathJax {
-                font-size: 0.8em !important;
+                font-size: 1.01em !important;
             }
+            #xAxisLabel {
+        font-size: 14px;
+        bottom: 200px;
+        right: -70px;
+    }
         }
     </style>
 </head>
@@ -193,10 +218,10 @@
         <span class="complex-number" id="z2"></span>
     </div>
     <div style="position: relative; display: inline-block; margin-top: 20px;">
-        <canvas id="complexPlane" width="600" height="600"></canvas>
-        <div style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-weight: bold;">y (Im z)</div>
-        <div style="position: absolute; bottom: 292px; right: -70px; font-weight: bold;">x (Re z)</div>
-    </div>
+    <div style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-weight: bold;">y (Im z)</div>
+    <div id="xAxisLabel" style="position: absolute; font-weight: bold; color: #333; font-size: 16px; font-family: Arial, sans-serif;">x (Re z)</div>
+    <canvas id="complexPlane" width="600" height="600"></canvas>
+</div>
     <div id="hint">Малюйте z₁</div>
     <div class="controls">
         <button id="checkDiff" disabled>Перевірити різницю</button>
@@ -714,7 +739,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
    window.closeExercise = function() {
     console.log('closeExercise: Перенаправлення');
-    const redirectUrl = "p4.html?openExamplesModal=true";
+   const redirectUrl = "p4.html?openExamplesModal=true";
     try {
         window.location.href = redirectUrl;
     } catch (e) {
