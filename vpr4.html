@@ -714,7 +714,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
    window.closeExercise = function() {
     console.log('closeExercise: Перенаправлення');
-    const redirectUrl = "{{ url_for('p4') }}?openExamplesModal=true";
+    const redirectUrl = "p4.html?openExamplesModal=true";
     try {
         window.location.href = redirectUrl;
     } catch (e) {
