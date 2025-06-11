@@ -565,55 +565,65 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function animateCorrectDiff() {
-        let t = 0;
-        const duration = 1500;
-        function step() {
-            t += 16;
-            const progress = Math.min(t / duration, 1);
-            render();
-            ctx.save();
-            ctx.beginPath();
-            ctx.strokeStyle = "#FF0000";
-            ctx.lineWidth = 3;
-            ctx.setLineDash([]);
-            ctx.moveTo(origin.x, origin.y);
-            ctx.lineTo(
-                origin.x + (z1.re - z2.re) * scale * progress,
-                origin.y - (z1.im - z2.im) * scale * progress
-            );
-            ctx.stroke();
-            ctx.setLineDash([]);
-            ctx.restore();
+    let t = 0;
+    const duration = 1500;
+    function step() {
+        t += 16;
+        const progress = Math.min(t / duration, 1);
+        render();
+        ctx.save();
+        ctx.beginPath();
+        ctx.strokeStyle = "#FF0000";
+        ctx.lineWidth = 3;
+        ctx.setLineDash([]);
+        ctx.moveTo(origin.x, origin.y);
+        ctx.lineTo(
+            origin.x + (z1.re - z2.re) * scale * progress,
+            origin.y - (z1.im - z2.im) * scale * progress
+        );
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
 
-            if (progress >= 1) {
-                const isCorrect = vector3 &&
-                    Math.abs(vector1.re - z1.re) <= 0.5 &&
-                    Math.abs(vector1.im - z1.im) <= 0.5 &&
-                    Math.abs(vector2.re - z2.re) <= 0.5 &&
-                    Math.abs(vector2.im - z2.im) <= 0.5 &&
-                    Math.abs(vectorNegZ2.re - (-z2.re)) <= 0.5 &&
-                    Math.abs(vectorNegZ2.im - (-z2.im)) <= 0.5 &&
-                    Math.abs(vector3.endRe - (z1.re - z2.re)) <= 0.5 &&
-                    Math.abs(vector3.endIm - (z1.im - z2.im)) <= 0.5;
-                showFeedback(isCorrect ? '✅ Молодець!' : '❌ Різниця невірна!', isCorrect);
+        if (progress >= 1) {
+            const isCorrect = vector3 &&
+                Math.abs(vector1.re - z1.re) <= 0.5 &&
+                Math.abs(vector1.im - z1.im) <= 0.5 &&
+                Math.abs(vector2.re - z2.re) <= 0.5 &&
+                Math.abs(vector2.im - z2.im) <= 0.5 &&
+                Math.abs(vectorNegZ2.re - (-z2.re)) <= 0.5 &&
+                Math.abs(vectorNegZ2.im - (-z2.im)) <= 0.5 &&
+                Math.abs(vector3.endRe - (z1.re - z2.re)) <= 0.5 &&
+                Math.abs(vector3.endIm - (z1.im - z2.im)) <= 0.5;
+            showFeedback(isCorrect ? '✅ Молодець!' : '❌ Різниця невірна!', isCorrect);
+            if (isCorrect) {
                 drawingStep = null;
                 checkDiffBtn.classList.remove('pulse');
                 checkDiffBtn.disabled = true;
-                nextNumbersBtn.disabled = !isCorrect;
-                if (isCorrect) {
-                    animateParallelogramFadeOut(() => {
-                        console.log('Паралелограм зник');
-                    });
-                } else {
-                    render();
-                }
-                animationId = null;
+                nextNumbersBtn.disabled = false;
+                animateParallelogramFadeOut(() => {
+                    console.log('Паралелограм зник');
+                });
             } else {
-                animationId = requestAnimationFrame(step);
+                // Повертаємо можливість виправити vector3
+                drawingStep = 'result_start';
+                showCorrectDiff = false; // Скидаємо відображення правильної різниці
+                parallelogramOpacity = 1; // Відновлюємо паралелограм
+                vector3 = null; // Скидаємо vector3 для нової спроби
+                resultStart = null;
+                checkDiffBtn.classList.remove('pulse');
+                checkDiffBtn.disabled = true;
+                nextNumbersBtn.disabled = true;
+                render();
+                updateHint();
             }
+            animationId = null;
+        } else {
+            animationId = requestAnimationFrame(step);
         }
-        animationId = requestAnimationFrame(step);
     }
+    animationId = requestAnimationFrame(step);
+}
 
     canvas.addEventListener("click", (event) => {
         if (drawingStep === 'animating' || drawingStep === 'checking' || drawingStep === 'animating_correct') return;
@@ -739,7 +749,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
    window.closeExercise = function() {
     console.log('closeExercise: Перенаправлення');
-   const redirectUrl = "p4.html?openExamplesModal=true";
+    const redirectUrl = "p4.html?openExamplesModal=true";
     try {
         window.location.href = redirectUrl;
     } catch (e) {
@@ -749,12 +759,15 @@ document.addEventListener("DOMContentLoaded", () => {
 };
 
     window.addEventListener('resize', () => {
-        canvasWidth = window.innerWidth <= 768 ? 400 : 600;
-        canvasHeight = canvasWidth;
-        canvas.width = canvasWidth;
-        canvas.height = canvasHeight;
-        render();
-    });
+    canvasWidth = window.innerWidth <= 768 ? 400 : 600;
+    canvasHeight = canvasWidth;
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+    origin.x = canvasWidth / 2;
+    origin.y = canvasHeight / 2;
+    scale = window.innerWidth <= 768 ? 20 : 25;
+    render();
+});
 
     const styleSheet = document.createElement('style');
     styleSheet.innerText = `
