@@ -716,22 +716,29 @@ body.loaded {
 
 
 .btn-title {
-    font-size: 24px; /* Більший шрифт для заголовка */
+    font-size: 24px !important;  /* Більший шрифт для заголовка */
     font-weight: 700; /* Жирний шрифт */
-    color: #FFFFFF; /* Білий колір тексту */
-    margin: 0 0 8px 0; /* Відступ знизу */
+    color: #FFF5EE; /* Білий колір тексту */
+    margin: 0 0 10px 0; /* Відступ знизу */
     text-align: center;
     font-family: 'Arial', sans-serif; /* Сучасний шрифт */
 }
 
 .btn-description {
-    font-size: 18px; /* Більший шрифт для опису */
-    color: #F5F5F5; /* Легкий сірувато-білий для контрасту */
+   font-size: 20px !important; /* Забезпечує пріоритет */
+    color: #FFFFE0; /* Легкий сірувато-білий для контрасту */
     margin: 0;
     text-align: center;
     font-family: 'Arial', sans-serif;
 }
-
+.btn-description .math-formula {
+    font-size: 22px; /* Для формул всередині */
+     font-style: italic;
+            color: #ffff00;
+}
+.btn-description mjx-container {
+    font-size: 22px !important; /* Для MathJax формул */
+}
         @media (max-width: 768px) {
  .figure-1-1 {
         width: 200px;
@@ -820,7 +827,7 @@ body.loaded {
             .modal-content {
                 padding: 15px;
             }
-             .video-card {
+            .video-card {
         width: 180px; /* Зменшуємо ширину */
         height: 130px; /* Зменшуємо висоту */
         padding: 8px; /* Зменшуємо відступи */
@@ -1005,18 +1012,18 @@ body.loaded {
                 font-size: 14px;
                 padding: 4px 10px;
             }
-           .video-card {
-        width: 160px; /* Ще менша ширина */
-        height: 120px; /* Ще менша висота */
-        padding: 6px; /* Ще менші відступи */
+            .video-card {
+        width: 180px; /* Зменшуємо ширину */
+        height: 130px; /* Зменшуємо висоту */
+        padding: 8px; /* Зменшуємо відступи */
     }
     .video-card img {
-        width: 28px; /* Менша іконка */
-        height: 28px;
+        width: 32px; /* Зменшуємо іконку */
+        height: 32px;
     }
     .video-card h3 {
-        font-size: 13px; /* Менший шрифт */
-        line-height: 1.2;
+        font-size: 14px; /* Зменшуємо шрифт */
+        line-height: 1.3; /* Покращуємо читабельність */
     }
             .question-card {
                 min-height: 200px;
@@ -1216,13 +1223,13 @@ body.loaded {
     </div>
 
     <div class="navigation-buttons">
-                <a class="nav-button" href='tema1.html'>
+        <a class="nav-button" href='tema1.html'>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                 <path d="M15 18l-6-6 6-6"/>
             </svg>
             До теми 1
         </a>
-               <a class="nav-button" href='index.html'>
+                       <a class="nav-button" href='index.html'>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                 <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
             </svg>
@@ -1416,20 +1423,27 @@ body.loaded {
     <div class="modal-header">
         <button class="close-btn" id="closeExamplesBtn" aria-label="Закрити">× Закрити</button>
     </div>
-   <div class="modal-content">
-    <div class="exercise-container">
-        <button class="exercise-btn" id="exercise1Btn" aria-label="Відкрити Завдання 1">
-            <h3 class="btn-title">Завдання 1:</h3>
-            <p class="btn-description">Позначити точку для заданого комплексного числа <span class="math-formula">\( z = a + b i \)</span>.</p>
-        </button>
-        <button class="exercise-btn" id="exercise2Btn" aria-label="Відкрити Завдання 2">
-       <h3 class="btn-title">Завдання 2:</h3>
-            <p class="btn-description">Побудувати вектор, що відповідає комплексному числу <span class="math-formula">\( z = a + b i \)</span>.</p>
-        </button>
+    <div class="modal-content">
+        <div class="exercise-container">
+            <button class="exercise-btn" id="exercise1Btn" aria-label="Відкрити Завдання 1">
+                <h3 class="btn-title">Завдання 1:</h3>
+                <p class="btn-description">Позначити точку для заданого комплексного числа <span class="math-formula">\( z = a + b i \)</span>.</p>
+            </button>
+            <button class="exercise-btn" id="exercise2Btn" aria-label="Відкрити Завдання 2">
+                <h3 class="btn-title">Завдання 2:</h3>
+                <p class="btn-description">Побудувати вектор, що відповідає комплексному числу <span class="math-formula">\( z = a + b i \)</span>.</p>
+            </button>
+            <button class="exercise-btn" id="exercise3Btn" aria-label="Відкрити Завдання 3">
+                <h3 class="btn-title">Завдання 3:</h3>
+                <p class="btn-description">Геометричне додавання комплексних чисел <span class="math-formula">\( z_1 + z_2 \)</span>, де <span class="math-formula">\( z_1 = a_1 + b_1 i \)</span>, <span class="math-formula">\( z_2 = a_2 + b_2 i \).</span></p>
+            </button>
+            <button class="exercise-btn" id="exercise4Btn" aria-label="Відкрити Завдання 4">
+                <h3 class="btn-title">Завдання 4:</h3>
+                <p class="btn-description">Геометричне віднімання комплексних чисел <span class="math-formula">\( z_1 - z_2 \)</span>, де <span class="math-formula">\( z_1 = a_1 + b_1 i \)</span>, <span class="math-formula">\( z_2 = a_2 + b_2 i \).</span></p>
+            </button>
+        </div>
     </div>
 </div>
-</div>
-
     <div id="modalOverlay"></div>
 
     <script>
@@ -1443,33 +1457,35 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     const elements = {
-        openTheoryBtn: document.getElementById('openTheoryBtn'),
-        openVideoBtn: document.getElementById('openVideoBtn'),
-        openQuestionsBtn: document.getElementById('openQuestionsBtn'),
-        openTrainerBtn: document.getElementById('openTrainerBtn'),
-        openExamplesBtn: document.getElementById('openExamplesBtn'),
-        theoryModal: document.getElementById('theoryModal'),
-        videoModal: document.getElementById('videoModal'),
-        questionsModal: document.getElementById('questionsModal'),
-        trainerModal: document.getElementById('trainerModal'),
-        examplesModal: document.getElementById('examplesModal'),
-        videoPlayerModal1: document.getElementById('videoPlayerModal1'),
-        videoPlayerModal2: document.getElementById('videoPlayerModal2'),
-        videoPlayerModal3: document.getElementById('videoPlayerModal3'),
-        videoPlayerModal4: document.getElementById('videoPlayerModal4'),
-        closeTheoryBtn: document.getElementById('closeTheoryBtn'),
-        closeVideoBtn: document.getElementById('closeVideoBtn'),
-        closeQuestionsBtn: document.getElementById('closeQuestionsBtn'),
-        closeTrainerBtn: document.getElementById('closeTrainerBtn'),
-        closeExamplesBtn: document.getElementById('closeExamplesBtn'),
-        closeVideoPlayerBtn1: document.getElementById('closeVideoPlayerBtn1'),
-        closeVideoPlayerBtn2: document.getElementById('closeVideoPlayerBtn2'),
-        closeVideoPlayerBtn3: document.getElementById('closeVideoPlayerBtn3'),
-        closeVideoPlayerBtn4: document.getElementById('closeVideoPlayerBtn4'),
-        exercise1Btn: document.getElementById('exercise1Btn'),
-        exercise2Btn: document.getElementById('exercise2Btn'),
-        modalOverlay: document.getElementById('modalOverlay')
-    };
+    openTheoryBtn: document.getElementById('openTheoryBtn'),
+    openVideoBtn: document.getElementById('openVideoBtn'),
+    openQuestionsBtn: document.getElementById('openQuestionsBtn'),
+    openTrainerBtn: document.getElementById('openTrainerBtn'),
+    openExamplesBtn: document.getElementById('openExamplesBtn'),
+    theoryModal: document.getElementById('theoryModal'),
+    videoModal: document.getElementById('videoModal'),
+    questionsModal: document.getElementById('questionsModal'),
+    trainerModal: document.getElementById('trainerModal'),
+    examplesModal: document.getElementById('examplesModal'),
+    videoPlayerModal1: document.getElementById('videoPlayerModal1'),
+    videoPlayerModal2: document.getElementById('videoPlayerModal2'),
+    videoPlayerModal3: document.getElementById('videoPlayerModal3'),
+    videoPlayerModal4: document.getElementById('videoPlayerModal4'),
+    closeTheoryBtn: document.getElementById('closeTheoryBtn'),
+    closeVideoBtn: document.getElementById('closeVideoBtn'),
+    closeQuestionsBtn: document.getElementById('closeQuestionsBtn'),
+    closeTrainerBtn: document.getElementById('closeTrainerBtn'),
+    closeExamplesBtn: document.getElementById('closeExamplesBtn'),
+    closeVideoPlayerBtn1: document.getElementById('closeVideoPlayerBtn1'),
+    closeVideoPlayerBtn2: document.getElementById('closeVideoPlayerBtn2'),
+    closeVideoPlayerBtn3: document.getElementById('closeVideoPlayerBtn3'),
+    closeVideoPlayerBtn4: document.getElementById('closeVideoPlayerBtn4'),
+    exercise1Btn: document.getElementById('exercise1Btn'),
+    exercise2Btn: document.getElementById('exercise2Btn'),
+    exercise3Btn: document.getElementById('exercise3Btn'),
+    exercise4Btn: document.getElementById('exercise4Btn'),
+    modalOverlay: document.getElementById('modalOverlay')
+};
 
     // Перевірка URL-параметра для автоматичного відкриття examplesModal
     const urlParams = new URLSearchParams(window.location.search);
@@ -1838,17 +1854,30 @@ document.addEventListener('DOMContentLoaded', function () {
             toggleModal(elements.videoModal, true);
         });
 
-        // Обробник для кнопки "Завдання 1"
-elements.exercise1Btn?.addEventListener('click', () => {
-    console.log('Перехід до vpr1.html');
-    window.location.href = "vpr1.html";
-});
+       // Обробники для кнопок вправ
+try {
+    elements.exercise1Btn?.addEventListener('click', () => {
+        console.log('Перехід до vpr1.html');
+        window.location.href = "vpr1.html";
+    });
 
-// Обробник для кнопки "Завдання 2"
-elements.exercise2Btn?.addEventListener('click', () => {
-    console.log('Перехід до vpr2.html');
-    window.location.href = "vpr2.html";
-});
+    elements.exercise2Btn?.addEventListener('click', () => {
+        console.log('Перехід до vpr2.html');
+        window.location.href = "vpr2.html";
+    });
+
+    elements.exercise3Btn?.addEventListener('click', () => {
+        console.log('Перехід до vpr3.html');
+        window.location.href = "vpr3.html";
+    });
+
+    elements.exercise4Btn?.addEventListener('click', () => {
+        console.log('Перехід до vpr4.html');
+        window.location.href = "vpr4.html";
+    });
+} catch (error) {
+    console.error('Помилка при прив’язці обробників для кнопок вправ:', error);
+}
 
         // Закриття модальних вікон по кліку на overlay
         elements.modalOverlay?.addEventListener('click', () => {
