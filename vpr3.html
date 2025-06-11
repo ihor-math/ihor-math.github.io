@@ -141,6 +141,15 @@
             color: #ffff00 !important;
             font-weight: bold !important;
         }
+            #xAxisLabel {
+    position: absolute;
+    font-weight: bold;
+    color: #333;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    bottom: 300px; /* На 1 клітинку нижче осі X (~20px) + невеликий відступ */
+    right: -70px; /* Перед стрілкою осі X */
+}
         @media (max-width: 768px) {
             body {
                 margin: 10px;
@@ -151,32 +160,48 @@
             }
             .complex-label {
                 gap: 8px;
+                flex-wrap: wrap;
+                justify-content: center;
             }
             .icon {
-                font-size: 20px;
+                font-size: 18px;
             }
             .label-text {
-                font-size: 20px;
+                font-size: 18px;
             }
             .complex-number {
                 font-size: 16px;
-                padding: 8px 15px;
+                padding: 6px 12px;
+            }
+            .controls {
+                flex-direction: row;
+                flex-wrap: nowrap;
+                gap: 8px;
+                padding: 0 10px;
             }
             .controls button {
-                padding: 8px 15px;
-                font-size: 14px;
+                padding: 6px 12px;
+                font-size: 12px;
+                flex: 1;
+                min-width: 70px;
+                max-width: 90px;
             }
             #feedback {
-                font-size: 16px;
-                padding: 12px;
+                font-size: 14px;
+                padding: 10px;
                 max-width: 90%;
             }
             #hint {
-                font-size: 16px;
+                font-size: 14px;
             }
             .MathJax {
-                font-size: 0.8em !important;
+                font-size: 1.01em !important;
             }
+            #xAxisLabel {
+        font-size: 14px;
+        bottom: 200px;
+        right: -70px;
+    }
         }
     </style>
 </head>
@@ -193,10 +218,10 @@
         <span class="complex-number" id="z2"></span>
     </div>
     <div style="position: relative; display: inline-block; margin-top: 20px;">
-        <canvas id="complexPlane" width="600" height="600"></canvas>
-        <div style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-weight: bold;">y (Im z)</div>
-        <div style="position: absolute; bottom: 292px; right: -70px; font-weight: bold;">x (Re z)</div>
-    </div>
+    <div style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-weight: bold;">y (Im z)</div>
+    <div id="xAxisLabel" style="position: absolute; font-weight: bold; color: #333; font-size: 16px; font-family: Arial, sans-serif;">x (Re z)</div>
+    <canvas id="complexPlane" width="600" height="600"></canvas>
+</div>
     <div id="hint">Малюйте z₁</div>
     <div class="controls">
         <button id="checkSum" disabled>Перевірити суму</button>
@@ -312,40 +337,45 @@ document.addEventListener("DOMContentLoaded", () => {
         ctx.restore();
     }
 
-    function drawAxes() {
-        drawGrid();
-        ctx.save();
-        ctx.strokeStyle = "#000";
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(0, origin.y);
-        ctx.lineTo(canvasWidth, origin.y);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(canvasWidth - 15, origin.y - 7);
-        ctx.lineTo(canvasWidth, origin.y);
-        ctx.lineTo(canvasWidth - 15, origin.y + 7);
-        ctx.fillStyle = "#000";
-        ctx.fill();
-        ctx.beginPath();
-        ctx.moveTo(origin.x, 0);
-        ctx.lineTo(origin.x, canvasHeight);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(origin.x - 7, 15);
-        ctx.lineTo(origin.x, 0);
-        ctx.lineTo(origin.x + 7, 15);
-        ctx.fill();
-        ctx.font = window.innerWidth <= 768 ? "14px Arial" : "16px Arial";
-        ctx.fillStyle = "#444";
-        for (let i = -11; i <= 11; i++) {
-            if (i !== 0) {
-                ctx.fillText(i, origin.x + i * scale - 10, origin.y + 18);
-                ctx.fillText(-i, origin.x + 10, origin.y + i * scale + 10);
-            }
+   
+  function drawAxes() {
+    ctx.save();
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+    ctx.font = window.innerWidth <= 768 ? "bold 14px Arial" : "bold 16px Arial";
+    ctx.fillStyle = "#333";
+    ctx.fillText("y (Im z)", origin.x - 20, 20); // Напис осі Y залишається
+    drawGrid();
+    ctx.strokeStyle = "#000";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, origin.y);
+    ctx.lineTo(canvasWidth, origin.y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(canvasWidth - 15, origin.y - 7);
+    ctx.lineTo(canvasWidth, origin.y);
+    ctx.lineTo(canvasWidth - 15, origin.y + 7);
+    ctx.fillStyle = "#000";
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(origin.x, 0);
+    ctx.lineTo(origin.x, canvasHeight);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(origin.x - 7, 15);
+    ctx.lineTo(origin.x, 0);
+    ctx.lineTo(origin.x + 7, 15);
+    ctx.fill();
+    ctx.font = window.innerWidth <= 768 ? "14px Arial" : "16px Arial";
+    ctx.fillStyle = "#444";
+    for (let i = -11; i <= 11; i++) {
+        if (i !== 0) {
+            ctx.fillText(i, origin.x + i * scale - 10, origin.y + 18);
+            ctx.fillText(-i, origin.x + 10, origin.y + i * scale + 10);
         }
-        ctx.restore();
     }
+    ctx.restore();
+}
 
     function drawVector(startX, startY, endX, endY, color, label, dashed = false, isSegment = false, opacity = 1) {
         ctx.save();
@@ -707,7 +737,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     window.closeExercise = function() {
         console.log('closeExercise: Перенаправлення');
-        const redirectUrl = "p4.html?openExamplesModal=true";
+       const redirectUrl = "p4.html?openExamplesModal=true";
         try {
             window.location.href = redirectUrl;
         } catch (e) {
@@ -716,13 +746,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    window.addEventListener('resize', () => {
-        canvasWidth = window.innerWidth <= 768 ? 400 : 600;
-        canvasHeight = canvasWidth;
-        canvas.width = canvasWidth;
-        canvas.height = canvasHeight;
-        render();
-    });
+   window.addEventListener('resize', () => {
+    canvasWidth = window.innerWidth <= 768 ? 400 : 600;
+    canvasHeight = canvasWidth;
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+    render();
+});
 
     const styleSheet = document.createElement('style');
     styleSheet.innerText = `
