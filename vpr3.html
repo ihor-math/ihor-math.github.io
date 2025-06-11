@@ -576,106 +576,116 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function animateCorrectSum() {
-        let t = 0;
-        const duration = 1500;
-        function step() {
-            t += 16;
-            const progress = Math.min(t / duration, 1);
-            render();
-            ctx.save();
-            ctx.beginPath();
-            ctx.strokeStyle = "#FF0000";
-            ctx.lineWidth = 3;
-            ctx.setLineDash([]);
-            ctx.moveTo(origin.x, origin.y);
-            ctx.lineTo(
-                origin.x + (z1.re + z2.re) * scale * progress,
-                origin.y - (z1.im + z2.im) * scale * progress
-            );
-            ctx.stroke();
-            ctx.setLineDash([]);
-            ctx.restore();
+    let t = 0;
+    const duration = 1500;
+    function step() {
+        t += 16;
+        const progress = Math.min(t / duration, 1);
+        render();
+        ctx.save();
+        ctx.beginPath();
+        ctx.strokeStyle = "#FF0000";
+        ctx.lineWidth = 3;
+        ctx.setLineDash([]);
+        ctx.moveTo(origin.x, origin.y);
+        ctx.lineTo(
+            origin.x + (z1.re + z2.re) * scale * progress,
+            origin.y - (z1.im + z2.im) * scale * progress
+        );
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
 
-            if (progress >= 1) {
-                const isCorrect = vector3 &&
-                    Math.abs(vector1.re - z1.re) <= 0.5 &&
-                    Math.abs(vector1.im - z1.im) <= 0.5 &&
-                    Math.abs(vector2.re - z2.re) <= 0.5 &&
-                    Math.abs(vector2.im - z2.im) <= 0.5 &&
-                    Math.abs(vector3.endRe - (z1.re + z2.re)) <= 0.5 &&
-                    Math.abs(vector3.endIm - (z1.im + z2.im)) <= 0.5;
-                showFeedback(isCorrect ? '✅ Молодець!' : '❌ Сума невірна!', isCorrect);
+        if (progress >= 1) {
+            const isCorrect = vector3 &&
+                Math.abs(vector1.re - z1.re) <= 0.5 &&
+                Math.abs(vector1.im - z1.im) <= 0.5 &&
+                Math.abs(vector2.re - z2.re) <= 0.5 &&
+                Math.abs(vector2.im - z2.im) <= 0.5 &&
+                Math.abs(vector3.endRe - (z1.re + z2.re)) <= 0.5 &&
+                Math.abs(vector3.endIm - (z1.im + z2.im)) <= 0.5;
+            showFeedback(isCorrect ? '✅ Молодець!' : '❌ Сума невірна!', isCorrect);
+            if (isCorrect) {
                 drawingStep = null;
                 checkSumBtn.classList.remove('pulse');
                 checkSumBtn.disabled = true;
-                nextNumbersBtn.disabled = !isCorrect;
-                if (isCorrect) {
-                    animateParallelogramFadeOut(() => {
-                        console.log('Паралелограм зник');
-                    });
-                } else {
-                    render();
-                }
-                animationId = null;
+                nextNumbersBtn.disabled = false;
+                animateParallelogramFadeOut(() => {
+                    console.log('Паралелограм зник');
+                });
             } else {
-                animationId = requestAnimationFrame(step);
+                // Повертаємо можливість виправити vector3
+                drawingStep = 'result_start';
+                showCorrectSum = false; // Скидаємо відображення правильної суми
+                parallelogramOpacity = 1; // Відновлюємо паралелограм
+                vector3 = null; // Скидаємо vector3 для нової спроби
+                resultStart = null;
+                checkSumBtn.classList.remove('pulse');
+                checkSumBtn.disabled = true;
+                nextNumbersBtn.disabled = true;
+                render();
+                updateHint();
             }
+            animationId = null;
+        } else {
+            animationId = requestAnimationFrame(step);
         }
-        animationId = requestAnimationFrame(step);
     }
+    animationId = requestAnimationFrame(step);
+}
 
     canvas.addEventListener("click", (event) => {
-        if (drawingStep === 'animating' || drawingStep === 'checking' || drawingStep === 'animating_correct') return;
-        const rect = canvas.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
-        const point = {
-            re: Math.round((x - origin.x) / scale),
-            im: -Math.round((y - origin.y) / scale)
-        };
-        console.log(`Клік: drawingStep=${drawingStep}, point={re: ${point.re}, im: ${point.im}}`);
+    if (drawingStep === 'animating' || drawingStep === 'checking' || drawingStep === 'animating_correct') return;
+    const rect = canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    const point = {
+        re: Math.round((x - origin.x) / scale),
+        im: -Math.round((y - origin.y) / scale)
+    };
+    console.log(`Клік: drawingStep=${drawingStep}, point={re: ${point.re}, im: ${point.im}}`);
 
-        if (drawingStep === 'z1') {
-            vector1 = point;
-            const isCorrect = Math.abs(point.re - z1.re) <= 0.5 && Math.abs(point.im - z1.im) <= 0.5;
-            showFeedback(isCorrect ? '✅ Вірно!' : '❌ Невірно!', isCorrect);
-            if (!isCorrect) {
-                vector1 = null;
-            } else {
-                drawingStep = 'z2';
-            }
-        } else if (drawingStep === 'z2') {
-            vector2 = point;
-            const isCorrect = Math.abs(point.re - z2.re) <= 0.5 && Math.abs(point.im - z2.im) <= 0.5;
-            showFeedback(isCorrect ? '✅ Вірно!' : '❌ Невірно!', isCorrect);
-            if (!isCorrect) {
-                vector2 = null;
-            } else {
-                drawingStep = 'result_start';
-            }
-        } else if (drawingStep === 'result_start') {
-            resultStart = point;
-            vector3 = {
-                startRe: resultStart.re,
-                startIm: resultStart.im,
-                endRe: resultStart.re,
-                endIm: resultStart.im,
-                re: 0,
-                im: 0,
-                isValid: false
-            };
-            drawingStep = 'result_end';
-        } else if (drawingStep === 'result_end') {
-            vector3.endRe = point.re;
-            vector3.endIm = point.im;
-            vector3.re = point.re - vector3.startRe;
-            vector3.im = point.im - vector3.startIm;
-            drawingStep = 'animating';
-            animateVector3Transfer(animateVector3Solid);
+    if (drawingStep === 'z1') {
+        vector1 = point;
+        const isCorrect = Math.abs(point.re - z1.re) <= 0.5 && Math.abs(point.im - z1.im) <= 0.5;
+        showFeedback(isCorrect ? '✅ Вірно!' : '❌ Невірно!', isCorrect);
+        if (!isCorrect) {
+            vector1 = null;
+        } else {
+            drawingStep = 'z2';
         }
-        render();
-        updateHint();
-    });
+    } else if (drawingStep === 'z2') {
+        vector2 = point;
+        const isCorrect = Math.abs(point.re - z2.re) <= 0.5 && Math.abs(point.im - z2.im) <= 0.5;
+        showFeedback(isCorrect ? '✅ Вірно!' : '❌ Невірно!', isCorrect);
+        if (!isCorrect) {
+            vector2 = null;
+        } else {
+            drawingStep = 'result_start';
+        }
+    } else if (drawingStep === 'result_start') {
+        resultStart = point;
+        vector3 = {
+            startRe: resultStart.re,
+            startIm: resultStart.im,
+            endRe: resultStart.re,
+            endIm: resultStart.im,
+            re: 0,
+            im: 0,
+            isValid: false
+        };
+        drawingStep = 'result_end';
+    } else if (drawingStep === 'result_end') {
+        vector3.endRe = point.re;
+        vector3.endIm = point.im;
+        vector3.re = point.re - vector3.startRe;
+        vector3.im = point.im - vector3.startIm;
+        drawingStep = 'animating';
+        animateVector3Transfer(animateVector3Solid);
+    }
+    render();
+    updateHint();
+});
 
     checkSumBtn.addEventListener("click", () => {
         if (drawingStep !== 'checking') {
@@ -737,7 +747,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     window.closeExercise = function() {
         console.log('closeExercise: Перенаправлення');
-       const redirectUrl = "p4.html?openExamplesModal=true";
+        const redirectUrl = "p4.html?openExamplesModal=true";
         try {
             window.location.href = redirectUrl;
         } catch (e) {
@@ -746,14 +756,16 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-   window.addEventListener('resize', () => {
+  window.addEventListener('resize', () => {
     canvasWidth = window.innerWidth <= 768 ? 400 : 600;
     canvasHeight = canvasWidth;
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
+    origin.x = canvasWidth / 2;
+    origin.y = canvasHeight / 2;
+    scale = window.innerWidth <= 768 ? 20 : 25;
     render();
 });
-
     const styleSheet = document.createElement('style');
     styleSheet.innerText = `
         .pulse {
