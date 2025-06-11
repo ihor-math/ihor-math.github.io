@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Завдання 3</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #f0f0f0;
+            margin: 16px;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        body.loaded {
+            visibility: visible;
+            opacity: 1;
+        }
+        .complex-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+        }
+        .icon {
+            font-size: 28px;
+            color: #0000ff;
+            animation: pulse 1.5s infinite;
+        }
+        .label-text {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1e3a8a;
+        }
+        .complex-number {
+            display: inline-block;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #6dd5ed, #2193b0);
+            border-radius: 8px;
+            color: #ffff00;
+            font-size: 18px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .complex-number.rendered {
+            opacity: 1;
+        }
+        canvas {
+            background: #ffffff;
+            margin-top: 10px;
+            outline: none;
+        }
+        .controls {
+            margin-top: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 6px;
+            background-color: #008080;
+            color: white;
+            border: none;
+        }
+        button:hover:not(:disabled) {
+            background-color: #006666;
+        }
+        button:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+        }
+        .close-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, #ff4444, #cc0000);
+            color: #ffffff;
+            border-radius: 50%;
+            font-size: 16px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s, background 0.2s;
+        }
+        .close-btn:hover {
+            background: linear-gradient(135deg, #cc0000, #ff4444);
+            transform: scale(1.1);
+        }
+        #feedback {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 15px;
+            border-radius: 8px;
+            max-width: 400px;
+            font-size: 18px;
+            font-weight: bold;
+            display: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+        .feedback-success {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+        }
+        .feedback-error {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            color: #721c24;
+        }
+        #hint {
+            margin-top: 10px;
+            font-size: 18px;
+            color: #1e3a8a;
+            font-weight: bold;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        .MathJax {
+            font-family: Arial, sans-serif;
+            font-size: 1.1em !important;
+            color: #ffff00 !important;
+            font-weight: bold !important;
+        }
+        @media (max-width: 768px) {
+            body {
+                margin: 10px;
+            }
+            canvas {
+                width: 400px !important;
+                height: 400px !important;
+            }
+            .complex-label {
+                gap: 8px;
+            }
+            .icon {
+                font-size: 20px;
+            }
+            .label-text {
+                font-size: 20px;
+            }
+            .complex-number {
+                font-size: 16px;
+                padding: 8px 15px;
+            }
+            .controls button {
+                padding: 8px 15px;
+                font-size: 14px;
+            }
+            #feedback {
+                font-size: 16px;
+                padding: 12px;
+                max-width: 90%;
+            }
+            #hint {
+                font-size: 16px;
+            }
+            .MathJax {
+                font-size: 0.8em !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="close-btn" onclick="closeExercise()" aria-label="Закрити та повернутися до сторінки p4">✖ Закрити</button>
+    <div class="complex-label">
+        <span class="icon">🔹</span>
+        <span class="label-text">Комплексне число 1:</span>
+        <span class="complex-number" id="z1"></span>
+    </div>
+    <div class="complex-label">
+        <span class="icon">🔹</span>
+        <span class="label-text">Комплексне число 2:</span>
+        <span class="complex-number" id="z2"></span>
+    </div>
+    <div style="position: relative; display: inline-block; margin-top: 20px;">
+        <canvas id="complexPlane" width="600" height="600"></canvas>
+        <div style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-weight: bold;">y (Im z)</div>
+        <div style="position: absolute; bottom: 292px; right: -70px; font-weight: bold;">x (Re z)</div>
+    </div>
+    <div id="hint">Малюйте z₁</div>
+    <div class="controls">
+        <button id="checkSum" disabled>Перевірити суму</button>
+        <button onclick="clearCanvas()">Очистити</button>
+        <button id="nextNumbers" disabled>Наступні числа</button>
+    </div>
+    <div id="feedback"></div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    console.log('vpr3.html завантажено');
+    document.body.classList.add('loaded');
+
+    const canvas = document.getElementById("complexPlane");
+    const ctx = canvas.getContext("2d");
+    if (!ctx) {
+        console.error('Контекст canvas не ініціалізований');
+        alert('Помилка: Не вдалося ініціалізувати canvas. Перевірте браузер.');
+        return;
+    }
+    const z1El = document.getElementById("z1");
+    const z2El = document.getElementById("z2");
+    const checkSumBtn = document.getElementById("checkSum");
+    const nextNumbersBtn = document.getElementById("nextNumbers");
+    const feedbackEl = document.getElementById("feedback");
+    const hintEl = document.getElementById("hint");
+
+    if (!z1El || !z2El || !checkSumBtn || !nextNumbersBtn || !feedbackEl || !hintEl) {
+        console.error('Один або кілька елементів DOM не знайдено');
+        alert('Помилка: Не знайдено необхідні елементи сторінки.');
+        return;
+    }
+
+    let canvasWidth = window.innerWidth <= 768 ? 400 : 600;
+    let canvasHeight = canvasWidth;
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+    const origin = { x: canvasWidth / 2, y: canvasHeight / 2 };
+    const scale = window.innerWidth <= 768 ? 20 : 25;
+
+    let z1, z2;
+    function generateComplexNumbers() {
+        let valid = false;
+        while (!valid) {
+            z1 = { re: Math.floor(Math.random() * 19) - 9, im: Math.floor(Math.random() * 19) - 9 };
+            const minRe = Math.max(-9, -10 - z1.re);
+            const maxRe = Math.min(9, 10 - z1.re);
+            const minIm = Math.max(-9, -10 - z1.im);
+            const maxIm = Math.min(9, 10 - z1.im);
+            z2 = {
+                re: Math.floor(Math.random() * (maxRe - minRe + 1)) + minRe,
+                im: Math.floor(Math.random() * (maxIm - minIm + 1)) + minIm
+            };
+            const sumRe = z1.re + z2.re;
+            const sumIm = z1.im + z2.im;
+            if (sumRe >= -10 && sumRe <= 10 && sumIm >= -10 && sumIm <= 10 && 
+                (z1.re !== 0 || z1.im !== 0) && (z2.re !== 0 || z2.im !== 0)) {
+                valid = true;
+            }
+        }
+        z1El.innerHTML = `\\( z_1 = ${z1.re}${z1.im >= 0 ? '+' : ''}${z1.im}i \\)`;
+        z2El.innerHTML = `\\( z_2 = ${z2.re}${z2.im >= 0 ? '+' : ''}${z2.im}i \\)`;
+        console.log('Нові числа:', { z1, z2, sum: { re: z1.re + z2.re, im: z1.im + z2.im } });
+
+        if (typeof MathJax !== 'undefined') {
+            MathJax.typesetPromise().then(() => {
+                z1El.classList.add('rendered');
+                z2El.classList.add('rendered');
+                console.log('MathJax оброблено');
+            }).catch(err => console.error('Помилка MathJax:', err));
+        } else {
+            console.error('MathJax не завантажено');
+            z1El.textContent = `z1 = ${z1.re}${z1.im >= 0 ? '+' : ''}${z1.im}i`;
+            z2El.textContent = `z2 = ${z2.re}${z2.im >= 0 ? '+' : ''}${z2.im}i`;
+            z1El.classList.add('rendered');
+            z2El.classList.add('rendered');
+        }
+    }
+    generateComplexNumbers();
+
+    let vector1 = null, vector2 = null, vector3 = null;
+    let drawingStep = 'z1';
+    let resultStart = null;
+    let animationId = null;
+    let showCorrectSum = false;
+    let parallelogramOpacity = 1;
+
+    function updateHint() {
+        console.log('Оновлення підказки:', drawingStep);
+        if (drawingStep === 'z1') hintEl.textContent = 'Малюйте z₁';
+        else if (drawingStep === 'z2') hintEl.textContent = 'Малюйте z₂';
+        else if (drawingStep === 'result_start') hintEl.textContent = 'Укажіть початок результату';
+        else if (drawingStep === 'result_end') hintEl.textContent = 'Укажіть кінець результату';
+        else hintEl.textContent = '';
+    }
+
+    function drawGrid() {
+        ctx.save();
+        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+        ctx.strokeStyle = "#ccc";
+        ctx.lineWidth = 1;
+        for (let x = 0; x <= canvasWidth; x += scale) {
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, canvasHeight);
+            ctx.stroke();
+        }
+        for (let y = 0; y <= canvasHeight; y += scale) {
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(canvasWidth, y);
+            ctx.stroke();
+        }
+        ctx.restore();
+    }
+
+    function drawAxes() {
+        drawGrid();
+        ctx.save();
+        ctx.strokeStyle = "#000";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, origin.y);
+        ctx.lineTo(canvasWidth, origin.y);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(canvasWidth - 15, origin.y - 7);
+        ctx.lineTo(canvasWidth, origin.y);
+        ctx.lineTo(canvasWidth - 15, origin.y + 7);
+        ctx.fillStyle = "#000";
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(origin.x, 0);
+        ctx.lineTo(origin.x, canvasHeight);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(origin.x - 7, 15);
+        ctx.lineTo(origin.x, 0);
+        ctx.lineTo(origin.x + 7, 15);
+        ctx.fill();
+        ctx.font = window.innerWidth <= 768 ? "14px Arial" : "16px Arial";
+        ctx.fillStyle = "#444";
+        for (let i = -11; i <= 11; i++) {
+            if (i !== 0) {
+                ctx.fillText(i, origin.x + i * scale - 10, origin.y + 18);
+                ctx.fillText(-i, origin.x + 10, origin.y + i * scale + 10);
+            }
+        }
+        ctx.restore();
+    }
+
+    function drawVector(startX, startY, endX, endY, color, label, dashed = false, isSegment = false, opacity = 1) {
+        ctx.save();
+        ctx.globalAlpha = opacity;
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 3;
+        if (dashed) ctx.setLineDash([5, 3]);
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+        if (dashed) ctx.setLineDash([]);
+        
+        if (!isSegment) {
+            const angle = Math.atan2(endY - startY, endX - startX);
+            const arrowSize = 10;
+            ctx.beginPath();
+            ctx.moveTo(endX, endY);
+            ctx.lineTo(endX - arrowSize * Math.cos(angle - Math.PI / 6), endY - arrowSize * Math.sin(angle - Math.PI / 6));
+            ctx.moveTo(endX, endY);
+            ctx.lineTo(endX - arrowSize * Math.cos(angle + Math.PI / 6), endY - arrowSize * Math.sin(angle + Math.PI / 6));
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(endX, endY, 5, 0, 2 * Math.PI);
+            ctx.fillStyle = color;
+            ctx.fill();
+        }
+        
+        if (label) {
+            ctx.font = "16px Arial";
+            ctx.fillStyle = color;
+            if (label === "z₁+z₂") {
+                const offsetX = endX + (endX > startX ? 15 : -30);
+                const offsetY = endY + (endY > startY ? -5 : 30);
+                ctx.fillText(label, offsetX, offsetY);
+            } else {
+                ctx.fillText(label, endX + 15, endY - 5);
+            }
+        }
+        ctx.restore();
+    }
+
+    function render() {
+        console.log('Рендеринг:', { vector1, vector2, vector3, showCorrectSum, drawingStep, parallelogramOpacity });
+        drawAxes();
+        if (vector1) {
+            drawVector(origin.x, origin.y, origin.x + vector1.re * scale, origin.y - vector1.im * scale, "#008080", "z₁");
+        }
+        if (vector2) {
+            drawVector(origin.x, origin.y, origin.x + vector2.re * scale, origin.y - vector2.im * scale, "#00FF00", "z₂");
+        }
+        if (vector1 && vector2) {
+            drawVector(
+                origin.x + vector1.re * scale,
+                origin.y - vector1.im * scale,
+                origin.x + (vector1.re + vector2.re) * scale,
+                origin.y - (vector1.im + vector2.im) * scale,
+                "#800080", null, true, true, parallelogramOpacity
+            );
+            drawVector(
+                origin.x + vector2.re * scale,
+                origin.y - vector2.im * scale,
+                origin.x + (vector1.re + vector2.re) * scale,
+                origin.y - (vector1.im + vector2.im) * scale,
+                "#800080", null, true, true, parallelogramOpacity
+            );
+        }
+        if (vector3 && drawingStep !== 'result_start') {
+            const startX = origin.x + vector3.startRe * scale;
+            const startY = origin.y - vector3.startIm * scale;
+            const endX = origin.x + vector3.endRe * scale;
+            const endY = origin.y - vector3.endIm * scale;
+            drawVector(startX, startY, endX, endY, "#00008B", null, true);
+        }
+        if (showCorrectSum && drawingStep !== 'animating_correct') {
+            drawVector(
+                origin.x, origin.y,
+                origin.x + (z1.re + z2.re) * scale,
+                origin.y - (z1.im + z2.im) * scale,
+                "#FF0000", "z₁+z₂"
+            );
+        }
+    }
+
+    function showFeedback(message, isCorrect) {
+        console.log('showFeedback:', { message, isCorrect });
+        feedbackEl.textContent = message;
+        feedbackEl.className = isCorrect ? 'feedback-success' : 'feedback-error';
+        feedbackEl.style.display = 'block';
+        setTimeout(() => {
+            feedbackEl.style.display = 'none';
+            feedbackEl.textContent = '';
+        }, 2000);
+    }
+
+    function animateVector3Transfer(callback) {
+        if (!vector3) {
+            callback();
+            return;
+        }
+        const isOrigin = Math.abs(vector3.startRe) < 0.5 && Math.abs(vector3.startIm) < 0.5;
+        if (isOrigin) {
+            callback();
+            return;
+        }
+
+        let t = 0;
+        const duration = 1000;
+        function step() {
+            t += 16;
+            const progress = Math.min(t / duration, 1);
+            const currentStartRe = vector3.startRe * (1 - progress);
+            const currentStartIm = vector3.startIm * (1 - progress);
+            const currentEndRe = vector3.endRe - vector3.startRe * progress;
+            const currentEndIm = vector3.endIm - vector3.startIm * progress;
+
+            render();
+            ctx.save();
+            ctx.beginPath();
+            ctx.strokeStyle = "#00008B";
+            ctx.lineWidth = 3;
+            ctx.setLineDash([5, 3]);
+            ctx.moveTo(origin.x + currentStartRe * scale, origin.y - currentStartIm * scale);
+            ctx.lineTo(origin.x + currentEndRe * scale, origin.y - currentEndIm * scale);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.restore();
+
+            if (progress < 1) {
+                animationId = requestAnimationFrame(step);
+            } else {
+                vector3.startRe = 0;
+                vector3.startIm = 0;
+                vector3.endRe = vector3.endRe - vector3.startRe;
+                vector3.endIm = vector3.endIm - vector3.startIm;
+                vector3.re = vector3.endRe;
+                vector3.im = vector3.endIm;
+                render();
+                animationId = null;
+                callback();
+            }
+        }
+        animationId = requestAnimationFrame(step);
+    }
+
+    function animateVector3Solid() {
+        let t = 0;
+        const duration = 1000;
+        function step() {
+            t += 16;
+            const progress = Math.min(t / duration, 1);
+            render();
+            ctx.save();
+            ctx.beginPath();
+            ctx.strokeStyle = "#00008B";
+            ctx.lineWidth = 3;
+            ctx.setLineDash([5, 3]);
+            ctx.moveTo(origin.x, origin.y);
+            ctx.lineTo(
+                origin.x + vector3.re * scale * progress,
+                origin.y - vector3.im * scale * progress
+            );
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.restore();
+
+            if (progress < 1) {
+                animationId = requestAnimationFrame(step);
+            } else {
+                drawingStep = 'checking';
+                checkSumBtn.classList.add('pulse');
+                checkSumBtn.disabled = false;
+                render();
+                animationId = null;
+            }
+        }
+        animationId = requestAnimationFrame(step);
+    }
+
+    function animateParallelogramFadeOut(callback) {
+        let t = 0;
+        const duration = 1000;
+        function step() {
+            t += 16;
+            const progress = Math.min(t / duration, 1);
+            parallelogramOpacity = 1 - progress;
+            render();
+            if (progress < 1) {
+                animationId = requestAnimationFrame(step);
+            } else {
+                parallelogramOpacity = 0;
+                render();
+                animationId = null;
+                if (callback) callback();
+            }
+        }
+        animationId = requestAnimationFrame(step);
+    }
+
+    function animateCorrectSum() {
+        let t = 0;
+        const duration = 1500;
+        function step() {
+            t += 16;
+            const progress = Math.min(t / duration, 1);
+            render();
+            ctx.save();
+            ctx.beginPath();
+            ctx.strokeStyle = "#FF0000";
+            ctx.lineWidth = 3;
+            ctx.setLineDash([]);
+            ctx.moveTo(origin.x, origin.y);
+            ctx.lineTo(
+                origin.x + (z1.re + z2.re) * scale * progress,
+                origin.y - (z1.im + z2.im) * scale * progress
+            );
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.restore();
+
+            if (progress >= 1) {
+                const isCorrect = vector3 &&
+                    Math.abs(vector1.re - z1.re) <= 0.5 &&
+                    Math.abs(vector1.im - z1.im) <= 0.5 &&
+                    Math.abs(vector2.re - z2.re) <= 0.5 &&
+                    Math.abs(vector2.im - z2.im) <= 0.5 &&
+                    Math.abs(vector3.endRe - (z1.re + z2.re)) <= 0.5 &&
+                    Math.abs(vector3.endIm - (z1.im + z2.im)) <= 0.5;
+                showFeedback(isCorrect ? '✅ Молодець!' : '❌ Сума невірна!', isCorrect);
+                drawingStep = null;
+                checkSumBtn.classList.remove('pulse');
+                checkSumBtn.disabled = true;
+                nextNumbersBtn.disabled = !isCorrect;
+                if (isCorrect) {
+                    animateParallelogramFadeOut(() => {
+                        console.log('Паралелограм зник');
+                    });
+                } else {
+                    render();
+                }
+                animationId = null;
+            } else {
+                animationId = requestAnimationFrame(step);
+            }
+        }
+        animationId = requestAnimationFrame(step);
+    }
+
+    canvas.addEventListener("click", (event) => {
+        if (drawingStep === 'animating' || drawingStep === 'checking' || drawingStep === 'animating_correct') return;
+        const rect = canvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        const point = {
+            re: Math.round((x - origin.x) / scale),
+            im: -Math.round((y - origin.y) / scale)
+        };
+        console.log(`Клік: drawingStep=${drawingStep}, point={re: ${point.re}, im: ${point.im}}`);
+
+        if (drawingStep === 'z1') {
+            vector1 = point;
+            const isCorrect = Math.abs(point.re - z1.re) <= 0.5 && Math.abs(point.im - z1.im) <= 0.5;
+            showFeedback(isCorrect ? '✅ Вірно!' : '❌ Невірно!', isCorrect);
+            if (!isCorrect) {
+                vector1 = null;
+            } else {
+                drawingStep = 'z2';
+            }
+        } else if (drawingStep === 'z2') {
+            vector2 = point;
+            const isCorrect = Math.abs(point.re - z2.re) <= 0.5 && Math.abs(point.im - z2.im) <= 0.5;
+            showFeedback(isCorrect ? '✅ Вірно!' : '❌ Невірно!', isCorrect);
+            if (!isCorrect) {
+                vector2 = null;
+            } else {
+                drawingStep = 'result_start';
+            }
+        } else if (drawingStep === 'result_start') {
+            resultStart = point;
+            vector3 = {
+                startRe: resultStart.re,
+                startIm: resultStart.im,
+                endRe: resultStart.re,
+                endIm: resultStart.im,
+                re: 0,
+                im: 0,
+                isValid: false
+            };
+            drawingStep = 'result_end';
+        } else if (drawingStep === 'result_end') {
+            vector3.endRe = point.re;
+            vector3.endIm = point.im;
+            vector3.re = point.re - vector3.startRe;
+            vector3.im = point.im - vector3.startIm;
+            drawingStep = 'animating';
+            animateVector3Transfer(animateVector3Solid);
+        }
+        render();
+        updateHint();
+    });
+
+    checkSumBtn.addEventListener("click", () => {
+        if (drawingStep !== 'checking') {
+            console.log('checkSumBtn: Кнопка неактивна, drawingStep=', drawingStep);
+            return;
+        }
+        console.log('checkSumBtn: Запуск анімації правильної суми');
+        showCorrectSum = true;
+        drawingStep = 'animating_correct';
+        animateCorrectSum();
+    });
+
+    nextNumbersBtn.addEventListener("click", () => {
+        console.log('nextNumbersBtn: Генерація нових чисел');
+        if (animationId) {
+            cancelAnimationFrame(animationId);
+            animationId = null;
+        }
+        vector1 = null;
+        vector2 = null;
+        vector3 = null;
+        resultStart = null;
+        showCorrectSum = false;
+        parallelogramOpacity = 1;
+        drawingStep = 'z1';
+        checkSumBtn.classList.remove('pulse');
+        checkSumBtn.disabled = true;
+        nextNumbersBtn.disabled = true;
+        feedbackEl.style.display = "none";
+        z1El.classList.remove('rendered');
+        z2El.classList.remove('rendered');
+        generateComplexNumbers();
+        render();
+        updateHint();
+    });
+
+    window.clearCanvas = function() {
+        console.log('clearCanvas: Очищення canvas');
+        if (animationId) {
+            cancelAnimationFrame(animationId);
+            animationId = null;
+            console.log('clearCanvas: Анімацію зупинено');
+        }
+        vector1 = null;
+        vector2 = null;
+        vector3 = null;
+        resultStart = null;
+        showCorrectSum = false;
+        parallelogramOpacity = 1;
+        drawingStep = 'z1';
+        checkSumBtn.classList.remove('pulse');
+        checkSumBtn.disabled = true;
+        nextNumbersBtn.disabled = true;
+        feedbackEl.style.display = "none";
+        feedbackEl.textContent = '';
+        render();
+        updateHint();
+    };
+
+    window.closeExercise = function() {
+        console.log('closeExercise: Перенаправлення');
+        const redirectUrl = "{{ url_for('p4') }}?openExamplesModal=true";
+        try {
+            window.location.href = redirectUrl;
+        } catch (e) {
+            console.error('closeExercise: Помилка перенаправлення:', e);
+            alert('Не вдалося повернутися до списку завдань.');
+        }
+    };
+
+    window.addEventListener('resize', () => {
+        canvasWidth = window.innerWidth <= 768 ? 400 : 600;
+        canvasHeight = canvasWidth;
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+        render();
+    });
+
+    const styleSheet = document.createElement('style');
+    styleSheet.innerText = `
+        .pulse {
+            animation: pulseButton 1s infinite;
+        }
+        @keyframes pulseButton {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }`;
+    document.head.appendChild(styleSheet);
+
+    render();
+    updateHint();
+});
+</script>
+</body>
+</html>
