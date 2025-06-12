@@ -948,23 +948,35 @@ body.loaded {
         align-items: center;
         gap: 15px;
     }
-    .exercise-btn {
-        width: 100%; /* Адаптивна ширина */
+    #examplesModal .exercise-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+
+    #examplesModal .exercise-btn {
+        width: 100%;
         min-width: 400px;
-        height: 150px; /* Зменшуємо висоту */
-        padding: 10px; /* Зменшуємо відступи */
-        
+        height: 150px;
+        padding: 10px;
     }
-     .btn-title {
-        font-size: 18px !important;  /* Менший шрифт заголовка */
+
+    #examplesModal .btn-title {
+        font-size: 22px !important; /* Трохи менший, але більший за попередній */
     }
-    .btn-description {
-        font-size: 16px !important;  /* Менший шрифт опису */
+
+    #examplesModal .btn-description {
+        font-size: 20px !important; /* Трохи менший, але більший за попередній */
         text-align: justify;
     }
-    .math-formula mjx-container {
-  font-size: 16px !important;
-}
+
+    #examplesModal .btn-description .math-formula {
+        font-size: 20px !important;
+    }
+
+    #examplesModal .btn-description mjx-container {
+        font-size: 20px !important;
+    }
 }
 
         @media (max-width: 480px) {
@@ -1183,23 +1195,29 @@ body.loaded {
     overflow: hidden;
     flex-direction: column;
 }
-             .exercise-btn {
+             #examplesModal .exercise-btn {
         width: 90%;
         min-width: 270px;
-        height: 130px; /* Ще менша висота */
-        padding: 8px; /* Ще менші відступи */
-        font-size: clamp(14px, 2vw, 16px);
+        height: 130px;
+        padding: 8px;
     }
-    .btn-title {
-        font-size: 18px !important;  /* Менший шрифт заголовка */
+
+    #examplesModal .btn-title {
+        font-size: 20px !important; /* Збільшений для малих екранів */
     }
-    .btn-description {
-        font-size: 16px !important;  /* Менший шрифт опису */
+
+    #examplesModal .btn-description {
+        font-size: 18px !important; /* Збільшений для малих екранів */
         text-align: justify;
     }
-    .math-formula mjx-container {
-  font-size: 16px !important;
-}
+
+    #examplesModal .btn-description .math-formula {
+        font-size: 18px !important;
+    }
+
+    #examplesModal .btn-description mjx-container {
+        font-size: 18px !important;
+    }
 }
     </style>
 </head> 
