@@ -689,56 +689,60 @@ body.loaded {
     justify-content: center;
     gap: 20px;
    }
-
-.exercise-btn {
+/* Стилі для кнопок вправ у #examplesModal */
+#examplesModal .exercise-btn {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 700px; /* Збільшуємо ширину кнопки */
-    height: 120px; /* Збільшуємо висоту кнопки */
+    width: 700px;
+    height: 120px;
     padding: 15px;
-    background-color: #008080; /* Колір фону кнопки */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Тінь для глибини */
-    transition: transform 0.2s, box-shadow 0.2s; /* Плавна анімація */
+    background-color: #008080;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s, box-shadow 0.2s;
     border: none;
-    border-radius: 12px; /* Закруглені кути */
+    border-radius: 12px;
     cursor: pointer;
     text-align: center;
-    margin: 10px; /* Відступ між кнопками */
+    margin: 10px;
 }
 
-.exercise-btn:hover {
-    transform: translateY(-2px); /* Легке підняття при наведенні */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Посилена тінь */
-    background: linear-gradient(135deg, #45a049, #4CAF50); /* Зміна градієнта */
+#examplesModal .exercise-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(135deg, #45a049, #4CAF50);
 }
 
-
-.btn-title {
-    font-size: 24px !important;  /* Більший шрифт для заголовка */
-    font-weight: 700; /* Жирний шрифт */
-    color: #FFF5EE; /* Білий колір тексту */
-    margin: 0 0 10px 0; /* Відступ знизу */
+#examplesModal .btn-title {
+    font-size: 24px !important; /* Збільшений шрифт для заголовка */
+    font-weight: 700;
+    color: #FFF5EE;
+    margin: 0 0 10px 0;
     text-align: center;
-    font-family: 'Arial', sans-serif; /* Сучасний шрифт */
+    font-family: 'Arial', sans-serif;
 }
 
-.btn-description {
-   font-size: 20px !important; /* Забезпечує пріоритет */
-    color: #FFFFE0; /* Легкий сірувато-білий для контрасту */
+#examplesModal .btn-description {
+    font-size: 22px !important; /* Збільшений шрифт для опису */
+    color: #FFFFE0;
     margin: 0;
     text-align: center;
     font-family: 'Arial', sans-serif;
 }
-.btn-description .math-formula {
-    font-size: 22px; /* Для формул всередині */
-     font-style: italic;
-            color: #ffff00;
+
+#examplesModal .btn-description .math-formula {
+    font-size: 22px !important; /* Збільшений шрифт для формул у тексті */
+    font-style: italic;
+    color: #ffff00;
 }
-.btn-description mjx-container {
-    font-size: 22px !important; /* Для MathJax формул */
+
+#examplesModal .btn-description mjx-container {
+    font-size: 22px !important; /* Збільшений шрифт для MathJax формул */
+    color: #ffff00 !important;
+    font-style: italic !important;
 }
+
         @media (max-width: 768px) {
  .figure-1-1 {
         width: 200px;
