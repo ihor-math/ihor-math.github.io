@@ -259,7 +259,7 @@ document.addEventListener("DOMContentLoaded", () => {
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
     const origin = { x: canvasWidth / 2, y: canvasHeight / 2 };
-    const scale = window.innerWidth <= 768 ? 20 : 25;
+    let scale = window.innerWidth <= 768 ? 20 : 25;
 
     let z1, z2;
     function generateComplexNumbers() {
@@ -291,6 +291,7 @@ document.addEventListener("DOMContentLoaded", () => {
             z2El.classList.add('rendered');
         }
     }
+
     generateComplexNumbers();
 
     let vector1 = null, vector2 = null, vectorNegZ2 = null, vector3 = null;
