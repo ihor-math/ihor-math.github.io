@@ -340,6 +340,11 @@ body.loaded {
             padding: 10px;
             border-radius: 6px;
         }
+            #questionsModal mjx-container {
+    color: #FFFF00 !important;
+    font-style: italic;
+    font-size: 20px !important;
+}
         .trainer-container {
             width: 90%;
             max-width: 800px;
@@ -406,7 +411,7 @@ body.loaded {
             border: 1.5px solid #a855f7;
             border-radius: 10px;
             background: #ffedd5;
-            cursor: pointer;
+            cursor: #052419;
             transition: background 0.3s, transform 0.2s;
             font-size: clamp(13px, 2.1vw, 15px);
             line-height: 1.4;
@@ -420,10 +425,19 @@ body.loaded {
             background: #fed7aa;
             transform: scale(1.03);
         }
+            
         .option.selected {
-            background: #fdba74;
-            border-color: #a855f7;
-        }
+    background-color: #FFFF00 !important; /* Жовтий фон для вибраного */
+    color: #000000 !important; /* Чорний текст для контрасту */
+    border: 2px solid #FFD700 !important; /* Темніша жовта рамка */
+    font-weight: bold; /* Жирний текст */
+}
+
+.option:focus {
+    outline: 2px solid #FFD700; /* Фокус для доступності */
+    outline-offset: 2px;
+}
+            
         button {
             background-color: #fb7185;
             color: #ffffff;
@@ -480,7 +494,7 @@ body.loaded {
             font-size: clamp(16px, 2.8vw, 18px);
             margin: 5px 0;
             line-height: 1.4;
-            color: #a855f7;
+            color: #6d351a;
             font-family: 'Roboto', sans-serif;
         }
         mjx-container.math-notation-centered {
@@ -490,7 +504,7 @@ body.loaded {
             white-space: nowrap !important;
             line-height: 1.4 !important;
             font-size: clamp(16px, 2.8vw, 18px) !important;
-            color: #a855f7 !important;
+            color: #052419 !important;
             margin: 5px auto !important;
             padding: 0 !important;
         }
@@ -675,7 +689,7 @@ body.loaded {
             color: #4b1a6b;
             font-weight: 700;
             font-family: 'Lora', serif;
-            font-size: clamp(14px, 2.5vw, 16px);
+            font-size: clamp(16px, 2.8vw, 18px);
             line-height: 1.4;
             width: 100%;
         }
@@ -742,6 +756,56 @@ body.loaded {
     font-size: 24px !important; /* Збільшений шрифт для MathJax формул */
     color: #ffff00 !important;
     font-style: italic !important;
+}
+
+    /* Питання */
+#trainerModal .math-notation-centered {
+    font-size: clamp(18px, 3vw, 20px);
+    color: #490849;
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.5;
+    text-align: center;
+    margin: 5px 0;
+}
+       
+
+/* Формули в питаннях */
+#trainerModal .math-notation-centered mjx-container {
+    font-size: clamp(18px, 3vw, 20px) !important;
+    color: #92000a !important; /* Темно-червоний колір для формул */
+    font-style: italic !important;
+    display: inline-block !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+    margin: 5px auto !important;
+}
+
+/* Варіанти відповідей */
+#trainerModal .option {
+    font-size: clamp(18px, 3vw, 20px);
+    color: #5c0a0a;
+    font-family: 'Lora', serif;
+    background: #ffedd5;
+    padding: 1.8vw 2.8vw;
+    border: 1.5px solid #a855f7;
+    border-radius: 10px;
+    text-align: center;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    flex: 1 1 auto;
+    min-width: 150px;
+    max-width: 70%;
+}
+            .canvas-container {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+#complexPlaneCanvas {
+    border: 1px solid #a855f7;
+    border-radius: 5px;
+    background-color: #ffffff;
 }
             @media (max-width: 768px) {
  .figure-1-1 {
@@ -867,10 +931,10 @@ body.loaded {
                 padding: 4vw;
             }
             .question-circle, .completion-emoji {
-                width: 20vw;
-                height: 20vw;
-                min-width: 70px;
-                min-height: 70px;
+                width: 25vw;
+                height: 25vw;
+                min-width: 80px;
+                min-height: 80px;
             }
             .question-circle h3 {
                 font-size: clamp(14px, 3vw, 16px);
@@ -883,6 +947,12 @@ body.loaded {
                 flex-direction: column;
                 align-items: center;
             }
+             #questionsModal mjx-container {
+    color: #FFFF00 !important;
+    font-style: italic;
+    font-size: 15px !important;
+}
+
             .option {
                 padding: 2.2vw 3.2vw;
                 font-size: clamp(11px, 2.6vw, 13px);
@@ -976,6 +1046,16 @@ body.loaded {
 
     #examplesModal .btn-description mjx-container {
         font-size: 20px !important;
+    }
+    #complexPlaneCanvas {
+        width: 200px;
+        height: 200px;
+    }
+     #trainerModal .option {
+        font-size: clamp(18px, 2.8vw, 20px); /* Збільшено шрифт для мобільних */
+        padding: 4vw 5vw;
+        max-width: 95%; /* Максимально використовуємо доступний простір */
+        min-width: 120px;
     }
 }
 
@@ -1223,9 +1303,18 @@ body.loaded {
     mjx-container {
         font-size: inherit !important; /* Спадкування розміру шрифту від батьківського елемента */
     }
+     #complexPlaneCanvas {
+        width: 150px;
+        height: 150px;
+    }
+      #trainerModal .option {
+        font-size: clamp(16px, 2.8vw, 18px); /* Збільшено шрифт для маленьких екранів */
+        padding: 3vw 4vw;
+        max-width: 98%; /* Залишаємо більше простору */
+        min-width: 100px;
+    }
 }
-    </style>      
-        
+    </style>
 </head> 
 <body>
     <div class="title-box">
@@ -1256,13 +1345,13 @@ body.loaded {
     </div>
 
     <div class="navigation-buttons">
-               <a class="nav-button" href='tema1.html'>
+        <a class="nav-button" href='tema1.html'>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                 <path d="M15 18l-6-6 6-6"/>
             </svg>
             До теми 1
         </a>
-                             <a class="nav-button" href='index.html'>
+       <a class="nav-button" href='index.html'>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                 <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
             </svg>
@@ -1405,45 +1494,54 @@ body.loaded {
         </div>
     </div>
 
-    <div id="questionsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="questionsTitle">
-        <div class="modal-header">
-            <button class="close-btn" id="closeQuestionsBtn" aria-label="Закрити">× Закрити</button>
+   <div id="questionsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="questionsTitle">
+    <div class="modal-header">
+        <button class="close-btn" id="closeQuestionsBtn" aria-label="Закрити">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <h2 style="text-align: center; color: #1e3a8a;">Питання і відповіді</h2>
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>Як називається площина, на якій зображуються комплексні числа?</span>
+                </div>
+                <div class="card-back">
+                    <span>Площину, на якій комплексним числам відповідають точки, називають комплексною площиною. На цій площині кожному комплексному числу \( z = a + bi \) відповідає точка з координатами \( (a; b) \), і навпаки — кожній точці \( (a; b) \) відповідає комплексне число \( z = a + bi \).</span>
+                </div>
+            </div>
         </div>
-        <div class="modal-content">
-            <h2 style="text-align: center; color: #1e3a8a;">Питання і відповіді</h2>
-            <div class="question-card">
-                <div class="card-inner">
-                    <div class="card-front">
-                        <span>Що таке комплексна площина?</span>
-                    </div>
-                    <div class="card-back">
-                        <span>Комплексна площина — це двовимірна площина, на якій зображують комплексні числа. Горизонтальна вісь (Ox) є дійсною віссю, де відкладається дійсна частина числа \( a \), а вертикальна вісь (Oy) — уявною, де відкладається уявна частина \( b \). Кожному комплексному числу \( z = a + bi \) відповідає точка з координатами \( (a, b) \).</span>
-                    </div>
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>Як називаються вісь абсцис і вісь ординат на комплексній площині?</span>
+                </div>
+                <div class="card-back">
+                    <span>На комплексній площині горизонтальна вісь \( Ox \) називається дійсною віссю, оскільки на ній відкладається дійсна частина комплексного числа. Вертикальна вісь \( Oy \) називається уявною віссю, оскільки на ній відкладається уявна частина комплексного числа. Таким чином, абсциса  — це дійсна частина \( a \), а ордината — це уявна частина \( b \) у записі \( z = a + bi \).</span>
                 </div>
             </div>
-            <div class="question-card">
-                <div class="card-inner">
-                    <div class="card-front">
-                        <span>Як геометрично інтерпретувати додавання комплексних чисел?</span>
-                    </div>
-                    <div class="card-back">
-                        <span>Додавання комплексних чисел \( z_1 = a_1 + b_1i \) і \( z_2 = a_2 + b_2i \) відповідає додаванню їхніх векторів на комплексній площині за правилом паралелограма. Сума \( z_1 + z_2 \) — це вектор, координати якого дорівнюють \( (a_1 + a_2, b_1 + b_2) \).</span>
-                    </div>
+        </div>
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>Як геометрично зображується комплексне число на комплексній площині?</span>
+                </div>
+                <div class="card-back">
+                    <span>Комплексне число \( z = a + bi \) геометрично зображується як точка \( M(a; b) \) або радіус-вектор, що починається в початку координат \( O(0; 0) \) і закінчується в точці \( M(a; b) \). Це означає, що кожному комплексному числу відповідає певний вектор \( \overrightarrow{OM} \), і навпаки — кожному такому вектору відповідає єдине комплексне число.</span>
                 </div>
             </div>
-            <div class="question-card">
-                <div class="card-inner">
-                    <div class="card-front">
-                        <span>Як знайти модуль комплексного числа?</span>
-                    </div>
-                    <div class="card-back">
-                        <span>Модуль комплексного числа \( z = a + bi \) обчислюється як відстань від початку координат до точки \( (a, b) \) на комплексній площині: \( |z| = \sqrt{a^2 + b^2} \).</span>
-                    </div>
+        </div>
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>Як геометрично зображуються додавання та віднімання комплексних чисел на комплексній площині?</span>
+                </div>
+                <div class="card-back">
+                    <span>Додавання комплексних чисел \( z_1 \) і \( z_2 \) зображується як побудова паралелограма: якщо два комплексні числа подати як радіус-вектори, то вектор, що відповідає їхній сумі, є діагоналлю паралелограма, побудованого на цих двох векторах. Віднімання \( z_1 - z_2 \) зображується як вектор, проведений від кінця вектора \( z_2 \) до кінця вектора \( z_1 \). Альтернативно, можна зобразити число \( -z_2 \) і додати його до \( z_1 \) за правилом паралелограма.</span>
                 </div>
             </div>
         </div>
     </div>
-
+</div>
     <div id="trainerModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="trainerTitle">
         <div class="modal-header">
             <button class="close-btn" id="closeTrainerBtn" aria-label="Закрити">× Закрити</button>
@@ -1490,35 +1588,35 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     const elements = {
-    openTheoryBtn: document.getElementById('openTheoryBtn'),
-    openVideoBtn: document.getElementById('openVideoBtn'),
-    openQuestionsBtn: document.getElementById('openQuestionsBtn'),
-    openTrainerBtn: document.getElementById('openTrainerBtn'),
-    openExamplesBtn: document.getElementById('openExamplesBtn'),
-    theoryModal: document.getElementById('theoryModal'),
-    videoModal: document.getElementById('videoModal'),
-    questionsModal: document.getElementById('questionsModal'),
-    trainerModal: document.getElementById('trainerModal'),
-    examplesModal: document.getElementById('examplesModal'),
-    videoPlayerModal1: document.getElementById('videoPlayerModal1'),
-    videoPlayerModal2: document.getElementById('videoPlayerModal2'),
-    videoPlayerModal3: document.getElementById('videoPlayerModal3'),
-    videoPlayerModal4: document.getElementById('videoPlayerModal4'),
-    closeTheoryBtn: document.getElementById('closeTheoryBtn'),
-    closeVideoBtn: document.getElementById('closeVideoBtn'),
-    closeQuestionsBtn: document.getElementById('closeQuestionsBtn'),
-    closeTrainerBtn: document.getElementById('closeTrainerBtn'),
-    closeExamplesBtn: document.getElementById('closeExamplesBtn'),
-    closeVideoPlayerBtn1: document.getElementById('closeVideoPlayerBtn1'),
-    closeVideoPlayerBtn2: document.getElementById('closeVideoPlayerBtn2'),
-    closeVideoPlayerBtn3: document.getElementById('closeVideoPlayerBtn3'),
-    closeVideoPlayerBtn4: document.getElementById('closeVideoPlayerBtn4'),
-    exercise1Btn: document.getElementById('exercise1Btn'),
-    exercise2Btn: document.getElementById('exercise2Btn'),
-    exercise3Btn: document.getElementById('exercise3Btn'),
-    exercise4Btn: document.getElementById('exercise4Btn'),
-    modalOverlay: document.getElementById('modalOverlay')
-};
+        openTheoryBtn: document.getElementById('openTheoryBtn'),
+        openVideoBtn: document.getElementById('openVideoBtn'),
+        openQuestionsBtn: document.getElementById('openQuestionsBtn'),
+        openTrainerBtn: document.getElementById('openTrainerBtn'),
+        openExamplesBtn: document.getElementById('openExamplesBtn'),
+        theoryModal: document.getElementById('theoryModal'),
+        videoModal: document.getElementById('videoModal'),
+        questionsModal: document.getElementById('questionsModal'),
+        trainerModal: document.getElementById('trainerModal'),
+        examplesModal: document.getElementById('examplesModal'),
+        videoPlayerModal1: document.getElementById('videoPlayerModal1'),
+        videoPlayerModal2: document.getElementById('videoPlayerModal2'),
+        videoPlayerModal3: document.getElementById('videoPlayerModal3'),
+        videoPlayerModal4: document.getElementById('videoPlayerModal4'),
+        closeTheoryBtn: document.getElementById('closeTheoryBtn'),
+        closeVideoBtn: document.getElementById('closeVideoBtn'),
+        closeQuestionsBtn: document.getElementById('closeQuestionsBtn'),
+        closeTrainerBtn: document.getElementById('closeTrainerBtn'),
+        closeExamplesBtn: document.getElementById('closeExamplesBtn'),
+        closeVideoPlayerBtn1: document.getElementById('closeVideoPlayerBtn1'),
+        closeVideoPlayerBtn2: document.getElementById('closeVideoPlayerBtn2'),
+        closeVideoPlayerBtn3: document.getElementById('closeVideoPlayerBtn3'),
+        closeVideoPlayerBtn4: document.getElementById('closeVideoPlayerBtn4'),
+        exercise1Btn: document.getElementById('exercise1Btn'),
+        exercise2Btn: document.getElementById('exercise2Btn'),
+        exercise3Btn: document.getElementById('exercise3Btn'),
+        exercise4Btn: document.getElementById('exercise4Btn'),
+        modalOverlay: document.getElementById('modalOverlay')
+    };
 
     // Перевірка URL-параметра для автоматичного відкриття examplesModal
     const urlParams = new URLSearchParams(window.location.search);
@@ -1528,20 +1626,18 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log('✅ Відкривається #examplesModal');
             toggleModal(elements.examplesModal, true);
             window.history.replaceState({}, document.title, window.location.pathname);
-            finalizePageLoad(); // Показуємо сторінку після відкриття модального вікна
+            finalizePageLoad();
         } else {
             console.error('Помилка: Елемент #examplesModal не знайдено');
             alert('Помилка: Не вдалося відкрити модальне вікно вправ.');
-            finalizePageLoad(); // Показуємо сторінку у разі помилки
+            finalizePageLoad();
         }
     } else {
-        finalizePageLoad(); // Показуємо сторінку, якщо модальне вікно не відкривається
+        finalizePageLoad();
     }
-
 
     let youtubeApiReady = false;
     let player1, player2, player3, player4;
-
     const videoIds = {
         '1': 'QMw45uwT7Uo',
         '2': '09iwX4swKAk',
@@ -1549,86 +1645,487 @@ document.addEventListener('DOMContentLoaded', function () {
         '4': '6HQBlrl7Cdw'
     };
 
-    const questions = [
-        [
-            { type: 'multiple', question: 'Який модуль комплексного числа \\( z = 3 + 4i \\)?', options: ['\\(5\\)', '\\(7\\)', '\\(3\\)', '\\(4\\)'], correct: '\\(5\\)' },
-            { type: 'multiple', question: 'Який модуль комплексного числа \\( z = -2 + i \\)?', options: ['\\(2\\)', '\\(\\sqrt{5}\\)','\\(3\\)', '\\(\\sqrt{3}\\)'], correct: '\\(\\sqrt{5}\\)' },
-            { type: 'multiple', question: 'Який модуль комплексного числа \\( z = 1 - i \\)?', options: ['\\(1\\)', '\\(\\sqrt{2}\\)','\\(2\\)', '\\(\\sqrt{3}\\)'], correct: '\\(\\sqrt{2}\\)' }
-        ],
-        [
-            { type: 'multiple', question: 'Який аргумент комплексного числа \\( z = 1 + i \\)?', options: ['\\(\\frac{\pi}{4}\\)', '\\(\\frac{\pi}{2}\\)', '\\(\\frac{\pi}{3}\\)', '\\(0\\)'], correct: '\\(\\frac{\pi}{4}\\)'},
-            { type: 'multiple', question: 'Який аргумент комплексного числа \\( z = -1 + i \\)?', options: ['\\(\\frac{\pi}{4}\\)', '\\(\\frac{3\pi}{4}\\)', '\\(\\pi\\)', '\\(\\frac{\pi}{2}\\)' ], correct: '\\(\\frac{3\pi}{4}\\) '},
-            { type: 'multiple', question: 'Який аргумент комплексного числа \\( z = -1 - i \\)?', options: ['\\(-\\frac{\pi}{4}\\)', '\\(\\frac{5\pi}{4}\\)', '\\(-\\frac{3\pi}{4}\\)', '\\(\\pi\\)'], correct: '\\(-\\frac{3\pi}{4}\\)' }
-        ],
-        [
-            { type: 'input', question: 'Знайти модуль комплексного числа \\( z = 5 + 12i \\).', correct: '13' },
-            { type: 'input', question: 'Знайти модуль комплексного числа \\( z = -3 - 4i \\).', correct: '5' },
-            { type: 'input', question: 'Знайти модуль комплексного числа \\( z = 8 \\).', correct: '8' }
-        ],
-        [
-            { type: 'input_two_fields', question: 'Записати комплексне число \\( z = -2 + 2i \\) у полярній формі. Ввести модуль \\( r \\) та аргумент \\( \\theta \\) (у радіанах).', correct: ['\\(\\sqrt{8}\\)', '\\(\\frac{3\pi}{4}\\)'] },
-            { type: 'input_two_fields', question: 'Записати комплексне число \\( z = 1 - i \\) у полярній формі. Ввести модуль \\( r \\) та аргумент \\( \\theta \\) (у радіанах).', correct: ['\\(\\sqrt{2}\\)', '\\(-\\frac{\pi}{4}\\)'] },
-            { type: 'input_two_fields', question: 'Записати комплексне число \\( z = \\sqrt{3} + i \\) у полярній формі. Ввести модуль \\( r \\) та аргумент \\( \\theta \\) (у радіанах).', correct: ['2', '\\(\\frac{\pi}{6}\\)'] }
-        ]
-    ];
-
+    // Змінні для тренажера
     let currentGroupIndex = 0;
-    let selectedVariants = [];
     let score = 0;
+    let currentQuestion = null;
 
+    // Функція для генерації випадкового цілого числа в межах [min, max]
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    // Функція для форматування комплексного числа у LaTeX
+    function formatComplexNumber(a, b) {
+        if (b === 0) return `${a}`;
+        if (a === 0) return b === 1 ? `i` : b === -1 ? `-i` : `${b}i`;
+        if (b === 1) return `${a} + i`;
+        if (b === -1) return `${a} - i`;
+        return `${a} ${b > 0 ? '+' : '-'} ${Math.abs(b)}i`;
+    }
+
+    // Функція для перемішування масиву
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    // Функція для малювання системи координат із точкою M
+   function drawComplexPlane(canvasId, pointX, pointY, isVector = false) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+
+    // Очистка полотна
+    ctx.clearRect(0, 0, width, height);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, width, height);
+
+    // Налаштування масштабу (1 одиниця = 20 пікселів)
+    const scale = 20;
+    const originX = width / 2;
+    const originY = height / 2;
+
+    // Малювання сітки
+    ctx.beginPath();
+    ctx.strokeStyle = '#d3d3d3'; // Світло-сірий колір
+    ctx.lineWidth = 0.5;
+    for (let i = -5; i <= 5; i++) {
+        ctx.moveTo(originX + i * scale, 0);
+        ctx.lineTo(originX + i * scale, height);
+    }
+    for (let i = -5; i <= 5; i++) {
+        ctx.moveTo(0, originY - i * scale);
+        ctx.lineTo(width, originY - i * scale);
+    }
+    ctx.stroke();
+
+    // Малювання осей
+    ctx.beginPath();
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = 2;
+    ctx.moveTo(0, originY);
+    ctx.lineTo(width, originY);
+    ctx.moveTo(originX, 0);
+    ctx.lineTo(originX, height);
+    ctx.stroke();
+
+    // Малювання стрілок
+    ctx.beginPath();
+    ctx.moveTo(width - 10, originY - 5);
+    ctx.lineTo(width, originY);
+    ctx.lineTo(width - 10, originY + 5);
+    ctx.moveTo(originX - 5, 10);
+    ctx.lineTo(originX, 0);
+    ctx.lineTo(originX + 5, 10);
+    ctx.fillStyle = '#000000';
+    ctx.fill();
+
+    // Мітки на осях
+    ctx.font = '14px Arial';
+    ctx.fillStyle = '#000000';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    for (let i = -5; i <= 5; i++) {
+        if (i !== 0) {
+            ctx.fillText(i, originX + i * scale, originY + 5);
+            ctx.beginPath();
+            ctx.moveTo(originX + i * scale, originY - 3);
+            ctx.lineTo(originX + i * scale, originY + 3);
+            ctx.stroke();
+        }
+    }
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    for (let i = -5; i <= 5; i++) {
+        if (i !== 0) {
+            ctx.fillText(i, originX - 5, originY - i * scale);
+            ctx.beginPath();
+            ctx.moveTo(originX - 3, originY - i * scale);
+            ctx.lineTo(originX + 3, originY - i * scale);
+            ctx.stroke();
+        }
+    }
+
+    // Позначки x, y
+    ctx.textAlign = 'left';
+    ctx.fillText('x', width - 15, originY + 15);
+    ctx.textAlign = 'center';
+    ctx.fillText('y', originX + 15, 15);
+
+    if (isVector) {
+        // Малювання вектора
+        const endX = originX + pointX * scale;
+        const endY = originY - pointY * scale;
+        ctx.beginPath();
+        ctx.strokeStyle = '#ff0000';
+        ctx.lineWidth = 2;
+        ctx.moveTo(originX, originY);
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+
+        // Малювання стрілки на кінці вектора
+        const angle = Math.atan2(-pointY, pointX);
+        const arrowSize = 8;
+        ctx.beginPath();
+        ctx.moveTo(endX, endY);
+        ctx.lineTo(
+            endX - arrowSize * Math.cos(angle + Math.PI / 6),
+            endY - arrowSize * Math.sin(angle + Math.PI / 6)
+        );
+        ctx.moveTo(endX, endY);
+        ctx.lineTo(
+            endX - arrowSize * Math.cos(angle - Math.PI / 6),
+            endY - arrowSize * Math.sin(angle - Math.PI / 6)
+        );
+        ctx.stroke();
+
+        // Позначка "z" біля кінця вектора
+        ctx.fillStyle = '#ff0000';
+        ctx.fillText('z', endX + 10, endY - 10);
+    } else {
+        // Малювання точки M (для третього питання)
+        ctx.beginPath();
+        ctx.arc(originX + pointX * scale, originY - pointY * scale, 4, 0, 2 * Math.PI);
+        ctx.fillStyle = '#ff0000';
+        ctx.fill();
+        ctx.fillText('M', originX + pointX * scale + 10, originY - pointY * scale - 10);
+    }
+}
+
+    // Функція для генерації питання та варіантів відповідей
+   function generateQuestion(groupIndex) {
+    let a = getRandomInt(-5, 5);
+    let b = getRandomInt(-5, 5);
+    // Уникаємо тривіальних випадків (a = b, a = 0, b = 0) для питань 1–3
+    if (groupIndex <= 2) {
+        while (a === b || a === 0 || b === 0) {
+            a = getRandomInt(-5, 5);
+            b = getRandomInt(-5, 5);
+        }
+    } else {
+        // Для питань 4–5 уникаємо вектора (0; 0)
+        while (a === 0 && b === 0) {
+            a = getRandomInt(-5, 5);
+            b = getRandomInt(-5, 5);
+        }
+    }
+
+    // Лог для діагностики
+    console.log(`Generating question ${groupIndex + 1} with a=${a}, b=${b}`);
+
+    if (groupIndex === 0) {
+        const correctAnswer = `\\((${a}; ${b})\\)`;
+        const optionsSet = new Set([correctAnswer]);
+        const possibleOptions = [
+            `\\((${b}; ${a})\\)`,
+            `\\((${a}; ${-b})\\)`,
+            `\\(${a === 1 ? '(-1; ' : '(1; '}${b})\\)`
+        ];
+        // Додаємо унікальні варіанти
+        for (let opt of possibleOptions) {
+            if (!optionsSet.has(opt)) {
+                optionsSet.add(opt);
+            }
+        }
+        const options = Array.from(optionsSet);
+        console.log('Question 1 options:', options);
+        shuffleArray(options);
+        return {
+            type: 'multiple',
+            question: `Задано комплексне число \\( z = ${formatComplexNumber(a, b)} \\). Знайти координати точки на площині \\( xOy \\), які відповідають числу \\( z \\).`,
+            options: options,
+            correct: correctAnswer
+        };
+    } else if (groupIndex === 1) {
+        const correctAnswer = `\\(${formatComplexNumber(a, b)}\\)`;
+        const optionsSet = new Set([correctAnswer]);
+        const possibleOptions = [
+            `\\(${formatComplexNumber(b, a)}\\)`,
+            `\\(${formatComplexNumber(a, -b)}\\)`,
+            `\\(${formatComplexNumber(-a, b)}\\)`
+        ];
+        for (let opt of possibleOptions) {
+            if (!optionsSet.has(opt)) {
+                optionsSet.add(opt);
+            }
+        }
+        const options = Array.from(optionsSet);
+        console.log('Question 2 options:', options);
+        shuffleArray(options);
+        return {
+            type: 'multiple',
+            question: `Яке комплексне число відповідає точці \\( (${a}; ${b}) \\) на комплексній площині?`,
+            options: options,
+            correct: correctAnswer
+        };
+    } else if (groupIndex === 2) {
+        const correctAnswer = `\\(${formatComplexNumber(a, b)}\\)`;
+        const optionsSet = new Set([correctAnswer]);
+        const possibleOptions = [
+            `\\(${formatComplexNumber(b, a)}\\)`,
+            `\\(${formatComplexNumber(a, -b)}\\)`,
+            `\\(${formatComplexNumber(-a, b)}\\)`
+        ];
+        for (let opt of possibleOptions) {
+            if (!optionsSet.has(opt)) {
+                optionsSet.add(opt);
+            }
+        }
+        const options = Array.from(optionsSet);
+        console.log('Question 3 options:', options);
+        shuffleArray(options);
+        return {
+            type: 'multiple',
+            question: `Вказати, якому комплексному числу відповідає точка \\( M \\), зображена на рисунку:`,
+            options: options,
+            correct: correctAnswer,
+            point: { x: a, y: b }
+        };
+    } else if (groupIndex === 3) {
+        // Питання про суму z1 + z2
+        const c = getRandomInt(-3, 3);
+        const d = getRandomInt(-3, 3);
+        const z1 = formatComplexNumber(c, d);
+        const z2 = formatComplexNumber(a - c, b - d); // z1 + z2 = a + bi
+        const correctAnswer = `\\(z_1 = ${z1}, z_2 = ${z2}\\)`;
+        const optionsSet = new Set([correctAnswer]);
+        const possibleOptions = [
+            `\\(z_1 = ${formatComplexNumber(c, d)}, z_2 = ${formatComplexNumber(-a + c, b - d)}\\)` , // Дає (-a; b)
+            `\\(z_1 = ${formatComplexNumber(c, d)}, z_2 = ${formatComplexNumber(a - c, -b + d)}\\)` , // Дає (a; -b)
+            `\\(z_1 = ${formatComplexNumber(-c, -d)}, z_2 = ${formatComplexNumber(-a + c, -b + d)}\\)` // Дає (-a; -b)
+        ];
+        for (let opt of possibleOptions) {
+            if (!optionsSet.has(opt)) {
+                optionsSet.add(opt);
+            }
+        }
+        const options = Array.from(optionsSet);
+        console.log('Question 4 options:', options);
+        shuffleArray(options);
+        return {
+            type: 'multiple',
+            question: `На рисунку показано вектор, що відповідає сумі двох комплексних чисел. Оберіть правильну пару чисел, які при додаванні утворюють цей вектор:`,
+            options: options,
+            correct: correctAnswer,
+            vector: { x: a, y: b }
+        };
+    } else {
+        // Питання про різницю z2 - z1
+        const c = getRandomInt(-3, 3);
+        const d = getRandomInt(-3, 3);
+        const z1 = formatComplexNumber(c, d);
+        const z2 = formatComplexNumber(a + c, b + d); // z2 - z1 = a + bi
+        const correctAnswer = `\\(z_1 = ${z1}, z_2 = ${z2}\\)`;
+        const optionsSet = new Set([correctAnswer]);
+        const possibleOptions = [
+            `\\(z_1 = ${formatComplexNumber(c, d)}, z_2 = ${formatComplexNumber(a + c, -b - d)}\\)` , // Дає (a; -b)
+            `\\(z_1 = ${formatComplexNumber(c, d)}, z_2 = ${formatComplexNumber(-a + c, b + d)}\\)` , // Дає (-a; b)
+            `\\(z_1 = ${formatComplexNumber(-c, -d)}, z_2 = ${formatComplexNumber(-a - c, -b - d)}\\)` // Дає (-a; -b)
+        ];
+        for (let opt of possibleOptions) {
+            if (!optionsSet.has(opt)) {
+                optionsSet.add(opt);
+            }
+        }
+        const options = Array.from(optionsSet);
+        console.log('Question 5 options:', options);
+        shuffleArray(options);
+        return {
+            type: 'multiple',
+            question: `На комплексній площині показано вектор різниці \\( z_2 - z_1 \\). Оберіть таку пару комплексних чисел, щоб їх різниця відповідала цьому вектору:`,
+            options: options,
+            correct: correctAnswer,
+            vector: { x: a, y: b }
+        };
+    }
+}
+    // Функція завантаження питання
+    function loadQuestion() {
+    const trainerContent = document.getElementById('trainerContent');
+    if (!trainerContent) {
+        console.error('trainerContent not found');
+        return;
+    }
+
+    if (currentGroupIndex >= 5) {
+        trainerContent.innerHTML = `
+            <div class="completion-emoji"></div>
+            <div class="completion-message">
+                <h2>Тренування завершено!</h2>
+                <p>Молодець!</p>
+                <button id="resetTrainerBtn">Спробувати ще раз</button>
+            </div>`;
+        typesetMathJax();
+
+        const resetButton = document.getElementById('resetTrainerBtn');
+        if (resetButton) {
+            resetButton.addEventListener('click', () => {
+                console.log('Reset button clicked');
+                resetTrainer();
+            });
+        } else {
+            console.error('Reset button not found');
+        }
+        return;
+    }
+
+    currentQuestion = generateQuestion(currentGroupIndex);
+    let contentHtml = `
+        <div class="question-circle"><h3>Питання ${currentGroupIndex + 1}</h3></div>
+        <div class="math-notation-centered">${currentQuestion.question}</div>
+    `;
+
+    // Додаємо Canvas для третього, четвертого і п’ятого питань
+    if (currentGroupIndex === 2 || currentGroupIndex === 3 || currentGroupIndex === 4) {
+        contentHtml += `
+            <div class="canvas-container">
+                <canvas id="complexPlaneCanvas" width="250" height="250"></canvas>
+            </div>
+        `;
+    }
+
+    if (currentQuestion.type === 'multiple') {
+        contentHtml += `
+            <div class="options-container">
+                ${currentQuestion.options.map(opt => `
+                    <div class="option" data-value="${opt.replace(/\\\(|\s*\\\)/g, '')}" role="button" aria-label="Вибір відповіді: ${opt}">${opt}</div>
+                `).join('')}
+            </div>
+            <button id="submitAnswer" disabled>Відповісти</button>
+        `;
+    }
+
+    contentHtml += `<div class="result"></div>`;
+    trainerContent.innerHTML = contentHtml;
+
+    // Малюємо систему координат
+    if (currentGroupIndex === 2 && currentQuestion.point) {
+        drawComplexPlane('complexPlaneCanvas', currentQuestion.point.x, currentQuestion.point.y, false);
+    } else if ((currentGroupIndex === 3 || currentGroupIndex === 4) && currentQuestion.vector) {
+        drawComplexPlane('complexPlaneCanvas', currentQuestion.vector.x, currentQuestion.vector.y, true);
+    }
+
+    // Прив’язка обробників для варіантів відповіді
+    document.querySelectorAll('.option').forEach(option => {
+        option.addEventListener('click', () => {
+            const value = option.dataset.value;
+            selectOption(option, value);
+        });
+    });
+
+    // Прив’язка обробника для кнопки "Відповісти"
+    const submitButton = document.getElementById('submitAnswer');
+    if (submitButton && currentQuestion.type === 'multiple') {
+        submitButton.disabled = true; // Ініціалізація як неактивна
+        console.log('Submit button initialized as disabled');
+        submitButton.addEventListener('click', () => checkAnswer(document.querySelector('.option.selected')?.dataset?.value));
+    }
+
+    typesetMathJax();
+}
+    // Функція перевірки відповіді
+    function checkAnswer(selectedValue) {
+        if (!currentQuestion) {
+            console.error('No current question available');
+            return;
+        }
+
+        const normalizedSelected = selectedValue ? selectedValue.replace(/\s+/g, '') : '';
+        const normalizedCorrect = currentQuestion.correct.replace(/\\\(|\s*\\\)/g, '').replace(/\s+/g, '');
+        const isCorrect = normalizedSelected === normalizedCorrect;
+
+        console.log('Selected value:', normalizedSelected);
+        console.log('Correct value:', normalizedCorrect);
+        console.log('Is correct:', isCorrect);
+
+        showFeedback(isCorrect ? '✅ Правильно!' : '❌ Неправильно. Спробуйте ще раз!', isCorrect);
+
+        if (isCorrect) {
+            score++;
+            currentGroupIndex++;
+        }
+
+        setTimeout(() => {
+            loadQuestion();
+        }, 1500);
+    }
+
+    // Функція скидання тренажера
+    function resetTrainer() {
+        currentGroupIndex = 0;
+        score = 0;
+        currentQuestion = null;
+        loadQuestion();
+        console.log('Trainer reset');
+    }
+
+    // Функція для вибору варіанту
+   function selectOption(element, value) {
+    console.log('selectOption called with value:', value);
+    document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+    element.classList.add('selected');
+    const submitButton = document.getElementById('submitAnswer');
+    if (submitButton) {
+        submitButton.disabled = false;
+        console.log('Submit button enabled');
+    } else {
+        console.error('Submit button not found');
+    }
+}
+
+    // Функція показу зворотного зв’язку
+    function showFeedback(message, isCorrect) {
+        const feedback = document.createElement('div');
+        feedback.className = `feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'}`;
+        feedback.textContent = message;
+        feedback.setAttribute('role', 'alert');
+        document.body.appendChild(feedback);
+        feedback.style.opacity = '1';
+        setTimeout(() => {
+            feedback.style.opacity = '0';
+            setTimeout(() => feedback.remove(), 500);
+        }, 1500);
+        console.log(`Feedback shown: ${message}, isCorrect: ${isCorrect}`);
+    }
+
+    // Функція рендерингу MathJax
+    function typesetMathJax(attempts = 10, delay = 200) {
+        if (window.MathJax && MathJax.typesetPromise) {
+            MathJax.typesetPromise(['#trainerContent', '#questionsModal', '#theoryModal', '#examplesModal']).then(() => {
+                console.log('MathJax processed');
+                document.querySelectorAll('.option').forEach(option => {
+                    option.addEventListener('click', () => {
+                        const value = option.dataset.value;
+                        selectOption(option, value);
+                    });
+                });
+                const submitButton = document.getElementById('submitAnswer');
+                if (submitButton) {
+                    submitButton.disabled = true;
+                    console.log('Submit button initialized as disabled');
+                }
+            }).catch(err => console.error('MathJax error:', err));
+        } else if (attempts > 0) {
+            console.log(`MathJax not loaded, retrying in ${delay}ms, attempts left: ${attempts}`);
+            setTimeout(() => typesetMathJax(attempts - 1, delay), delay);
+        } else {
+            console.warn('Failed to load MathJax');
+        }
+    }
+
+    // Функція для роботи з YouTube API
     function onYouTubeIframeAPIReady() {
         youtubeApiReady = true;
         console.log('YouTube API Ready');
     }
 
-    function toggleModal(modal, show) {
-    if (!modal) {
-        console.error('Modal is undefined');
-        return;
-    }
-    const allModals = Object.values(elements).filter(el => el?.id?.startsWith('theoryModal') || el?.id?.startsWith('videoModal') || el?.id?.startsWith('questionsModal') || el?.id?.startsWith('trainerModal') || el?.id?.startsWith('videoPlayerModal') || el?.id?.startsWith('examplesModal'));
-    allModals.forEach(m => {
-        if (m && m !== modal) {
-            m.style.display = 'none';
-        }
-    });
-    modal.style.display = show ? 'flex' : 'none';
-    elements.modalOverlay.style.display = show ? 'block' : 'none';
-    document.body.style.overflow = show ? 'hidden' : 'auto';
-    
-    if (show) {
-        const closeBtn = modal.querySelector('.close-btn');
-        if (closeBtn) closeBtn.focus();
-        typesetMathJax(); // Рендеринг MathJax при відкритті
-    }
-    
-    if (show && modal === elements.trainerModal) {
-        currentGroupIndex = 0;
-        score = 0;
-        loadQuestion();
-    }
-    if (!show) {
-        stopVideo(player1, 'player1', 'youtubePlayer1');
-        stopVideo(player2, 'player2', 'youtubePlayer2');
-        stopVideo(player3, 'player3', 'youtubePlayer3');
-        stopVideo(player4, 'player4', 'youtubePlayer4');
-        player1 = player2 = player3 = player4 = null;
-    }
-}
-    function stopVideo(player, playerName, playerId) {
-        if (player) {
-            try {
-                if (typeof player.stopVideo === 'function') player.stopVideo();
-                if (typeof player.destroy === 'function') player.destroy();
-                const playerElement = document.getElementById(playerId);
-                if (playerElement) playerElement.innerHTML = `<div id="${playerId}"></div>`;
-                console.log(`Stopped and destroyed ${playerName}`);
-            } catch (e) {
-                console.error(`Error stopping/destroying ${playerName}:`, e);
-            }
-        }
-    }
-
+    // Функція для створення YouTube плеєра
     function createPlayer(playerId, videoId) {
         if (!youtubeApiReady || typeof YT === 'undefined' || !YT.Player) {
             console.error('YouTube API not loaded');
@@ -1650,196 +2147,56 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function loadQuestion() {
-        const trainerContent = document.getElementById('trainerContent');
-        if (!trainerContent) {
-            console.error('trainerContent not found');
+    // Функція зупинки відео
+    function stopVideo(player, playerName, playerId) {
+        if (player) {
+            try {
+                if (typeof player.stopVideo === 'function') player.stopVideo();
+                if (typeof player.destroy === 'function') player.destroy();
+                const playerElement = document.getElementById(playerId);
+                if (playerElement) playerElement.innerHTML = `<div id="${playerId}"></div>`;
+                console.log(`Stopped and destroyed ${playerName}`);
+            } catch (e) {
+                console.error(`Error stopping/destroying ${playerName}:`, e);
+            }
+        }
+    }
+
+    // Функція перемикання модальних вікон
+    function toggleModal(modal, show) {
+        if (!modal) {
+            console.error('Modal is undefined');
             return;
         }
-        if (currentGroupIndex >= questions.length) {
-            trainerContent.innerHTML = `
-                <div class="completion-emoji"></div>
-                <div class="completion-message">
-                    <h2>Тренування завершено!</h2>
-                    <p>Молодець!</p>
-                    <button onclick="resetTrainer()">Спробувати ще раз</button>
-                </div>`;
+        const allModals = Object.values(elements).filter(el => el?.id?.startsWith('theoryModal') || el?.id?.startsWith('videoModal') || el?.id?.startsWith('questionsModal') || el?.id?.startsWith('trainerModal') || el?.id?.startsWith('videoPlayerModal') || el?.id?.startsWith('examplesModal'));
+        allModals.forEach(m => {
+            if (m && m !== modal) {
+                m.style.display = 'none';
+            }
+        });
+        modal.style.display = show ? 'flex' : 'none';
+        elements.modalOverlay.style.display = show ? 'block' : 'none';
+        document.body.style.overflow = show ? 'hidden' : 'auto';
+
+        if (show) {
+            const closeBtn = modal.querySelector('.close-btn');
+            if (closeBtn) closeBtn.focus();
             typesetMathJax();
-            return;
         }
-        const question = questions[currentGroupIndex][selectedVariants[currentGroupIndex]];
-        let contentHtml = `
-            <div class="question-circle"><h3>Питання ${currentGroupIndex + 1}</h3></div>
-            <div class="math-notation-centered">${question.question}</div>
-        `;
-        if (question.type === 'multiple') {
-            contentHtml += `
-                <div class="options-container">
-                    ${question.options.map(opt => `
-                        <div class="option" data-value="${opt.replace(/\\\(|\s*\\\)/g, '')}" role="button" aria-label="Вибір відповіді: ${opt}" onclick="selectOption(this, '${opt.replace(/\\\(|\s*\\\)/g, '')}')">${opt}</div>
-                    `).join('')}
-                </div>
-                <button id="submitAnswer" disabled>Відповісти</button>
-            `;
-        } else if (question.type === 'input') {
-            contentHtml += `
-                <div class="input-container">
-                    <div class="input-group">
-                        <strong>Відповідь:</strong>
-                        <input type="text" id="inputComplex" placeholder="Введіть у форматі a+bi або a-bi" aria-label="Введіть відповідь">
-                    </div>
-                </div>
-                <button id="submitAnswer">Відповісти</button>
-            `;
-        } else if (question.type === 'input_two_fields') {
-            contentHtml += `
-                <div class="input-container">
-                    <div class="input-group">
-                        <strong>r =</strong>
-                        <input type="text" id="inputReal" placeholder="Введіть модуль" aria-label="Введіть модуль">
-                    </div>
-                </div>
-                <div class="input-container">
-                    <div class="input-group">
-                        <strong>\\( \theta \\) =</strong>
-                        <input type="text" id="inputImaginary" placeholder="Введіть аргумент" aria-label="Введіть аргумент">
-                    </div>
-                </div>
-                <button id="submitAnswer">Відповісти</button>
-            `;
-        }
-        contentHtml += `<div class="result"></div>`;
-        trainerContent.innerHTML = contentHtml;
-        if (question.type === 'multiple') {
-            document.getElementById('submitAnswer').addEventListener('click', () => checkAnswer(document.querySelector('.option.selected')?.dataset?.value));
-        } else if (question.type === 'input') {
-            document.getElementById('submitAnswer').addEventListener('click', checkInputAnswer);
-        } else if (question.type === 'input_two_fields') {
-            document.getElementById('submitAnswer').addEventListener('click', checkInputTwoFieldsAnswer);
-        }
-        typesetMathJax();
-    }
 
-    function typesetMathJax(attempts = 10, delay = 200) {
-        if (window.MathJax && MathJax.typesetPromise) {
-            MathJax.typesetPromise(['#trainerContent', '#questionsModal', '#theoryModal', '#examplesModal']).then(() => {
-                console.log('MathJax processed');
-            }).catch(err => console.error('MathJax error:', err));
-        } else if (attempts > 0) {
-            console.log(`MathJax not loaded, retrying in ${delay}ms, attempts left: ${attempts}`);
-            setTimeout(() => typesetMathJax(attempts - 1, delay), delay);
-        } else {
-            console.warn('Failed to load MathJax');
-        }
-    }
-
-    function selectOption(element, value) {
-        document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
-        element.classList.add('selected');
-        document.getElementById('submitAnswer').disabled = false;
-        console.log(`Selected option: ${value}`);
-    }
-
-    function showFeedback(message, isCorrect) {
-        const feedback = document.createElement('div');
-        feedback.className = `feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'}`;
-        feedback.textContent = message;
-        feedback.setAttribute('role', 'alert');
-        document.body.appendChild(feedback);
-        feedback.style.opacity = '1';
-        setTimeout(() => {
-            feedback.style.opacity = '0';
-            setTimeout(() => feedback.remove(), 500);
-        }, 1500);
-        console.log(`Feedback shown: ${message}, isCorrect: ${isCorrect}`);
-    }
-
-    function checkAnswer(selectedValue) {
-        const question = questions[currentGroupIndex][selectedVariants[currentGroupIndex]];
-        const isCorrect = selectedValue === question.correct.replace(/\\\(|\s*\\\)/g, '');
-        showFeedback(isCorrect ? 'Правильно!' : 'Неправильно!', isCorrect);
-        if (isCorrect) score++;
-        setTimeout(() => {
-            currentGroupIndex++;
-            if (currentGroupIndex < questions.length) {
-                selectedVariants[currentGroupIndex] = Math.floor(Math.random() * 3);
-            }
+        if (show && modal === elements.trainerModal) {
+            currentGroupIndex = 0;
+            score = 0;
+            currentQuestion = null;
             loadQuestion();
-        }, 1500);
-    }
-
-    function checkInputAnswer() {
-        const input = document.getElementById('inputComplex').value;
-        const question = questions[currentGroupIndex][selectedVariants[currentGroupIndex]];
-        const normalizedInput = normalizeComplexInput(input);
-        const isCorrect = normalizedInput === normalizeComplexInput(question.correct);
-        showFeedback(isCorrect ? 'Правильно!' : 'Неправильно!', isCorrect);
-        if (isCorrect) score++;
-        setTimeout(() => {
-            currentGroupIndex++;
-            if (currentGroupIndex < questions.length) {
-                selectedVariants[currentGroupIndex] = Math.floor(Math.random() * 3);
-            }
-            loadQuestion();
-        }, 1500);
-    }
-
-    function checkInputTwoFieldsAnswer() {
-        const inputReal = document.getElementById('inputReal').value.trim();
-        const inputImaginary = document.getElementById('inputImaginary').value.trim();
-        const question = questions[currentGroupIndex][selectedVariants[currentGroupIndex]];
-        const correctReal = question.correct[0].replace(/\\\(|\s*\\\)/g, '');
-        const correctImaginary = question.correct[1].replace(/\\\(|\s*\\\)/g, '');
-        const isCorrect = normalizeComplexInput(inputReal) === normalizeComplexInput(correctReal) &&
-                        normalizeComplexInput(inputImaginary) === normalizeComplexInput(correctImaginary);
-        showFeedback(isCorrect ? 'Правильно!' : 'Неправильно!', isCorrect);
-        if (isCorrect) score++;
-        setTimeout(() => {
-            currentGroupIndex++;
-            if (currentGroupIndex < questions.length) {
-                selectedVariants[currentGroupIndex] = Math.floor(Math.random() * 3);
-            }
-            loadQuestion();
-        }, 1500);
-    }
-
-    function normalizeComplexInput(input) {
-        if (!input) return '';
-        let normalized = input.trim().toLowerCase().replace(/\s+/g, '');
-        normalized = normalized.replace(/\\sqrt\{([^}]+)\}/g, 'sqrt($1)');
-        normalized = normalized.replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '($1)/($2)');
-        normalized = normalized.replace(/\\pi/g, 'pi');
-        normalized = normalized.replace(/і/g, 'i');
-        normalized = normalized.replace(/([0-9])([+-])/g, '$1 $2');
-        normalized = normalized.replace(/[^0-9+\-i\s]/g, '');
-        normalized = normalized.replace(/-\+/g, '-').replace(/\+-/g, '-');
-        if (!normalized.includes('i')) {
-            normalized += normalized.length > 0 ? ' + 0i' : '0 + 0i';
         }
-        if (normalized.endsWith('i')) normalized = normalized.replace('i', '1i');
-        if (normalized.includes('-i')) normalized = normalized.replace('-i', '-1i');
-        if (normalized.includes('+i')) normalized = normalized.replace('+i', '+1i');
-        if (normalized.startsWith('i') || normalized.startsWith('-i') || normalized.startsWith('+i')) {
-            normalized = '0 ' + normalized;
+        if (!show) {
+            stopVideo(player1, 'player1', 'youtubePlayer1');
+            stopVideo(player2, 'player2', 'youtubePlayer2');
+            stopVideo(player3, 'player3', 'youtubePlayer3');
+            stopVideo(player4, 'player4', 'youtubePlayer4');
+            player1 = player2 = player3 = player4 = null;
         }
-        return normalized;
-    }
-
-    function shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-        return array;
-    }
-
-    function resetTrainer() {
-        currentGroupIndex = 0;
-        score = 0;
-        questions.forEach(group => shuffleArray(group));
-        selectedVariants = questions.map(() => Math.floor(Math.random() * 3));
-        loadQuestion();
-        console.log('Trainer reset');
     }
 
     // Ініціалізація обробників подій
@@ -1887,32 +2244,26 @@ document.addEventListener('DOMContentLoaded', function () {
             toggleModal(elements.videoModal, true);
         });
 
-       // Обробники для кнопок вправ
-try {
-    elements.exercise1Btn?.addEventListener('click', () => {
-        console.log('Перехід до vpr1.html');
-        window.location.href = "vpr1.html";
-    });
+        elements.exercise1Btn?.addEventListener('click', () => {
+            console.log('Перехід до vpr1.html');
+            window.location.href = "vpr1.html";
+        });
 
-    elements.exercise2Btn?.addEventListener('click', () => {
-        console.log('Перехід до vpr2.html');
-        window.location.href = "vpr2.html";
-    });
+        elements.exercise2Btn?.addEventListener('click', () => {
+            console.log('Перехід до vpr2.html');
+            window.location.href = "vpr2.html";
+        });
 
-    elements.exercise3Btn?.addEventListener('click', () => {
-        console.log('Перехід до vpr3.html');
-        window.location.href = "vpr3.html";
-    });
+        elements.exercise3Btn?.addEventListener('click', () => {
+            console.log('Перехід до vpr3.html');
+            window.location.href = "vpr3.html";
+        });
 
-    elements.exercise4Btn?.addEventListener('click', () => {
-        console.log('Перехід до vpr4.html');
-        window.location.href = "vpr4.html";
-    });
-} catch (error) {
-    console.error('Помилка при прив’язці обробників для кнопок вправ:', error);
-}
+        elements.exercise4Btn?.addEventListener('click', () => {
+            console.log('Перехід до vpr4.html');
+            window.location.href = "vpr4.html";
+        });
 
-        // Закриття модальних вікон по кліку на overlay
         elements.modalOverlay?.addEventListener('click', () => {
             toggleModal(elements.theoryModal, false);
             toggleModal(elements.videoModal, false);
@@ -1970,8 +2321,6 @@ try {
             }
         });
 
-        questions.forEach(group => shuffleArray(group));
-        selectedVariants = questions.map(() => Math.floor(Math.random() * 3));
         typesetMathJax();
     } catch (error) {
         console.error('Error initializing event listeners:', error);
@@ -1980,7 +2329,6 @@ try {
 
     window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
 });
-
 </script>
 </body>
 </html>
