@@ -1,26 +1,30 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>5. Модуль комплексного числа </title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5. Модуль комплексного числа</title>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         *, *:before, *:after {
             box-sizing: border-box;
-        }
-        body {
             margin: 0;
             padding: 0;
+        }
+        body {
             background: linear-gradient(135deg, #1a1a2e, #16213e);
             font-family: 'Poppins', sans-serif;
             color: #e0e0e0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: start;
             min-height: 100dvh;
+        }
+        body.modal-open {
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
         }
         .title-box {
             margin-top: 60px;
@@ -33,11 +37,9 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
         .title-box h1 {
-            margin: 0;
             font-size: 28px;
             color: #00ff88;
             text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
-            font-family: 'Poppins', sans-serif;
             font-weight: 800;
         }
         .section-container {
@@ -61,7 +63,6 @@
             padding: 20px;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             cursor: pointer;
-            text-decoration: none;
             color: inherit;
             border: 1px solid rgba(0, 255, 136, 0.3);
         }
@@ -80,60 +81,26 @@
         .section h2 {
             font-size: 20px;
             color: #e0e0e0;
-            margin: 0;
-            font-family: 'Poppins', sans-serif;
             font-weight: 600;
             text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
         }
-            
-       #theoryModal, #questionsModal, #trainerModal, #videoModal, #videoPlayerModal1, #videoPlayerModal2, #videoPlayerModal3 {
-    display: none;
-    position: fixed;
-    top: 5%;
-    left: 5%;
-    width: 90%;
-    max-height: 90vh; /* Змінено з height: 90% */
-    background: linear-gradient(135deg, #1e1e3e, #2a2a5a);
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    flex-direction: column;
-    border: 1px solid rgba(0, 255, 136, 0.2);
-}
-        #theoryModal .modal-content, #questionsModal .modal-content, #trainerModal .modal-content, #videoModal .modal-content, #videoPlayerModal1 .modal-content, #videoPlayerModal2 .modal-content, #videoPlayerModal3 .modal-content {
-            padding: 20px;
-            overflow-y: auto;
-            flex-grow: 1;
+        .modal {
+            display: none;
+            position: fixed;
+            top: 2%;
+            left: 2%;
+            width: 96%;
+            background: linear-gradient(135deg, #1e1e3e, #2a2a5a);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            flex-direction: column;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            height: auto;
+            max-height: 96vh;
+            overflow: hidden;
         }
-        #theoryModal .modal-content {
-    padding: 20px;
-    padding-bottom: 50px; /* Збільшено для додаткового простору */
-    overflow-y: auto;
-    flex-grow: 1;
-    min-height: 0; /* Для коректної роботи flex */
-}
-        #theoryModal .modal-content p {
-    font-size: clamp(15px, 2.7vw, 18px); /* Збільшено з 14px/16px */
-    line-height: 1.6;
-    color: #e0e0e0;
-    margin: 10px 0;
-}
-        #theoryModal mjx-container {
-    font-size: clamp(16px, 2.7vw, 18px) !important; /* Збільшено */
-    color: #FFFF00 !important;
-}
-#theoryModal .math-notation-centered {
-    font-size: clamp(16px, 2.7vw, 18px); /* Збільшено */
-    color: #FFFF00 !important;
-}
-
-
-#theoryModal mjx-container.math-notation-centered {
-    font-size: clamp(15px, 2.7vw, 18px) !important; /* Збільшено */
-    color: #FFFF00 !important;
-}
-
-        #theoryModal .modal-header, #questionsModal .modal-header, #trainerModal .modal-header, #videoModal .modal-header, #videoPlayerModal1 .modal-header, #videoPlayerModal2 .modal-header, #videoPlayerModal3 .modal-header {
+        .modal-header {
             display: flex;
             justify-content: flex-end;
             background: linear-gradient(90deg, #2a2a4a, #3b3b6a);
@@ -141,7 +108,7 @@
             border-top-left-radius: 15px;
             border-top-right-radius: 15px;
         }
-        #theoryModal .close-btn, #questionsModal .close-btn, #trainerModal .close-btn, #videoModal .close-btn, #videoPlayerModal1 .close-btn, #videoPlayerModal2 .close-btn, #videoPlayerModal3 .close-btn {
+        .close-btn {
             background: #00ff88;
             color: #1a1a2e;
             border: none;
@@ -151,8 +118,96 @@
             cursor: pointer;
             transition: background 0.3s ease;
         }
-        #theoryModal .close-btn:hover, #questionsModal .close-btn:hover, #trainerModal .close-btn:hover, #videoModal .close-btn:hover, #videoPlayerModal1 .close-btn:hover, #videoPlayerModal2 .close-btn:hover, #videoPlayerModal3 .close-btn:hover {
+        .close-btn:hover {
             background: #00cc66;
+        }
+        .modal-content {
+            padding: 15px;
+            padding-bottom: 100px;
+            overflow-y: auto;
+            flex-grow: 1;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            max-width: 100%;
+            box-sizing: border-box;
+            max-height: calc(96vh - 60px);
+            -webkit-overflow-scrolling: touch;
+        }
+        #theoryModal .modal-content {
+            overflow-x: hidden; /* Відключаємо горизонтальну прокрутку на десктопах */
+        }
+        #theoryModal .modal-content p, #theoryModal .modal-content li {
+            font-size: clamp(16px, 2.8vw, 18px);
+            line-height: 1.6;
+            color: #e0e0e0;
+            margin: 8px 0;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            max-width: 100%;
+            text-align: justify; /* Вирівнювання по ширині */
+        }
+        #theoryModal .modal-content li {
+            color: #e9b1a0;
+            padding-left: 20px; /* Відступ для маркера */
+            margin-left: 10px; /* Додатковий відступ для списку */
+            max-width: calc(100% - 30px); /* Обмежуємо ширину, враховуючи відступи */
+            overflow-x: auto; /* Дозволяємо прокрутку для довгих формул у списку */
+            -webkit-overflow-scrolling: touch;
+            white-space: normal; /* Дозволяємо перенос тексту */
+        }
+        #theoryModal .modal-content li mjx-container {
+            display: inline-block !important;
+            max-width: none; /* Формули можуть бути ширшими */
+            white-space: nowrap; /* Формули не переносяться */
+            overflow: visible; /* Запобігаємо обрізанню формул */
+            vertical-align: middle; /* Вирівнювання формул по вертикалі */
+            
+        }
+        #theoryModal .modal-content img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 10px auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        #theoryModal mjx-container {
+            display: inline-block !important;
+            max-width: 100%;
+            font-size: clamp(17px, 2.8vw, 19px) !important;
+            color: #FFFF00 !important;
+            white-space: normal;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: center;
+        }
+        #theoryModal mjx-container.math-notation-centered {
+            display: block !important;
+            text-align: center !important;
+            max-width: 100%;
+            font-size: clamp(17px, 2.8vw, 19px) !important;
+            color: #FFFF00 !important;
+            margin: 10px auto;
+            padding: 5px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        /* Виправлення для пронумерованих формул */
+        #theoryModal mjx-container[jax="CHTML"][display="true"] {
+            display: block !important;
+            text-align: center !important;
+            margin: 10px auto;
+        }
+        #theoryModal mjx-container[jax="CHTML"][display="true"] mjx-mtable {
+            display: inline-block;
+            text-align: center;
+        }
+        #theoryModal mjx-container[jax="CHTML"][display="true"] mjx-mtag {
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 5px;
         }
         #modalOverlay {
             display: none;
@@ -186,7 +241,6 @@
             padding: 10px;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             cursor: pointer;
-            text-decoration: none;
             color: #00ff88;
         }
         .video-card:hover {
@@ -201,19 +255,8 @@
             border-radius: 8px;
             filter: drop-shadow(0 0 5px rgba(0, 255, 136, 0.3));
         }
-        .video-card img:not([src]) {
-            background-image: url('https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000');
-            background-size: cover;
-            background-position: center;
-            content: '';
-        }
-        .video-card img[alt] {
-            text-indent: -9999px;
-        }
         .video-card h3 {
             font-size: 18px;
-            margin: 0;
-            font-family: 'Poppins', sans-serif;
             font-weight: 600;
             line-height: 1.2;
             text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
@@ -240,20 +283,13 @@
             border-radius: 10px;
             background: linear-gradient(135deg, #2a2a4a, #3b3b6a);
             cursor: pointer;
-            transition: max-height 0.3s ease;
-            overflow: hidden;
             border: 1px solid rgba(0, 255, 136, 0.3);
-        }
-        details[open] {
-            max-height: 1000px;
         }
         summary {
             font-weight: 600;
             padding: 10px;
             background: linear-gradient(90deg, #3b3b6a, #4a4a7a);
             border-radius: 10px;
-            transition: background 0.2s ease;
-            font-family: 'Poppins', sans-serif;
             color: #00ff88;
             text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
         }
@@ -264,56 +300,12 @@
             padding: 0 20px 10px;
             color: #e0e0e0;
         }
-        .highlight-term {
-            padding: 2px 5px;
-            border-radius: 3px;
-            transition: background 0.2s ease;
-            font-family: 'Poppins', sans-serif;
-            color: #00ff88;
-            font-weight: 600;
-        }
-        details .highlight-term {
-            background: none;
-            color: #00ff88;
-        }
-        .card-front .highlight-term {
-            color: #00ff88;
-        }
-        .math-notation {
-            font-style: italic;
-            color: #ff4d4d;
-            font-family: 'Poppins', sans-serif;
-            display: inline;
-            white-space: normal;
-            margin: 0 2px;
-        }
-        .card-front .math-notation {
-            vertical-align: baseline;
-            display: inline;
-            font-size: inherit;
-            line-height: normal;
-        }
-        details .math-notation {
-            color: #ff4d4d;
-        }
         .question-card {
             perspective: 1000px;
             margin: 20px auto;
             max-width: 90%;
-            width: 100%;
             height: 150px;
-            transition: transform 0.3s ease, opacity 0.3s ease;
         }
-        #questionsModal[style*="display: flex"] .question-card {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .question-card:nth-child(1) { transition-delay: 0s; }
-        .question-card:nth-child(2) { transition-delay: 0.1s; }
-        .question-card:nth-child(3) { transition-delay: 0.2s; }
-        .question-card:nth-child(4) { transition-delay: 0.3s; }
-        .question-card:nth-child(5) { transition-delay: 0.4s; }
-        .question-card:nth-child(6) { transition-delay: 0.5s; }
         .card-inner {
             position: relative;
             width: 100%;
@@ -323,9 +315,6 @@
             border-radius: 15px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
             cursor: pointer;
-        }
-        .card-inner:hover {
-            transform: scale(1.02);
         }
         .card-inner.flipped {
             transform: rotateY(180deg);
@@ -338,9 +327,7 @@
             padding: 10px;
             border-radius: 15px;
             font-size: clamp(14px, 2.5vw, 16px);
-            font-family: 'Poppins', sans-serif;
             line-height: 1.4;
-            box-sizing: border-box;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -353,39 +340,12 @@
             background: linear-gradient(135deg, #2a2a4a, #4a4a7a);
             color: #e0e0e0;
             font-weight: 600;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            padding: 10px;
         }
         .card-back {
             background: linear-gradient(135deg, #3b3b6a, #5a5a9a);
             color: #e0e0e0;
             transform: rotateY(180deg);
             overflow-y: auto;
-            hyphens: auto;
-            word-break: break-word;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            padding: 10px;
-        }
-        .card-back span, .card-back .MathJax {
-            margin: 0;
-            font-size: 1em;
-            line-height: 1.4;
-            color: #e0e0e0;
-            display: inline;
-        }
-        .card-back .MathJax {
-            vertical-align: middle;
-            font-size: 0.95em;
-        }
-        .card-front:nth-child(2n), .card-back:nth-child(2n) {
-            background: linear-gradient(135deg, #4a4a7a, #6a6aaa);
-            border: none;
-        }
-        .card-front:nth-child(3n), .card-back:nth-child(3n) {
-            background: linear-gradient(135deg, #5a5a9a, #7a7aca);
-            border: 1px solid rgba(0, 255, 136, 0.3);
         }
         .trainer-container {
             width: 90%;
@@ -395,8 +355,6 @@
             background: linear-gradient(135deg, #2a2a4a, #3b3b6a);
             border-radius: 16px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-            transition: all 0.3s ease;
-            position: relative;
             border: 1px solid rgba(0, 255, 136, 0.3);
         }
         .question-circle {
@@ -416,34 +374,8 @@
         }
         .question-circle h3 {
             color: #1a1a2e;
-            font-family: 'Poppins', sans-serif;
             font-size: clamp(16px, 2.5vw, 20px);
-            margin: 0;
             text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-        }
-        .completion-emoji {
-            width: 15vw;
-            height: 15vw;
-            min-width: 80px;
-            min-height: 80px;
-            max-width: 120px;
-            max-height: 120px;
-            margin: 0 auto 3vw;
-            border-radius: 50%;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-            border: 2px dashed #ff4d4d;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .completion-emoji::after {
-            content: '🎉';
-            font-size: clamp(40px, 8vw, 60px);
-            color: #ff4d4d;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
         }
         .options-container {
             display: flex;
@@ -458,99 +390,27 @@
             border-radius: 10px;
             background: linear-gradient(135deg, #3b3b6a, #4a4a7a);
             cursor: pointer;
-            transition: background 0.3s, transform 0.2s;
             font-size: clamp(13px, 2.1vw, 15px);
-            line-height: 1.4;
-            flex: 1 1 auto;
-            min-width: 90px;
-            max-width: 45%;
             color: #e0e0e0;
         }
         .option:hover {
             background: linear-gradient(135deg, #4a4a7a, #5a5a9a);
-            transform: scale(1.03);
         }
         .option.selected {
             background: linear-gradient(135deg, #00ff88, #00cc66);
-            border-color: #00cc66;
             color: #1a1a2e;
         }
         button {
             padding: 2vw 4vw;
-            margin-top: 3vw;
             background: linear-gradient(135deg, #00ff88, #00cc66);
             color: #1a1a2e;
             border: none;
             border-radius: 10px;
             font-size: clamp(14px, 2.5vw, 16px);
             cursor: pointer;
-            transition: background 0.3s;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
         }
         button:hover {
             background: linear-gradient(135deg, #00cc66, #00aa44);
-        }
-        .result {
-            margin-top: 3vw;
-            font-size: clamp(16px, 2.5vw, 18px);
-            color: #e0e0e0;
-        }
-        .result-text {
-            margin-top: 2vw;
-            font-size: clamp(14px, 2vw, 16px);
-            color: #e0e0e0;
-        }
-        .feedback {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: clamp(26px, 6.5vw, 38px);
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-            padding: clamp(12px, 3.5vw, 18px) clamp(18px, 5.5vw, 28px);
-            border-radius: 15px;
-            border: 2.5px solid;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
-            z-index: 1000;
-            opacity: 0;
-            transition: opacity 0.5s ease, transform 0.5s ease;
-            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-            text-align: center;
-            line-height: 1.2;
-        }
-        .correct-feedback {
-            color: #00ff88;
-            background: linear-gradient(135deg, #2a2a4a, #3b3b6a);
-            border-color: #00cc66;
-            animation: popInOut 1.5s ease-in-out;
-        }
-        .incorrect-feedback {
-            color: #ff4d4d;
-            background: linear-gradient(135deg, #2a2a4a, #3b3b6a);
-            border-color: #cc3333;
-            animation: popInOut 1.5s ease-in-out;
-        }
-        .completion-message {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-            color: #00ff88;
-            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-            background: linear-gradient(135deg, #2a2a4a, #3b3b6a);
-            border: 2.5px solid #00cc66;
-            border-radius: 15px;
-            padding: clamp(12px, 3vw, 18px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
-            margin: 2vw auto;
-            max-width: 90%;
-        }
-        .completion-message h2 {
-            font-size: clamp(22px, 4.5vw, 30px);
-            margin: 0 0 1vw;
-        }
-        .completion-message p {
-            font-size: clamp(18px, 3.5vw, 22px);
-            margin: 0;
         }
         .navigation-buttons {
             display: flex;
@@ -566,30 +426,22 @@
             align-items: center;
             background: linear-gradient(135deg, #2a2a4a, #3b3b6a);
             color: #00ff88;
-            text-decoration: none;
             padding: 12px 24px;
             border-radius: 12px;
             font-size: 18px;
             font-weight: 600;
-            transition: all 0.3s ease;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
             border: 1px solid rgba(0, 255, 136, 0.3);
+            text-decoration: none;
         }
         .nav-button:hover {
             background: linear-gradient(135deg, #3b3b6a, #4a4a7a);
             color: #e0e0e0;
-            transform: scale(1.05);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            text-decoration: none;
         }
         .nav-button svg {
             margin-right: 8px;
             fill: currentColor;
-        }
-        @keyframes popInOut {
-            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
-            20% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
-            80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-            100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
         }
         @media (max-width: 768px) {
             .title-box {
@@ -608,20 +460,43 @@
                 width: 80%;
                 height: 180px;
             }
-            #theoryModal, #questionsModal, #trainerModal, #videoModal, #videoPlayerModal1, #videoPlayerModal2, #videoPlayerModal3 {
-                top: 2%;
-                left: 2%;
-                width: 96%;
-                height: 96%;
-            }
-            #theoryModal .modal-content, #questionsModal .modal-content, #trainerModal .modal-content, #videoModal .modal-content, #videoPlayerModal1 .modal-content, #videoPlayerModal2 .modal-content, #videoPlayerModal3 .modal-content {
+            .modal-content {
                 padding: 15px;
+                padding-bottom: 120px;
+                max-height: calc(96vh - 60px);
             }
-             #theoryModal .modal-content {
-        padding: 15px;
-        padding-bottom: 50px; /* Збільшено для консистентності */
-        overflow-y: auto;
-    }
+            #theoryModal .modal-content {
+                overflow-x: auto; /* Горизонтальна прокрутка для мобільних */
+                -webkit-overflow-scrolling: touch;
+            }
+            #theoryModal .modal-content li {
+                max-width: calc(100% - 20px); /* Враховуємо відступи */
+                overflow-x: auto; /* Прокрутка для довгих формул */
+                white-space: normal; /* Дозволяємо перенос тексту */
+                text-align: justify; /* Вирівнювання по ширині */
+            }
+            #theoryModal mjx-container, #theoryModal mjx-container.math-notation-centered {
+                max-width: none; /* Дозволяємо формулам бути ширшими */
+                white-space: nowrap; /* Формули не переносяться */
+                overflow: visible; /* Запобігаємо обрізанню формул */
+            }
+            /* Центрування формул на мобільних */
+            #theoryModal mjx-container[jax="CHTML"][display="true"] {
+                display: block !important;
+                text-align: center !important;
+                margin: 10px auto;
+                white-space: nowrap;
+                overflow: visible;
+            }
+            #theoryModal mjx-container[jax="CHTML"][display="true"] mjx-mtable {
+                display: inline-block;
+                text-align: center;
+            }
+            #theoryModal mjx-container[jax="CHTML"][display="true"] mjx-mtag {
+                display: inline-block;
+                vertical-align: middle;
+                margin-left: 5px;
+            }
             .video-card {
                 width: 180px;
                 height: 150px;
@@ -636,60 +511,17 @@
             .question-card {
                 height: 150px;
             }
-            .card-front, .card-back {
-                font-size: 12px;
-                padding: 8px;
-                line-height: 1.2;
-            }
-            .card-front span {
-                font-size: 12px;
-                line-height: 1.2;
-            }
             .trainer-container {
                 width: 95%;
                 padding: 4vw;
             }
-            .question-circle, .completion-emoji {
+            .question-circle {
                 width: 25vw;
                 height: 25vw;
-                min-width: 80px;
-                min-height: 80px;
-            }
-            .question-circle h3 {
-                font-size: clamp(14px, 5vw, 15px);
-            }
-            .completion-emoji::after {
-                font-size: clamp(30px, 7vw, 40px);
-            }
-            .option {
-                padding: 2.2vw 3.2vw;
-                font-size: clamp(11px, 2.6vw, 13px);
-                min-width: 75px;
-                max-width: 90%;
             }
             .options-container {
-                gap: 1.5vw;
                 flex-direction: column;
                 align-items: center;
-            }
-            .button {
-                padding: 3vw 5vw;
-                font-size: clamp(14px, 5vw, 16px);
-            }
-            .feedback {
-                font-size: clamp(22px, 5.5vw, 30px);
-                padding: clamp(10px, 3vw, 15px) clamp(15px, 4.5vw, 22px);
-                max-width: 90vw;
-                word-wrap: break-word;
-            }
-            .completion-message {
-                padding: clamp(10px, 3vw, 15px);
-            }
-            .completion-message h2 {
-                font-size: clamp(20px, 4vw, 26px);
-            }
-            .completion-message p {
-                font-size: clamp(16px, 3vw, 20px);
             }
             .navigation-buttons {
                 margin: 20px auto;
@@ -698,9 +530,6 @@
             .nav-button {
                 font-size: 16px;
                 padding: 10px 20px;
-            }
-            .video-player-container {
-                padding: 15px;
             }
             .video-player-container iframe {
                 max-height: 300px;
@@ -725,31 +554,10 @@
             .section h2 {
                 font-size: 18px;
             }
-            #theoryModal .modal-content, #questionsModal .modal-content, #trainerModal .modal-content, #videoModal .modal-content, #videoPlayerModal1 .modal-content, #videoPlayerModal2 .modal-content, #videoPlayerModal3 .modal-content {
+            .modal-content {
                 padding: 10px;
+                padding-bottom: 140px;
             }
-            #theoryModal .modal-header, #questionsModal .modal-header, #trainerModal .modal-header, #videoModal .modal-header, #videoPlayerModal1 .modal-header, #videoPlayerModal2 .modal-header, #videoPlayerModal3 .modal-header {
-                padding: 5px 8px;
-            }
-            #theoryModal .close-btn, #questionsModal .close-btn, #trainerModal .close-btn, #videoModal .close-btn, #videoPlayerModal1 .close-btn, #videoPlayerModal2 .close-btn, #videoPlayerModal3 .close-btn {
-                font-size: 14px;
-                padding: 4px 10px;
-            }
-             #theoryModal .modal-content {
-        padding: 10px;
-        padding-bottom: 50px; /* Збільшено для додаткового простору */
-        overflow-y: auto;
-    }
-    #theoryModal .modal-content p {
-        font-size: 16px; /* Залишаємо 16px, як ви хочете */
-        line-height: 1.3; /* Зменшено для компактності */
-    }
-    #theoryModal .math-notation-centered,
-    #theoryModal mjx-container.math-notation-centered,
-    #theoryModal mjx-container {
-        font-size: 16px !important; /* Залишаємо 16px */
-        line-height: 1.3 !important; /* Зменшено для компактності */
-    }
             .video-card {
                 width: 160px;
                 height: 140px;
@@ -761,229 +569,42 @@
             .video-card h3 {
                 font-size: 15px;
             }
-            .question-card {
-                height: 180px;
-            }
-            .card-front, .card-back {
-                font-size: 11px;
-                padding: 6px;
-                line-height: 1.1;
-            }
-            .card-front span {
-                font-size: 11px;
-                line-height: 1.1;
-            }
-            .card-back .MathJax {
-                font-size: 0.9em;
-            }
-            .question-circle, .completion-emoji {
-                width: 25vw;
-                height: 25vw;
-                min-width: 80px;
-                min-height: 80px;
-            }
-            .completion-emoji::after {
-                font-size: clamp(25px, 6vw, 35px);
-            }
-            .option {
-                font-size: clamp(10px, 2.3vw, 12px);
-                padding: 2.8vw 3.8vw;
-            }
-            .feedback {
-                font-size: clamp(20px, 5vw, 26px);
-                padding: clamp(8px, 2.5vw, 12px) clamp(12px, 4vw, 18px);
-            }
-            .completion-message h2 {
-                font-size: clamp(18px, 3.5vw, 22px);
-            }
-            .completion-message p {
-                font-size: clamp(14px, 3vw, 18px);
-            }
-            .navigation-buttons {
-                margin: 15px auto;
-                gap: 10px;
-            }
             .nav-button {
                 font-size: 14px;
                 padding: 8px 16px;
             }
-            .video-player-container {
-                padding: 10px;
-            }
             .video-player-container iframe {
                 max-height: 200px;
-            }
-        }
-        @media (max-width: 768px) {
-            .card-front {
-                text-align: justify;
-                word-wrap: break-word;
-                overflow-wrap: break-word;
-            }
-            .card-back {
-                text-align: justify;
-                word-wrap: break-word;
-                overflow-wrap: break-word;
-            }
-        }
-        mjx-container {
-            display: inline !important;
-            vertical-align: baseline !important;
-            white-space: normal !important;
-            line-height: normal !important;
-        }
-        mjx-container > * {
-            display: inline !important;
-            vertical-align: baseline !important;
-        }
-        .math-i {
-            color: #ff4d4d;
-            font-style: italic;
-            font-family: 'Poppins', sans-serif;
-            font-size: 1em;
-            vertical-align: baseline;
-            display: inline;
-        }
-        .card-inner.flipped .card-back {
-            opacity: 1;
-        }
-        .card-front {
-            opacity: 1;
-            transition: opacity 0s;
-        }
-        .card-inner.flipped .card-front {
-            opacity: 0;
-        }
-        .card-front span {
-            display: block;
-            text-align: justify;
-            color: #e0e0e0;
-            font-weight: 600;
-            font-family: 'Poppins', sans-serif;
-            font-size: clamp(14px, 2.5vw, 16px);
-            line-height: 1.4;
-            width: 100%;
-        }
-        .math-notation-centered {
-            display: block;
-            text-align: center;
-            width: 100%;
-            font-size: inherit;
-            margin: 5px 0;
-            line-height: 1.2;
-            color: #ffff00 !important;
-            font-style: italic;
-            font-family: 'Poppins', sans-serif;
-        }
-        mjx-container.math-notation-centered {
-            display: block !important;
-            text-align: center !important;
-            vertical-align: middle !important;
-            white-space: normal !important;
-            line-height: 1.2 !important;
-            font-size: inherit !important;
-            color: #ff4d4d !important;
-            margin: 5px auto !important;
-            width: auto !important;
-            padding: 0 !important;
-        }
-        mjx-container.math-notation-centered * {
-            color: #ff4d4d !important;
-        }
-        @media (max-width: 480px) {
-            .card-front {
-                text-align: justify;
-                word-wrap: break-word;
-                overflow-wrap: break-word;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                height: 100%;
-                line-height: 1.1;
-                font-size: 14px;
-            }
-            .card-front span {
-                display: block;
-                text-align: justify;
-                width: 100%;
-                line-height: 1.1;
-                font-size: 14px;
-            }
-            .card-back {
-                text-align: justify;
-                word-wrap: break-word;
-                overflow-wrap: break-word;
-                font-size: 14px;
-                padding: 7px;
-                line-height: 1.2;
-            }
-            .card-back span, .card-back .MathJax {
-                font-size: 14px;
-                line-height: 1.2;
-            }
-            .math-notation-centered {
-                display: block;
-                text-align: center;
-                width: 100%;
-                font-size: 12px;
-                margin: 2px 0;
-                line-height: 1.1;
-                color: #ff4d4d !important;
-            }
-            mjx-container.math-notation-centered {
-                display: block !important;
-                text-align: center !important;
-                vertical-align: middle !important;
-                white-space: normal !important;
-                line-height: 1.1 !important;
-                font-size: 12px !important;
-                color: #ff4d4d !important;
-                margin: 2px auto !important;
-                width: auto !important;
-                padding: 0 !important;
-            }
-            mjx-container.math-notation-centered * {
-                color: #ff4d4d !important;
-            }
-            mjx-container {
-                font-size: 16px !important;
-                line-height: 1.4 !important;
-            }
-            .math-notation,
-            .math-notation-centered,
-            mjx-container.math-notation-centered {
-                font-size: 16px !important;
             }
         }
     </style>
 </head>
 <body>
     <div class="title-box">
-        <h1>5. Модуль комплексного числа </h1>
+        <h1>5. Модуль комплексного числа</h1>
     </div>
 
     <div class="section-container">
-        <div class="section" id="openTheoryBtn" tabindex="0" role="button" aria-pressed="false">
-            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Книга" />
+        <div class="section" id="openTheoryBtn">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Книга">
             <h2>Теоретичні відомості</h2>
         </div>
-        <div class="section" id="openVideoBtn" tabindex="0" role="button" aria-pressed="false">
-            <img src="https://img.icons8.com/fluency/96/video.png" alt="Відео" />
+        <div class="section" id="openVideoBtn">
+            <img src="https://img.icons8.com/fluency/96/video.png" alt="Відео">
             <h2>Відеоматеріали</h2>
         </div>
-        <div class="section" id="openQuestionsBtn" tabindex="0" role="button" aria-pressed="false">
-            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Картки" />
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Картки">
             <h2>Питання і відповіді</h2>
         </div>
-        <div class="section" id="openTrainerBtn" tabindex="0" role="button" aria-pressed="false">
-            <img src="https://img.icons8.com/fluency/96/flash-on.png" alt="Тренажер" />
+        <div class="section" id="openTrainerBtn">
+            <img src="https://img.icons8.com/fluency/96/flash-on.png" alt="Тренажер">
             <h2>Тренажер</h2>
         </div>
     </div>
 
     <div class="navigation-buttons">
-       <a class="nav-button" href='tema2.html'>
+        <a class="nav-button" href='tema2.html'>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                 <path d="M15 18l-6-6 6-6"/>
             </svg>
@@ -999,88 +620,91 @@
 
     <div id="modalOverlay"></div>
 
-   <div id="theoryModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <div class="modal-header">
-        <button class="close-btn" aria-label="Закрити документ" id="closeTheoryBtn">× Закрити</button>
-    </div>
-    <div class="modal-content">
-        <details open>
-            <summary>Модуль комплексного числа</summary>
-            <p>
-                <strong>Модуль комплексного числа</strong> \( z = a + bi \) позначається як \( |z| \) або \( r \) і визначається як відстань від початку координат \( O(0;0) \) до точки \( (a;b) \), яка відповідає цьому числу на комплексній площині (рис. 2.1).
-            </p>
-            <img src="/static/figure2.1.jpg" alt="Комплексна площина" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);" />
-            <p>
-                Для обчислення модуля використовують формулу:
-            </p>
-            <p class="math-notation-centered">
-                \[ r = |z| = \sqrt{a^2 + b^2}. \tag{2.1} \]
-            </p>
-            <p>
-                Надалі для позначення модуля ми використовуватимемо символ \( r \). Для особливих випадків:
-            </p>
-            <ul>
-                <li>якщо число дійсне (\( z = a + 0i \)), то \( r = |a| \) — абсолютна величина дійсної частини;</li>
-                <li>якщо число чисто уявне (\( z = 0 + bi \)), то \( r = |b| \) — абсолютна величина уявної частини.</li>
-            </ul>
-            <p>
-                Спряжені комплексні числа \( z = a + bi \) і \( \overline{z} = a - bi \) мають однакові модулі:
-            </p>
-            <p>
-                \[ r = |z| = |\overline{z}| = \sqrt{a^2 + b^2}. \]
-            </p>
-            <p>
-                Крім того, їхній добуток дорівнює квадрату модуля. Розглянемо це детальніше:
-            </p>
-            <p>
-                \[ (a + bi) \cdot (a - bi) = a^2 - (bi)^2 = a^2 - b^2 i^2. \]
-            </p>
-            <p>
-                Оскільки \( i^2 = -1 \), то \( b^2 i^2 = b^2 \cdot (-1) = -b^2 \), і вираз спрощується:
-            </p>
-            <p>
-                \[ a^2 - b^2 i^2 = a^2 + b^2 = r^2. \]
-            </p>
-            <p>
-                Отже:
-            </p>
-            <p class="math-notation-centered">
-                \[ (a + bi) \cdot (a - bi) = r^2. \tag{2.2} \]
-            </p>
-        </details>
-        <details>
-            <summary>Приклад</summary>
-            <p>Тут буде приклад використання тригонометричної форми в розв’язанні рівнянь. Наповнення буде надано пізніше.</p>
-        </details>
-    </div>
-</div>
-
-    <div id="videoModal" role="dialog" aria-modal="true" aria-labelledby="videoTitle">
+    <div id="theoryModal" class="modal">
         <div class="modal-header">
-            <button class="close-btn" aria-label="Закрити відео" id="closeVideoBtn">× Закрити</button>
+            <button class="close-btn" id="closeTheoryBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <details open>
+                <summary>Модуль комплексного числа</summary>
+                <p>
+                    <strong>Модуль комплексного числа</strong> \( z = a + bi \) позначається як \( |z| \) або \( r \) і визначається як відстань від початку координат \( O(0;0) \) до точки \( (a;b) \), яка відповідає цьому числу на комплексній площині (рис. 2.1).
+                </p>
+                <img src="/static/figure2.1.jpg" alt="Комплексна площина">
+                <p>
+                    Для обчислення модуля використовують формулу:
+                </p>
+                <p class="math-notation-centered">
+                    \[ r = |z| = \sqrt{a^2 + b^2}. \tag{2.1} \]
+                </p>
+                <p>
+                    Надалі для позначення модуля ми використовуватимемо символ \( r \). Для особливих випадків:
+                </p>
+                <ul>
+                   <ul>
+  <li>✔ якщо число дійсне \(( z = a + 0i )\), то \( r = |a| \);</li>
+  <li>✔ якщо число чисто уявне \( (z = 0 + bi )\), то \( r = |b| \).</li>
+</ul>
+
+                </ul>
+                <p>
+                    Спряжені комплексні числа \( z = a + bi \) і \( \overline{z} = a - bi \) мають однакові модулі:
+                </p>
+                <p>
+                    \[ r = |z| = |\overline{z}| = \sqrt{a^2 + b^2}. \]
+                </p>
+                <p>
+                    Крім того, їхній добуток дорівнює квадрату модуля. Розглянемо це детальніше:
+                </p>
+                <p>
+                    \[ (a + bi) \cdot (a - bi) = a^2 - (bi)^2 = a^2 - b^2 i^2. \]
+                </p>
+                <p>
+                    Оскільки \( i^2 = -1 \), то \( b^2 i^2 = b^2 \cdot (-1) = -b^2 \), і вираз спрощується:
+                </p>
+                <p>
+                    \[ a^2 - b^2 i^2 = a^2 + b^2 = r^2. \]
+                </p>
+                <p>
+                    Отже:
+                </p>
+                <p class="math-notation-centered">
+                    \[ (a + bi) \cdot (a - bi) = r^2. \tag{2.2} \]
+                </p>
+            </details>
+            <details>
+                <summary>Приклад</summary>
+                <p>Тут буде приклад використання тригонометричної форми в розв’язанні рівнянь. Наповнення буде надано пізніше.</p>
+            </details>
+        </div>
+    </div>
+
+    <div id="videoModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoBtn">× Закрити</button>
         </div>
         <div class="modal-content">
             <h2 style="text-align: center; color: #00ff88;">Оберіть відео</h2>
             <div class="video-card-container">
                 <div class="video-card" data-video="1">
-                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера" />
+                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
                     <h3>Тригонометрична форма: основи</h3>
                 </div>
                 <div class="video-card" data-video="2">
-                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера" />
+                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
                     <h3>Розв’язання рівнянь із тригонометричною формою</h3>
                 </div>
                 <div class="video-card" data-video="3">
-                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера" />
+                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
                     <h3>Практика з тригонометричною формою</h3>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="videoPlayerModal1" role="dialog" aria-modal="true" aria-labelledby="videoPlayerTitle1">
+    <div id="videoPlayerModal1" class="modal">
         <div class="modal-header">
-            <button class="close-btn" aria-label="Закрити відео" id="closeVideoPlayerBtn1">× Закрити</button>
+            <button class="close-btn" id="closeVideoPlayerBtn1">× Закрити</button>
         </div>
         <div class="modal-content">
             <div class="video-player-container">
@@ -1089,9 +713,9 @@
         </div>
     </div>
 
-    <div id="videoPlayerModal2" role="dialog" aria-modal="true" aria-labelledby="videoPlayerTitle2">
+    <div id="videoPlayerModal2" class="modal">
         <div class="modal-header">
-            <button class="close-btn" aria-label="Закрити відео" id="closeVideoPlayerBtn2">× Закрити</button>
+            <button class="close-btn" id="closeVideoPlayerBtn2">× Закрити</button>
         </div>
         <div class="modal-content">
             <div class="video-player-container">
@@ -1100,9 +724,9 @@
         </div>
     </div>
 
-    <div id="videoPlayerModal3" role="dialog" aria-modal="true" aria-labelledby="videoPlayerTitle3">
+    <div id="videoPlayerModal3" class="modal">
         <div class="modal-header">
-            <button class="close-btn" aria-label="Закрити відео" id="closeVideoPlayerBtn3">× Закрити</button>
+            <button class="close-btn" id="closeVideoPlayerBtn3">× Закрити</button>
         </div>
         <div class="modal-content">
             <div class="video-player-container">
@@ -1111,47 +735,47 @@
         </div>
     </div>
 
-    <div id="questionsModal" role="dialog" aria-modal="true" aria-labelledby="questionsTitle">
+    <div id="questionsModal" class="modal">
         <div class="modal-header">
-            <button class="close-btn" aria-label="Закрити питання" id="closeQuestionsBtn">× Закрити</button>
+            <button class="close-btn" id="closeQuestionsBtn">× Закрити</button>
         </div>
         <div class="modal-content">
             <div class="question-card">
                 <div class="card-inner">
                     <div class="card-front">1. Як тригонометрична форма допомагає у розв’язанні рівнянь?</div>
-                    <div class="card-back"><span>Тригонометрична форма спрощує операції множення, ділення та піднесення до степеня, що полегшує розв’язання рівнянь виду <em class="math-notation">\( z^n = a \).</em></span></div>
+                    <div class="card-back">Тригонометрична форма спрощує операції множення, ділення та піднесення до степеня, що полегшує розв’язання рівнянь виду \( z^n = a \).</div>
                 </div>
             </div>
             <div class="question-card">
                 <div class="card-inner">
                     <div class="card-front">2. Що таке корені n-го степеня комплексного числа?</div>
-                    <div class="card-back"><span>Корені n-го степеня комплексного числа <em class="math-notation">\( z \)</em> — це числа <em class="math-notation">\( w \)</em>, для яких <em class="math-notation">\( w^n = z \).</em> Їх можна знайти за допомогою тригонометричної форми.</span></div>
+                    <div class="card-back">Корені n-го степеня комплексного числа \( z \) — це числа \( w \), для яких \( w^n = z \). Їх можна знайти за допомогою тригонометричної форми.</div>
                 </div>
             </div>
             <div class="question-card">
                 <div class="card-inner">
                     <div class="card-front">3. Яка формула використовується для знаходження коренів?</div>
-                    <div class="card-back"><span>Для комплексного числа <em class="math-notation">\( z = r(\cos\theta + i\sin\theta) \)</em> корені n-го степеня мають вигляд: <em class="math-notation">\( w_k = \sqrt[n]{r} \left( \cos\left(\frac{\theta + 2k\pi}{n}\right) + i\sin\left(\frac{\theta + 2k\pi}{n}\right) \right), \)</em> де <em class="math-notation">\( k = 0, 1, \ldots, n-1 \).</em></span></div>
+                    <div class="card-back">Для комплексного числа \( z = r(\cos\theta + i\sin\theta) \) корені n-го степеня мають вигляд: \( w_k = \sqrt[n]{r} \left( \cos\left(\frac{\theta + 2k\pi}{n}\right) + i\sin\left(\frac{\theta + 2k\pi}{n}\right) \right), \) де \( k = 0, 1, \ldots, n-1 \).</div>
                 </div>
             </div>
             <div class="question-card">
                 <div class="card-inner">
                     <div class="card-front">4. Чи завжди корені комплексного числа різні?</div>
-                    <div class="card-back"><span>Так, n коренів n-го степеня комплексного числа завжди різні, якщо <em class="math-notation">\( n \)</em> — ціле число, і вони розташовані на колі радіусом <em class="math-notation">\( \sqrt[n]{r} \).</em></span></div>
+                    <div class="card-back">Так, n коренів n-го степеня комплексного числа завжди різні, якщо \( n \) — ціле число, і вони розташовані на колі радіусом \( \sqrt[n]{r} \).</div>
                 </div>
             </div>
             <div class="question-card">
                 <div class="card-inner">
                     <div class="card-front">5. Як перевірити правильність знайденого кореня?</div>
-                    <div class="card-back"><span>Щоб перевірити корінь <em class="math-notation">\( w \)</em>, піднесіть його до степеня <em class="math-notation">\( n \)</em>: <em class="math-notation">\( w^n \)</em> має дорівнювати початковому числу <em class="math-notation">\( z \).</em></span></div>
+                    <div class="card-back">Щоб перевірити корінь \( w \), піднесіть його до степеня \( n \): \( w^n \) має дорівнювати початковому числу \( z \).</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="trainerModal" role="dialog" aria-modal="true" aria-labelledby="trainerTitle">
+    <div id="trainerModal" class="modal">
         <div class="modal-header">
-            <button class="close-btn" aria-label="Закрити тренажер" id="closeTrainerBtn">× Закрити</button>
+            <button class="close-btn" id="closeTrainerBtn">× Закрити</button>
         </div>
         <div class="modal-content">
             <div class="trainer-container" id="trainerContent">Завантаження...</div>
@@ -1159,118 +783,107 @@
     </div>
 
     <script>
-        const openTheoryBtn = document.getElementById('openTheoryBtn');
-        const openVideoBtn = document.getElementById('openVideoBtn');
-        const openQuestionsBtn = document.getElementById('openQuestionsBtn');
-        const openTrainerBtn = document.getElementById('openTrainerBtn');
-        const theoryModal = document.getElementById('theoryModal');
-        const videoModal = document.getElementById('videoModal');
-        const questionsModal = document.getElementById('questionsModal');
-        const trainerModal = document.getElementById('trainerModal');
-        const videoPlayerModal1 = document.getElementById('videoPlayerModal1');
-        const videoPlayerModal2 = document.getElementById('videoPlayerModal2');
-        const videoPlayerModal3 = document.getElementById('videoPlayerModal3');
-        const youtubePlayer1 = document.getElementById('youtubePlayer1');
-        const youtubePlayer2 = document.getElementById('youtubePlayer2');
-        const youtubePlayer3 = document.getElementById('youtubePlayer3');
-        const closeVideoPlayerBtn1 = document.getElementById('closeVideoPlayerBtn1');
-        const closeVideoPlayerBtn2 = document.getElementById('closeVideoPlayerBtn2');
-        const closeVideoPlayerBtn3 = document.getElementById('closeVideoPlayerBtn3');
+        const modals = {
+            theory: document.getElementById('theoryModal'),
+            video: document.getElementById('videoModal'),
+            questions: document.getElementById('questionsModal'),
+            trainer: document.getElementById('trainerModal'),
+            videoPlayer1: document.getElementById('videoPlayerModal1'),
+            videoPlayer2: document.getElementById('videoPlayerModal2'),
+            videoPlayer3: document.getElementById('videoPlayerModal3')
+        };
+        const buttons = {
+            openTheory: document.getElementById('openTheoryBtn'),
+            openVideo: document.getElementById('openVideoBtn'),
+            openQuestions: document.getElementById('openQuestionsBtn'),
+            openTrainer: document.getElementById('openTrainerBtn'),
+            closeTheory: document.getElementById('closeTheoryBtn'),
+            closeVideo: document.getElementById('closeVideoBtn'),
+            closeQuestions: document.getElementById('closeQuestionsBtn'),
+            closeTrainer: document.getElementById('closeTrainerBtn'),
+            closeVideoPlayer1: document.getElementById('closeVideoPlayerBtn1'),
+            closeVideoPlayer2: document.getElementById('closeVideoPlayerBtn2'),
+            closeVideoPlayer3: document.getElementById('closeVideoPlayerBtn3')
+        };
         const overlay = document.getElementById('modalOverlay');
-        const closeTheoryBtn = document.getElementById('closeTheoryBtn');
-        const closeVideoBtn = document.getElementById('closeVideoBtn');
-        const closeQuestionsBtn = document.getElementById('closeQuestionsBtn');
-        const closeTrainerBtn = document.getElementById('closeTrainerBtn');
+        const youtubePlayers = {
+            1: document.getElementById('youtubePlayer1'),
+            2: document.getElementById('youtubePlayer2'),
+            3: document.getElementById('youtubePlayer3')
+        };
 
-        document.querySelectorAll('.video-card img').forEach(img => {
-            img.onerror = () => {
-                img.src = 'https://img.icons8.com/color/48/video-camera.png';
-            };
-        });
-
-        function isModalVisible(modal) {
-            return modal.style.display === 'flex';
+        function adjustModalHeight(modal) {
+            const modalContent = modal.querySelector('.modal-content');
+            const modalHeader = modal.querySelector('.modal-header');
+            modalContent.style.height = 'auto';
+            const contentHeight = modalContent.scrollHeight;
+            const headerHeight = modalHeader.offsetHeight;
+            const windowHeight = window.innerHeight;
+            const maxModalHeight = windowHeight * 0.96;
+            const requiredHeight = contentHeight + headerHeight + 20;
+            if (requiredHeight < maxModalHeight) {
+                modal.style.height = `${requiredHeight}px`;
+                modalContent.style.overflowY = 'hidden';
+            } else {
+                modal.style.height = `${maxModalHeight}px`;
+                modalContent.style.overflowY = 'auto';
+            }
+            modalContent.scrollTop = 0;
         }
 
         function openModal(modal, btn) {
             modal.style.display = 'flex';
             overlay.style.display = 'block';
+            document.body.classList.add('modal-open');
             btn.setAttribute('aria-pressed', 'true');
             setTimeout(() => {
                 if (typeof MathJax !== 'undefined') {
-                    MathJax.typesetPromise().catch(err => console.error('MathJax error:', err));
+                    MathJax.typesetPromise().then(() => {
+                        adjustModalHeight(modal);
+                    }).catch(err => console.error('MathJax error:', err));
+                } else {
+                    adjustModalHeight(modal);
                 }
-            }, 100);
+            }, 200);
         }
 
         function closeModal(modal, btn) {
             modal.style.display = 'none';
             overlay.style.display = 'none';
+            document.body.classList.remove('modal-open');
             btn.setAttribute('aria-pressed', 'false');
             btn.focus();
         }
 
         function closeVideoPlayerModal(videoModal, player, mainModal, btn) {
-            if (player) {
-                player.src = player.src;
-            }
+            if (player) player.src = player.src;
             videoModal.style.display = 'none';
             overlay.style.display = 'none';
             openModal(mainModal, btn);
         }
 
-        openTheoryBtn.addEventListener('click', () => openModal(theoryModal, openTheoryBtn));
-        openVideoBtn.addEventListener('click', () => openModal(videoModal, openVideoBtn));
-        openQuestionsBtn.addEventListener('click', () => openModal(questionsModal, openQuestionsBtn));
-        openTrainerBtn.addEventListener('click', () => openModal(trainerModal, openTrainerBtn));
-        closeTheoryBtn.addEventListener('click', () => closeModal(theoryModal, openTheoryBtn));
-        closeVideoBtn.addEventListener('click', () => closeModal(videoModal, openVideoBtn));
-        closeQuestionsBtn.addEventListener('click', () => closeModal(questionsModal, openQuestionsBtn));
-        closeTrainerBtn.addEventListener('click', () => closeModal(trainerModal, openTrainerBtn));
-        closeVideoPlayerBtn1.addEventListener('click', () => closeVideoPlayerModal(videoPlayerModal1, youtubePlayer1, videoModal, openVideoBtn));
-        closeVideoPlayerBtn2.addEventListener('click', () => closeVideoPlayerModal(videoPlayerModal2, youtubePlayer2, videoModal, openVideoBtn));
-        closeVideoPlayerBtn3.addEventListener('click', () => closeVideoPlayerModal(videoPlayerModal3, youtubePlayer3, videoModal, openVideoBtn));
+        buttons.openTheory.addEventListener('click', () => openModal(modals.theory, buttons.openTheory));
+        buttons.openVideo.addEventListener('click', () => openModal(modals.video, buttons.openVideo));
+        buttons.openQuestions.addEventListener('click', () => openModal(modals.questions, buttons.openQuestions));
+        buttons.openTrainer.addEventListener('click', () => openModal(modals.trainer, buttons.openTrainer));
+        buttons.closeTheory.addEventListener('click', () => closeModal(modals.theory, buttons.openTheory));
+        buttons.closeVideo.addEventListener('click', () => closeModal(modals.video, buttons.openVideo));
+        buttons.closeQuestions.addEventListener('click', () => closeModal(modals.questions, buttons.openQuestions));
+        buttons.closeTrainer.addEventListener('click', () => closeModal(modals.trainer, buttons.openTrainer));
+        buttons.closeVideoPlayer1.addEventListener('click', () => closeVideoPlayerModal(modals.videoPlayer1, youtubePlayers[1], modals.video, buttons.openVideo));
+        buttons.closeVideoPlayer2.addEventListener('click', () => closeVideoPlayerModal(modals.videoPlayer2, youtubePlayers[2], modals.video, buttons.openVideo));
+        buttons.closeVideoPlayer3.addEventListener('click', () => closeVideoPlayerModal(modals.videoPlayer3, youtubePlayers[3], modals.video, buttons.openVideo));
         overlay.addEventListener('click', () => {
-            closeModal(theoryModal, openTheoryBtn);
-            closeModal(videoModal, openVideoBtn);
-            closeModal(questionsModal, openQuestionsBtn);
-            closeModal(trainerModal, openTrainerBtn);
-            closeVideoPlayerModal(videoPlayerModal1, youtubePlayer1, videoModal, openVideoBtn);
-            closeVideoPlayerModal(videoPlayerModal2, youtubePlayer2, videoModal, openVideoBtn);
-            closeVideoPlayerModal(videoPlayerModal3, youtubePlayer3, videoModal, openVideoBtn);
+            Object.values(modals).forEach(modal => modal.style.display = 'none');
+            overlay.style.display = 'none';
+            document.body.classList.remove('modal-open');
         });
 
         document.querySelectorAll('.video-card').forEach(card => {
             card.addEventListener('click', () => {
                 const videoId = card.dataset.video;
-                if (videoId === '1') {
-                    openModal(videoPlayerModal1, openVideoBtn);
-                } else if (videoId === '2') {
-                    openModal(videoPlayerModal2, openVideoBtn);
-                } else if (videoId === '3') {
-                    openModal(videoPlayerModal3, openVideoBtn);
-                }
+                openModal(modals[`videoPlayer${videoId}`], buttons.openVideo);
             });
-        });
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === "Escape") {
-                if (isModalVisible(videoPlayerModal1)) {
-                    closeVideoPlayerModal(videoPlayerModal1, youtubePlayer1, videoModal, openVideoBtn);
-                } else if (isModalVisible(videoPlayerModal2)) {
-                    closeVideoPlayerModal(videoPlayerModal2, youtubePlayer2, videoModal, openVideoBtn);
-                } else if (isModalVisible(videoPlayerModal3)) {
-                    closeVideoPlayerModal(videoPlayerModal3, youtubePlayer3, videoModal, openVideoBtn);
-                } else if (isModalVisible(theoryModal)) {
-                    closeModal(theoryModal, openTheoryBtn);
-                } else if (isModalVisible(videoModal)) {
-                    closeModal(videoModal, openVideoBtn);
-                } else if (isModalVisible(questionsModal)) {
-                    closeModal(questionsModal, openQuestionsBtn);
-                } else if (isModalVisible(trainerModal)) {
-                    closeModal(trainerModal, openTrainerBtn);
-                }
-            }
         });
 
         document.querySelectorAll('.card-inner').forEach(card => {
@@ -1284,224 +897,64 @@
             });
         });
 
-        if (typeof MathJax === 'undefined') {
-            console.error('MathJax not loaded');
-            document.getElementById('trainerContent').innerHTML = '<p>Помилка: MathJax не завантажено. Перевірте підключення до інтернету або CDN.</p>';
-        }
-
         let currentQuestion = 'q1_v1';
-        let attemptCounts = {
-            q1: 0,
-            q2: 0,
-            q3: 0,
-            q4: 0,
-            q5: 0
-        };
-
+        let attemptCounts = { q1: 0, q2: 0, q3: 0, q4: 0, q5: 0 };
         const questions = {
-            q1_v1: {
-                text: 'Як знайти корені рівняння \\( z^3 = 1 \\)?',
-                options: ['Перейти до тригонометричної форми', 'Використати алгебраїчну форму', 'Розв’язати як квадратне рівняння', 'Підставити дійсні числа'],
-                correct: 'Перейти до тригонометричної форми',
-                nextCorrect: 'q2_v1',
-                nextIncorrect: 'q1_v2',
-                attemptKey: 'q1'
-            },
-            q1_v2: {
-                text: 'Який перший крок для знаходження коренів \\( z^4 = -16 \\)?',
-                options: ['Використати тригонометричну форму', 'Розв’язати як лінійне рівняння', 'Взяти логарифм', 'Підставити уявні числа'],
-                correct: 'Використати тригонометричну форму',
-                nextCorrect: 'q2_v1',
-                nextIncorrect: 'q1_v3',
-                attemptKey: 'q1'
-            },
-            q1_v3: {
-                text: 'Як знайти корені рівняння \\( z^5 = 32 \\)?',
-                options: ['Перейти до тригонометричної форми', 'Використати формулу дискримінанта', 'Розв’язати як квадратне рівняння', 'Підставити дійсні числа'],
-                correct: 'Перейти до тригонометричної форми',
-                nextCorrect: 'q2_v1',
-                nextIncorrect: 'q1_v1',
-                attemptKey: 'q1'
-            },
-            q2_v1: {
-                text: 'З наведених виразів виберіть ті, які можна розв’язати за допомогою тригонометричної форми:',
-                options: [
-                    { value: '\\( z^3 = 8 \\)', isCorrect: true },
-                    { value: '\\( z^2 + z + 1 = 0 \\)', isCorrect: false },
-                    { value: '\\( z^4 = -1 \\)', isCorrect: true },
-                    { value: '\\( z = 5 \\)', isCorrect: false }
-                ],
-                multiSelect: true,
-                nextCorrect: 'q3_v1',
-                nextIncorrect: 'q2_v2',
-                attemptKey: 'q2'
-            },
-            q2_v2: {
-                text: 'З наведених виразів виберіть ті, які можна розв’язати за допомогою тригонометричної форми:',
-                options: [
-                    { value: '\\( z^5 = 1 \\)', isCorrect: true },
-                    { value: '\\( z^2 = 4 \\)', isCorrect: false },
-                    { value: '\\( z^3 = -27 \\)', isCorrect: true },
-                    { value: '\\( z + 1 = 0 \\)', isCorrect: false }
-                ],
-                multiSelect: true,
-                nextCorrect: 'q3_v1',
-                nextIncorrect: 'q2_v3',
-                attemptKey: 'q2'
-            },
-            q2_v3: {
-                text: 'З наведених виразів виберіть ті, які можна розв’язати за допомогою тригонометричної форми:',
-                options: [
-                    { value: '\\( z^2 + 1 = 0 \\)', isCorrect: false },
-                    { value: '\\( z^4 = 16 \\)', isCorrect: true },
-                    { value: '\\( z^3 = i \\)', isCorrect: true },
-                    { value: '\\( z = i \\)', isCorrect: false }
-                ],
-                multiSelect: true,
-                nextCorrect: 'q3_v1',
-                nextIncorrect: 'q2_v1',
-                attemptKey: 'q2'
-            },
-            q3_v1: {
-                text: 'Скільки коренів має рівняння \\( z^4 = 1 \\)?',
-                options: ['2', '3', '4', '5'],
-                correct: '4',
-                nextCorrect: 'q4_v1',
-                nextIncorrect: 'q3_v2',
-                attemptKey: 'q3'
-            },
-            q3_v2: {
-                text: 'Скільки коренів має рівняння \\( z^3 = -8 \\)?',
-                options: ['1', '2', '3', '4'],
-                correct: '3',
-                nextCorrect: 'q4_v1',
-                nextIncorrect: 'q3_v3',
-                attemptKey: 'q3'
-            },
-            q3_v3: {
-                text: 'Скільки коренів має рівняння \\( z^5 = 32 \\)?',
-                options: ['3', '4', '5', '6'],
-                correct: '5',
-                nextCorrect: 'q4_v1',
-                nextIncorrect: 'q3_v1',
-                attemptKey: 'q3'
-            },
-            q4_v1: {
-                text: 'Який аргумент кореня рівняння \\( z^3 = 1 \\) для \\( k=1 \\)?',
-                options: ['\\( \\frac{2\\pi}{3} \\)', '\\( \\frac{\\pi}{3} \\)', '\\( \\pi \\)', '\\( \\frac{4\\pi}{3} \\)'],
-                correct: '\\( \\frac{2\\pi}{3} \\)',
-                nextCorrect: 'q5_v1',
-                nextIncorrect: 'q4_v2',
-                attemptKey: 'q4'
-            },
-            q4_v2: {
-                text: 'Який аргумент кореня рівняння \\( z^4 = 1 \\) для \\( k=2 \\)?',
-                options: ['\\( \\frac{\\pi}{2} \\)', '\\( \\pi \\)', '\\( \\frac{3\\pi}{2} \\)', '\\( \\frac{\\pi}{4} \\)'],
-                correct: '\\( \\pi \\)',
-                nextCorrect: 'q5_v1',
-                nextIncorrect: 'q4_v3',
-                attemptKey: 'q4'
-            },
-            q4_v3: {
-                text: 'Який аргумент кореня рівняння \\( z^5 = 1 \\) для \\( k=3 \\)?',
-                options: ['\\( \\frac{2\\pi}{5} \\)', '\\( \\frac{4\\pi}{5} \\)', '\\( \\frac{6\\pi}{5} \\)', '\\( \\frac{8\\pi}{5} \\)'],
-                correct: '\\( \\frac{6\\pi}{5} \\)',
-                nextCorrect: 'q5_v1',
-                nextIncorrect: 'q4_v1',
-                attemptKey: 'q4'
-            },
-            q5_v1: {
-                text: 'Який модуль кореня рівняння \\( z^3 = 8 \\)?',
-                options: ['1', '2', '3', '4'],
-                correct: '2',
-                nextCorrect: 'end',
-                nextIncorrect: 'q5_v2',
-                attemptKey: 'q5'
-            },
-            q5_v2: {
-                text: 'Який модуль кореня рівняння \\( z^4 = 16 \\)?',
-                options: ['1', '2', '4', '16'],
-                correct: '2',
-                nextCorrect: 'end',
-                nextIncorrect: 'q5_v3',
-                attemptKey: 'q5'
-            },
-            q5_v3: {
-                text: 'Який модуль кореня рівняння \\( z^5 = 32 \\)?',
-                options: ['1', '2', '4', '32'],
-                correct: '2',
-                nextCorrect: 'end',
-                nextIncorrect: 'q5_v1',
-                attemptKey: 'q5'
-            }
+            q1_v1: { text: 'Як знайти корені рівняння \\( z^3 = 1 \\)?', options: ['Перейти до тригонометричної форми', 'Використати алгебраїчну форму', 'Розв’язати як квадратне рівняння', 'Підставити дійсні числа'], correct: 'Перейти до тригонометричної форми', nextCorrect: 'q2_v1', nextIncorrect: 'q1_v2', attemptKey: 'q1' },
+            q1_v2: { text: 'Який перший крок для знаходження коренів \\( z^4 = -16 \\)?', options: ['Використати тригонометричну форму', 'Розв’язати як лінійне рівняння', 'Взяти логарифм', 'Підставити уявні числа'], correct: 'Використати тригонометричну форму', nextCorrect: 'q2_v1', nextIncorrect: 'q1_v3', attemptKey: 'q1' },
+            q1_v3: { text: 'Як знайти корені рівняння \\( z^5 = 32 \\)?', options: ['Перейти до тригонометричної форми', 'Використати формулу дискриминанта', 'Розв’язати як квадратне рівняння', 'Підставити дійсні числа'], correct: 'Перейти до тригонометричної форми', nextCorrect: 'q2_v1', nextIncorrect: 'q1_v1', attemptKey: 'q1' },
+            q2_v1: { text: 'З наведених виразів виберіть ті, які можна розв’язати за допомогою тригонометричної форми:', options: [{ value: '\\( z^3 = 8 \\)', isCorrect: true }, { value: '\\( z^2 + z + 1 = 0 \\)', isCorrect: false }, { value: '\\( z^4 = -1 \\)', isCorrect: true }, { value: '\\( z = 5 \\)', isCorrect: false }], multiSelect: true, nextCorrect: 'q3_v1', nextIncorrect: 'q2_v2', attemptKey: 'q2' },
+            q2_v2: { text: 'З наведених виразів виберіть ті, які можна розв’язати за допомогою тригонометричної форми:', options: [{ value: '\\( z^5 = 1 \\)', isCorrect: true }, { value: '\\( z^2 = 4 \\)', isCorrect: false }, { value: '\\( z^3 = -27 \\)', isCorrect: true }, { value: '\\( z + 1 = 0 \\)', isCorrect: false }], multiSelect: true, nextCorrect: 'q3_v1', nextIncorrect: 'q2_v3', attemptKey: 'q2' },
+            q2_v3: { text: 'З наведених виразів виберіть ті, які можна розв’язати за допомогою тригонометричної форми:', options: [{ value: '\\( z^2 + 1 = 0 \\)', isCorrect: false }, { value: '\\( z^4 = 16 \\)', isCorrect: true }, { value: '\\( z^3 = i \\)', isCorrect: true }, { value: '\\( z = i \\)', isCorrect: false }], multiSelect: true, nextCorrect: 'q3_v1', nextIncorrect: 'q2_v1', attemptKey: 'q2' },
+            q3_v1: { text: 'Скільки коренів має рівняння \\( z^4 = 1 \\)?', options: ['2', '3', '4', '5'], correct: '4', nextCorrect: 'q4_v1', nextIncorrect: 'q3_v2', attemptKey: 'q3' },
+            q3_v2: { text: 'Скільки коренів має рівняння \\( z^3 = -8 \\)?', options: ['1', '2', '3', '4'], correct: '3', nextCorrect: 'q4_v1', nextIncorrect: 'q3_v3', attemptKey: 'q3' },
+            q3_v3: { text: 'Скільки коренів має рівняння \\( z^5 = 32 \\)?', options: ['3', '4', '5', '6'], correct: '5', nextCorrect: 'q4_v1', nextIncorrect: 'q3_v1', attemptKey: 'q3' },
+            q4_v1: { text: 'Який аргумент кореня рівняння \\( z^3 = 1 \\) для \\( k=1 \\)?', options: ['\\( \\frac{2\\pi}{3} \\)', '\\( \\frac{\\pi}{3} \\)', '\\( \\pi \\)', '\\( \\frac{4\\pi}{3} \\)'], correct: '\\( \\frac{2\\pi}{3} \\)', nextCorrect: 'q5_v1', nextIncorrect: 'q4_v2', attemptKey: 'q4' },
+            q4_v2: { text: 'Який аргумент кореня рівняння \\( z^4 = 1 \\) для \\( k=2 \\)?', options: ['\\( \\frac{\\pi}{2} \\)', '\\( \\pi \\)', '\\( \\frac{3\\pi}{2} \\)', '\\( \\frac{\\pi}{4} \\)'], correct: '\\( \\pi \\)', nextCorrect: 'q5_v1', nextIncorrect: 'q4_v3', attemptKey: 'q4' },
+            q4_v3: { text: 'Який аргумент кореня рівняння \\( z^5 = 1 \\) для \\( k=3 \\)?', options: ['\\( \\frac{2\\pi}{5} \\)', '\\( \\frac{4\\pi}{5} \\)', '\\( \\frac{6\\pi}{5} \\)', '\\( \\frac{8\\pi}{5} \\)'], correct: '\\( \\frac{6\\pi}{5} \\)', nextCorrect: 'q5_v1', nextIncorrect: 'q4_v1', attemptKey: 'q4' },
+            q5_v1: { text: 'Який модуль кореня рівняння \\( z^3 = 8 \\)?', options: ['1', '2', '3', '4'], correct: '2', nextCorrect: 'end', nextIncorrect: 'q5_v2', attemptKey: 'q5' },
+            q5_v2: { text: 'Який модуль кореня рівняння \\( z^4 = 16 \\)?', options: ['1', '2', '4', '16'], correct: '2', nextCorrect: 'end', nextIncorrect: 'q5_v3', attemptKey: 'q5' },
+            q5_v3: { text: 'Який модуль кореня рівняння \\( z^5 = 32 \\)?', options: ['1', '2', '4', '32'], correct: '2', nextCorrect: 'end', nextIncorrect: 'q5_v1', attemptKey: 'q5' }
         };
 
         function renderQuestion() {
-            console.log('Rendering question:', currentQuestion);
-            try {
-                if (currentQuestion === 'end') {
-                    document.getElementById('trainerContent').innerHTML = `
-                        <div class="completion-emoji"></div>
-                        <div class="completion-message">
-                            <h2>Тренування завершено!</h2>
-                            <p>Молодець!</p>
-                        </div>
-                    `;
-                    return;
-                }
-
-                const q = questions[currentQuestion];
-                const questionNumber = currentQuestion.match(/q(\d+)/)[1];
-
-                let optionsHTML = '';
-                if (q.multiSelect) {
-                    optionsHTML = q.options.map((opt, i) => `
-                        <div class="option" data-index="${i}">\\(${opt.value}\\)</div>
-                    `).join('');
-                } else {
-                    optionsHTML = q.options.map(opt => `
-                        <div class="option" data-answer="${opt}">\\(${opt}\\)</div>
-                    `).join('');
-                }
-
+            if (currentQuestion === 'end') {
                 document.getElementById('trainerContent').innerHTML = `
-                    <div class="question-circle"><h3>Питання ${questionNumber}</h3></div>
-                    <p>${q.text}</p>
-                    <div class="options-container">${optionsHTML}</div>
-                    <button onclick="checkAnswer()">Відповісти</button>
-                    <div class="result" id="result"></div>
+                    <div class="completion-emoji"></div>
+                    <div class="completion-message">
+                        <h2>Тренування завершено!</h2>
+                        <p>Молодець!</p>
+                    </div>
                 `;
-
-                if (typeof MathJax !== 'undefined') {
-                    MathJax.typesetPromise().catch(err => {
-                        console.error('MathJax Error:', err);
-                        document.getElementById('result').innerHTML = '<div class="result-text">Помилка рендерингу математичних виразів.</div>';
-                    });
-                }
-
-                const options = document.querySelectorAll('.option');
-                options.forEach(opt => {
-                    opt.addEventListener('click', () => {
-                        if (q.multiSelect) {
-                            opt.classList.toggle('selected');
-                        } else {
-                            options.forEach(o => o.classList.remove('selected'));
-                            opt.classList.add('selected');
-                        }
-                    });
-                });
-            } catch (err) {
-                console.error('Render error:', err);
-                document.getElementById('trainerContent').innerHTML = '<p>Помилка рендерингу: ' + err.message + '</p>';
+                return;
             }
+            const q = questions[currentQuestion];
+            const questionNumber = currentQuestion.match(/q(\d+)/)[1];
+            let optionsHTML = q.multiSelect ? q.options.map((opt, i) => `<div class="option" data-index="${i}">\\(${opt.value}\\)</div>`).join('') : q.options.map(opt => `<div class="option" data-answer="${opt}">\\(${opt}\\)</div>`).join('');
+            document.getElementById('trainerContent').innerHTML = `
+                <div class="question-circle"><h3>Питання ${questionNumber}</h3></div>
+                <p>${q.text}</p>
+                <div class="options-container">${optionsHTML}</div>
+                <button onclick="checkAnswer()">Відповісти</button>
+                <div class="result" id="result"></div>
+            `;
+            if (typeof MathJax !== 'undefined') MathJax.typesetPromise();
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    if (q.multiSelect) opt.classList.toggle('selected');
+                    else {
+                        document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+                        opt.classList.add('selected');
+                    }
+                });
+            });
         }
 
         function showFeedback(isCorrect, nextQuestion) {
             const feedbackDiv = document.createElement('div');
-            feedbackDiv.className = isCorrect ? 'feedback correct-feedback' : 'feedback incorrect-feedback';
+            feedbackDiv.className = `feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'}`;
             feedbackDiv.innerHTML = isCorrect ? '✅ Правильно!' : '❌ Неправильно';
             document.body.appendChild(feedbackDiv);
-
             setTimeout(() => {
                 feedbackDiv.remove();
                 currentQuestion = nextQuestion;
@@ -1510,62 +963,32 @@
         }
 
         function checkAnswer() {
-            console.log('Checking answer for question:', currentQuestion);
-            try {
-                const q = questions[currentQuestion];
-                const resultDiv = document.getElementById('result');
-                resultDiv.innerHTML = '';
-                let isCorrect = false;
-
-                if (q.multiSelect) {
-                    const selected = Array.from(document.querySelectorAll('.option.selected'));
-                    const selectedIndexes = selected.map(el => parseInt(el.dataset.index));
-                    const correctIndexes = q.options
-                        .map((opt, idx) => opt.isCorrect ? idx : -1)
-                        .filter(idx => idx !== -1);
-                    isCorrect = selectedIndexes.length === correctIndexes.length &&
-                                selectedIndexes.every(idx => correctIndexes.includes(idx));
-                } else {
-                    const selected = document.querySelector('.option.selected');
-                    if (!selected) {
-                        resultDiv.innerHTML = '<div class="result-text">Оберіть варіант відповіді.</div>';
-                        return;
-                    }
-                    isCorrect = selected.dataset.answer === q.correct;
+            const q = questions[currentQuestion];
+            const resultDiv = document.getElementById('result');
+            let isCorrect = false;
+            if (q.multiSelect) {
+                const selected = Array.from(document.querySelectorAll('.option.selected')).map(el => parseInt(el.dataset.index));
+                const correctIndexes = q.options.map((opt, idx) => opt.isCorrect ? idx : -1).filter(idx => idx !== -1);
+                isCorrect = selected.length === correctIndexes.length && selected.every(idx => correctIndexes.includes(idx));
+            } else {
+                const selected = document.querySelector('.option.selected');
+                if (!selected) {
+                    resultDiv.innerHTML = '<div class="result-text">Оберіть варіант відповіді.</div>';
+                    return;
                 }
-
-                attemptCounts[q.attemptKey]++;
-
-                if (isCorrect) {
-                    attemptCounts[q.attemptKey] = 0;
-                    showFeedback(true, q.nextCorrect);
-                } else {
-                    let nextQuestion = q.nextIncorrect;
-                    showFeedback(false, nextQuestion);
-                }
-            } catch (err) {
-                console.error('Check error:', err);
-                document.getElementById('result').innerHTML = '<p>Помилка перевірки: ' + err.message + '</p>';
+                isCorrect = selected.dataset.answer === q.correct;
+            }
+            attemptCounts[q.attemptKey]++;
+            if (isCorrect) {
+                attemptCounts[q.attemptKey] = 0;
+                showFeedback(true, q.nextCorrect);
+            } else {
+                showFeedback(false, q.nextIncorrect);
             }
         }
 
-        openTheoryBtn.addEventListener('click', () => {
-    openModal(theoryModal, openTheoryBtn);
-    theoryModal.querySelector('.modal-content').scrollTop = 0; // Скидання прокрутки
-    setTimeout(() => {
-        if (typeof MathJax !== 'undefined') {
-            MathJax.typesetPromise().then(() => {
-                theoryModal.querySelector('.modal-content').scrollTop = 0; // Повторне скидання після MathJax
-            }).catch(err => console.error('MathJax error:', err));
-        }
-    }, 200);
-});
-
-        window.addEventListener('load', () => {
-            if (typeof MathJax !== 'undefined') {
-                MathJax.typesetPromise().catch(err => console.error('MathJax error:', err));
-            }
-        });
+        window.addEventListener('resize', () => adjustModalHeight(modals.theory));
+        renderQuestion();
     </script>
 </body>
 </html>
