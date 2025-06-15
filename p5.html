@@ -12,6 +12,22 @@
             margin: 0;
             padding: 0;
         }
+        .figure {
+            display: block;
+            margin: 10px auto;
+            max-width: 100%;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            object-fit: contain;
+        }
+        .figure.figure-2-1 {
+            width: 150px;
+            height: 150px;
+        }
+        .figure.figure-2-2 {
+            width: 180px;
+            height: 180px;
+        }
         body {
             background: linear-gradient(135deg, #1a1a2e, #16213e);
             font-family: 'Poppins', sans-serif;
@@ -121,49 +137,66 @@
         .close-btn:hover {
             background: #00cc66;
         }
+        #theoryModal {
+            display: none;
+            position: fixed;
+            top: 5%;
+            left: 5%;
+            width: 90%;
+            height: 90%;
+            background: linear-gradient(135deg, #1e1e3e, #2a2a5a);
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            z-index: 1000;
+            overflow: hidden;
+            flex-direction: column;
+        }
         .modal-content {
-            padding: 15px;
-            padding-bottom: 100px;
+            padding: 20px;
             overflow-y: auto;
             flex-grow: 1;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            hyphens: auto;
+            background: linear-gradient(135deg, #2dd4bf, #1e3a8a);
+            border-radius: 10px;
+            margin: 10px;
+            color: #FFB6B6;
+            width: auto;
+            min-width: 100%;
             max-width: 100%;
             box-sizing: border-box;
-            max-height: calc(96vh - 60px);
-            -webkit-overflow-scrolling: touch;
+            overflow-x: hidden;
         }
-        #theoryModal .modal-content {
-            overflow-x: hidden; /* Відключаємо горизонтальну прокрутку на десктопах */
-        }
-        #theoryModal .modal-content p, #theoryModal .modal-content li {
-            font-size: clamp(16px, 2.8vw, 18px);
+        #theoryModal .modal-content p {
+            font-size: 18px !important;
             line-height: 1.6;
-            color: #e0e0e0;
-            margin: 8px 0;
             word-wrap: break-word;
             overflow-wrap: break-word;
-            hyphens: auto;
+            text-align: justify;
             max-width: 100%;
-            text-align: justify; /* Вирівнювання по ширині */
+        }
+        #theoryModal .modal-content p.math-notation-centered {
+            max-width: 100%;
+            text-align: center;
+            padding: 5px 0;
+        }
+        #theoryModal .modal-content ul {
+            list-style: none;
+            padding-left: 20px;
         }
         #theoryModal .modal-content li {
             color: #e9b1a0;
-            padding-left: 20px; /* Відступ для маркера */
-            margin-left: 10px; /* Додатковий відступ для списку */
-            max-width: calc(100% - 30px); /* Обмежуємо ширину, враховуючи відступи */
-            overflow-x: auto; /* Дозволяємо прокрутку для довгих формул у списку */
-            -webkit-overflow-scrolling: touch;
-            white-space: normal; /* Дозволяємо перенос тексту */
+            padding-left: 20px;
+            margin-left: 10px;
+            max-width: calc(100% - 30px);
+            white-space: normal;
+            text-align: justify;
+            position: relative;
         }
-        #theoryModal .modal-content li mjx-container {
-            display: inline-block !important;
-            max-width: none; /* Формули можуть бути ширшими */
-            white-space: nowrap; /* Формули не переносяться */
-            overflow: visible; /* Запобігаємо обрізанню формул */
-            vertical-align: middle; /* Вирівнювання формул по вертикалі */
-            
+        #theoryModal .modal-content li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #00ff88;
+            font-size: 16px;
         }
         #theoryModal .modal-content img {
             max-width: 100%;
@@ -174,31 +207,34 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
         #theoryModal mjx-container {
-            display: inline-block !important;
-            max-width: 100%;
             font-size: clamp(17px, 2.8vw, 19px) !important;
             color: #FFFF00 !important;
-            white-space: normal;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            display: inline-block !important;
+            max-width: 100%;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 5px;
+            box-sizing: border-box;
             text-align: center;
         }
         #theoryModal mjx-container.math-notation-centered {
             display: block !important;
             text-align: center !important;
             max-width: 100%;
-            font-size: clamp(17px, 2.8vw, 19px) !important;
-            color: #FFFF00 !important;
+            width: fit-content;
             margin: 10px auto;
             padding: 5px;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            box-sizing: border-box;
         }
-        /* Виправлення для пронумерованих формул */
         #theoryModal mjx-container[jax="CHTML"][display="true"] {
             display: block !important;
             text-align: center !important;
             margin: 10px auto;
+            max-width: 100%;
+            width: fit-content;
+            padding: 5px;
+            box-sizing: border-box;
         }
         #theoryModal mjx-container[jax="CHTML"][display="true"] mjx-mtable {
             display: inline-block;
@@ -214,10 +250,21 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.6);
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
             z-index: 999;
+        }
+        .complex-plane, .polar-form {
+            overflow-x: auto;
+            width: 100%;
+        }
+        .complex-plane > div, .polar-form > div {
+            display: block;
+            white-space: normal;
+            word-wrap: break-word;
+            width: 100%;
+            text-align: justify;
         }
         .video-card-container {
             display: flex;
@@ -448,8 +495,18 @@
                 margin-top: 40px;
                 padding: 15px 20px;
             }
+            .figure.figure-2-1 {
+                width: 200px;
+                height: 120px;
+                max-width: 100%;
+            }
+            .figure.figure-2-2 {
+                width: 150px;
+                height: 150px;
+                max-width: 100%;
+            }
             .title-box h1 {
-                font-size: 24px;
+                font-size: 28px;
             }
             .section-container {
                 flex-direction: column;
@@ -460,42 +517,37 @@
                 width: 80%;
                 height: 180px;
             }
+            #theoryModal {
+                top: 2%;
+                left: 2%;
+                width: 96%;
+                height: 96%;
+            }
             .modal-content {
                 padding: 15px;
                 padding-bottom: 120px;
                 max-height: calc(96vh - 60px);
+                overflow-x: hidden;
             }
-            #theoryModal .modal-content {
-                overflow-x: auto; /* Горизонтальна прокрутка для мобільних */
-                -webkit-overflow-scrolling: touch;
+            #theoryModal .modal-content p {
+                font-size: 18px !important;
+                line-height: 1.7;
             }
             #theoryModal .modal-content li {
-                max-width: calc(100% - 20px); /* Враховуємо відступи */
-                overflow-x: auto; /* Прокрутка для довгих формул */
-                white-space: normal; /* Дозволяємо перенос тексту */
-                text-align: justify; /* Вирівнювання по ширині */
+                font-size: 18px !important;
+                max-width: calc(100% - 20px);
+                white-space: normal;
             }
             #theoryModal mjx-container, #theoryModal mjx-container.math-notation-centered {
-                max-width: none; /* Дозволяємо формулам бути ширшими */
-                white-space: nowrap; /* Формули не переносяться */
-                overflow: visible; /* Запобігаємо обрізанню формул */
-            }
-            /* Центрування формул на мобільних */
-            #theoryModal mjx-container[jax="CHTML"][display="true"] {
-                display: block !important;
-                text-align: center !important;
-                margin: 10px auto;
-                white-space: nowrap;
-                overflow: visible;
-            }
-            #theoryModal mjx-container[jax="CHTML"][display="true"] mjx-mtable {
-                display: inline-block;
+                font-size: clamp(18px, 3vw, 20px) !important;
+                max-width: 100%;
+                width: fit-content;
+                margin-left: auto;
+                margin-right: auto;
+                padding: 8px;
+                box-sizing: border-box;
+                transform: scale(1);
                 text-align: center;
-            }
-            #theoryModal mjx-container[jax="CHTML"][display="true"] mjx-mtag {
-                display: inline-block;
-                vertical-align: middle;
-                margin-left: 5px;
             }
             .video-card {
                 width: 180px;
@@ -506,7 +558,7 @@
                 height: 40px;
             }
             .video-card h3 {
-                font-size: 16px;
+                font-size: 18px;
             }
             .question-card {
                 height: 150px;
@@ -528,7 +580,7 @@
                 gap: 15px;
             }
             .nav-button {
-                font-size: 16px;
+                font-size: 18px;
                 padding: 10px 20px;
             }
             .video-player-container iframe {
@@ -540,8 +592,21 @@
                 margin-top: 20px;
                 padding: 10px 15px;
             }
+            .figure.figure-2-1 {
+                width: 150px;
+                height: 90px;
+            }
+            .figure.figure-2-2 {
+                width: 120px;
+                height: 120px;
+            }
+            .float-left {
+                float: none;
+                margin: 10px auto;
+                display: block;
+            }
             .title-box h1 {
-                font-size: 20px;
+                font-size: 24px;
             }
             .section {
                 width: 90%;
@@ -552,11 +617,29 @@
                 height: 50px;
             }
             .section h2 {
-                font-size: 18px;
+                font-size: 20px;
             }
             .modal-content {
                 padding: 10px;
-                padding-bottom: 140px;
+                padding-bottom: 100px;
+            }
+            #theoryModal .modal-content p {
+                font-size: 16px !important;
+                line-height: 1.7;
+            }
+            #theoryModal .modal-content li {
+                font-size: 16px !important;
+            }
+            #theoryModal mjx-container, #theoryModal mjx-container.math-notation-centered {
+                font-size: clamp(16px, 2.8vw, 18px) !important;
+                max-width: 100%;
+                width: fit-content;
+                margin-left: auto;
+                margin-right: auto;
+                padding: 8px;
+                box-sizing: border-box;
+                transform: scale(1);
+                text-align: center;
             }
             .video-card {
                 width: 160px;
@@ -567,10 +650,10 @@
                 height: 36px;
             }
             .video-card h3 {
-                font-size: 15px;
+                font-size: 16px;
             }
             .nav-button {
-                font-size: 14px;
+                font-size: 16px;
                 padding: 8px 16px;
             }
             .video-player-container iframe {
@@ -610,7 +693,7 @@
             </svg>
             До теми 2
         </a>
-        <a class="nav-button" href='index.html'>
+       <a class="nav-button" href='index.html'>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                 <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
             </svg>
@@ -630,7 +713,7 @@
                 <p>
                     <strong>Модуль комплексного числа</strong> \( z = a + bi \) позначається як \( |z| \) або \( r \) і визначається як відстань від початку координат \( O(0;0) \) до точки \( (a;b) \), яка відповідає цьому числу на комплексній площині (рис. 2.1).
                 </p>
-                <img src="/static/figure2.1.jpg" alt="Комплексна площина">
+                <img src="static/figure2.1.jpg" alt="Рисунок 2.1" class="figure figure-2-1" />
                 <p>
                     Для обчислення модуля використовують формулу:
                 </p>
@@ -641,11 +724,8 @@
                     Надалі для позначення модуля ми використовуватимемо символ \( r \). Для особливих випадків:
                 </p>
                 <ul>
-                   <ul>
-  <li>✔ якщо число дійсне \(( z = a + 0i )\), то \( r = |a| \);</li>
-  <li>✔ якщо число чисто уявне \( (z = 0 + bi )\), то \( r = |b| \).</li>
-</ul>
-
+                    <li>якщо число дійсне \(( z = a + 0i )\), то \( r = |a| \);</li>
+                    <li>якщо число чисто уявне \( (z = 0 + bi )\), то \( r = |b| \).</li>
                 </ul>
                 <p>
                     Спряжені комплексні числа \( z = a + bi \) і \( \overline{z} = a - bi \) мають однакові модулі:
