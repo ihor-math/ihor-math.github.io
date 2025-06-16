@@ -24,10 +24,7 @@
             width: 150px;
             height: 150px;
         }
-        .figure.figure-2-2 {
-            width: 180px;
-            height: 180px;
-        }
+        
         body {
             background: linear-gradient(135deg, #1a1a2e, #16213e);
             font-family: 'Poppins', sans-serif;
@@ -347,54 +344,121 @@
             padding: 0 20px 10px;
             color: #e0e0e0;
         }
-        .question-card {
-            perspective: 1000px;
-            margin: 20px auto;
-            max-width: 90%;
-            height: 150px;
-        }
-        .card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
-            border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-        }
-        .card-inner.flipped {
-            transform: rotateY(180deg);
-        }
-        .card-front, .card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            padding: 10px;
-            border-radius: 15px;
-            font-size: clamp(14px, 2.5vw, 16px);
-            line-height: 1.4;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: justify;
-            overflow: hidden;
-            border: 1px solid rgba(0, 255, 136, 0.3);
-        }
-        .card-front {
-            background: linear-gradient(135deg, #2a2a4a, #4a4a7a);
-            color: #e0e0e0;
-            font-weight: 600;
-        }
-        .card-back {
-            background: linear-gradient(135deg, #3b3b6a, #5a5a9a);
-            color: #e0e0e0;
-            transform: rotateY(180deg);
-            overflow-y: auto;
-        }
-        .trainer-container {
+       
+     .question-card {
+    perspective: 1000px;
+    margin: 20px auto;
+    max-width: 95%;
+    height: 200px;
+}
+
+.card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+    border-radius: 15px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+}
+
+.card-inner.flipped {
+    transform: rotateY(180deg);
+}
+
+.card-front, .card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    padding: 12px;
+    border-radius: 15px;
+    font-size: clamp(16px, 3vw, 18px);
+    line-height: 1.5;
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    font-family: 'Poppins', sans-serif;
+    box-sizing: border-box;
+}
+
+.card-front {
+    background: linear-gradient(135deg, #2a2a4a, #4a4a7a);
+    color: #e0e0e0;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    flex-wrap: wrap; /* Змінено з nowrap на wrap для перенесення тексту */
+    overflow-wrap: break-word; /* Забезпечує перенесення слів */
+    word-break: break-word; /* Дозволяє розрив слів, якщо потрібно */
+    padding: 12px 15px; /* Додаємо більше відступів для кращого вигляду */
+    max-width: 100%; /* Обмежуємо ширину, щоб уникнути переповнення */
+}
+
+.card-back {
+    background: linear-gradient(135deg, #3b3b6a, #5a5a9a);
+    color: #e0e0e0;
+    transform: rotateY(180deg);
+    overflow-y: auto;
+    text-align: justify;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100%;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    padding: 12px 15px;
+    max-width: 100%; /* Обмежуємо ширину для уникнення обрізання */
+    box-sizing: border-box; /* Забезпечує врахування відступів у розмірах */
+}
+
+/* Видаляємо або замінюємо конфліктне правило */
+.question-card:nth-child(3) .card-front {
+    white-space: normal; /* Забезпечуємо перенесення тексту */
+    overflow-wrap: break-word; /* Дозволяємо перенесення слів */
+    word-break: break-word; /* Дозволяємо розрив слів */
+    flex-wrap: wrap; /* Дозволяємо перенесення у flex-контейнері */
+}
+.card-back p {
+    margin: 5px 0;
+    font-size: clamp(16px, 3vw, 18px);
+    color: #e0e0e0;
+    box-sizing: border-box;
+}
+
+#questionsModal .modal-content {
+    background: linear-gradient(135deg, #1e1e3e, #2a2a5a);
+    color: #e0e0e0;
+}
+
+#questionsModal mjx-container {
+    color: #FFFF00 !important;
+    font-size: clamp(18px, 3.2vw, 20px) !important;
+    max-width: 100%;
+    width: fit-content;
+    margin: 5px auto;
+    padding: 3px;
+    box-sizing: border-box;
+}
+
+#questionsModal .math-notation-centered {
+    text-align: center !important;
+    margin: 5px 0;
+}
+
+.card-front span.yellow {
+    color: #FFFF00;
+    font-weight: 600;
+    display: inline;
+    margin-right: 0.1em;
+}
+
+
+
+
+             .trainer-container {
             width: 90%;
             max-width: 800px;
             padding: 3vw 4vw;
@@ -500,11 +564,7 @@
                 height: 120px;
                 max-width: 100%;
             }
-            .figure.figure-2-2 {
-                width: 150px;
-                height: 150px;
-                max-width: 100%;
-            }
+            
             .title-box h1 {
                 font-size: 28px;
             }
@@ -544,7 +604,7 @@
                 width: fit-content;
                 margin-left: auto;
                 margin-right: auto;
-                padding: 8px;
+                padding: 4px;
                 box-sizing: border-box;
                 transform: scale(1);
                 text-align: center;
@@ -567,10 +627,31 @@
                 width: 95%;
                 padding: 4vw;
             }
-            .question-circle {
-                width: 25vw;
-                height: 25vw;
-            }
+             .question-card {
+        height: 190px;
+        max-width: 90%;
+    }
+    .card-front, .card-back {
+        font-size: clamp(15px, 2.8vw, 17px); /* Зменшуємо розмір шрифту для кращої адаптивності */
+        padding: 8px 10px;
+        overflow-wrap: break-word;
+        word-break: break-word;
+    }
+    .card-back {
+        padding: 8px 10px;
+        font-size: clamp(14px, 2.7vw, 16px);
+    }
+    #questionsModal mjx-container {
+        font-size: clamp(15px, 2.9vw, 17px) !important; /* Зменшуємо розмір MathJax для мобільних */
+        max-width: 100%;
+        margin: 2px auto;
+        padding: 2px;
+    }
+    .card-back p {
+        font-size: clamp(14px, 2.7vw, 17px);
+        margin: 5px 0;
+    }
+}
             .options-container {
                 flex-direction: column;
                 align-items: center;
@@ -596,10 +677,7 @@
                 width: 150px;
                 height: 90px;
             }
-            .figure.figure-2-2 {
-                width: 120px;
-                height: 120px;
-            }
+            
             .float-left {
                 float: none;
                 margin: 10px auto;
@@ -636,7 +714,7 @@
                 width: fit-content;
                 margin-left: auto;
                 margin-right: auto;
-                padding: 8px;
+                padding: 4px;
                 box-sizing: border-box;
                 transform: scale(1);
                 text-align: center;
@@ -659,6 +737,27 @@
             .video-player-container iframe {
                 max-height: 200px;
             }
+             .question-card {
+        height: 180px;
+        max-width: 90%;
+    }
+    .card-front {
+        font-size: clamp(14px, 2.7vw, 16px);
+        padding: 6px 8px;
+    }
+    .card-back {
+        padding: 6px 8px;
+        font-size: clamp(13px, 2.5vw, 15px);
+    }
+    #questionsModal mjx-container {
+        font-size: clamp(14px, 2.8vw, 16px) !important;
+        max-width: 100%;
+        margin: 2px auto;
+        padding: 2px;
+    }
+    .card-back p {
+        font-size: clamp(13px, 2.6vw, 15px);
+    }
         }
     </style>
 </head>
@@ -687,13 +786,13 @@
     </div>
 
     <div class="navigation-buttons">
-        <a class="nav-button" href='tema2.html'>
+       <a class="nav-button" href='tema2.html'>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                 <path d="M15 18l-6-6 6-6"/>
             </svg>
             До теми 2
         </a>
-       <a class="nav-button" href='index.html'>
+        <a class="nav-button" href='index.html'>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                 <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
             </svg>
@@ -737,7 +836,7 @@
                     Крім того, їхній добуток дорівнює квадрату модуля. Розглянемо це детальніше:
                 </p>
                 <p>
-                    \[ (a + bi) \cdot (a - bi) = a^2 - (bi)^2 = a^2 - b^2 i^2. \]
+                    \[ (a + bi) \cdot (a - bi) =  a^2 - b^2 i^2. \]
                 </p>
                 <p>
                     Оскільки \( i^2 = -1 \), то \( b^2 i^2 = b^2 \cdot (-1) = -b^2 \), і вираз спрощується:
@@ -754,104 +853,125 @@
             </details>
             <details>
                 <summary>Приклад</summary>
-                <p>Тут буде приклад використання тригонометричної форми в розв’язанні рівнянь. Наповнення буде надано пізніше.</p>
+                <p>
+                    <strong>Приклад 2.1.</strong> Знайти модулі комплексних чисел:<br>
+                    а) \( z = 3 - i \); &nbsp;&nbsp;&nbsp;&nbsp; б) \( z = -2 - 3i \).
+                </p>
+                <p>
+                    <strong>Розв’язок:</strong>
+                </p>
+                <p>
+                    а) Для числа \( z = 3 - i \), маємо \( a = 3 \), \( b = -1 \). За формулою для модуля комплексного числа (2.1):
+                </p>
+                <p class="math-notation-centered">
+                    \[ r = |z| = \sqrt{a^2 + b^2}, \]
+                </p>
+                <p>
+                    обчислимо:
+                </p>
+                <p class="math-notation-centered">
+                    \[ r = \sqrt{3^2 + (-1)^2} = \sqrt{9 + 1} = \sqrt{10} = 2. \]
+                </p>
+                <p>
+                    б) Для числа \( z = -2 - 3i \), маємо \( a = -2 \), \( b = -3 \). За тією ж формулою (2.1):
+                </p>
+                <p class="math-notation-centered">
+                    \[ r =  \sqrt{(-2)^2 + (-3)^2} = \sqrt{4 + 9} = \sqrt{13}. \]
+                </p>
+                <p>
+                    <strong>Відповідь:</strong> а) \( r = 2 \); б) \( r = \sqrt{13} \).
+                </p>
             </details>
         </div>
     </div>
 
-    <div id="videoModal" class="modal">
-        <div class="modal-header">
-            <button class="close-btn" id="closeVideoBtn">× Закрити</button>
-        </div>
-        <div class="modal-content">
-            <h2 style="text-align: center; color: #00ff88;">Оберіть відео</h2>
-            <div class="video-card-container">
-                <div class="video-card" data-video="1">
-                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
-                    <h3>Тригонометрична форма: основи</h3>
-                </div>
-                <div class="video-card" data-video="2">
-                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
-                    <h3>Розв’язання рівнянь із тригонометричною формою</h3>
-                </div>
-                <div class="video-card" data-video="3">
-                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
-                    <h3>Практика з тригонометричною формою</h3>
-                </div>
+   <div id="videoModal" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeVideoBtn">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <h2 style="text-align: center; color: #00ff88;">Оберіть відео</h2>
+        <div class="video-card-container">
+            <div class="video-card" data-video="1">
+                <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
+                <h3>Модуль комплексного числа</h3>
+            </div>
+            <div class="video-card" data-video="2">
+                <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
+                <h3>Модуль комплексного числа 2</h3>
             </div>
         </div>
     </div>
+</div>
 
-    <div id="videoPlayerModal1" class="modal">
-        <div class="modal-header">
-            <button class="close-btn" id="closeVideoPlayerBtn1">× Закрити</button>
-        </div>
-        <div class="modal-content">
-            <div class="video-player-container">
-                <iframe id="youtubePlayer1" width="100%" height="400" src="https://www.youtube.com/embed/placeholder1?rel=0&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
+<div id="videoPlayerModal1" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeVideoPlayerBtn1">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="video-player-container">
+            <iframe id="youtubePlayer1" width="100%" height="400" src="https://www.youtube.com/embed/HoFYxJYinn0?rel=0&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
     </div>
+</div>
 
-    <div id="videoPlayerModal2" class="modal">
-        <div class="modal-header">
-            <button class="close-btn" id="closeVideoPlayerBtn2">× Закрити</button>
-        </div>
-        <div class="modal-content">
-            <div class="video-player-container">
-                <iframe id="youtubePlayer2" width="100%" height="400" src="https://www.youtube.com/embed/placeholder2?rel=0&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
+<div id="videoPlayerModal2" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeVideoPlayerBtn2">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="video-player-container">
+            <iframe id="youtubePlayer2" width="100%" height="400" src="https://www.youtube.com/embed/6emdubLFYRw?rel=0&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
     </div>
+</div>
 
-    <div id="videoPlayerModal3" class="modal">
-        <div class="modal-header">
-            <button class="close-btn" id="closeVideoPlayerBtn3">× Закрити</button>
-        </div>
-        <div class="modal-content">
-            <div class="video-player-container">
-                <iframe id="youtubePlayer3" width="100%" height="400" src="https://www.youtube.com/embed/placeholder3?rel=0&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
-        </div>
-    </div>
+   
 
-    <div id="questionsModal" class="modal">
-        <div class="modal-header">
-            <button class="close-btn" id="closeQuestionsBtn">× Закрити</button>
+   
+ <div id="questionsModal" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeQuestionsBtn">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">1. Що таке модуль комплексного числа?</div>
+                <div class="card-back">
+                    <p>Модуль комплексного числа \( z = a + bi \) — це його відстань від початку координат \( O(0;0) \) до точки \( (a;b) \), яка відповідає цьому числу на комплексній площині. Модуль позначається як \( |z| \) або \( r \) і обчислюється за формулою:</p>
+                    <p class="math-notation-centered">\[ r = |z| = \sqrt{a^2 + b^2}. \]</p>
+                </div>
+            </div>
         </div>
-        <div class="modal-content">
-            <div class="question-card">
-                <div class="card-inner">
-                    <div class="card-front">1. Як тригонометрична форма допомагає у розв’язанні рівнянь?</div>
-                    <div class="card-back">Тригонометрична форма спрощує операції множення, ділення та піднесення до степеня, що полегшує розв’язання рівнянь виду \( z^n = a \).</div>
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">2. Як знайти модуль комплексного числа, записаного в алгебраїчній формі?</div>
+                <div class="card-back">
+                    <p>Щоб знайти модуль комплексного числа, записаного в алгебраїчній формі \( z = a + bi \), потрібно підставити значення \( a \) та \( b \) у формулу:</p>
+                    <p class="math-notation-centered">\[ r = |z| = \sqrt{a^2 + b^2}. \]</p>
+                                    </div>
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">3. Який модуль має спряжене комплексне число?</div>
+                <div class="card-back">
+                    <p>Спряжені комплексні числа \( z = a + bi \) і \( \overline{z} = a - bi \) мають однакові модулі:</p>
+                    <p class="math-notation-centered">\[ |z| = |\overline{z}| = \sqrt{a^2 + b^2}. \]</p>
                 </div>
             </div>
-            <div class="question-card">
-                <div class="card-inner">
-                    <div class="card-front">2. Що таке корені n-го степеня комплексного числа?</div>
-                    <div class="card-back">Корені n-го степеня комплексного числа \( z \) — це числа \( w \), для яких \( w^n = z \). Їх можна знайти за допомогою тригонометричної форми.</div>
-                </div>
-            </div>
-            <div class="question-card">
-                <div class="card-inner">
-                    <div class="card-front">3. Яка формула використовується для знаходження коренів?</div>
-                    <div class="card-back">Для комплексного числа \( z = r(\cos\theta + i\sin\theta) \) корені n-го степеня мають вигляд: \( w_k = \sqrt[n]{r} \left( \cos\left(\frac{\theta + 2k\pi}{n}\right) + i\sin\left(\frac{\theta + 2k\pi}{n}\right) \right), \) де \( k = 0, 1, \ldots, n-1 \).</div>
-                </div>
-            </div>
-            <div class="question-card">
-                <div class="card-inner">
-                    <div class="card-front">4. Чи завжди корені комплексного числа різні?</div>
-                    <div class="card-back">Так, n коренів n-го степеня комплексного числа завжди різні, якщо \( n \) — ціле число, і вони розташовані на колі радіусом \( \sqrt[n]{r} \).</div>
-                </div>
-            </div>
-            <div class="question-card">
-                <div class="card-inner">
-                    <div class="card-front">5. Як перевірити правильність знайденого кореня?</div>
-                    <div class="card-back">Щоб перевірити корінь \( w \), піднесіть його до степеня \( n \): \( w^n \) має дорівнювати початковому числу \( z \).</div>
+        </div>
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">4. Чому дорівнює добуток комплексного числа на його спряжене?</div>
+                <div class="card-back">
+                    <p>Добуток комплексного числа \( z = a + bi \) на його спряжене \( \overline{z} = a - bi \) дорівнює квадрату його модуля:</p>
+                    <p class="math-notation-centered">\[ (a + bi)(a - bi) = a^2 + b^2 = r^2. \]</p>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
     <div id="trainerModal" class="modal">
         <div class="modal-header">
@@ -869,8 +989,7 @@
             questions: document.getElementById('questionsModal'),
             trainer: document.getElementById('trainerModal'),
             videoPlayer1: document.getElementById('videoPlayerModal1'),
-            videoPlayer2: document.getElementById('videoPlayerModal2'),
-            videoPlayer3: document.getElementById('videoPlayerModal3')
+            videoPlayer2: document.getElementById('videoPlayerModal2')            
         };
         const buttons = {
             openTheory: document.getElementById('openTheoryBtn'),
@@ -882,15 +1001,13 @@
             closeQuestions: document.getElementById('closeQuestionsBtn'),
             closeTrainer: document.getElementById('closeTrainerBtn'),
             closeVideoPlayer1: document.getElementById('closeVideoPlayerBtn1'),
-            closeVideoPlayer2: document.getElementById('closeVideoPlayerBtn2'),
-            closeVideoPlayer3: document.getElementById('closeVideoPlayerBtn3')
-        };
+            closeVideoPlayer2: document.getElementById('closeVideoPlayerBtn2')
+                    };
         const overlay = document.getElementById('modalOverlay');
         const youtubePlayers = {
-            1: document.getElementById('youtubePlayer1'),
-            2: document.getElementById('youtubePlayer2'),
-            3: document.getElementById('youtubePlayer3')
-        };
+    1: document.getElementById('youtubePlayer1'),
+    2: document.getElementById('youtubePlayer2')
+};
 
         function adjustModalHeight(modal) {
             const modalContent = modal.querySelector('.modal-content');
@@ -952,7 +1069,7 @@
         buttons.closeTrainer.addEventListener('click', () => closeModal(modals.trainer, buttons.openTrainer));
         buttons.closeVideoPlayer1.addEventListener('click', () => closeVideoPlayerModal(modals.videoPlayer1, youtubePlayers[1], modals.video, buttons.openVideo));
         buttons.closeVideoPlayer2.addEventListener('click', () => closeVideoPlayerModal(modals.videoPlayer2, youtubePlayers[2], modals.video, buttons.openVideo));
-        buttons.closeVideoPlayer3.addEventListener('click', () => closeVideoPlayerModal(modals.videoPlayer3, youtubePlayers[3], modals.video, buttons.openVideo));
+       
         overlay.addEventListener('click', () => {
             Object.values(modals).forEach(modal => modal.style.display = 'none');
             overlay.style.display = 'none';
