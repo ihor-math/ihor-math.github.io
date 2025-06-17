@@ -8,350 +8,347 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         *, *:before, *:after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        .figure {
-            display: block;
-            margin: 10px auto;
-            max-width: 100%;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            object-fit: contain;
-        }
-        .figure.figure-2-1 {
-            width: 150px;
-            height: 150px;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            font-family: 'Poppins', sans-serif;
-            color: #e0e0e0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100dvh;
-        }
-        body.modal-open {
-            overflow: hidden;
-            position: fixed;
-            width: 100%;
-        }
-        .title-box {
-            margin-top: 60px;
-            padding: 25px 40px;
-            background: linear-gradient(135deg, #2a2a4a, #3b3b6a);
-            border-radius: 25px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.1);
-            max-width: 90%;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .title-box h1 {
-            font-size: 28px;
-            color: #00ff88;
-            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
-            font-weight: 800;
-        }
-        .section-container {
-            margin-top: 40px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            justify-content: center;
-        }
-        .section {
-            width: 250px;
-            height: 220px;
-            background: linear-gradient(135deg, #2a2a4a, #4a4a7a);
-            border-radius: 20px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3), inset 0 0 8px rgba(255, 255, 255, 0.1);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 20px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            cursor: pointer;
-            color: inherit;
-            border: 1px solid rgba(0, 255, 136, 0.3);
-        }
-        .section:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5), inset 0 0 12px rgba(0, 255, 136, 0.2);
-        }
-        .section img {
-            width: 60px;
-            height: 60px;
-            margin-bottom: 15px;
-            object-fit: cover;
-            border-radius: 8px;
-            filter: drop-shadow(0 0 5px rgba(0, 255, 136, 0.3));
-        }
-        .section h2 {
-            font-size: 20px;
-            color: #e0e0e0;
-            font-weight: 600;
-            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 2%;
-            left: 2%;
-            width: 96%;
-            background: linear-gradient(135deg, #1e1e3e, #2a2a5a);
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            flex-direction: column;
-            border: 1px solid rgba(0, 255, 136, 0.2);
-            height: auto;
-            max-height: 96vh;
-            overflow: hidden;
-        }
-        .modal-header {
-            display: flex;
-            justify-content: flex-end;
-            background: linear-gradient(90deg, #2a2a4a, #3b3b6a);
-            padding: 8px 10px;
-            border-top-left-radius: 15px;
-            border-top-right-radius: 15px;
-        }
-        .close-btn {
-            background: #00ff88;
-            color: #1a1a2e;
-            border: none;
-            border-radius: 6px;
-            padding: 5px 15px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-        .close-btn:hover {
-            background: #00cc66;
-        }
-        #theoryModal {
-            display: none;
-            position: fixed;
-            top: 5%;
-            left: 5%;
-            width: 90%;
-            height: 90%;
-            background: linear-gradient(135deg, #1e1e3e, #2a2a5a);
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            z-index: 1000;
-            overflow: hidden;
-            flex-direction: column;
-        }
-        .modal-content {
-            padding: 20px;
-            overflow-y: auto;
-            flex-grow: 1;
-            background: linear-gradient(135deg, #2dd4bf, #1e3a8a);
-            border-radius: 10px;
-            margin: 10px;
-            color: #FFB6B6;
-            width: auto;
-            min-width: 100%;
-            max-width: 100%;
-            box-sizing: border-box;
-            overflow-x: hidden;
-        }
-        #theoryModal .modal-content p {
-            font-size: 18px !important;
-            line-height: 1.6;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            text-align: justify;
-            max-width: 100%;
-        }
-        #theoryModal .modal-content p.math-notation-centered {
-            max-width: 100%;
-            text-align: center;
-            padding: 5px 0;
-        }
-        #theoryModal .modal-content ul {
-            list-style: none;
-            padding-left: 20px;
-        }
-        #theoryModal .modal-content li {
-            color: #e9b1a0;
-            padding-left: 20px;
-            margin-left: 10px;
-            max-width: calc(100% - 30px);
-            white-space: normal;
-            text-align: justify;
-            position: relative;
-        }
-        #theoryModal .modal-content li::before {
-            content: '✓';
-            position: absolute;
-            left: 0;
-            color: #00ff88;
-            font-size: 16px;
-        }
-        #theoryModal .modal-content img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            margin: 10px auto;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-        #theoryModal mjx-container {
-            font-size: clamp(17px, 2.8vw, 19px) !important;
-            color: #FFFF00 !important;
-            display: inline-block !important;
-            max-width: 100%;
-            width: fit-content;
-            margin-left: auto;
-            margin-right: auto;
-            padding: 5px;
-            box-sizing: border-box;
-            text-align: center;
-        }
-        #theoryModal mjx-container.math-notation-centered {
-            display: block !important;
-            text-align: center !important;
-            max-width: 100%;
-            width: fit-content;
-            margin: 10px auto;
-            padding: 5px;
-            box-sizing: border-box;
-        }
-        #theoryModal mjx-container[jax="CHTML"][display="true"] {
-            display: block !important;
-            text-align: center !important;
-            margin: 10px auto;
-            max-width: 100%;
-            width: fit-content;
-            padding: 5px;
-            box-sizing: border-box;
-        }
-        #theoryModal mjx-container[jax="CHTML"][display="true"] mjx-mtable {
-            display: inline-block;
-            text-align: center;
-        }
-        #theoryModal mjx-container[jax="CHTML"][display="true"] mjx-mtag {
-            display: inline-block;
-            vertical-align: middle;
-            margin-left: 5px;
-        }
-        #modalOverlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 999;
-        }
-        .complex-plane, .polar-form {
-            overflow-x: auto;
-            width: 100%;
-        }
-        .complex-plane > div, .polar-form > div {
-            display: block;
-            white-space: normal;
-            word-wrap: break-word;
-            width: 100%;
-            text-align: justify;
-        }
-        .video-card-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-            margin-top: 20px;
-        }
-        .video-card {
-            width: 260px;
-            height: 170px;
-            background: linear-gradient(135deg, #3b3b6a, #5a5a9a);
-            border-radius: 20px;
-            border: 1px solid rgba(0, 255, 136, 0.3);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 10px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            cursor: pointer;
-            color: #00ff88;
-        }
-        .video-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(0, 255, 136, 0.2);
-        }
-        .video-card img {
-            width: 48px;
-            height: 48px;
-            margin-bottom: 10px;
-            object-fit: cover;
-            border-radius: 8px;
-            filter: drop-shadow(0 0 5px rgba(0, 255, 136, 0.3));
-        }
-        .video-card h3 {
-            font-size: 18px;
-            font-weight: 600;
-            line-height: 1.2;
-            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-        }
-        .video-player-container {
-            max-width: 800px;
-            margin: 20px auto;
-            background: rgba(30, 30, 62, 0.9);
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-            text-align: center;
-        }
-        .video-player-container iframe {
-            width: 100%;
-            max-height: 400px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            border: 1px solid rgba(0, 255, 136, 0.3);
-        }
-        details {
-            margin: 10px 0;
-            padding: 10px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #2a2a4a, #3b3b6a);
-            cursor: pointer;
-            border: 1px solid rgba(0, 255, 136, 0.3);
-        }
-        summary {
-            font-weight: 600;
-            padding: 10px;
-            background: linear-gradient(90deg, #3b3b6a, #4a4a7a);
-            border-radius: 10px;
-            color: #00ff88;
-            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-        }
-        summary:hover {
-            background: linear-gradient(90deg, #4a4a7a, #5a5a9a);
-        }
-        details p {
-            padding: 0 20px 10px;
-            color: #e0e0e0;
-        }
-       
-     .question-card {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+.figure {
+    display: block;
+    margin: 10px auto;
+    max-width: 100%;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    object-fit: contain;
+}
+.figure.figure-2-1 {
+    width: 150px;
+    height: 150px;
+}
+
+body {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    font-family: 'Poppins', sans-serif;
+    color: #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100dvh;
+}
+body.modal-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+.title-box {
+    margin-top: 60px;
+    padding: 25px 40px;
+    background: linear-gradient(135deg, #2a2a4a, #3b3b6a);
+    border-radius: 25px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.1);
+    max-width: 90%;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.title-box h1 {
+    font-size: 28px;
+    color: #00ff88;
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+    font-weight: 800;
+}
+.section-container {
+    margin-top: 40px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: center;
+}
+.section {
+    width: 250px;
+    height: 220px;
+    background: linear-gradient(135deg, #2a2a4a, #4a4a7a);
+    border-radius: 20px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3), inset 0 0 8px rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    color: inherit;
+    border: 1px solid rgba(0, 255, 136, 0.3);
+}
+.section:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5), inset 0 0 12px rgba(0, 255, 136, 0.2);
+}
+.section img {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 15px;
+    object-fit: cover;
+    border-radius: 8px;
+    filter: drop-shadow(0 0 5px rgba(0, 255, 136, 0.3));
+}
+.section h2 {
+    font-size: 20px;
+    color: #e0e0e0;
+    font-weight: 600;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 100dvh;
+    background: linear-gradient(135deg, #1e1e3e, #2a2a5a);
+    border-radius: 0;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    z-index: 1001;
+    overflow: hidden;
+    flex-direction: column;
+}
+.modal-header {
+    display: flex;
+    justify-content: flex-end;
+    background: linear-gradient(90deg, #2a2a4a, #3b3b6a);
+    padding: 8px 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+.close-btn {
+    background: #00ff88;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 6px;
+    padding: 5px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+.close-btn:hover {
+    background: #00cc66;
+}
+#theoryModal, #videoModal, #questionsModal, #trainerModal, #videoPlayerModal1, #videoPlayerModal2 {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 100dvh;
+    border-radius: 0;
+}
+.modal-content {
+    padding: 20px;
+    overflow-y: auto;
+    flex-grow: 1;
+    background: linear-gradient(135deg, #2dd4bf, #1e3a8a);
+    border-radius: 10px;
+    margin: 10px;
+    color: #FFB6B6;
+    width: auto;
+    min-width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    min-height: 0;
+}
+#questionsModal .modal-content {
+    background: linear-gradient(135deg, #2dd4bf, #1e3a8a);
+    color: #e0e0e0;
+}
+#theoryModal .modal-content p {
+    font-size: 18px !important;
+    line-height: 1.6;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    text-align: justify;
+    max-width: 100%;
+}
+#theoryModal .modal-content p.math-notation-centered {
+    max-width: 100%;
+    text-align: center;
+    padding: 5px 0;
+}
+#theoryModal .modal-content ul {
+    list-style: none;
+    padding-left: 20px;
+}
+#theoryModal .modal-content li {
+    color: #e9b1a0;
+    padding-left: 20px;
+    margin-left: 10px;
+    max-width: calc(100% - 30px);
+    white-space: normal;
+    text-align: justify;
+    position: relative;
+}
+#theoryModal .modal-content li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #00ff88;
+    font-size: 16px;
+}
+#theoryModal .modal-content img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 10px auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+#theoryModal mjx-container {
+    font-size: clamp(17px, 2.8vw, 19px) !important;
+    color: #FFFF00 !important;
+    display: inline-block !important;
+    max-width: 100%;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 5px;
+    box-sizing: border-box;
+    text-align: center;
+}
+#theoryModal mjx-container.math-notation-centered {
+    display: block !important;
+    text-align: center !important;
+    max-width: 100%;
+    width: fit-content;
+    margin: 10px auto;
+    padding: 5px;
+    box-sizing: border-box;
+}
+#theoryModal mjx-container[jax="CHTML"][display="true"] {
+    display: block !important;
+    text-align: center !important;
+    margin: 10px auto;
+    max-width: 100%;
+    width: fit-content;
+    padding: 5px;
+    box-sizing: border-box;
+}
+#theoryModal mjx-container[jax="CHTML"][display="true"] mjx-mtable {
+    display: inline-block;
+    text-align: center;
+}
+#theoryModal mjx-container[jax="CHTML"][display="true"] mjx-mtag {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 5px;
+}
+#modalOverlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height PK: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+}
+.complex-plane, .polar-form {
+    overflow-x: auto;
+    width: 100%;
+}
+.complex-plane > div, .polar-form > div {
+    display: block;
+    white-space: normal;
+    word-wrap: break-word;
+    width: 100%;
+    text-align: justify;
+}
+.video-card-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+.video-card {
+    width: 360px;
+    height: 220px;
+    background: linear-gradient(135deg, #3b3b6a, #5a5a9a);
+    border-radius: 20px;
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    color: #00ff88;
+}
+.video-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(0, 255, 136, 0.2);
+}
+.video-card img {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 10px;
+    object-fit: cover;
+    border-radius: 8px;
+    filter: drop-shadow(0 0 5px rgba(0, 255, 136, 0.3));
+}
+.video-card h3 {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.2;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+.video-player-container {
+    max-width: 800px;
+    margin: 20px auto;
+    background: rgba(30, 30, 62, 0.9);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    text-align: center;
+}
+.video-player-container iframe {
+    width: 100%;
+    max-height: 400px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    border: 1px solid rgba(0, 255, 136, 0.3);
+}
+details {
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #2a2a4a, #3b3b6a);
+    cursor: pointer;
+    border: 1px solid rgba(0, 255, 136, 0.3);
+}
+summary {
+    font-weight: 600;
+    padding: 10px;
+    background: linear-gradient(90deg, #3b3b6a, #4a4a7a);
+    border-radius: 10px;
+    color: #00ff88;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+summary:hover {
+    background: linear-gradient(90deg, #4a4a7a, #5a5a9a);
+}
+details p {
+    padding: 0 20px 10px;
+    color: #e0e0e0;
+}
+.question-card {
     perspective: 1000px;
     margin: 20px auto;
     max-width: 95%;
     height: 200px;
 }
-
 .card-inner {
     position: relative;
     width: 100%;
@@ -362,11 +359,9 @@
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
     cursor: pointer;
 }
-
 .card-inner.flipped {
     transform: rotateY(180deg);
 }
-
 .card-front, .card-back {
     position: absolute;
     width: 100%;
@@ -380,7 +375,6 @@
     font-family: 'Poppins', sans-serif;
     box-sizing: border-box;
 }
-
 .card-front {
     background: linear-gradient(135deg, #2a2a4a, #4a4a7a);
     color: #e0e0e0;
@@ -389,13 +383,12 @@
     justify-content: center;
     align-items: center;
     text-align: center;
-    flex-wrap: wrap; /* Змінено з nowrap на wrap для перенесення тексту */
-    overflow-wrap: break-word; /* Забезпечує перенесення слів */
-    word-break: break-word; /* Дозволяє розрив слів, якщо потрібно */
-    padding: 12px 15px; /* Додаємо більше відступів для кращого вигляду */
-    max-width: 100%; /* Обмежуємо ширину, щоб уникнути переповнення */
+    flex-wrap: wrap;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    padding: 12px 15px;
+    max-width: 100%;
 }
-
 .card-back {
     background: linear-gradient(135deg, #3b3b6a, #5a5a9a);
     color: #e0e0e0;
@@ -410,16 +403,14 @@
     word-break: break-word;
     overflow-wrap: break-word;
     padding: 12px 15px;
-    max-width: 100%; /* Обмежуємо ширину для уникнення обрізання */
-    box-sizing: border-box; /* Забезпечує врахування відступів у розмірах */
+    max-width: 100%;
+    box-sizing: border-box;
 }
-
-/* Видаляємо або замінюємо конфліктне правило */
 .question-card:nth-child(3) .card-front {
-    white-space: normal; /* Забезпечуємо перенесення тексту */
-    overflow-wrap: break-word; /* Дозволяємо перенесення слів */
-    word-break: break-word; /* Дозволяємо розрив слів */
-    flex-wrap: wrap; /* Дозволяємо перенесення у flex-контейнері */
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    flex-wrap: wrap;
 }
 .card-back p {
     margin: 5px 0;
@@ -427,12 +418,6 @@
     color: #e0e0e0;
     box-sizing: border-box;
 }
-
-#questionsModal .modal-content {
-    background: linear-gradient(135deg, #1e1e3e, #2a2a5a);
-    color: #e0e0e0;
-}
-
 #questionsModal mjx-container {
     color: #FFFF00 !important;
     font-size: clamp(18px, 3.2vw, 20px) !important;
@@ -442,323 +427,450 @@
     padding: 3px;
     box-sizing: border-box;
 }
-
 #questionsModal .math-notation-centered {
     text-align: center !important;
     margin: 5px 0;
 }
-
 .card-front span.yellow {
     color: #FFFF00;
     font-weight: 600;
     display: inline;
     margin-right: 0.1em;
 }
-
-
-
-
-             .trainer-container {
-            width: 90%;
-            max-width: 800px;
-            padding: 3vw 4vw;
-            text-align: center;
-            background: linear-gradient(135deg, #2a2a4a, #3b3b6a);
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(0, 255, 136, 0.3);
-        }
-        .question-circle {
-            width: 15vw;
-            height: 15vw;
-            min-width: 80px;
-            min-height: 80px;
-            max-width: 120px;
-            max-height: 120px;
-            margin: 0 auto 3vw;
-            background: linear-gradient(135deg, #00ff88, #00cc66);
-            border-radius: 50%;
+#trainerModal .modal-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    overflow-y: auto;
+    flex-grow: 1;
+    background: linear-gradient(135deg, #2dd4bf, #1e3a8a);
+    border-radius: 10px;
+    margin: 10px;
+    color: #FFB6B6;
+    width: auto;
+    min-width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    min-height: calc(100% - 20px);
+}
+    
+.trainer-container {
+    width: 95%;
+    max-width: 900px;
+    padding: 4vw 5vw;
+    text-align: center;
+    background: linear-gradient(135deg, #2a2a4a, #3b3b6a);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    box-sizing: border-box;
+    margin: auto;
+}
+.trainer-container p {
+    font-size: clamp(18px, 3vw, 20px);
+    color: #FFFF00;
+    margin: 10px 0;
+}
+.question-circle {
+    width: 15vw;
+    height: 15vw;
+    min-width: 80px;
+    min-height: 80px;
+    max-width: 120px;
+    max-height: 120px;
+    margin: 0 auto 3vw;
+    background: linear-gradient(135deg, #00ff88, #00cc66);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+.question-circle h3 {
+    color: #1a1a2e;
+    font-size: clamp(16px, 2.5vw, 20px);
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+.canvas-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 18px auto;
+    max-width: 100%;
+    width: 100%;
+}
+#complexPlane {
+    width: 100%;
+    max-width: 250px;
+    height: auto;
+    aspect-ratio: 1 / 1;
+}
+    .completion-emoji::after {
+            content: '🎉';
+            font-size: clamp(40px, 8vw, 60px);
+            color: #ffff00;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            height: 100%;
         }
-        .question-circle h3 {
-            color: #1a1a2e;
-            font-size: clamp(16px, 2.5vw, 20px);
-            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-        }
-        .options-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2vw;
-            justify-content: center;
-            margin-bottom: 3vw;
-        }
-        .option {
-            padding: 1.8vw 2.8vw;
-            border: 1.5px solid #00ff88;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #3b3b6a, #4a4a7a);
-            cursor: pointer;
-            font-size: clamp(13px, 2.1vw, 15px);
-            color: #e0e0e0;
-        }
-        .option:hover {
-            background: linear-gradient(135deg, #4a4a7a, #5a5a9a);
-        }
-        .option.selected {
-            background: linear-gradient(135deg, #00ff88, #00cc66);
-            color: #1a1a2e;
-        }
-        button {
-            padding: 2vw 4vw;
-            background: linear-gradient(135deg, #00ff88, #00cc66);
-            color: #1a1a2e;
-            border: none;
-            border-radius: 10px;
-            font-size: clamp(14px, 2.5vw, 16px);
-            cursor: pointer;
-        }
-        button:hover {
-            background: linear-gradient(135deg, #00cc66, #00aa44);
-        }
-        .navigation-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin: 40px auto;
-            max-width: 1000px;
-            padding: 0 20px;
-        }
-        .nav-button {
-            display: flex;
-            align-items: center;
-            background: linear-gradient(135deg, #2a2a4a, #3b3b6a);
-            color: #00ff88;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-size: 18px;
-            font-weight: 600;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(0, 255, 136, 0.3);
-            text-decoration: none;
-        }
-        .nav-button:hover {
-            background: linear-gradient(135deg, #3b3b6a, #4a4a7a);
-            color: #e0e0e0;
-            text-decoration: none;
-        }
-        .nav-button svg {
-            margin-right: 8px;
-            fill: currentColor;
-        }
-        @media (max-width: 768px) {
-            .title-box {
-                margin-top: 40px;
-                padding: 15px 20px;
-            }
-            .figure.figure-2-1 {
-                width: 200px;
-                height: 120px;
-                max-width: 100%;
-            }
-            
-            .title-box h1 {
-                font-size: 28px;
-            }
-            .section-container {
-                flex-direction: column;
-                align-items: center;
-                gap: 20px;
-            }
-            .section {
-                width: 80%;
-                height: 180px;
-            }
-            #theoryModal {
-                top: 2%;
-                left: 2%;
-                width: 96%;
-                height: 96%;
-            }
-            .modal-content {
-                padding: 15px;
-                padding-bottom: 120px;
-                max-height: calc(96vh - 60px);
-                overflow-x: hidden;
-            }
-            #theoryModal .modal-content p {
-                font-size: 18px !important;
-                line-height: 1.7;
-            }
-            #theoryModal .modal-content li {
-                font-size: 18px !important;
-                max-width: calc(100% - 20px);
-                white-space: normal;
-            }
-            #theoryModal mjx-container, #theoryModal mjx-container.math-notation-centered {
-                font-size: clamp(18px, 3vw, 20px) !important;
-                max-width: 100%;
-                width: fit-content;
-                margin-left: auto;
-                margin-right: auto;
-                padding: 4px;
-                box-sizing: border-box;
-                transform: scale(1);
-                text-align: center;
-            }
-            .video-card {
-                width: 180px;
-                height: 150px;
-            }
-            .video-card img {
-                width: 40px;
-                height: 40px;
-            }
-            .video-card h3 {
-                font-size: 18px;
-            }
-            .question-card {
-                height: 150px;
-            }
-            .trainer-container {
-                width: 95%;
-                padding: 4vw;
-            }
-             .question-card {
+.options-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1vw;
+    justify-content: center;
+    margin-bottom: 3vw;
+}
+.option {
+    padding: 1vw 2vw;
+    border: 1.5px solid #00ff88;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #3b3b6a, #4a4a7a);
+    cursor: pointer;
+    font-size: clamp(16px, 2.6vw, 18px);
+    color: #e0e0e0;
+    min-width: 60px;
+    text-align: center;
+    flex: 0 0 auto;
+}
+.option:hover {
+    background: linear-gradient(135deg, #4a4a7a, #5a5a9a);
+}
+.option.selected {
+    background: linear-gradient(135deg, #00ff88, #00cc66);
+    color: #1a1a2e;
+}
+.result-text {
+    margin-top: 10px;
+    font-size: clamp(18px, 2.9vw, 20px);
+    color: #00ff88;
+}
+.result-text.incorrect {
+    color: #ff4d4d;
+}
+button {
+    padding: 2vw 4vw;
+    background: linear-gradient(135deg, #00ff88, #00cc66);
+    color: #1a1a2e;
+    border: none;
+    border-radius: 10px;
+    font-size: clamp(16px, 2.8vw, 18px);
+    cursor: pointer;
+}
+button:hover {
+    background: linear-gradient(135deg, #00cc66, #00aa44);
+}
+.navigation-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin: 40px auto;
+    max-width: 1000px;
+    padding: 0 20px;
+}
+.nav-button {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, #2a2a4a, #3b3b6a);
+    color: #00ff88;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    text-decoration: none;
+}
+.nav-button:hover {
+    background: linear-gradient(135deg, #3b3b6a, #4a4a7a);
+    color: #e0e0e0;
+    text-decoration: none;
+}
+.nav-button svg {
+    margin-right: 8px;
+    fill: currentColor;
+}
+.feedback {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 15px 30px;
+    border-radius: 10px;
+    font-size: 18px;
+    color: #fff;
+    z-index: 1002;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+.correct-feedback {
+    background: linear-gradient(135deg, #00ff88, #00cc66);
+}
+.incorrect-feedback {
+    background: linear-gradient(135deg, #ff4d4d, #cc3333);
+}
+@media (max-width: 768px) {
+    .title-box {
+        margin-top: 40px;
+        padding: 15px 20px;
+    }
+    .figure.figure-2-1 {
+        width: 200px;
+        height: 120px;
+        max-width: 100%;
+    }
+    .title-box h1 {
+        font-size: 28px;
+    }
+    .section-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+    .section {
+        width: 80%;
+        height: 180px;
+    }
+    .modal-content {
+        padding: 15px;
+        max-height: calc(100dvh - 60px);
+        overflow-x: hidden;
+    }
+    #theoryModal .modal-content p {
+        font-size: 18px !important;
+        line-height: 1.7;
+    }
+    #theoryModal .modal-content li {
+        font-size: 18px !important;
+        max-width: calc(100% - 20px);
+        white-space: normal;
+    }
+    #theoryModal mjx-container, #theoryModal mjx-container.math-notation-centered {
+        font-size: clamp(18px, 3vw, 20px) !important;
+        max-width: 100%;
+        width: fit-content;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 4px;
+        box-sizing: border-box;
+        transform: scale(1);
+        text-align: center;
+    }
+    .video-card {
+        width: 260px;
+        height: 210px;
+    }
+    .video-card img {
+        width: 50px;
+        height: 50px;
+    }
+    .video-card h3 {
+        font-size: 18px;
+    }
+    .question-card {
         height: 190px;
         max-width: 90%;
     }
     .card-front, .card-back {
-        font-size: clamp(15px, 2.8vw, 17px); /* Зменшуємо розмір шрифту для кращої адаптивності */
+        font-size: clamp(17px, 3vw, 19px);
         padding: 8px 10px;
         overflow-wrap: break-word;
         word-break: break-word;
     }
     .card-back {
         padding: 8px 10px;
-        font-size: clamp(14px, 2.7vw, 16px);
+        font-size: clamp(16px, 2.9vw, 18px);
     }
     #questionsModal mjx-container {
-        font-size: clamp(15px, 2.9vw, 17px) !important; /* Зменшуємо розмір MathJax для мобільних */
+        font-size: clamp(18px, 3.2vw, 20px) !important;
         max-width: 100%;
         margin: 2px auto;
         padding: 2px;
     }
     .card-back p {
-        font-size: clamp(14px, 2.7vw, 17px);
+        font-size: clamp(16px, 2.9vw, 18px);
         margin: 5px 0;
     }
+    .options-container {
+        gap: 2vw;
+        flex-wrap: wrap;
+    }
+    .option {
+        padding: 1.5vw 2.5vw;
+        font-size: clamp(12px, 2vw, 14px);
+        min-width: 50px;
+    }
+    .navigation-buttons {
+        margin: 20px auto;
+        gap: 15px;
+    }
+    .nav-button {
+        font-size: 18px;
+        padding: 10px 20px;
+    }
+    .video-player-container iframe {
+        max-height: 300px;
+    }
+    .canvas-container {
+        max-width: 250px;
+    }
+    .trainer-container {
+        padding: 4vw 5vw;
+        width: 95%;
+        max-width: 800px;
+    }
+    .trainer-container p {
+        font-size: clamp(16px, 2.8vw, 18px);
+    }
+    .question-circle h3 {
+        font-size: clamp(17px, 2.7vw, 21px);
+    }
+    .option {
+        font-size: clamp(14px, 2.2vw, 16px);
+        padding: 1.5vw 2.5vw;
+    }
+    #trainerModal button {
+        font-size: clamp(15px, 2.6vw, 17px);
+        padding: 2.5vw 5vw;
+    }
+    .result-text {
+        font-size: clamp(15px, 2.6vw, 17px);
+    }
+    .feedback {
+        font-size: clamp(19px, 2.9vw, 21px);
+        padding: 12px 25px;
+    }
 }
-            .options-container {
-                flex-direction: column;
-                align-items: center;
-            }
-            .navigation-buttons {
-                margin: 20px auto;
-                gap: 15px;
-            }
-            .nav-button {
-                font-size: 18px;
-                padding: 10px 20px;
-            }
-            .video-player-container iframe {
-                max-height: 300px;
-            }
-        }
-        @media (max-width: 480px) {
-            .title-box {
-                margin-top: 20px;
-                padding: 10px 15px;
-            }
-            .figure.figure-2-1 {
-                width: 150px;
-                height: 90px;
-            }
-            
-            .float-left {
-                float: none;
-                margin: 10px auto;
-                display: block;
-            }
-            .title-box h1 {
-                font-size: 24px;
-            }
-            .section {
-                width: 90%;
-                height: 150px;
-            }
-            .section img {
-                width: 50px;
-                height: 50px;
-            }
-            .section h2 {
-                font-size: 20px;
-            }
-            .modal-content {
-                padding: 10px;
-                padding-bottom: 100px;
-            }
-            #theoryModal .modal-content p {
-                font-size: 16px !important;
-                line-height: 1.7;
-            }
-            #theoryModal .modal-content li {
-                font-size: 16px !important;
-            }
-            #theoryModal mjx-container, #theoryModal mjx-container.math-notation-centered {
-                font-size: clamp(16px, 2.8vw, 18px) !important;
-                max-width: 100%;
-                width: fit-content;
-                margin-left: auto;
-                margin-right: auto;
-                padding: 4px;
-                box-sizing: border-box;
-                transform: scale(1);
-                text-align: center;
-            }
-            .video-card {
-                width: 160px;
-                height: 140px;
-            }
-            .video-card img {
-                width: 36px;
-                height: 36px;
-            }
-            .video-card h3 {
-                font-size: 16px;
-            }
-            .nav-button {
-                font-size: 16px;
-                padding: 8px 16px;
-            }
-            .video-player-container iframe {
-                max-height: 200px;
-            }
-             .question-card {
+@media (max-width: 480px) {
+    .title-box {
+        margin-top: 20px;
+        padding: 10px 15px;
+    }
+    .figure.figure-2-1 {
+        width: 150px;
+        height: 90px;
+    }
+    .float-left {
+        float: none;
+        margin: 10px auto;
+        display: block;
+    }
+    .title-box h1 {
+        font-size: 24px;
+    }
+    .section {
+        width: 90%;
+        height: 150px;
+    }
+    .section img {
+        width: 50px;
+        height: 50px;
+    }
+    .section h2 {
+        font-size: 20px;
+    }
+    .modal-content {
+        padding: 10px;
+    }
+    #theoryModal .modal-content p {
+        font-size: 16px !important;
+        line-height: 1.7;
+    }
+    #theoryModal .modal-content li {
+        font-size: 16px !important;
+    }
+    #theoryModal mjx-container, #theoryModal mjx-container.math-notation-centered {
+        font-size: clamp(16px, 2.8vw, 18px) !important;
+        max-width: 100%;
+        width: fit-content;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 4px;
+        box-sizing: border-box;
+        transform: scale(1);
+        text-align: center;
+    }
+    .video-card {
+        width: 240px;
+        height: 200px;
+    }
+    .video-card img {
+        width: 36px;
+        height: 36px;
+    }
+    .video-card h3 {
+        font-size: 16px;
+    }
+    .nav-button {
+        font-size: 16px;
+        padding: 8px 16px;
+    }
+    .video-player-container iframe {
+        max-height: 200px;
+    }
+    .question-card {
         height: 180px;
         max-width: 90%;
     }
     .card-front {
-        font-size: clamp(14px, 2.7vw, 16px);
+        font-size: clamp(16px, 2.9vw, 18px);
         padding: 6px 8px;
     }
     .card-back {
         padding: 6px 8px;
-        font-size: clamp(13px, 2.5vw, 15px);
+        font-size: clamp(15px, 2.7vw, 17px);
     }
     #questionsModal mjx-container {
-        font-size: clamp(14px, 2.8vw, 16px) !important;
+        font-size: clamp(17px, 3.1vw, 19px) !important;
         max-width: 100%;
         margin: 2px auto;
         padding: 2px;
     }
     .card-back p {
-        font-size: clamp(13px, 2.6vw, 15px);
+        font-size: clamp(15px, 2.7vw, 17px);
     }
-        }
+    .options-container {
+        gap: 3vw;
+    }
+    .option {
+        padding: 2vw 3vw;
+        font-size: clamp(11px, 1.8vw, 13px);
+        min-width: 45px;
+    }
+    .canvas-container {
+        max-width: 200px;
+    }
+     .trainer-container {
+        padding: 5vw 6vw;
+        width: 95%;
+        max-width: 700px;
+    }
+    .trainer-container p {
+        font-size: clamp(15px, 2.7vw, 17px);
+    }
+    .question-circle h3 {
+        font-size: clamp(16px, 2.6vw, 20px);
+    }
+    .option {
+        font-size: clamp(13px, 2.1vw, 15px);
+        padding: 2vw 3vw;
+        min-width: 50px;
+    }
+    #trainerModal button {
+        font-size: clamp(14px, 2.5vw, 16px);
+        padding: 3vw 6vw;
+    }
+    .result-text {
+        font-size: clamp(14px, 2.5vw, 16px);
+    }
+    .feedback {
+        font-size: clamp(18px, 2.8vw, 20px);
+        padding: 10px 20px;
+    }
+}
     </style>
 </head>
 <body>
@@ -792,7 +904,7 @@
             </svg>
             До теми 2
         </a>
-        <a class="nav-button" href='index.html'>
+       <a class="nav-button" href='index.html'>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                 <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
             </svg>
@@ -807,7 +919,7 @@
             <button class="close-btn" id="closeTheoryBtn">× Закрити</button>
         </div>
         <div class="modal-content">
-            <details open>
+            <details>
                 <summary>Модуль комплексного числа</summary>
                 <p>
                     <strong>Модуль комплексного числа</strong> \( z = a + bi \) позначається як \( |z| \) або \( r \) і визначається як відстань від початку координат \( O(0;0) \) до точки \( (a;b) \), яка відповідає цьому числу на комплексній площині (рис. 2.1).
@@ -855,7 +967,7 @@
                 <summary>Приклад</summary>
                 <p>
                     <strong>Приклад 2.1.</strong> Знайти модулі комплексних чисел:<br>
-                    а) \( z = 3 - i \); &nbsp;&nbsp;&nbsp;&nbsp; б) \( z = -2 - 3i \).
+                    а) \( z = 3 - i \);      б) \( z = -2 - 3i \).
                 </p>
                 <p>
                     <strong>Розв’язок:</strong>
@@ -885,93 +997,90 @@
         </div>
     </div>
 
-   <div id="videoModal" class="modal">
-    <div class="modal-header">
-        <button class="close-btn" id="closeVideoBtn">× Закрити</button>
-    </div>
-    <div class="modal-content">
-        <h2 style="text-align: center; color: #00ff88;">Оберіть відео</h2>
-        <div class="video-card-container">
-            <div class="video-card" data-video="1">
-                <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
-                <h3>Модуль комплексного числа</h3>
-            </div>
-            <div class="video-card" data-video="2">
-                <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
-                <h3>Модуль комплексного числа 2</h3>
-            </div>
+    <div id="videoModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoBtn">× Закрити</button>
         </div>
-    </div>
-</div>
-
-<div id="videoPlayerModal1" class="modal">
-    <div class="modal-header">
-        <button class="close-btn" id="closeVideoPlayerBtn1">× Закрити</button>
-    </div>
-    <div class="modal-content">
-        <div class="video-player-container">
-            <iframe id="youtubePlayer1" width="100%" height="400" src="https://www.youtube.com/embed/HoFYxJYinn0?rel=0&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        </div>
-    </div>
-</div>
-
-<div id="videoPlayerModal2" class="modal">
-    <div class="modal-header">
-        <button class="close-btn" id="closeVideoPlayerBtn2">× Закрити</button>
-    </div>
-    <div class="modal-content">
-        <div class="video-player-container">
-            <iframe id="youtubePlayer2" width="100%" height="400" src="https://www.youtube.com/embed/6emdubLFYRw?rel=0&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        </div>
-    </div>
-</div>
-
-   
-
-   
- <div id="questionsModal" class="modal">
-    <div class="modal-header">
-        <button class="close-btn" id="closeQuestionsBtn">× Закрити</button>
-    </div>
-    <div class="modal-content">
-        <div class="question-card">
-            <div class="card-inner">
-                <div class="card-front">1. Що таке модуль комплексного числа?</div>
-                <div class="card-back">
-                    <p>Модуль комплексного числа \( z = a + bi \) — це його відстань від початку координат \( O(0;0) \) до точки \( (a;b) \), яка відповідає цьому числу на комплексній площині. Модуль позначається як \( |z| \) або \( r \) і обчислюється за формулою:</p>
-                    <p class="math-notation-centered">\[ r = |z| = \sqrt{a^2 + b^2}. \]</p>
+        <div class="modal-content">
+            <h2 style="text-align: center; color: #00ff88;">Оберіть відео</h2>
+            <div class="video-card-container">
+                <div class="video-card" data-video="1">
+                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
+                    <h3>Модуль комплексного числа_1</h3>
                 </div>
-            </div>
-        </div>
-        <div class="question-card">
-            <div class="card-inner">
-                <div class="card-front">2. Як знайти модуль комплексного числа, записаного в алгебраїчній формі?</div>
-                <div class="card-back">
-                    <p>Щоб знайти модуль комплексного числа, записаного в алгебраїчній формі \( z = a + bi \), потрібно підставити значення \( a \) та \( b \) у формулу:</p>
-                    <p class="math-notation-centered">\[ r = |z| = \sqrt{a^2 + b^2}. \]</p>
-                                    </div>
-            </div>
-        </div>
-        <div class="question-card">
-            <div class="card-inner">
-                <div class="card-front">3. Який модуль має спряжене комплексне число?</div>
-                <div class="card-back">
-                    <p>Спряжені комплексні числа \( z = a + bi \) і \( \overline{z} = a - bi \) мають однакові модулі:</p>
-                    <p class="math-notation-centered">\[ |z| = |\overline{z}| = \sqrt{a^2 + b^2}. \]</p>
-                </div>
-            </div>
-        </div>
-        <div class="question-card">
-            <div class="card-inner">
-                <div class="card-front">4. Чому дорівнює добуток комплексного числа на його спряжене?</div>
-                <div class="card-back">
-                    <p>Добуток комплексного числа \( z = a + bi \) на його спряжене \( \overline{z} = a - bi \) дорівнює квадрату його модуля:</p>
-                    <p class="math-notation-centered">\[ (a + bi)(a - bi) = a^2 + b^2 = r^2. \]</p>
+                <div class="video-card" data-video="2">
+                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
+                    <h3>Модуль комплексного числа_2</h3>
                 </div>
             </div>
         </div>
     </div>
-</div>
+
+    <div id="videoPlayerModal1" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoPlayerBtn1">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-player-container">
+                <iframe id="youtubePlayer1" width="100%" height="400" src="https://www.youtube.com/embed/HoFYxJYinn0?rel=0&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div id="videoPlayerModal2" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoPlayerBtn2">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-player-container">
+                <iframe id="youtubePlayer2" width="100%" height="400" src="https://www.youtube.com/embed/6emdubLFYRw?rel=0&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div id="questionsModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeQuestionsBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="question-card">
+                <div class="card-inner">
+                    <div class="card-front">1. Що таке модуль комплексного числа?</div>
+                    <div class="card-back">
+                        <p>Модуль комплексного числа \( z = a + bi \) — це його відстань від початку координат \( O(0;0) \) до точки \( (a;b) \), яка відповідає цьому числу на комплексній площині. Модуль позначається як \( |z| \) або \( r \) і обчислюється за формулою:</p>
+                        <p class="math-notation-centered">\[ r = |z| = \sqrt{a^2 + b^2}. \]</p>
+                    </div>
+                </div>
+            </div>
+            <div class="question-card">
+                <div class="card-inner">
+                    <div class="card-front">2. Як знайти модуль комплексного числа, записаного в алгебраїчній формі?</div>
+                    <div class="card-back">
+                        <p>Щоб знайти модуль комплексного числа, записаного в алгебраїчній формі \( z = a + bi \), потрібно підставити значення \( a \) та \( b \) у формулу:</p>
+                        <p class="math-notation-centered">\[ r = |z| = \sqrt{a^2 + b^2}. \]</p>
+                    </div>
+                </div>
+            </div>
+            <div class="question-card">
+                <div class="card-inner">
+                    <div class="card-front">3. Який модуль має спряжене комплексне число?</div>
+                    <div class="card-back">
+                        <p>Спряжені комплексні числа \( z = a + bi \) і \( \overline{z} = a - bi \) мають однакові модулі:</p>
+                        <p class="math-notation-centered">\[ |z| = |\overline{z}| = \sqrt{a^2 + b^2}. \]</p>
+                    </div>
+                </div>
+            </div>
+            <div class="question-card">
+                <div class="card-inner">
+                    <div class="card-front">4. Чому дорівнює добуток комплексного числа на його спряжене?</div>
+                    <div class="card-back">
+                        <p>Добуток комплексного числа \( z = a + bi \) на його спряжене \( \overline{z} = a - bi \) дорівнює квадрату його модуля:</p>
+                        <p class="math-notation-centered">\[ (a + bi)(a - bi) = a^2 + b^2 = r^2. \]</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div id="trainerModal" class="modal">
         <div class="modal-header">
@@ -989,7 +1098,7 @@
             questions: document.getElementById('questionsModal'),
             trainer: document.getElementById('trainerModal'),
             videoPlayer1: document.getElementById('videoPlayerModal1'),
-            videoPlayer2: document.getElementById('videoPlayerModal2')            
+            videoPlayer2: document.getElementById('videoPlayerModal2')
         };
         const buttons = {
             openTheory: document.getElementById('openTheoryBtn'),
@@ -1002,21 +1111,32 @@
             closeTrainer: document.getElementById('closeTrainerBtn'),
             closeVideoPlayer1: document.getElementById('closeVideoPlayerBtn1'),
             closeVideoPlayer2: document.getElementById('closeVideoPlayerBtn2')
-                    };
+        };
         const overlay = document.getElementById('modalOverlay');
         const youtubePlayers = {
-    1: document.getElementById('youtubePlayer1'),
-    2: document.getElementById('youtubePlayer2')
-};
+            1: document.getElementById('youtubePlayer1'),
+            2: document.getElementById('youtubePlayer2')
+        };
+
+        // Перевірка наявності елементів
+        if (!Object.values(modals).every(el => el) || !Object.values(buttons).every(el => el) || !overlay) {
+            console.error('Some DOM elements are missing. Check HTML IDs.');
+        }
 
         function adjustModalHeight(modal) {
+            if (!modal) return;
             const modalContent = modal.querySelector('.modal-content');
             const modalHeader = modal.querySelector('.modal-header');
+            if (!modalContent || !modalHeader) return;
+
+            // Скидаємо висоту для перерахунку
             modalContent.style.height = 'auto';
             const contentHeight = modalContent.scrollHeight;
             const headerHeight = modalHeader.offsetHeight;
             const windowHeight = window.innerHeight;
-            const maxModalHeight = windowHeight * 0.96;
+            const maxModalHeight = windowHeight * 0.85; // 85% висоти екрана для запасу
+
+            // Встановлюємо висоту модального вікна
             const requiredHeight = contentHeight + headerHeight + 20;
             if (requiredHeight < maxModalHeight) {
                 modal.style.height = `${requiredHeight}px`;
@@ -1025,10 +1145,13 @@
                 modal.style.height = `${maxModalHeight}px`;
                 modalContent.style.overflowY = 'auto';
             }
+
+            // Прокручуємо до початку
             modalContent.scrollTop = 0;
         }
 
         function openModal(modal, btn) {
+            if (!modal || !btn) return;
             modal.style.display = 'flex';
             overlay.style.display = 'block';
             document.body.classList.add('modal-open');
@@ -1037,7 +1160,10 @@
                 if (typeof MathJax !== 'undefined') {
                     MathJax.typesetPromise().then(() => {
                         adjustModalHeight(modal);
-                    }).catch(err => console.error('MathJax error:', err));
+                    }).catch(err => {
+                        console.error('MathJax error:', err);
+                        adjustModalHeight(modal);
+                    });
                 } else {
                     adjustModalHeight(modal);
                 }
@@ -1045,6 +1171,7 @@
         }
 
         function closeModal(modal, btn) {
+            if (!modal || !btn) return;
             modal.style.display = 'none';
             overlay.style.display = 'none';
             document.body.classList.remove('modal-open');
@@ -1054,27 +1181,32 @@
 
         function closeVideoPlayerModal(videoModal, player, mainModal, btn) {
             if (player) player.src = player.src;
-            videoModal.style.display = 'none';
+            if (videoModal) videoModal.style.display = 'none';
             overlay.style.display = 'none';
             openModal(mainModal, btn);
         }
 
-        buttons.openTheory.addEventListener('click', () => openModal(modals.theory, buttons.openTheory));
-        buttons.openVideo.addEventListener('click', () => openModal(modals.video, buttons.openVideo));
-        buttons.openQuestions.addEventListener('click', () => openModal(modals.questions, buttons.openQuestions));
-        buttons.openTrainer.addEventListener('click', () => openModal(modals.trainer, buttons.openTrainer));
-        buttons.closeTheory.addEventListener('click', () => closeModal(modals.theory, buttons.openTheory));
-        buttons.closeVideo.addEventListener('click', () => closeModal(modals.video, buttons.openVideo));
-        buttons.closeQuestions.addEventListener('click', () => closeModal(modals.questions, buttons.openQuestions));
-        buttons.closeTrainer.addEventListener('click', () => closeModal(modals.trainer, buttons.openTrainer));
-        buttons.closeVideoPlayer1.addEventListener('click', () => closeVideoPlayerModal(modals.videoPlayer1, youtubePlayers[1], modals.video, buttons.openVideo));
-        buttons.closeVideoPlayer2.addEventListener('click', () => closeVideoPlayerModal(modals.videoPlayer2, youtubePlayers[2], modals.video, buttons.openVideo));
-       
-        overlay.addEventListener('click', () => {
-            Object.values(modals).forEach(modal => modal.style.display = 'none');
-            overlay.style.display = 'none';
-            document.body.classList.remove('modal-open');
-        });
+        // Прив’язка подій
+        if (buttons.openTheory) buttons.openTheory.addEventListener('click', () => openModal(modals.theory, buttons.openTheory));
+        if (buttons.openVideo) buttons.openVideo.addEventListener('click', () => openModal(modals.video, buttons.openVideo));
+        if (buttons.openQuestions) buttons.openQuestions.addEventListener('click', () => openModal(modals.questions, buttons.openQuestions));
+        if (buttons.openTrainer) buttons.openTrainer.addEventListener('click', () => openModal(modals.trainer, buttons.openTrainer));
+        if (buttons.closeTheory) buttons.closeTheory.addEventListener('click', () => closeModal(modals.theory, buttons.openTheory));
+        if (buttons.closeVideo) buttons.closeVideo.addEventListener('click', () => closeModal(modals.video, buttons.openVideo));
+        if (buttons.closeQuestions) buttons.closeQuestions.addEventListener('click', () => closeModal(modals.questions, buttons.openQuestions));
+        if (buttons.closeTrainer) buttons.closeTrainer.addEventListener('click', () => closeModal(modals.trainer, buttons.openTrainer));
+        if (buttons.closeVideoPlayer1) buttons.closeVideoPlayer1.addEventListener('click', () => closeVideoPlayerModal(modals.videoPlayer1, youtubePlayers[1], modals.video, buttons.openVideo));
+        if (buttons.closeVideoPlayer2) buttons.closeVideoPlayer2.addEventListener('click', () => closeVideoPlayerModal(modals.videoPlayer2, youtubePlayers[2], modals.video, buttons.openVideo));
+
+        if (overlay) {
+            overlay.addEventListener('click', () => {
+                Object.values(modals).forEach(modal => {
+                    if (modal) modal.style.display = 'none';
+                });
+                overlay.style.display = 'none';
+                document.body.classList.remove('modal-open');
+            });
+        }
 
         document.querySelectorAll('.video-card').forEach(card => {
             card.addEventListener('click', () => {
@@ -1094,58 +1226,303 @@
             });
         });
 
-        let currentQuestion = 'q1_v1';
-        let attemptCounts = { q1: 0, q2: 0, q3: 0, q4: 0, q5: 0 };
-        const questions = {
-            q1_v1: { text: 'Як знайти корені рівняння \\( z^3 = 1 \\)?', options: ['Перейти до тригонометричної форми', 'Використати алгебраїчну форму', 'Розв’язати як квадратне рівняння', 'Підставити дійсні числа'], correct: 'Перейти до тригонометричної форми', nextCorrect: 'q2_v1', nextIncorrect: 'q1_v2', attemptKey: 'q1' },
-            q1_v2: { text: 'Який перший крок для знаходження коренів \\( z^4 = -16 \\)?', options: ['Використати тригонометричну форму', 'Розв’язати як лінійне рівняння', 'Взяти логарифм', 'Підставити уявні числа'], correct: 'Використати тригонометричну форму', nextCorrect: 'q2_v1', nextIncorrect: 'q1_v3', attemptKey: 'q1' },
-            q1_v3: { text: 'Як знайти корені рівняння \\( z^5 = 32 \\)?', options: ['Перейти до тригонометричної форми', 'Використати формулу дискриминанта', 'Розв’язати як квадратне рівняння', 'Підставити дійсні числа'], correct: 'Перейти до тригонометричної форми', nextCorrect: 'q2_v1', nextIncorrect: 'q1_v1', attemptKey: 'q1' },
-            q2_v1: { text: 'З наведених виразів виберіть ті, які можна розв’язати за допомогою тригонометричної форми:', options: [{ value: '\\( z^3 = 8 \\)', isCorrect: true }, { value: '\\( z^2 + z + 1 = 0 \\)', isCorrect: false }, { value: '\\( z^4 = -1 \\)', isCorrect: true }, { value: '\\( z = 5 \\)', isCorrect: false }], multiSelect: true, nextCorrect: 'q3_v1', nextIncorrect: 'q2_v2', attemptKey: 'q2' },
-            q2_v2: { text: 'З наведених виразів виберіть ті, які можна розв’язати за допомогою тригонометричної форми:', options: [{ value: '\\( z^5 = 1 \\)', isCorrect: true }, { value: '\\( z^2 = 4 \\)', isCorrect: false }, { value: '\\( z^3 = -27 \\)', isCorrect: true }, { value: '\\( z + 1 = 0 \\)', isCorrect: false }], multiSelect: true, nextCorrect: 'q3_v1', nextIncorrect: 'q2_v3', attemptKey: 'q2' },
-            q2_v3: { text: 'З наведених виразів виберіть ті, які можна розв’язати за допомогою тригонометричної форми:', options: [{ value: '\\( z^2 + 1 = 0 \\)', isCorrect: false }, { value: '\\( z^4 = 16 \\)', isCorrect: true }, { value: '\\( z^3 = i \\)', isCorrect: true }, { value: '\\( z = i \\)', isCorrect: false }], multiSelect: true, nextCorrect: 'q3_v1', nextIncorrect: 'q2_v1', attemptKey: 'q2' },
-            q3_v1: { text: 'Скільки коренів має рівняння \\( z^4 = 1 \\)?', options: ['2', '3', '4', '5'], correct: '4', nextCorrect: 'q4_v1', nextIncorrect: 'q3_v2', attemptKey: 'q3' },
-            q3_v2: { text: 'Скільки коренів має рівняння \\( z^3 = -8 \\)?', options: ['1', '2', '3', '4'], correct: '3', nextCorrect: 'q4_v1', nextIncorrect: 'q3_v3', attemptKey: 'q3' },
-            q3_v3: { text: 'Скільки коренів має рівняння \\( z^5 = 32 \\)?', options: ['3', '4', '5', '6'], correct: '5', nextCorrect: 'q4_v1', nextIncorrect: 'q3_v1', attemptKey: 'q3' },
-            q4_v1: { text: 'Який аргумент кореня рівняння \\( z^3 = 1 \\) для \\( k=1 \\)?', options: ['\\( \\frac{2\\pi}{3} \\)', '\\( \\frac{\\pi}{3} \\)', '\\( \\pi \\)', '\\( \\frac{4\\pi}{3} \\)'], correct: '\\( \\frac{2\\pi}{3} \\)', nextCorrect: 'q5_v1', nextIncorrect: 'q4_v2', attemptKey: 'q4' },
-            q4_v2: { text: 'Який аргумент кореня рівняння \\( z^4 = 1 \\) для \\( k=2 \\)?', options: ['\\( \\frac{\\pi}{2} \\)', '\\( \\pi \\)', '\\( \\frac{3\\pi}{2} \\)', '\\( \\frac{\\pi}{4} \\)'], correct: '\\( \\pi \\)', nextCorrect: 'q5_v1', nextIncorrect: 'q4_v3', attemptKey: 'q4' },
-            q4_v3: { text: 'Який аргумент кореня рівняння \\( z^5 = 1 \\) для \\( k=3 \\)?', options: ['\\( \\frac{2\\pi}{5} \\)', '\\( \\frac{4\\pi}{5} \\)', '\\( \\frac{6\\pi}{5} \\)', '\\( \\frac{8\\pi}{5} \\)'], correct: '\\( \\frac{6\\pi}{5} \\)', nextCorrect: 'q5_v1', nextIncorrect: 'q4_v1', attemptKey: 'q4' },
-            q5_v1: { text: 'Який модуль кореня рівняння \\( z^3 = 8 \\)?', options: ['1', '2', '3', '4'], correct: '2', nextCorrect: 'end', nextIncorrect: 'q5_v2', attemptKey: 'q5' },
-            q5_v2: { text: 'Який модуль кореня рівняння \\( z^4 = 16 \\)?', options: ['1', '2', '4', '16'], correct: '2', nextCorrect: 'end', nextIncorrect: 'q5_v3', attemptKey: 'q5' },
-            q5_v3: { text: 'Який модуль кореня рівняння \\( z^5 = 32 \\)?', options: ['1', '2', '4', '32'], correct: '2', nextCorrect: 'end', nextIncorrect: 'q5_v1', attemptKey: 'q5' }
-        };
-
-        function renderQuestion() {
-            if (currentQuestion === 'end') {
-                document.getElementById('trainerContent').innerHTML = `
-                    <div class="completion-emoji"></div>
-                    <div class="completion-message">
-                        <h2>Тренування завершено!</h2>
-                        <p>Молодець!</p>
-                    </div>
-                `;
-                return;
-            }
-            const q = questions[currentQuestion];
-            const questionNumber = currentQuestion.match(/q(\d+)/)[1];
-            let optionsHTML = q.multiSelect ? q.options.map((opt, i) => `<div class="option" data-index="${i}">\\(${opt.value}\\)</div>`).join('') : q.options.map(opt => `<div class="option" data-answer="${opt}">\\(${opt}\\)</div>`).join('');
-            document.getElementById('trainerContent').innerHTML = `
-                <div class="question-circle"><h3>Питання ${questionNumber}</h3></div>
-                <p>${q.text}</p>
-                <div class="options-container">${optionsHTML}</div>
-                <button onclick="checkAnswer()">Відповісти</button>
-                <div class="result" id="result"></div>
-            `;
-            if (typeof MathJax !== 'undefined') MathJax.typesetPromise();
-            document.querySelectorAll('.option').forEach(opt => {
-                opt.addEventListener('click', () => {
-                    if (q.multiSelect) opt.classList.toggle('selected');
-                    else {
-                        document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
-                        opt.classList.add('selected');
+        // Додатковий обробник для <details>
+        document.addEventListener('DOMContentLoaded', () => {
+            const detailsElements = document.querySelectorAll('details');
+            detailsElements.forEach(details => {
+                details.addEventListener('toggle', () => {
+                    if (modals.theory.style.display === 'flex') {
+                        adjustModalHeight(modals.theory);
                     }
                 });
             });
+        });
+
+        // Перевірка, чи є число точним квадратом
+        function isPerfectSquare(n) {
+            const sqrt = Math.sqrt(n);
+            return Number.isInteger(sqrt);
         }
+
+        // Генерація випадкових чисел
+        function getRandomInt(min, max, exclude = []) {
+            let num;
+            do {
+                num = Math.floor(Math.random() * (max - min + 1)) + min;
+            } while (exclude.includes(num));
+            return num;
+        }
+
+        // Генерація варіантів відповідей для q2, q3, q4, q5
+        function generateOptionsForModulus(correct, sumSquares, count) {
+            const options = [correct];
+            const perfectSquares = [1, 4, 9, 16, 25, 36, 49];
+            const possibleRoots = [2, 3, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 17, 18, 19, 20];
+            
+            while (options.length < count) {
+                if (Math.random() < 0.5) {
+                    const num = getRandomInt(1, 15, [parseInt(correct) || 0, sumSquares]);
+                    if (!options.includes(num.toString())) options.push(num.toString());
+                } else {
+                    const n = possibleRoots[Math.floor(Math.random() * possibleRoots.length)];
+                    const opt = `\\sqrt{${n}}`;
+                    if (n !== sumSquares && !options.includes(opt)) options.push(opt);
+                }
+            }
+            return options.sort(() => Math.random() - 0.5);
+        }
+
+        // Генерація варіантів відповідей для q1
+        function generateOptions(correct, count, rangeMin, rangeMax, includeSqrt = false) {
+            const options = [correct];
+            while (options.length < count) {
+                const num = includeSqrt
+                    ? `\\sqrt{${getRandomInt(rangeMin, rangeMax, options.map(o => parseInt(o.replace('\\sqrt{', '').replace('}', ''))))}}`
+                    : getRandomInt(rangeMin, rangeMax, options);
+                if (!options.includes(num)) options.push(num);
+            }
+            return options.sort(() => Math.random() - 0.5);
+        }
+
+        // Функція для малювання комплексної площини
+        function drawComplexPlane(canvas, a, b) {
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const size = canvas.width;
+            const center = size / 2;
+            const scale = size / 12; // Крок сітки
+
+            ctx.clearRect(0, 0, size, size);
+            ctx.fillStyle = '#1a1a2e';
+            ctx.fillRect(0, 0, size, size);
+
+            // Малюємо сітку симетрично відносно центра
+            ctx.strokeStyle = '#d3d3d3';
+            ctx.lineWidth = 0.5;
+            for (let i = -5; i <= 5; i++) {
+                const pos = center + i * scale; // Позиція відносно центра
+                ctx.beginPath();
+                ctx.moveTo(pos, 0);
+                ctx.lineTo(pos, size);
+                ctx.moveTo(0, pos);
+                ctx.lineTo(size, pos);
+                ctx.stroke();
+            }
+
+            // Малюємо головні осі
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(center, 0);
+            ctx.lineTo(center, size);
+            ctx.moveTo(0, center);
+            ctx.lineTo(size, center);
+            ctx.stroke();
+
+            // Додаємо мітки осей
+            ctx.fillStyle = '#e0e0e0';
+            ctx.font = '14px Poppins';
+            ctx.fillText('Re', size - 20, center - 10);
+            ctx.fillText('Im', center - 20, 25);
+
+            for (let i = -5; i <= 5; i++) {
+                if (i !== 0) {
+                    ctx.fillText(i, center + i * scale - 5, center + 15);
+                    ctx.fillText(i, center + 10, center - i * scale + 5);
+                }
+            }
+
+            // Малюємо радіус-вектор
+            ctx.strokeStyle = '#00ff88';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(center, center);
+            ctx.lineTo(center + a * scale, center - b * scale);
+            ctx.stroke();
+
+            ctx.fillStyle = '#00ff88';
+            ctx.beginPath();
+            ctx.arc(center + a * scale, center - b * scale, 4, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+
+        let currentQuestion = 'q1_v1';
+        let attemptCounts = { q1: 0, q2: 0, q3: 0, q4: 0, q5: 0 };
+        let currentData = {};
+
+        function generateRandomQ1() {
+            const b = getRandomInt(-10, 10, [0]);
+            const mod = Math.abs(b);
+            return {
+                b: b,
+                correct: mod,
+                options: generateOptions(mod, 4, 1, 10)
+            };
+        }
+
+        function generateQuestionData() {
+            try {
+                const b1 = getRandomInt(-10, 10, [0]);
+                currentData.q1_v1 = {
+                    b: b1,
+                    correct: Math.abs(b1),
+                    options: generateOptions(Math.abs(b1), 4, 1, 10)
+                };
+                currentData.q1_random = generateRandomQ1();
+
+                const a2 = getRandomInt(-10, 10, [0]);
+                const b2 = getRandomInt(-10, 10, [0]);
+                const sumSquares2 = a2 * a2 + b2 * b2;
+                const mod2 = isPerfectSquare(sumSquares2) ? Math.sqrt(sumSquares2) : `\\sqrt{${sumSquares2}}`;
+                currentData.q2 = {
+                    a: a2,
+                    b: b2,
+                    correct: mod2,
+                    sumSquares: sumSquares2,
+                    options: generateOptionsForModulus(mod2, sumSquares2, 4)
+                };
+
+                const a3 = getRandomInt(-5, 5, [0]);
+                const b3 = getRandomInt(-5, 5, [0]);
+                const sumSquares3 = a3 * a3 + b3 * b3;
+                const mod3 = isPerfectSquare(sumSquares3) ? Math.sqrt(sumSquares3) : `\\sqrt{${sumSquares3}}`;
+                currentData.q3 = {
+                    a: a3,
+                    b: b3,
+                    correct: mod3,
+                    sumSquares: sumSquares3,
+                    options: generateOptionsForModulus(mod3, sumSquares3, 4)
+                };
+
+                let a4_1, b4_1, a4_2, b4_2, diff_a, diff_b;
+                do {
+                    a4_1 = getRandomInt(-10, 10, [0]);
+                    b4_1 = getRandomInt(-10, 10, [0]);
+                    a4_2 = getRandomInt(-10, 10, [0]);
+                    b4_2 = getRandomInt(-10, 10, [0]);
+                    diff_a = a4_1 - a4_2;
+                    diff_b = b4_1 - b4_2;
+                } while (diff_a === 0 && diff_b === 0);
+                const sumSquares4 = diff_a * diff_a + diff_b * diff_b;
+                const mod4 = isPerfectSquare(sumSquares4) ? Math.sqrt(sumSquares4) : `\\sqrt{${sumSquares4}}`;
+                currentData.q4 = {
+                    a1: a4_1,
+                    b1: b4_1,
+                    a2: a4_2,
+                    b2: b4_2,
+                    correct: mod4,
+                    sumSquares: sumSquares4,
+                    options: generateOptionsForModulus(mod4, sumSquares4, 4)
+                };
+
+                const a5 = getRandomInt(-10, 10, [0]);
+                const b5 = getRandomInt(-10, 10, [0]);
+                const sumSquares5 = a5 * a5 + b5 * b5;
+                const mod5 = isPerfectSquare(sumSquares5) ? Math.sqrt(sumSquares5) : `\\sqrt{${sumSquares5}}`;
+                currentData.q5 = {
+                    a: a5,
+                    b: b5,
+                    correct: mod5,
+                    sumSquares: sumSquares5,
+                    options: generateOptionsForModulus(mod5, sumSquares5, 4)
+                };
+            } catch (err) {
+                console.error('Error in generateQuestionData:', err);
+            }
+        }
+
+        function renderQuestion() {
+    const trainerContent = document.getElementById('trainerContent');
+    if (!trainerContent) {
+        console.error('trainerContent element not found');
+        return;
+    }
+
+    if (currentQuestion === 'end') {
+        trainerContent.innerHTML = `
+            <div class="completion-emoji"></div>
+            <div class="completion-message">
+                <h2>Тренування завершено!</h2>
+                <p>Молодець!</p>
+                <button id="resetTrainerBtn">Спробувати ще раз</button>
+            </div>
+        `;
+        // Додаємо обробник для кнопки "Спробувати ще раз"
+        const resetBtn = document.getElementById('resetTrainerBtn');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => {
+                // Скидаємо стан тренажера
+                currentQuestion = 'q1_v1';
+                attemptCounts = { q1: 0, q2: 0, q3: 0, q4: 0, q5: 0 };
+                currentData = {};
+                generateQuestionData();
+                renderQuestion();
+            });
+        }
+        return;
+    }
+
+    const questionNumber = currentQuestion.match(/q(\d+)/)?.[1] || '1';
+    const data = currentData[currentQuestion];
+    if (!data && currentQuestion !== 'q1_random') {
+        console.error('No data for question:', currentQuestion);
+        return;
+    }
+
+    let text, optionsHTML;
+
+    if (currentQuestion === 'q1_v1' || currentQuestion === 'q1_random') {
+        const qData = currentQuestion === 'q1_v1' ? data : currentData.q1_random;
+        text = `Знайти модуль комплексного числа \\( z = ${qData.b > 0 ? '' : '-'}${Math.abs(qData.b)}i \\)`;
+        optionsHTML = qData.options.map(opt => `<div class="option" data-answer="${opt}">\\(${opt}\\)</div>`).join('');
+    } else if (currentQuestion === 'q2') {
+        text = `Знайти модуль комплексного числа \\( z = ${data.a}${data.b >= 0 ? '+' : '-'}${Math.abs(data.b)}i \\)`;
+        optionsHTML = data.options.map(opt => `<div class="option" data-answer="${opt}">\\(${opt}\\)</div>`).join('');
+    } else if (currentQuestion === 'q3') {
+        text = `На рисунку зображено радіус-вектор комплексного числа. Знайти його довжину.`;
+        optionsHTML = data.options.map(opt => `<div class="option" data-answer="${opt}">\\(${opt}\\)</div>`).join('');
+    } else if (currentQuestion === 'q4') {
+        text = `Знайти модуль різниці комплексних чисел \\( (${data.a1}${data.b1 >= 0 ? '+' : '-'}${Math.abs(data.b1)}i) - (${data.a2}${data.b2 >= 0 ? '+' : '-'}${Math.abs(data.b2)}i) \\)`;
+        optionsHTML = data.options.map(opt => `<div class="option" data-answer="${opt}">\\(${opt}\\)</div>`).join('');
+    } else if (currentQuestion === 'q5') {
+        text = `Який модуль має спряжене до числа \\( z = ${data.a}${data.b >= 0 ? '+' : '-'}${Math.abs(data.b)}i \\)?`;
+        optionsHTML = data.options.map(opt => `<div class="option" data-answer="${opt}">\\(${opt}\\)</div>`).join('');
+    }
+
+    trainerContent.innerHTML = `
+        <div class="question-circle"><h3>Питання ${questionNumber}</h3></div>
+        <p>${text}</p>
+        ${currentQuestion === 'q3' ? '<div class="canvas-container"><canvas id="complexPlane"></canvas></div>' : ''}
+        <div class="options-container">${optionsHTML}</div>
+        <button onclick="checkAnswer()">Відповісти</button>
+        <div class="result" id="result"></div>
+    `;
+
+    if (currentQuestion === 'q3') {
+        const canvas = document.getElementById('complexPlane');
+        if (canvas) {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.width;
+            drawComplexPlane(canvas, data.a, data.b);
+        }
+    }
+
+    if (typeof MathJax !== 'undefined') {
+        MathJax.typesetPromise().catch(err => {
+            console.error('MathJax typeset error:', err);
+            trainerContent.querySelector('p').textContent = text.replace(/\\\(.*?\\\)/g, '[формула]');
+        });
+    } else {
+        trainerContent.querySelector('p').textContent = text.replace(/\\\(.*?\\\)/g, '[формула]');
+    }
+
+    document.querySelectorAll('.option').forEach(opt => {
+        opt.addEventListener('click', () => {
+            document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
+        });
+    });
+}
 
         function showFeedback(isCorrect, nextQuestion) {
             const feedbackDiv = document.createElement('div');
@@ -1155,37 +1532,53 @@
             setTimeout(() => {
                 feedbackDiv.remove();
                 currentQuestion = nextQuestion;
+                if (!isCorrect) {
+                    if (nextQuestion === 'q1_random') {
+                        currentData.q1_random = generateRandomQ1();
+                    } else {
+                        generateQuestionData();
+                    }
+                }
                 renderQuestion();
             }, 1500);
         }
 
         function checkAnswer() {
-            const q = questions[currentQuestion];
+            const data = currentData[currentQuestion] || currentData.q1_random;
             const resultDiv = document.getElementById('result');
-            let isCorrect = false;
-            if (q.multiSelect) {
-                const selected = Array.from(document.querySelectorAll('.option.selected')).map(el => parseInt(el.dataset.index));
-                const correctIndexes = q.options.map((opt, idx) => opt.isCorrect ? idx : -1).filter(idx => idx !== -1);
-                isCorrect = selected.length === correctIndexes.length && selected.every(idx => correctIndexes.includes(idx));
-            } else {
-                const selected = document.querySelector('.option.selected');
-                if (!selected) {
-                    resultDiv.innerHTML = '<div class="result-text">Оберіть варіант відповіді.</div>';
-                    return;
-                }
-                isCorrect = selected.dataset.answer === q.correct;
+            const selected = document.querySelector('.option.selected');
+            if (!selected) {
+                resultDiv.innerHTML = '<div class="result-text">Оберіть варіант відповіді.</div>';
+                return;
             }
-            attemptCounts[q.attemptKey]++;
-            if (isCorrect) {
-                attemptCounts[q.attemptKey] = 0;
-                showFeedback(true, q.nextCorrect);
+            let isCorrect = false;
+            if (['q2', 'q3', 'q4', 'q5'].includes(currentQuestion)) {
+                const selectedValue = selected.dataset.answer;
+                const correctValue = data.correct.toString();
+                isCorrect = selectedValue === correctValue || 
+                            (selectedValue.match(/\\sqrt{(\d+)}/) && parseInt(selectedValue.match(/\\sqrt{(\d+)}/)[1]) === data.sumSquares);
             } else {
-                showFeedback(false, q.nextIncorrect);
+                isCorrect = selected.dataset.answer === data.correct.toString() || 
+                            selected.dataset.answer === `\\sqrt{${data.correct * data.correct}}`;
+            }
+            attemptCounts[`q${currentQuestion.match(/\d+/)?.[0] || 1}`]++;
+            if (isCorrect) {
+                attemptCounts[`q${currentQuestion.match(/\d+/)?.[0] || 1}`] = 0;
+                showFeedback(true, currentQuestion === 'q5' ? 'end' : currentQuestion === 'q1_v1' ? 'q2' : `q${parseInt(currentQuestion.match(/\d+/)?.[0]) + 1}`);
+            } else {
+                showFeedback(false, currentQuestion === 'q1_v1' ? 'q1_random' : currentQuestion);
             }
         }
 
-        window.addEventListener('resize', () => adjustModalHeight(modals.theory));
-        renderQuestion();
+        window.addEventListener('resize', () => adjustModalHeight(modals.trainer));
+
+        try {
+            generateQuestionData();
+            renderQuestion();
+        } catch (err) {
+            console.error('Initialization error:', err);
+            document.getElementById('trainerContent').innerHTML = '<p>Помилка завантаження тренажера. Спробуйте перезавантажити сторінку.</p>';
+        }
     </script>
 </body>
 </html>
