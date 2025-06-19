@@ -358,6 +358,15 @@
             font-size: clamp(16px, 2.5vw, 18px);
             font-weight: 600;
         }
+        .video-player-container {
+    max-width: 800px; /* Максимальна ширина контейнера відео */
+    margin: 0 auto; /* Центрування по горизонталі */
+}
+
+.video-player-container iframe {
+    width: 100%; /* Відео займає всю ширину контейнера */
+    height: 400px; /* Фіксована висота, як у вашому коді */
+}
             .glow-title {
     text-align: center;
     font-size: 2em;
