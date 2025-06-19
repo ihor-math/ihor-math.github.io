@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>6. Аргумент комплексного числа</title>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        *, *:before, *:after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        .figure {
+    display: block;
+    margin: 10px auto;
+    max-width: 100%;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    object-fit: contain;
+}
+.figure.figure-2-2 {
+    width: 180px;
+    height: 180px;
+}
+.figure.figure-2-3 {
+    width: 320px;
+    height: 230px;
+}
+.figure.figure-2-4 {
+    width: 170px;
+    height: 170px;
+}
+.figure.figure-2-5 {
+    width: 170px;
+    height: 170px;
+}
+.figure.figure-2-6 {
+    width: 200px;
+    height: 200px;
+}
+.figure.figure-2-7 {
+    width: 190px;
+    height: 190px;
+}
+.figure.figure-2-8 {
+    width: 170px;
+    height: 170px;
+}
+.figure.figure-2-9 {
+    width: 190px;
+    height: 190px;
+}
+.figure.figure-2-10 {
+    width: 190px;
+    height: 170px;
+}
+.figure.figure-2-11 {
+    width: 190px;
+    height: 170px;
+}
+.figure.figure-2-12 {
+    width: 170px;
+    height: 160px;
+}
+/* Зберігаємо поточні стилі для .quadrant-list */
+.quadrant-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px 40px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    list-style: none;
+    padding: 0;
+    margin: 20px auto;
+    max-width: 600px;
+}
+
+.quadrant-list li {
+    background: #1e3a8a;
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.quadrant-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px 40px; /* відступи між рядками та стовпцями */
+    justify-content: center; /* центрує по горизонталі */
+    align-items: center;
+    text-align: center;
+    list-style: none;
+    padding: 0;
+    margin: 20px auto;
+    max-width: 600px;
+  }
+
+  .quadrant-list li {
+    background: #1e3a8a;
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+
+        body {
+            background: linear-gradient(135deg, #1e1b4b, #2c2a6b);
+            font-family: 'Inter', sans-serif;
+            color: #e5e7eb;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        body.modal-open {
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
+        .title-box {
+            margin-top: 50px;
+            padding: 20px 35px;
+            background: linear-gradient(135deg, #2c2a6b, #4338ca);
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 0 8px rgba(255, 255, 255, 0.1);
+            max-width: 90%;
+            text-align: center;
+            border: 1px solid rgba(236, 72, 153, 0.3);
+        }
+        .title-box h1 {
+            font-size: clamp(24px, 5vw, 32px);
+            color: #ffff00;
+            text-shadow: 0 0 8px rgba(236, 72, 153, 0.5);
+            font-weight: 800;
+        }
+        .section-container {
+            margin-top: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            justify-content: center;
+        }
+        .section {
+            width: 220px;
+            height: 200px;
+            background: linear-gradient(135deg, #2c2a6b, #4f46e5);
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4), inset 0 0 6px rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            border: 1px solid rgba(236, 72, 153, 0.3);
+        }
+        .section:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(236, 72, 153, 0.2);
+        }
+        .section img {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 10px;
+            object-fit: cover;
+            border-radius: 6px;
+            filter: drop-shadow(0 0 4px rgba(236, 72, 153, 0.3));
+        }
+        .section h2 {
+            font-size: clamp(16px, 2.5vw, 18px);
+            color: #e5e7eb;
+            font-weight: 600;
+            text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e1b4b, #2c2a6b);
+            z-index: 1001;
+            overflow: hidden;
+            flex-direction: column;
+        }
+        .modal-header {
+            background: linear-gradient(90deg, #2c2a6b, #4338ca);
+            padding: 8px 12px;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .close-btn {
+            background: #f984e5;
+            color: #1e1b4b;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .close-btn:hover {
+            background: #db2777;
+        }
+        .modal-content {
+            padding: 20px;
+            overflow-y: auto;
+            flex-grow: 1;
+            background: linear-gradient(135deg, #a78bfa, #4f46e5);
+            border-radius: 10px;
+            margin: 10px;
+            color: #fae2f6;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+        #theoryModal .modal-content p {
+            font-size: clamp(16px, 2.8vw, 18px);
+            line-height: 1.7;
+            text-align: justify;
+            max-width: 100%;
+        }
+        #theoryModal .modal-content ul {
+            list-style: none;
+            padding-left: 20px;
+        }
+        #theoryModal .modal-content li {
+    color: #e9b1a0;
+    padding-left: 20px;
+    margin-left: 10px;
+    max-width: calc(100% - 30px);
+    white-space: normal;
+    text-align: justify;
+    position: relative;
+}
+        #theoryModal .modal-content li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #00ff88;
+    font-size: 16px;
+}
+        
+        #theoryModal mjx-container {
+            font-size: clamp(18px, 3vw, 20px) !important;
+            color: #fef08a !important;
+            display: inline-block !important;
+            max-width: 100%;
+            width: fit-content;
+             margin-left: auto;
+    margin-right: auto;
+            padding: 5px;
+                        text-align: center;
+        }
+       #theoryModal mjx-container.math-notation-centered {
+    display: block !important;
+    text-align: center !important;
+    max-width: 100%;
+    width: fit-content;
+    margin: 10px auto;
+    padding: 5px;
+    box-sizing: border-box;
+}
+        #theoryModal mjx-container[jax="CHTML"][display="true"] {
+    display: block !important;
+    text-align: center !important;
+    margin: 10px auto;
+    max-width: 100%;
+    width: fit-content;
+    padding: 5px;
+    box-sizing: border-box;
+}
+#theoryModal mjx-container[jax="CHTML"][display="true"] mjx-mtable {
+    display: inline-block;
+    text-align: center;
+}
+#theoryModal mjx-container[jax="CHTML"][display="true"] mjx-mtag {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 5px;
+}
+        #modalOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+        details {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #2c2a6b, #4338ca);
+            cursor: pointer;
+            border: 1px solid rgba(236, 72, 153, 0.3);
+        }
+        summary {
+            font-weight: 600;
+            padding: 10px;
+            background: linear-gradient(90deg, #4338ca, #5b21b6);
+            border-radius: 8px;
+            color: #c6ffe9;
+            text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+        }
+        summary:hover {
+            background: linear-gradient(90deg, #5b21b6, #7c3aed);
+        }
+        details p {
+            padding: 0 20px 10px;
+            color: #e5e7eb;
+        }
+        .video-card-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .video-card {
+            width: 300px;
+            height: 180px;
+            background: linear-gradient(135deg, #4338ca, #5b21b6);
+            border-radius: 15px;
+            border: 1px solid rgba(236, 72, 153, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 10px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            color: #ecec53;
+        }
+        .video-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+        }
+        .video-card img {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 8px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+        .video-card h3 {
+            font-size: clamp(16px, 2.5vw, 18px);
+            font-weight: 600;
+        }
+            .glow-title {
+    text-align: center;
+    font-size: 2em;
+    color: #ffff00;
+    font-family: 'Verdana', sans-serif;
+    text-shadow: 0 0 10px #ffd700, 0 0 20px #ffa500, 0 0 30px #ff0;
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes glow {
+    from {
+      text-shadow: 0 0 5px #ffd700, 0 0 10px #ffa500;
+    }
+    to {
+      text-shadow: 0 0 20px #ffff33, 0 0 30px #ff9900;
+    }
+  }
+        .question-card {
+            perspective: 1000px;
+            margin: 20px auto;
+            max-width: 95%;
+            height: 180px;
+        }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+            cursor: pointer;
+        }
+        .card-inner.flipped {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: clamp(15px, 2.7vw, 17px);
+            line-height: 1.5;
+            border: 1px solid rgba(236, 72, 153, 0.3);
+            box-sizing: border-box;
+        }
+        .card-front {
+            background: linear-gradient(135deg, #2c2a6b, #4f46e5);
+            color: #e5e7eb;
+            font-weight: 600;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow-wrap: break-word;
+        }
+        .card-back {
+            background: linear-gradient(135deg, #4338ca, #7c3aed);
+            color: #e5e7eb;
+            transform: rotateY(180deg);
+            overflow-y: auto;
+            text-align: justify;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            word-break: break-word;
+        }
+        #questionsModal mjx-container {
+            color: #fef08a !important;
+            font-size: clamp(16px, 2.8vw, 18px) !important;
+            max-width: 100%;
+            margin: 5px auto;
+            padding: 3px;
+        }
+        .trainer-container {
+            width: 95%;
+            max-width: 900px;
+            padding: 20px;
+            text-align: center;
+            background: linear-gradient(135deg, #2c2a6b, #4338ca);
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(236, 72, 153, 0.3);
+        }
+        .navigation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px auto;
+            flex-wrap: wrap;
+        }
+        .nav-button {
+            background: linear-gradient(135deg, #2c2a6b, #4338ca);
+            color: #ebc0a4;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: clamp(15px, 2.5vw, 17px);
+            font-weight: 600;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(236, 72, 153, 0.3);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        .nav-button:hover {
+            background: linear-gradient(135deg, #4338ca, #5b21b6);
+            color: #f9a8d4;
+            text-decoration: none;
+        }
+        .nav-button svg {
+            margin-right: 8px;
+            fill: currentColor;
+            width: 18px;
+            height: 18px;
+        }
+        @media (max-width: 768px) {
+            .figure {
+    display: block;
+    margin: 10px auto;
+    max-width: 100%;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    object-fit: contain;
+}
+.figure.figure-2-2 {
+    width: 180px;
+    height: 180px;
+}
+.figure.figure-2-3 {
+    width: 320px;
+    height: 230px;
+}
+.figure.figure-2-4 {
+    width: 170px;
+    height: 170px;
+}
+.figure.figure-2-5 {
+    width: 170px;
+    height: 170px;
+}
+.figure.figure-2-6 {
+    width: 200px;
+    height: 200px;
+}
+.figure.figure-2-7 {
+    width: 190px;
+    height: 190px;
+}
+.figure.figure-2-8 {
+    width: 170px;
+    height: 170px;
+}
+.figure.figure-2-9 {
+    width: 190px;
+    height: 190px;
+}
+.figure.figure-2-10 {
+    width: 190px;
+    height: 170px;
+}
+.figure.figure-2-11 {
+    width: 190px;
+    height: 170px;
+}
+.figure.figure-2-12 {
+    width: 170px;
+    height: 160px;
+}
+            .title-box {
+                margin-top: 20px;
+                padding: 15px 20px;
+            }
+            .title-box h1 {
+                font-size: 26px;
+            }
+            .section-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+            .section {
+                width: 80%;
+                height: 200px;
+            }
+            
+              .quadrant-list {
+        display: flex;
+        flex-direction: column; /* Вертикальний список */
+        gap: 15px; /* Відступ між елементами */
+        max-width: 100%;
+    }
+
+    .quadrant-list li {
+        display: flex;
+        flex-direction: row; /* Назва чверті та умова в одному рядку */
+        align-items: center; /* Вертикальне вирівнювання */
+        justify-content: center; /* Горизонтальне вирівнювання */
+        padding: 15px;
+        font-size: clamp(14px, 2.5vw, 16px);
+        width: 80%; /* Збільшуємо ширину прямокутника */
+        max-width: 400px; /* Максимальна ширина */
+        margin: 0 auto; /* Центруємо елемент */
+    }
+
+    .quadrant-list li .condition {
+        display: inline; /* Умова в тому ж рядку */
+        margin-left: 10px; /* Відступ зліва замість зверху */
+        font-size: clamp(13px, 2.3vw, 15px);
+        color: #fef08a; /* Жовтий колір для умови */
+    }
+            
+            .modal-content {
+                padding: 15px;
+                max-height: calc(100% - 60px);
+            }
+            .resizable-image {
+                max-width: 100%;
+            }
+            .video-card {
+                width: 260px;
+                height: 160px;
+            }
+            .question-card {
+                height: 160px;
+            }
+            .trainer-container {
+                padding: 15px;
+            }
+        }
+        @media (max-width: 480px) {
+            .section {
+                width: 90%;
+                height: 170px;
+            }
+            .section img {
+                width: 40px;
+                height: 40px;
+            }
+            .section h2 {
+                font-size: 15px;
+            }
+            .modal-content {
+                padding: 10px;
+            }
+            .video-card {
+                width: 220px;
+                height: 140px;
+            }
+            .question-card {
+                height: 140px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="title-box">
+        <h1>6. Аргумент комплексного числа</h1>
+    </div>
+
+    <div class="section-container">
+        <div class="section" id="openTheoryBtn">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Книга">
+            <h2>Теоретичні відомості</h2>
+        </div>
+        <div class="section" id="openVideoBtn">
+            <img src="https://img.icons8.com/fluency/96/video.png" alt="Відео">
+            <h2>Відеоматеріали</h2>
+        </div>
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Картки">
+            <h2>Питання і відповіді</h2>
+        </div>
+        <div class="section" id="openTrainerBtn">
+            <img src="https://img.icons8.com/fluency/96/flash-on.png" alt="Тренажер">
+            <h2>Тренажер</h2>
+        </div>
+    </div>
+
+    <div class="navigation-buttons">
+        <a class="nav-button" href="/tema2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            До теми
+        </a>
+        <a class="nav-button" href="/">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            На головну
+        </a>
+    </div>
+
+    <div id="modalOverlay"></div>
+
+    <div id="theoryModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeTheoryBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <details>
+                <summary>Головне значення аргументу</summary>
+                <p>
+                    Комплексні числа, які мають однаковий модуль \( r \), розташовуються на колі радіусом \( r \) з центром у початку координат \( O(0;0) \) на комплексній площині. Це означає, що для кожного фіксованого значення модуля \( r \) існує нескінченна кількість комплексних чисел, які визначаються напрямком вектора, що відповідає числу \( z \) (рис. 2.2). Напрямок цього вектора визначається кутом \( &phi; \), який називають аргументом (\( \arg z \)) комплексного числа \( z = a + bi \).
+                </p>
+                <img src="static/figure2.2.jpg" alt="Рисунок 2.2" class="figure figure-2-2" />
+                <p>
+                    Аргумент \( &phi; \) – це кут між додатною віссю \( x \) і вектором, що відповідає числу \( z \). Аргумент може бути додатним (якщо кут відкладено проти годинникової стрілки від осі \( x \)) або від’ємним (якщо за годинниковою стрілкою). Для спрощення обчислень і графічного зображення використовують головне значення аргументу, яке належить інтервалу \( (-\pi, \pi] \).
+                </p>
+                <p>
+                    Аргумент обчислюється як:
+                </p>
+                <p class="math-notation-centered">
+                    \[ &phi; = \arctan\left(\frac{b}{a}\right) \tag{2.3} \]
+                </p>
+                <p>
+                    де \( a \) – дійсна частина, а \( b \) – уявна частина комплексного числа \( z \). Але його точне значення залежить від координатної чверті, у якій розташовано число \( z \), і визначається за такими правилами:
+                </p>
+                <ul>
+                    <li>Для І чверті (\( a > 0, b > 0 \)): \( &phi; = \arctan\left(\frac{b}{a}\right) \).</li>
+                    <li>Для ІІ чверті (\( a < 0, b > 0 \)): \( &phi;= \arctan\left(\frac{b}{a}\right) + \pi \).</li>
+                    <li>Для ІІІ чверті (\( a < 0, b < 0 \)): \( &phi; = \arctan\left(\frac{b}{a}\right) - \pi \).</li>
+                    <li>Для IV чверті (\( a > 0, b < 0 \)): \( &phi; = \arctan\left(\frac{b}{a}\right) \).</li>
+                </ul>
+                <p>
+                    Цей підхід спрощує обчислення головного значення аргументу комплексного числа, забезпечуючи чіткі формули для кожної координатної чверті комплексної площини.
+                </p>
+            </details>
+           <details>
+  <summary>
+  Алгоритм обчислення головного значення аргументу комплексного числа 
+  <span style="color: yellow;">z = a + bi</span>, де 
+  <span style="color: yellow;">z ≠ 0</span>
+</summary>
+    <p>
+        Для обчислення головного значення аргументу комплексного числа \( z = a + bi \), де \( z \neq 0 \), виконайте наступні кроки:
+    </p>
+    <ol>
+        <p><span style="color: yellow;">1.</span> Визначити дійсну (\( a \)) і уявну (\( b \)) частини числа \( z \). </p>
+
+        <p><span style="color: yellow;">2.</span> Визначити, у якій координатній чверті комплексної площини розташоване число \( z \), на основі знаків \( a \) і \( b \):</p>
+
+          <ul class="quadrant-list">
+  <li>І чверть (\( a > 0, b > 0 \))</li>
+  <li>ІІ чверть (\( a < 0, b > 0 \))</li>
+  <li>ІІІ чверть (\( a < 0, b < 0 \))</li>
+  <li>IV чверть (\( a > 0, b < 0 \))</li>
+</ul>
+        </li>
+        <p><span style="color: yellow;"> 3.</span> Обчислити головне значення аргументу \( &phi;\), використовуючи відповідну формулу з корекцією за чвертями (рис. 2.3).</p>
+        <img src="static/figure2.3.jpg" alt="Рисунок 2.3" class="figure figure-2-3" />
+    </ol>
+    <p>
+        У випадках, коли одна з компонент (\( a \) або \( b \)) комплексного числа \( z = a + bi \) дорівнює нулю, головне значення аргументу \( &phi; \) обчислюється за такими правилами:
+    </p>
+    <ol>
+        <p><span style="color: yellow;"> 1) Для дійсних чисел </span>(\( b = 0 \), \( z = a \)):</p>
+            <ul>
+                <li>Якщо \( a > 0 \), напрям радіус-вектора числа \( z \) співпадає з напрямом дійсної осі \( x \), то \(&phi; = 0 \)(рис. 2.4).
+                    <img src="static/figure2.4.jpg" alt="Рисунок 2.4" class="figure figure-2-4" />
+                </li>
+                <li>Якщо \( a < 0 \), напрям радіус-вектора числа \( z \) протилежно напрямлений до напряму дійсної осі \( x \), то \( &phi; = \pi \) (рис. 2.5).
+                    <img src="static/figure2.5.jpg" alt="Рисунок 2.5" class="figure figure-2-5" />
+                </li>
+            </ul>
+        </li>
+        <p><span style="color: yellow;"> 2) Для уявних чисел </span>(\( a = 0 \), \( z = bi \)):
+            <ul>
+                <li>Якщо \( b > 0 \), напрям радіус-вектора числа \( z \) співпадає з напрямом уявної осі \( y \), то
+                                            \( &phi; = \frac{\pi}{2} \)     (рис. 2.6).   
+                    
+                    <img src="static/figure2.6.jpg" alt="Рисунок 2.6" class="figure figure-2-6" />
+                </li>
+                <li>Якщо \( b < 0 \), напрям радіус-вектора числа \( z \) протилежно напрямлений до напряму уявної осі \( y \), то
+                                           \( &phi; = -\frac{\pi}{2} \) (рис. 2.7).
+                    <img src="static/figure2.7.jpg" alt="Рисунок 2.7" class="figure figure-2-7" />
+                </li>
+            </ul>
+        </li>
+         <p><span style="color: yellow;">3) </span>Якщо \( a = 0 \) і \( b = 0 \), то \( z = 0 \), і його аргумент вважається невизначеним.</li>
+    </ol>
+    <p>
+        <strong>Примітка.</strong> У цьому посібнику головне значення аргументу комплексного числа \( &phi; \) обирається в інтервалі \( (-\pi, \pi] \), що відповідає стандартному підходу в комплексному аналізі. Також у деяких задачах чи джерелах використовується інтервал \( [0, 2\pi) \). Обидва варіанти є правильними!
+    </p>
+</details>
+           <details>
+    <summary>Приклади</summary>
+    <p><strong><span style="color: yellow;">Приклад 2.2.</span></strong> Визначити, в якій координатній чверті комплексної площини знаходяться задані комплексні числа:</p>
+    <p>
+        а) \( z_1 = 2 + i \); б) \( z_2 = -2 + 3i \); в) \( z_3 = 2 - 2i \); г) \( z_4 = -2 - i \).
+    </p>
+    <p>
+        Для визначення координатної чверті, в якій знаходиться комплексне число, потрібно врахувати знаки його дійсної (\( a \)) та уявної (\( b \)) частин:
+    </p>
+    <ul>
+        <li>
+            а) \( z_1 = 2 + i \): дійсна частина \( a = 2 > 0 \), уявна частина \( b = 1 > 0 \). Отже, число \( z_1 \) знаходиться в І чверті (рис. 2.8).
+            <img src="static/figure2.8.jpg" alt="Рисунок 2.8" class="figure figure-2-8" />
+        </li>
+        <li>
+            б) \( z_2 = -2 + 3i \): дійсна частина \( a = -2 < 0 \), уявна частина \( b = 3 > 0 \). Отже, число \( z_2 \) знаходиться в ІІ чверті (рис. 2.9).
+            <img src="static/figure2.9.jpg" alt="Рисунок 2.9" class="figure figure-2-9" />
+        </li>
+        <li>
+            в) \( z_3 = 2 - 2i \): дійсна частина \( a = 2 > 0 \), уявна частина \( b = -2 < 0 \). Отже, число \( z_3 \) знаходиться в IV чверті (рис. 2.10).
+            <img src="static/figure2.10.jpg" alt="Рисунок 2.10" class="figure figure-2-10" />
+        </li>
+        <li>
+            г) \( z_4 = -2 - i \): дійсна частина \( a = -2 < 0 \), уявна частина \( b = -1 < 0 \). Отже, число \( z_4 \) знаходиться в ІІІ чверті (рис. 2.11).
+            <img src="static/figure2.11.jpg" alt="Рисунок 2.11" class="figure figure-2-11" />
+        </li>
+    </ul>
+    <p><strong><span style="color: yellow;">Приклад 2.3.</span></strong> Знайти аргументи комплексних чисел:</p>
+    <p>
+        а) \( z = 8 \); б) \( z = -2i \); в) \( z = 2 - 2i \).
+    </p>
+    <ul>
+        <li>
+            а) \( z = 8 \): дійсна частина \( a = 8 > 0 \), уявна частина \( b = 0 \). Радіус-вектор даного числа \( z \) розташований на дійсній осі, і їхні напрями співпадають, отже
+            <p class="math-notation-centered">
+                \[ &phi;= 0 \tag{2.8} \]
+            </p>
+        </li>
+        <li>
+            б) \( z = -2i \): дійсна частина \( a = 0 \), уявна частина \( b = -2 < 0 \). Радіус-вектор числа \( z \) розташований на осі \( Oy \) і направлений протилежно до неї, отже
+            <p class="math-notation-centered">
+                \[ &phi; = -\frac{\pi}{2} \tag{2.9} \]
+            </p>
+        </li>
+        <li>
+            в) \( z = 2 - 2i \): дійсна частина \( a = 2 > 0 \), уявна частина \( b = -2 < 0 \). Радіус-вектор, що відповідає числу \( z \), зображений на рисунку 2.12. Комплексне число розташоване в IV координатній чверті комплексної площини. Щоб обчислити головне значення аргументу \( \phi \), використаємо формулу для IV чверті:
+            <p class="math-notation-centered">
+                \[ &phi;= \arctan\left(\frac{b}{a}\right) = \arctan\left(\frac{-2}{2}\right) = \arctan(-1) = -\arctan(1) = -\frac{\pi}{4} \tag{2.10} \]
+            </p>
+            <img src="static/figure2.12.jpg" alt="Рисунок 2.12" class="figure figure-2-12" />
+            <p>Відповідь: \( &phi; = -\frac{\pi}{4} \).</p>
+        </li>
+    </ul>
+    <p>
+        <strong>Примітка.</strong> Функція \( y = \arctan(x) \) є непарною функцією, тобто \( \arctan(-x) = -\arctan(x) \). Ця властивість спрощує обчислення аргументу комплексних чисел, особливо в чвертях, де одна з частин комплексного числа \( z \) (дійсна або уявна) від’ємна. Надалі ми застосовуватимемо цю властивість, але не згадуватимемо її повторно, якщо не вказано інше.
+    </p>
+</details>
+        </div>
+    </div>
+
+    <div id="videoModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <h2 class="glow-title">Оберіть відео</h2>
+            <div class="video-card-container">
+                <div class="video-card" data-video="1">
+                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
+                    <h3>Модуль та аргумент комплексного числа</h3>
+                </div>
+                <div class="video-card" data-video="2">
+                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
+                    <h3>Argument of z  </h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="videoPlayerModal1" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoPlayerBtn1">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-player-container">
+                <iframe id="youtubePlayer1" width="100%" height="400" src="https://youtu.be/BXQD38Y26uM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div id="videoPlayerModal2" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoPlayerBtn2">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-player-container">
+                <iframe id="youtubePlayer2" width="100%" height="400" src="https://youtube.com/shorts/3f2R9shnoGI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div id="questionsModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeQuestionsBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <p>[Тут будуть питання і відповіді]</p>
+        </div>
+    </div>
+
+    <div id="trainerModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeTrainerBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="trainer-container" id="trainerContent">Завантаження...</div>
+        </div>
+    </div>
+
+    <script>
+        const modals = {
+            theory: document.getElementById('theoryModal'),
+            video: document.getElementById('videoModal'),
+            questions: document.getElementById('questionsModal'),
+            trainer: document.getElementById('trainerModal'),
+            videoPlayer1: document.getElementById('videoPlayerModal1'),
+            videoPlayer2: document.getElementById('videoPlayerModal2')
+        };
+        const buttons = {
+            openTheory: document.getElementById('openTheoryBtn'),
+            openVideo: document.getElementById('openVideoBtn'),
+            openQuestions: document.getElementById('openQuestionsBtn'),
+            openTrainer: document.getElementById('openTrainerBtn'),
+            closeTheory: document.getElementById('closeTheoryBtn'),
+            closeVideo: document.getElementById('closeVideoBtn'),
+            closeQuestions: document.getElementById('closeQuestionsBtn'),
+            closeTrainer: document.getElementById('closeTrainerBtn'),
+            closeVideoPlayer1: document.getElementById('closeVideoPlayerBtn1'),
+            closeVideoPlayer2: document.getElementById('closeVideoPlayerBtn2')
+        };
+        const overlay = document.getElementById('modalOverlay');
+        const youtubePlayers = {
+            1: document.getElementById('youtubePlayer1'),
+            2: document.getElementById('youtubePlayer2')
+        };
+
+        function adjustModalHeight(modal) {
+            if (!modal) return;
+            const modalContent = modal.querySelector('.modal-content');
+            const modalHeader = modal.querySelector('.modal-header');
+            if (!modalContent || !modalHeader) return;
+            modalContent.style.height = 'auto';
+            const contentHeight = modalContent.scrollHeight;
+            const headerHeight = modalHeader.offsetHeight;
+            const windowHeight = window.innerHeight;
+            const maxModalHeight = windowHeight * 0.85;
+            const requiredHeight = contentHeight + headerHeight + 20;
+            if (requiredHeight < maxModalHeight) {
+                modal.style.height = `${requiredHeight}px`;
+                modalContent.style.overflowY = 'hidden';
+            } else {
+                modal.style.height = `${maxModalHeight}px`;
+                modalContent.style.overflowY = 'auto';
+            }
+            modalContent.scrollTop = 0;
+        }
+
+        function openModal(modal, btn) {
+            if (!modal || !btn) return;
+            modal.style.display = 'flex';
+            overlay.style.display = 'block';
+            document.body.classList.add('modal-open');
+            btn.setAttribute('aria-pressed', 'true');
+            setTimeout(() => {
+                if (typeof MathJax !== 'undefined') {
+                    MathJax.typesetPromise().then(() => adjustModalHeight(modal));
+                } else {
+                    adjustModalHeight(modal);
+                }
+            }, 200);
+        }
+
+        function closeModal(modal, btn) {
+            if (!modal || !btn) return;
+            modal.style.display = 'none';
+            overlay.style.display = 'none';
+            document.body.classList.remove('modal-open');
+            btn.setAttribute('aria-pressed', 'false');
+            btn.focus();
+        }
+
+        function closeVideoPlayerModal(videoModal, player, mainModal, btn) {
+            if (player) player.src = player.src;
+            if (videoModal) videoModal.style.display = 'none';
+            overlay.style.display = 'none';
+            openModal(mainModal, btn);
+        }
+
+        buttons.openTheory.addEventListener('click', () => openModal(modals.theory, buttons.openTheory));
+        buttons.openVideo.addEventListener('click', () => openModal(modals.video, buttons.openVideo));
+        buttons.openQuestions.addEventListener('click', () => openModal(modals.questions, buttons.openQuestions));
+        buttons.openTrainer.addEventListener('click', () => openModal(modals.trainer, buttons.openTrainer));
+        buttons.closeTheory.addEventListener('click', () => closeModal(modals.theory, buttons.openTheory));
+        buttons.closeVideo.addEventListener('click', () => closeModal(modals.video, buttons.openVideo));
+        buttons.closeQuestions.addEventListener('click', () => closeModal(modals.questions, buttons.openQuestions));
+        buttons.closeTrainer.addEventListener('click', () => closeModal(modals.trainer, buttons.openTrainer));
+        buttons.closeVideoPlayer1.addEventListener('click', () => closeVideoPlayerModal(modals.videoPlayer1, document.getElementById('youtubePlayer1'), modals.video, buttons.openVideo));
+        buttons.closeVideoPlayer2.addEventListener('click', () => closeVideoPlayerModal(modals.videoPlayer2, document.getElementById('youtubePlayer2'), modals.video, buttons.openVideo));
+
+        overlay.addEventListener('click', () => {
+            Object.values(modals).forEach(modal => modal.style.display = 'none');
+            overlay.style.display = 'none';
+            document.body.classList.remove('modal-open');
+        });
+
+        document.querySelectorAll('.video-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const videoId = card.dataset.video;
+                openModal(modals[`videoPlayer${videoId}`], buttons.openVideo);
+            });
+        });
+
+        document.querySelectorAll('.card-inner').forEach(card => {
+            card.addEventListener('click', () => {
+                card.classList.toggle('flipped');
+                setTimeout(() => {
+                    if (typeof MathJax !== 'undefined') {
+                        MathJax.typesetPromise();
+                    }
+                }, 600);
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('details').forEach(details => {
+                details.addEventListener('toggle', () => {
+                    if (modals.theory.style.display === 'flex') {
+                        adjustModalHeight(modals.theory);
+                    }
+                });
+            });
+        });
+
+        window.addEventListener('resize', () => adjustModalHeight(modals.theory));
+    </script>
+</body>
+</html>
