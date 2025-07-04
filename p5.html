@@ -598,14 +598,17 @@ button:hover {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    padding: 15px 30px;
-    border-radius: 10px;
-    font-size: 18px;
-    color: #fff;
+    padding: 40px 65px;
+    border-radius: 20px; /* більш округлі кути */
+    font-size: 20px;
+    font-weight: bold;  /* жирний текст */
+    color: #ffffff;     /* білий колір тексту для контрасту */
     z-index: 1002;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
     text-align: center;
+    background: linear-gradient(135deg, #1e3c72, #2a5298); /* стильний градієнт */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6); /* м'яка глибока тінь */
 }
+
 .correct-feedback {
     background: linear-gradient(135deg, #00ff88, #00cc66);
 }
@@ -868,7 +871,7 @@ button:hover {
     }
     .feedback {
         font-size: clamp(18px, 2.8vw, 20px);
-        padding: 10px 20px;
+        padding: 12px 25px;
     }
 }
     </style>
@@ -897,7 +900,7 @@ button:hover {
         </div>
     </div>
 
-    <div class="navigation-buttons">
+   <div class="navigation-buttons">
        <a class="nav-button" href='tema2.html'>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                 <path d="M15 18l-6-6 6-6"/>
@@ -911,6 +914,7 @@ button:hover {
             На головну
         </a>
     </div>
+
 
     <div id="modalOverlay"></div>
 
@@ -1285,67 +1289,80 @@ button:hover {
         }
 
         // Функція для малювання комплексної площини
-        function drawComplexPlane(canvas, a, b) {
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const size = canvas.width;
-            const center = size / 2;
-            const scale = size / 12; // Крок сітки
+function drawComplexPlane(canvas, a, b) {
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const size = canvas.width;
+    const center = size / 2;
+    const scale = size / 12; // Крок сітки
 
-            ctx.clearRect(0, 0, size, size);
-            ctx.fillStyle = '#1a1a2e';
-            ctx.fillRect(0, 0, size, size);
+    ctx.clearRect(0, 0, size, size);
+    ctx.fillStyle = '#1a1a2e';
+    ctx.fillRect(0, 0, size, size);
 
-            // Малюємо сітку симетрично відносно центра
-            ctx.strokeStyle = '#d3d3d3';
-            ctx.lineWidth = 0.5;
-            for (let i = -5; i <= 5; i++) {
-                const pos = center + i * scale; // Позиція відносно центра
-                ctx.beginPath();
-                ctx.moveTo(pos, 0);
-                ctx.lineTo(pos, size);
-                ctx.moveTo(0, pos);
-                ctx.lineTo(size, pos);
-                ctx.stroke();
-            }
+    // Малюємо сітку симетрично відносно центра
+    ctx.strokeStyle = '#d3d3d3';
+    ctx.lineWidth = 0.5;
+    for (let i = -5; i <= 5; i++) {
+        const pos = center + i * scale; // Позиція відносно центра
+        ctx.beginPath();
+        ctx.moveTo(pos, 0);
+        ctx.lineTo(pos, size);
+        ctx.moveTo(0, pos);
+        ctx.lineTo(size, pos);
+        ctx.stroke();
+    }
 
-            // Малюємо головні осі
-            ctx.strokeStyle = '#e0e0e0';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(center, 0);
-            ctx.lineTo(center, size);
-            ctx.moveTo(0, center);
-            ctx.lineTo(size, center);
-            ctx.stroke();
+    // Малюємо головні осі
+    ctx.strokeStyle = '#e0e0e0';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(center, 0);
+    ctx.lineTo(center, size);
+    ctx.moveTo(0, center);
+    ctx.lineTo(size, center);
+    ctx.stroke();
 
-            // Додаємо мітки осей
-            ctx.fillStyle = '#e0e0e0';
-            ctx.font = '14px Poppins';
-            ctx.fillText('Re', size - 20, center - 10);
-            ctx.fillText('Im', center - 20, 25);
+    // Додаємо мітки осей
+    ctx.fillStyle = '#e0e0e0';
+    ctx.font = '14px Poppins';
+    ctx.fillText('Re', size - 20, center - 10);
+    ctx.fillText('Im', center - 20, 25);
 
-            for (let i = -5; i <= 5; i++) {
-                if (i !== 0) {
-                    ctx.fillText(i, center + i * scale - 5, center + 15);
-                    ctx.fillText(i, center + 10, center - i * scale + 5);
-                }
-            }
-
-            // Малюємо радіус-вектор
-            ctx.strokeStyle = '#00ff88';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(center, center);
-            ctx.lineTo(center + a * scale, center - b * scale);
-            ctx.stroke();
-
-            ctx.fillStyle = '#00ff88';
-            ctx.beginPath();
-            ctx.arc(center + a * scale, center - b * scale, 4, 0, 2 * Math.PI);
-            ctx.fill();
+    for (let i = -5; i <= 5; i++) {
+        if (i !== 0) {
+            ctx.fillText(i, center + i * scale - 5, center + 15);
+            ctx.fillText(i, center + 10, center - i * scale + 5);
         }
+    }
 
+    // Малюємо радіус-вектор
+    ctx.strokeStyle = '#00ff88';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(center, center);
+    const endX = center + a * scale;
+    const endY = center - b * scale;
+    ctx.lineTo(endX, endY);
+    ctx.stroke();
+
+    // Малюємо стрілку на кінці вектора
+    const arrowSize = 10; // Розмір стрілки
+    const angle = Math.atan2(-b * scale, a * scale); // Кут вектора
+    ctx.fillStyle = '#00ff88';
+    ctx.beginPath();
+    ctx.moveTo(endX, endY);
+    ctx.lineTo(
+        endX - arrowSize * Math.cos(angle - Math.PI / 6),
+        endY - arrowSize * Math.sin(angle - Math.PI / 6)
+    );
+    ctx.lineTo(
+        endX - arrowSize * Math.cos(angle + Math.PI / 6),
+        endY - arrowSize * Math.sin(angle + Math.PI / 6)
+    );
+    ctx.closePath();
+    ctx.fill();
+}
         let currentQuestion = 'q1_v1';
         let attemptCounts = { q1: 0, q2: 0, q3: 0, q4: 0, q5: 0 };
         let currentData = {};
@@ -1527,7 +1544,7 @@ button:hover {
         function showFeedback(isCorrect, nextQuestion) {
             const feedbackDiv = document.createElement('div');
             feedbackDiv.className = `feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'}`;
-            feedbackDiv.innerHTML = isCorrect ? '✅ Правильно!' : '❌ Неправильно';
+            feedbackDiv.innerHTML = isCorrect ? '✅ Правильно!' : '❌ Неправильно.';
             document.body.appendChild(feedbackDiv);
             setTimeout(() => {
                 feedbackDiv.remove();
