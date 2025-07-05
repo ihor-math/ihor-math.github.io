@@ -1,0 +1,2565 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>7. Тригонометричне представлення комплексних чисел</title>
+    <script>
+        MathJax = {
+            chtml: {
+                adaptiveCSS: true,
+                scale: 1,
+                minScale: 0.8
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        *, *:before, *:after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        .figure {
+            display: block;
+            margin: 10px auto;
+            max-width: 100%;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            object-fit: contain;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a23, #1a1a4d);
+            font-family: 'Poppins', sans-serif;
+            color: #e0e0ff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100dvh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 0, 255, 0.1), transparent 70%);
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
+
+        .nav-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            text-decoration: none;
+            color: #e0e0ff;
+            background: linear-gradient(135deg, #ff00ff, #ff4081);
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .nav-button:hover {
+            background: linear-gradient(135deg, #ff4081, #f50057);
+            transform: scale(1.02);
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
+        }
+
+        .nav-button svg {
+            vertical-align: middle;
+            fill: white;
+        }
+
+        .title-box {
+            margin-top: 60px;
+            padding: 25px 40px;
+            background: linear-gradient(135deg, rgba(30, 30, 80, 0.7), rgba(80, 70, 200, 0.7));
+            border-radius: 25px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            max-width: 90%;
+            text-align: center;
+            border: 2px solid rgba(255, 0, 255, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .title-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(transparent, rgba(255, 0, 255, 0.2), transparent 30%);
+            z-index: -1;
+        }
+
+        .title-box h1 {
+            font-size: 28px;
+            color: #ff00ff;
+            text-shadow: 0 0 10px #ff00ff, 0 0 20px #00f0ff;
+            font-weight: 800;
+        }
+
+        .section-container {
+            margin-top: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .section {
+            width: 250px;
+            height: 220px;
+            background: linear-gradient(45deg, rgba(30, 30, 80, 0.8), rgba(80, 70, 200, 0.8));
+            border-radius: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            transition: transform 0.2s ease, box-shadow 0.2s;
+            cursor: pointer;
+            color: inherit;
+            border: 2px solid rgba(0, 255, 255, 0.4);
+            position: relative;
+        }
+
+        .section:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0, 255, 255, 0.3);
+        }
+
+        .section img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 15px;
+            object-fit: cover;
+            border-radius: 8px;
+            filter: drop-shadow(0 0 6px rgba(0, 255, 255, 0.5));
+            transition: transform 0.2s;
+        }
+
+        .section:hover img {
+            transform: scale(1.05);
+        }
+
+        .section h2 {
+            font-size: clamp(16px, 2.5vw, 18px);
+            color: #00f0ff;
+            font-weight: 600;
+            text-shadow: 0 0 6px rgba(0, 255, 255, 0.7);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            min-height: 100dvh;
+            background: linear-gradient(135deg, rgba(10, 10, 35, 0.9), rgba(30, 30, 80, 0.9));
+            z-index: 1001;
+            flex-direction: column;
+            align-items: center;
+            padding: 0;
+            opacity: 1;
+            border-radius: 0;
+            overflow: hidden;
+            border: 2px solid rgba(255, 0, 255, 0.5);
+            overflow-x: hidden;
+        }
+
+        .modal.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-header {
+            background: linear-gradient(90deg, rgba(10, 10, 35, 0.9), rgba(30, 30, 80, 0.9));
+            padding: 8px 12px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            width: 100%;
+            flex-shrink: 0;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+        }
+
+        .modal-header h2 {
+            color: #ff00ff;
+            font-size: clamp(18px, 3vw, 20px);
+            text-shadow: 0 0 6px rgba(255, 0, 255, 0.7);
+            margin: 0;
+            margin-right: 12px;
+        }
+
+        .close-btn {
+            background: linear-gradient(135deg, #ff00ff, #ff4081);
+            color: #e0e0ff;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+        }
+
+        .close-btn:hover {
+            background: linear-gradient(135deg, #ff4081, #f50057);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.7);
+        }
+
+        .modal-content {
+            padding: 20px;
+            flex-grow: 1;
+            background: linear-gradient(135deg, rgba(100, 80, 200, 0.8), rgba(80, 70, 200, 0.8));
+            border-radius: 10px;
+            margin: 0;
+            color: #e0e0ff;
+            width: 100%;
+            max-width: 95%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 0, 255, 0.5) transparent;
+        }
+
+        #trainerModal .modal-content {
+             display: flex;
+    flex-direction: column; /* Змінено на column для правильного розташування */
+    justify-content: flex-start; /* Починаємо згори */
+    align-items: center;
+    min-height: auto; /* Видаляємо 100%, щоб вміст визначав висоту */
+    padding: 20px; /* Додаємо відступи для вмісту */
+    box-sizing: border-box;
+        }
+
+        #questionsModal .modal-content {
+            padding-top: 20px;
+            min-height: 400px;
+        }
+
+        .card-back p {
+            font-size: clamp(14px, 2.5vw, 16px);
+            line-height: 1.6;
+            text-align: justify;
+        }
+
+        .modal-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .modal-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 0, 255, 0.5);
+            border-radius: 3px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 0, 255, 0.8);
+        }
+
+        .modal-content p {
+            font-size: clamp(16px, 2.8vw, 18px);
+            line-height: 1.7;
+            text-align: justify;
+            text-shadow: 0 0 4px rgba(0, 255, 255, 0.3);
+        }
+
+        .modal-content ul {
+            list-style: none;
+            padding-left: 20px;
+        }
+
+        .modal-content li {
+            color: #ff80ab;
+            padding-left: 20px;
+            margin-left: 10px;
+            max-width: calc(100% - 30px);
+            white-space: normal;
+            text-align: justify;
+            position: relative;
+        }
+
+        .modal-content li::before {
+            content: '✨';
+            position: absolute;
+            left: 0;
+            color: #00f0ff;
+            font-size: 16px;
+        }
+
+        .modal-content img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 10px auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .math-container {
+            display: block;
+            text-align: center;
+            margin: 15px auto;
+            max-width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            box-sizing: border-box;
+        }
+
+        .math-container mjx-container {
+            display: inline-block !important;
+            margin: 0 auto !important;
+            text-align: center !important;
+            color: #FFFF00 !important;
+            font-size: clamp(18px, 3vw, 20px) !important;
+            text-shadow: 0 0 8px rgba(255, 255, 0, 0.7);
+            white-space: nowrap !important;
+            vertical-align: middle !important;
+            max-width: 100%;
+            width: fit-content;
+        }
+
+        .math-container mjx-container[jax="CHTML"][display="true"] {
+            display: block !important;
+            text-align: center !important;
+            margin: 0 auto !important;
+            max-width: 100%;
+            width: fit-content;
+            padding: 5px;
+            white-space: nowrap !important;
+        }
+
+        mjx-container {
+            font-size: clamp(18px, 3vw, 20px) !important;
+            color: #FFFF00 !important;
+            display: inline-block !important;
+            max-width: 100%;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 5px;
+            text-align: center;
+            text-shadow: 0 0 8px rgba(255, 255, 0, 0.7);
+        }
+
+        .inline-math mjx-container {
+            display: inline !important;
+            color: #FFFF00 !important;
+            text-shadow: 0 0 8px rgba(255, 255, 0, 0.7);
+            font-size: clamp(16px, 2.8vw, 18px) !important;
+            vertical-align: middle !important;
+            margin: 0 2px !important;
+            padding: 2px !important;
+        }
+
+        mjx-container.math-notation-centered {
+            text-align: center !important;
+            max-width: 100%;
+            width: fit-content;
+            margin: 10px auto;
+            padding: 10px;
+            border-radius: 0;
+            box-sizing: border-box;
+        }
+
+        mjx-container[jax="CHTML"][display="true"] {
+            display: block !important;
+            text-align: center !important;
+            margin: 10px auto;
+            max-width: 100%;
+            width: fit-content;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+
+        details {
+            margin: 10px 0;
+            padding: 0;
+            border-radius: 10px;
+            background: none;
+            cursor: pointer;
+            border: 2px solid rgba(0, 255, 255, 0.4);
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        details p {
+            padding: 15px 20px;
+            color: #e0e0ff;
+            text-align: justify;
+            max-width: 100%;
+        }
+
+        summary {
+            font-weight: 600;
+            padding: 10px;
+            background: linear-gradient(90deg, rgba(80, 70, 200, 0.8), rgba(100, 80, 200, 0.8));
+            border-radius: 10px;
+            color: #ff99ff;
+            text-shadow: 0 0 6px rgba(255, 0, 255, 0.7);
+        }
+
+        summary:hover {
+            background: linear-gradient(90deg, rgba(100, 80, 200, 0.9), rgba(255, 0, 255, 0.9));
+        }
+
+        .video-card-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .video-card {
+            width: 360px;
+            height: 220px;
+            background: linear-gradient(135deg, rgba(30, 30, 80, 0.8), rgba(80, 70, 200, 0.8));
+            border-radius: 20px;
+            border: 2px solid rgba(0, 255, 255, 0.4);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 10px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            color: #00f0ff;
+        }
+
+        .video-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 255, 255, 0.5);
+        }
+
+        .video-card img {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 10px;
+            object-fit: cover;
+            border-radius: 8px;
+            filter: drop-shadow(0 0 5px rgba(0, 255, 255, 0.5));
+        }
+
+        .video-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            line-height: 1.2;
+            text-shadow: 0 0 6px rgba(0, 255, 255, 0.7);
+        }
+
+        .video-player-container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: rgba(30, 30, 80, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 255, 255, 0.5);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .video-player-container iframe {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 2px solid rgba(0, 255, 255, 0.4);
+        }
+
+        .modal-content.video-content {
+            max-width: 800px;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .question-card {
+            perspective: 1000px;
+            margin: 20px auto;
+            max-width: 95%;
+            height: 200px;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.4s;
+            transform-style: preserve-3d;
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+        }
+
+        .card-inner.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            padding: 12px;
+            border-radius: 15px;
+            font-size: clamp(16px, 3vw, 18px);
+            line-height: 1.5;
+            border: 2px solid rgba(255, 0, 255, 0.4);
+            box-sizing: border-box;
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, rgba(30, 30, 80, 0.8), rgba(80, 70, 200, 0.8));
+            color: #00f0ff;
+            font-weight: 600;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            flex-wrap: wrap;
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, rgba(80, 70, 200, 0.8), rgba(200, 70, 200, 0.8));
+            color: #e0e0ff;
+            transform: rotateY(180deg);
+            overflow-y: auto;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 0, 255, 0.5) transparent;
+        }
+
+        .card-back::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .card-back::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .card-back::-webkit-scrollbar-thumb {
+            background: rgba(255, 0, 255, 0.5);
+            border-radius: 3px;
+        }
+
+        .card-back::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 0, 255, 0.8);
+        }
+
+        .trainer-container {
+            width: 95%;
+            max-width: 900px;
+            padding: 20px;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(30, 30, 80, 0.8), rgba(80, 70, 200, 0.8));
+            border-radius: 16px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(0, 255, 255, 0.4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .trainer-question, .trainer-options {
+            display: block;
+            visibility: visible;
+            opacity: 1;
+            min-height: 50px;
+            margin: 10px 0;
+            padding: 10px;
+            color: #ff00ff;
+            font-size: clamp(18px, 3vw, 20px);
+            width: 100%;
+            text-align: center;
+        }
+
+        .trainer-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            max-width: 600px;
+            margin: 10px auto;
+        }
+
+        .trainer-option {
+            display: block;
+            visibility: visible;
+            opacity: 1;
+            background: linear-gradient(135deg, rgba(80, 70, 200, 0.8), rgba(100, 80, 200, 0.8));
+            padding: 10px;
+            border-radius: 8px;
+            border: 2px solid rgba(0, 255, 255, 0.4);
+            color: #00f0ff;
+            font-size: clamp(16px, 2.8vw, 18px);
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .trainer-option:hover {
+            background: linear-gradient(135deg, rgba(100, 80, 200, 0.9), rgba(255, 0, 255, 0.9));
+            transform: scale(1.05);
+        }
+
+        .trainer-option.selected {
+            background: linear-gradient(135deg, #ff00ff, #ff4081);
+        }
+
+        .trainer-submit {
+            display: block;
+            visibility: visible;
+            opacity: 1;
+            margin: 20px auto;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #ff00ff, #ff4081);
+            color: #00f0ff;
+            font-size: clamp(16px, 2.8vw, 18px);
+            border: 2px solid rgba(0, 255, 255, 0.4);
+            border-radius: 8px;
+            cursor: pointer;
+            width: auto;
+            text-align: center;
+        }
+
+        .trainer-submit:hover {
+            background: linear-gradient(135deg, #ff4081, #ff00ff);
+            transform: scale(1.05);
+        }
+
+        .trainer-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .question-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .question-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            height: 60px;
+            background: linear-gradient(135deg, rgba(80, 70, 200, 0.8), rgba(100, 80, 200, 0.8));
+            border-radius: 20px;
+            border: 2px solid rgba(0, 255, 255, 0.4);
+            color: #ffe5b4;
+            font-size: clamp(16px, 2.8vw, 18px);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .question-indicator.active {
+            background: linear-gradient(135deg, #ff00ff, #ff4081);
+            transform: scale(1.1);
+        }
+
+        .toast {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: linear-gradient(135deg, rgba(100, 80, 200, 0.95), rgba(150, 100, 255, 0.95));
+            color: #ffffff;
+            padding: 20px 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 0, 255, 0.6);
+            border: 3px solid rgba(0, 255, 255, 0.7);
+            font-size: clamp(20px, 3.5vw, 24px);
+            font-weight: 600;
+            text-align: center;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
+            z-index: 1002;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            min-width: 300px;
+            animation: pulse 1.5s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 0, 255, 0.6); }
+            100% { box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6), 0 0 30px rgba(255, 0, 255, 0.8); }
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .toast.correct {
+            background: linear-gradient(135deg, #073826, #073826);
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 25px rgba(0, 255, 255, 0.7);
+        }
+
+        .toast.incorrect {
+            background: linear-gradient(135deg, #a21232, #800000);
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 25px rgba(255, 50, 50, 0.7);
+        }
+
+        #modalOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+        }
+
+        #modalOverlay.show {
+            display: block;
+            opacity: 1;
+        }
+
+       .calculator-container {
+    margin: 20px auto;
+    padding: 15px;
+    background: linear-gradient(135deg, rgba(80, 70, 200, 0.8), rgba(100, 80, 200, 0.8));
+    border-radius: 10px;
+    border: 2px solid rgba(0, 255, 255, 0.4);
+    text-align: center;
+    max-width: 300px; /* Збільшено ширину контейнера для десктопів */
+    width: 100%; /* Забезпечує адаптивність */
+}
+            .calculator-container button {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #ff00ff, #ff4081);
+    color: #00f0ff;
+    border: 2px solid rgba(0, 255, 255, 0.4);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 10px;
+}
+
+.calculator-grid {
+    display: grid;
+    grid-template-columns: auto 1fr; /* Мітка займає мінімальну ширину, решта для input-group */
+    gap: 8px;
+    align-items: center;
+    max-width: 450px; /* Обмежуємо ширину сітки для кращого вирівнювання */
+    margin: 0 auto; /* Центруємо сітку */
+}
+            
+
+.calculator-grid label {
+    white-space: nowrap; /* Запобігаємо перенесенню мітки */
+    color: #ff99ff;
+    font-size: clamp(14px, 2.5vw, 16px);
+    align-self: center;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+    max-width: 200px; /* Обмежуємо ширину input-group для компактності */
+}
+
+.calculator-container input {
+    padding: 8px;
+    margin: 0; /* Видаляємо margin, щоб зменшити простір */
+    border-radius: 5px;
+    border: 1px solid rgba(0, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.1);
+    color: #e0e0ff;
+    font-size: 16px;
+    width: 90px; /* Зменшено ширину поля для десктопів */
+}
+
+.sign-btn {
+    display: none; /* Приховуємо кнопки на десктопах */
+    padding: 5px;
+    background: linear-gradient(135deg, #ff00ff, #ff4081);
+    color: #e0e0ff;
+    border: 1px solid rgba(0, 255, 255, 0.4);
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    width: 25px; /* Зменшено розмір кнопок для мобільних */
+    height: 25px;
+    text-align: center;
+}
+
+.sign-btn:hover {
+    background: linear-gradient(135deg, #ff4081, #ff00ff);
+    transform: scale(1.05);
+}
+        #canvasContainer {
+            width: 360px;
+            height: 360px;
+            margin: 18px auto;
+            position: relative;
+            display: none;
+        }
+
+        #vectorCanvas {
+            border: 2px solid rgba(0, 255, 255, 0.4);
+            border-radius: 8px;
+            background: rgba(30, 30, 80, 0.8);
+        }
+           /* Початкове приховування вмісту тренажера */
+#trainerModal .trainer-question.mathjax-pending,
+#trainerModal .trainer-options.mathjax-pending {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s linear 0.3s, opacity 0.3s ease;
+}
+
+/* Показ вмісту після рендерингу */
+#trainerModal .trainer-question.mathjax-rendered,
+#trainerModal .trainer-options.mathjax-rendered {
+    visibility: visible;
+    opacity: 1;
+    transition: visibility 0s linear 0s, opacity 0.3s ease;
+}
+
+          .completion-message {
+    text-align: center;
+    margin: 20px auto;
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(30, 30, 80, 0.8), rgba(80, 70, 200, 0.8));
+    border-radius: 20px;
+    border: 2px solid rgba(0, 255, 255, 0.4);
+    max-width: 400px;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+ .completion-emoji::after {
+            content: '🎉';
+            font-size: clamp(40px, 8vw, 60px);
+            color: #ffff00;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+.completion-message h2 {
+    font-size: clamp(20px, 4vw, 24px);
+    color: #ff00ff; /* Відповідність темі */
+    text-shadow: 0 0 6px rgba(255, 0, 255, 0.7);
+    margin-bottom: 10px;
+}
+
+.completion-message p {
+    font-size: clamp(16px, 3vw, 18px);
+    color: #00f0ff; /* Відповідність темі */
+    text-align: center; /* Явне центрування */
+    margin: 0 0 15px 0; /* Скидання відступів */
+    text-shadow: 0 0 4px rgba(0, 255, 255, 0.3);
+}
+
+#resetTrainerBtn {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #ff00ff, #ff4081); /* Як у .trainer-submit */
+    color: #00f0ff;
+    border: 2px solid rgba(0, 255, 255, 0.4);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: clamp(16px, 2.8vw, 18px);
+    font-weight: 600;
+    transition: background 0.2s, transform 0.2s;
+    box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+}
+
+#resetTrainerBtn:hover {
+    background: linear-gradient(135deg, #ff4081, #ff00ff);
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(255, 0, 255, 0.7);
+}
+
+#resetTrainerBtn:focus {
+    outline: 2px solid rgba(0, 255, 255, 0.6);
+    outline-offset: 2px;
+}
+
+            @media (max-width: 768px) {
+             .title-box {
+            margin-top: 40px;
+            padding: 15px 20px;
+        }
+
+        .title-box h1 {
+            font-size: 24px;
+        }
+
+        .section-container {
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .section {
+            width: 80%;
+            height: 180px;
+        }
+
+        .modal-content {
+            padding: 15px;
+            max-width: 100%;
+        }
+
+        .math-container {
+            padding: 8px;
+        }
+
+        details p {
+            padding: 10px 15px;
+        }
+
+        #questionsModal .modal-content {
+            padding-top: 15px;
+            min-height: 400px;
+        }
+
+        .question-card {
+            height: 280px;
+        }
+
+        .trainer-options {
+            grid-template-columns: 1fr;
+        }
+
+        .video-card {
+            width: 260px;
+            height: 210px;
+        }
+
+        .video-card img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .video-card h3 {
+            font-size: 16px;
+        }
+
+        .video-player-container iframe {
+            max-height: 300px;
+        }
+
+        .canvas-container {
+            width: clamp(100px, 60vw, 150px);
+            height: clamp(100px, 60vw, 150px);
+        }
+
+        .calculator-container {
+            max-width: clamp(180px, 70vw, 250px);
+        }
+    }
+        @media (max-width: 480px) {
+            .navigation-buttons {
+                flex-direction: row;
+                flex-wrap: wrap;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+            }
+
+            .nav-button {
+                padding: 8px 12px;
+                font-size: clamp(14px, 2.9vw, 16px);
+                min-width: 90px;
+                line-height: 1.2;
+            }
+
+            .nav-button svg {
+                width: 15px;
+                height: 15px;
+            }
+
+            .title-box {
+                margin-top: 20px;
+                padding: 10px 15px;
+            }
+
+            .section {
+                width: 90%;
+                height: 150px;
+            }
+
+            .section img {
+                width: 50px;
+                height: 50px;
+            }
+
+            .section h2 {
+                font-size: 17px;
+            }
+
+            .modal-content {
+                padding: 10px;
+                max-width: 100%;
+            }
+
+            .math-container {
+                padding: 6px;
+            }
+
+            details p {
+                font-size: clamp(14px, 2.5vw, 16px);
+                padding: 8px 10px;
+            }
+
+            #questionsModal .modal-content {
+                padding-top: 10px;
+                min-height: 250px;
+            }
+
+            .trainer-container {
+                width: 100%;
+                max-width: none;
+                padding: 10px;
+                margin: 0 auto;
+            }
+
+            #trainerModal .modal-content {
+                padding: 10px;
+                width: 100%;
+                max-width: 100%;
+            }
+            /* Стилі для toastContainer (повідомлення "Правильно"/"Неправильно") */
+    #trainerModal #toastContainer {
+        position: fixed; /* Фіксуємо внизу видимого екрана */
+        bottom: 300px; /* Вище кнопки "Перевірити" (висота кнопки + відступ) */
+        left: 50%; /* Центруємо по горизонталі */
+        transform: translateX(-50%); /* Зміщення для центрування */
+        
+        text-align: center; /* Центруємо текст */
+       
+        z-index: 1000; /* Вище інших елементів */
+    }
+
+
+            #canvasContainer {
+                width: clamp(200px, 80vw, 300px);
+                height: clamp(200px, 80vw, 300px);
+                margin: 10px auto;
+            }
+
+            #vectorCanvas {
+                width: 100%;
+                height: 100%;
+            }
+
+            .calculator-container {
+                padding: 10px;
+                max-width: clamp(180px, 90vw, 300px);
+                width: 100%;
+            }
+
+            .trainer-options {
+                grid-template-columns: 1fr;
+                width: 100%;
+                max-width: clamp(180px, 90vw, 300px);
+                margin: 10px auto;
+            }
+
+            .trainer-option {
+                font-size: clamp(14px, 2.5vw, 16px);
+                padding: 8px;
+            }
+
+            .trainer-question {
+                font-size: clamp(16px, 2.8vw, 18px);
+                padding: 8px;
+            }
+
+            .question-card {
+                height: 300px;
+            }
+
+            .video-card {
+                width: 240px;
+                height: 200px;
+            }
+
+            .video-card img {
+                width: 36px;
+                height: 36px;
+            }
+
+            .video-card h3 {
+                font-size: 14px;
+            }
+
+            .video-player-container iframe {
+                max-height: 200px;
+            }
+
+            .calculator-grid {
+                display: grid;
+                grid-template-columns: auto 1fr;
+                gap: 8px;
+                align-items: center;
+            }
+
+            .calculator-container input {
+                width: clamp(50px, 18vw, 70px);
+                font-size: clamp(12px, 2.5vw, 14px);
+                text-align: center;
+            }
+
+            .calculator-container input::placeholder {
+                color: #a0a0ff;
+                opacity: 0.7;
+            }
+
+            .calculator-container button {
+                padding: 6px 12px;
+                font-size: clamp(12px, 2.5vw, 14px);
+            }
+
+            .sign-btn {
+                display: inline-block;
+            }
+
+            .input-group {
+                flex: 1;
+            }
+            details:nth-child(2) .scrollable-formula-r,
+    details:nth-child(2) .scrollable-formula-phi {
+        overflow-x: auto;
+        white-space: nowrap;
+        padding: 8px;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 0, 255, 0.5) transparent;
+    }
+
+    details:nth-child(2) .scrollable-formula-r::-webkit-scrollbar,
+    details:nth-child(2) .scrollable-formula-phi::-webkit-scrollbar {
+        height: 6px; /* Висота горизонтальної смужки прокрутки */
+    }
+
+    details:nth-child(2) .scrollable-formula-r::-webkit-scrollbar-track,
+    details:nth-child(2) .scrollable-formula-phi::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    details:nth-child(2) .scrollable-formula-r::-webkit-scrollbar-thumb,
+    details:nth-child(2) .scrollable-formula-phi::-webkit-scrollbar-thumb {
+        background: rgba(255, 0, 255, 0.5);
+        border-radius: 3px;
+    }
+
+    details:nth-child(2) .scrollable-formula-r::-webkit-scrollbar-thumb:hover,
+    details:nth-child(2) .scrollable-formula-phi::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 0, 255, 0.8);
+    }
+
+    details:nth-child(2) .scrollable-formula-r mjx-container,
+    details:nth-child(2) .scrollable-formula-phi mjx-container {
+        display: inline-block !important;
+        min-width: fit-content; /* Гарантуємо, що формула не стискається */
+        max-width: none; /* Дозволяємо формулі бути ширшою за контейнер */
+        text-align: center !important;
+        color: #FFFF00 !important;
+        font-size: clamp(16px, 3vw, 18px) !important;
+    }
+
+    details:nth-child(2) .scrollable-formula-r mjx-container[jax="CHTML"][display="true"],
+    details:nth-child(2) .scrollable-formula-phi mjx-container[jax="CHTML"][display="true"] {
+        display: block !important;
+        min-width: fit-content;
+        max-width: none;
+    }
+
+    /* Забезпечуємо вертикальний макет для решти вмісту */
+    details:nth-child(2) p {
+        display: block;
+        margin: 10px 0;
+        padding: 0 10px;
+        text-align: left; /* Або center, залежно від вашого дизайну */
+    }
+
+    details:nth-child(2) .math-container:not(.scrollable-formula-r):not(.scrollable-formula-phi) {
+        display: block;
+        min-width: fit-content;
+        max-width: 100%;
+        margin: 10px 0;
+        padding: 8px;
+        text-align: center;
+        overflow-x: visible; /* Запобігаємо прокрутці для інших формул */
+    }
+    .completion-message {
+        padding: 15px;
+        max-width: 90%;
+    }
+
+    .completion-emoji {
+        font-size: 48px; /* Менший розмір для мобільних */
+    }
+
+    .completion-message h2 {
+        font-size: clamp(18px, 4vw, 20px);
+    }
+
+    .completion-message p {
+        font-size: clamp(14px, 3vw, 16px);
+    }
+
+    #resetTrainerBtn {
+        font-size: clamp(14px, 3vw, 16px);
+        padding: 8px 16px;
+    }
+        }
+    </style>
+</head>
+<body>
+    <div class="title-box">
+        <h1>7. Тригонометричне представлення комплексних чисел</h1>
+    </div>
+
+    <div class="section-container">
+        <div class="section" id="openTheoryBtn">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Книга">
+            <h2>Теоретичні відомості</h2>
+        </div>
+        <div class="section" id="openVideoBtn">
+            <img src="https://img.icons8.com/fluency/96/video.png" alt="Відео">
+            <h2>Відеоматеріали</h2>
+        </div>
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Картки">
+            <h2>Питання і відповіді</h2>
+        </div>
+        <div class="section" id="openTrainerBtn">
+            <img src="https://img.icons8.com/fluency/96/flash-on.png" alt="Тренажер">
+            <h2>Тренажер</h2>
+        </div>
+    </div>
+
+    <div class="navigation-buttons" style="margin: 40px 0; display: flex; gap: 20px; justify-content: center;">
+        <a class="nav-button" href="/tema2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            До теми 2
+        </a>
+        <a class="nav-button" href="{{ url_for('home') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            На головну
+        </a>
+    </div>
+
+    <div id="modalOverlay"></div>
+
+    <div id="theoryModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeTheoryBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <details>
+                <summary>Тригонометрична форма</summary>
+                <p>
+                    Тригонометрична форма комплексного числа описує його положення на комплексній площині через модуль \( r \) і аргумент \( φ \). Ця форма базується на геометричній інтерпретації комплексних чисел і значно спрощує виконання дій множення, ділення та піднесення до степеня.
+                </p>
+                <p>
+                    Радіус-вектор \( \overrightarrow{OM} \), що з’єднує початок координат \( O(0;0) \) і точку \( M(a;b) \), є геометричним зображенням комплексного числа, представленного в алгебраїчній формі \( z = a + bi \) (рис. 2.13).
+                </p>
+                <div class="math-container">
+                    \[ r = \sqrt{a^2 + b^2} .\]
+                </div>
+                <img src="static/figure2.13.jpg" alt="Рисунок 2.13" class="figure" style="width: 150px; height: 150px;" />
+                <p>
+                    Аргумент \( φ \) – це кут між додатною піввіссю дійсних чисел (віссю \( x \)) і вектором, що відповідає числу. Значення \( φ \) обчислюється за допомогою формули:
+                </p>
+                <div class="math-container">
+                    \[ φ = \text{arctg} \frac{b}{a}, \]
+                </div>
+                <p> причому необхідно врахувати, в якій координатній чверті розташоване число \( z \), щоб вибрати головне значення аргументу \( φ \), яке належить інтервалу \( (-\pi; \pi] \).
+                </p>
+                <p>
+                    У прямокутному трикутнику \( OKM \), утвореному точками \( O(0;0) \), \( K(a;0) \) та \( M(a;b) \), координати числа \( z \) виражаються через його модуль \( r \) і аргумент \( φ \):
+                </p>
+                <div class="math-container">
+                    \[ a = r \cos φ, \quad b = r \sin φ. \]
+                </div>
+                <p>
+                    Підставивши ці значення в алгебраїчну форму комплексного числа \( z = a + bi \), отримаємо:
+                </p>
+                <div class="math-container">
+                    \[ z = r \cos φ + i r \sin φ  = r (\cosφ + i \sin φ) .\]
+                </div>
+                <p>
+                    Таким чином, тригонометрична форма комплексного числа має вигляд:
+                </p>
+                <div class="math-container">
+                    \[ z = r (\cos φ + i \sin φ). \tag{2.4} \]
+                </div>
+            </details>
+
+          <details>
+    <summary>Приклад</summary>
+    <p>
+        <strong><span style="color: #ffd700;">Приклад 2.4. </span></strong>Представити комплексне число \( z = -4 - 4\sqrt{3}\,i \) у тригонометричній формі.
+    </p>
+    <p>
+        \( \triangleright \)  Знаходимо модуль комплексного числа:
+    </p>
+    <div class="math-container scrollable-formula-r">
+        \[ r = \sqrt{(-4)^2 + (-4\sqrt{3})^2} = \sqrt{16 + 48} = \sqrt{64} = 8 .\]
+    </div>
+    <p>
+        Визначимо координатну чверть розташування числа \( z \). Оскільки \( a = -4 < 0 \) і \( b = -4\sqrt{3} < 0 \), то число \( z \) знаходиться у ІІІ чверті комплексної площини.
+    </p>
+    <p>
+        Обчислюємо головне значення аргументу:
+    </p>
+    <div class="math-container scrollable-formula-phi">
+        \[ φ = \text{arctg}\frac{-4\sqrt{3}}{-4} - \pi = \text{arctg}\sqrt{3} - \pi = \frac{\pi}{3} - \pi = -\frac{2\pi}{3} .\]
+    </div>
+    <p>
+        Записуємо тригонометричну форму комплексного числа:
+    </p>
+    <div class="math-container">
+        \[ z = 8 \left( \cos \left( -\frac{2\pi}{3} \right) + i \sin \left( -\frac{2\pi}{3} \right) \right) .\] 
+    </div>
+    <p>
+        Використовуючи властивості тригонометричних функцій:
+    </p>
+    <div class="math-container">
+        \[ \cos(-φ) = \cos φ, \quad \sin(-φ) = -\sin φ, \]
+    </div>
+    <p>
+        можемо записати:
+    </p>
+    <div class="math-container">
+        \[ z = 8 \left( \cos \frac{2\pi}{3} - i \sin \frac{2\pi}{3} \right) . \triangleleft \] 
+    </div>
+</details>
+        </div>
+    </div>
+
+    <div id="videoModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-card-container">
+                <div class="video-card" data-video="1">
+                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
+                    <h3>Тригонометрична форма комплексного числа</h3>
+                </div>
+                <div class="video-card" data-video="2">
+                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
+                    <h3>Перетворення тригонометричної форми у алгебраїчну</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="videoPlayerModal1" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoPlayerBtn1">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-player-container">
+                <iframe id="youtubePlayer1" src="https://www.youtube.com/embed/KARjgz-Yft0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div id="videoPlayerModal2" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoPlayerBtn2">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-player-container">
+                <iframe id="youtubePlayer2" src="https://www.youtube.com/embed/xzKli6KHIrs" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div id="questionsModal" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeQuestionsBtn">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">
+                    <p>Як записати комплексне число у тригонометричній формі?</p>
+                </div>
+                <div class="card-back">
+                    <p>Щоб записати комплексне число <span class="inline-math">\( z = a + bi \)</span> у тригонометричній формі, потрібно подати його через модуль <span class="inline-math">\( r \)</span> і аргумент <span class="inline-math">\( φ \)</span>. Ця форма виглядає так: <span class="inline-math">\( z = r (\cos φ + i \sin φ) \)</span>, де: <span class="inline-math">\( r = \sqrt{a^2 + b^2} \)</span> — модуль комплексного числа (довжина радіус-вектора), <span class="inline-math">\( φ= \text{arctg} \frac{b}{a} \)</span> — аргумент, тобто кут між додатною віссю <span class="inline-math">\( x \)</span> і вектором, що з’єднує початок координат із точкою <span class="inline-math">\( (a; b) \)</span>.</p>
+                </div>
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">
+                    <p>У чому перевага тригонометричної форми комплексного числа?</p>
+                </div>
+                <div class="card-back">
+                    <p>Тригонометрична форма зручна для виконання множення, ділення, піднесення до степеня та добування коренів, оскільки ці операції спрощуються при роботі з модулем і аргументом.</p>
+                </div>
+            </div>
+        </div>
+       
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">
+                    <p>Яка тригонометрична форма числа <span class="inline-math">\( z = -4 - 4\sqrt{3}\,i \)</span>?</p>
+                </div>
+                <div class="card-back">
+                    <p>Модуль комплексного числа: <span class="inline-math">\( r = \sqrt{(-4)^2 + (-4\sqrt{3})^2} = \sqrt{64} = 8 \)</span>. Число <span class="inline-math">\( z \)</span> розташоване у ІІІ чверті. Головне значення аргументу: <span class="inline-math">\( \phi = \text{arctg} \frac{b}{a} - \pi \)</span>. Так як <span class="inline-math">\( \text{arctg} \left( \frac{-4\sqrt{3}}{-4} \right) = \text{arctg} \sqrt{3} = \frac{\pi}{3} \)</span>, тоді <span class="inline-math">\( \phi = \frac{\pi}{3} - \pi = -\frac{2\pi}{3} \)</span>. Тригонометрична форма комплексного числа: <span class="inline-math">\( z = 8 \left( \cos \left( -\frac{2\pi}{3} \right) + i \sin \left( -\frac{2\pi}{3} \right) \right) \)</span>. Або з урахуванням властивостей косинуса й синуса: <span class="inline-math">\( z = 8 \left( \cos \frac{2\pi}{3} - i \sin \frac{2\pi}{3} \right) \)</span>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+ <div id="trainerModal" class="modal">
+    <div class="modal-header">
+        <button id="closeTrainerBtn" class="close-btn" aria-label="Закрити тренажер">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="trainer-container">
+            <div class="question-indicators">
+                <span class="question-indicator active" id="currentQuestionIndicator"></span>
+            </div>
+            <div id="trainerQuestion" class="trainer-question"></div>
+            <div id="canvasContainer">
+                <canvas id="vectorCanvas" width="360" height="360"></canvas>
+            </div>
+            <div class="calculator-container" id="calculatorContainer">
+                <div class="calculator-grid">
+                    <label for="inputA">a = </label>
+                    <div class="input-group">
+                        <input type="number" id="inputA" inputmode="numeric" placeholder="Введіть число" aria-label="Введіть значення a">
+                        <button class="sign-btn" data-input="inputA" aria-label="Змінити знак для a">−</button>
+                    </div>
+                    <label for="inputB">b = </label>
+                    <div class="input-group">
+                        <input type="number" id="inputB" inputmode="numeric" placeholder="Введіть число" aria-label="Введіть значення b">
+                        <button class="sign-btn" data-input="inputB" aria-label="Змінити знак для b">−</button>
+                    </div>
+                </div>
+                <button id="calculateBtn" aria-label="Порахувати значення">Порахувати</button>
+                <div id="calculatorResult"></div>
+            </div>
+            <div id="trainerOptions" class="trainer-options"></div>
+            <button id="submitAnswer" class="trainer-submit" aria-label="Перевірити відповідь">Перевірити</button>
+            <div id="toastContainer"></div>
+            <div id="completionMessage" class="completion-message" style="display: none;">
+                <div class="completion-emoji"></div>
+                <h2>Тренування завершено!</h2>
+                <p>Молодець!</p>
+                <button id="resetTrainerBtn" aria-label="Почати тренування заново">Спробувати ще раз</button>
+            </div>
+        </div>
+    </div>
+</div>
+           
+            
+<script>
+const modals = {
+    theory: document.getElementById('theoryModal'),
+    video: document.getElementById('videoModal'),
+    questions: document.getElementById('questionsModal'),
+    trainer: document.getElementById('trainerModal'),
+    videoPlayer1: document.getElementById('videoPlayerModal1'),
+    videoPlayer2: document.getElementById('videoPlayerModal2')
+};
+
+const buttons = {
+    openTheory: document.getElementById('openTheoryBtn'),
+    openVideo: document.getElementById('openVideoBtn'),
+    openQuestions: document.getElementById('openQuestionsBtn'),
+    openTrainer: document.getElementById('openTrainerBtn'),
+    closeTheory: document.getElementById('closeTheoryBtn'),
+    closeVideo: document.getElementById('closeVideoBtn'),
+    closeQuestions: document.getElementById('closeQuestionsBtn'),
+    closeTrainer: document.getElementById('closeTrainerBtn'),
+    closeVideoPlayer1: document.getElementById('closeVideoPlayerBtn1'),
+    closeVideoPlayer2: document.getElementById('closeVideoPlayerBtn2')
+};
+
+const overlay = document.getElementById('modalOverlay');
+const youtubePlayers = {
+    1: document.getElementById('youtubePlayer1'),
+    2: document.getElementById('youtubePlayer2')
+};
+
+const trainerQuestion = document.getElementById('trainerQuestion');
+const trainerOptions = document.getElementById('trainerOptions');
+const submitButton = document.getElementById('submitAnswer');
+const toastContainer = document.getElementById('toastContainer');
+const canvasContainer = document.getElementById('canvasContainer');
+const calculatorContainer = document.getElementById('calculatorContainer');
+const inputA = document.getElementById('inputA');
+const inputB = document.getElementById('inputB');
+const calculateBtn = document.getElementById('calculateBtn');
+const calculatorResult = document.getElementById('calculatorResult');
+const vectorCanvas = document.getElementById('vectorCanvas');
+const ctx = vectorCanvas.getContext('2d');
+
+let scrollPosition = 0;
+let currentQuestion = 1;
+let selectedOption = null;
+let currentVector = { a: 0, b: 0 };
+let isVectorCorrect = false;
+let correctAnswer = '';
+
+// Функція для перемішування варіантів відповідей
+function shuffleArray(array) {
+    const originalArray = [...array];
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+// Функція для нормалізації рядків при порівнянні
+function normalizeString(str) {
+    return str
+        .replace(/\s+/g, '')
+        .replace(/\\{2,}/g, '\\')
+        .replace(/\^\\circ/g, '°')
+        .replace(/\\cdot/g, '')
+        .replace(/\*i/g, 'i')
+        .replace(/1i/g, 'i')
+        .replace(/-1i/g, '-i');
+}
+
+function adjustModalHeight(modal) {
+    if (!modal) return;
+    const modalContent = modal.querySelector('.modal-content');
+    const modalHeader = modal.querySelector('.modal-header');
+    if (!modalContent || !modalHeader) return;
+
+    modalContent.style.height = 'auto';
+    modalContent.style.minHeight = '400px';
+    const contentHeight = modalContent.scrollHeight;
+    const headerHeight = modalHeader.offsetHeight;
+    const windowHeight = window.innerHeight;
+    const maxModalHeight = windowHeight * 0.85;
+
+    let requiredHeight = contentHeight + headerHeight + 20;
+    if (modal.id === 'trainerModal') {
+        requiredHeight = Math.max(requiredHeight, 600);
+    }
+
+    modal.style.height = requiredHeight < maxModalHeight ? `${requiredHeight}px` : `${maxModalHeight}px`;
+    modalContent.style.overflowY = requiredHeight < maxModalHeight ? 'hidden' : 'auto';
+    modalContent.scrollTop = 0;
+}
+
+function openModal(modal, btn) {
+    if (!modal || !btn) return;
+    scrollPosition = window.scrollY;
+    modal.style.display = 'flex';
+    modal.classList.add('show');
+    overlay.style.display = 'block';
+    overlay.classList.add('show');
+    document.body.classList.add('modal-open');
+    document.body.style.top = `-${scrollPosition}px`;
+    btn.setAttribute('aria-pressed', 'true');
+    adjustModalHeight(modal);
+    if (modal.id === 'trainerModal') {
+        resetTrainer();
+    }
+}
+
+function closeModal(modal, btn) {
+    if (!modal || !btn) return;
+    modal.style.display = 'none';
+    modal.classList.remove('show');
+    overlay.style.display = 'none';
+    overlay.classList.remove('show');
+    document.body.classList.remove('modal-open');
+    document.body.style.top = '';
+    window.scrollTo(0, scrollPosition);
+    btn.setAttribute('aria-pressed', 'false');
+    btn.focus();
+}
+
+function closeVideoModal(videoModal, playerId, mainModal, btn) {
+    if (!videoModal || !mainModal || !btn) return;
+    if (playerId) {
+        const player = youtubePlayers[playerId];
+        if (player) {
+            const src = player.src;
+            player.src = '';
+            player.src = src;
+        }
+    }
+    videoModal.style.display = 'none';
+    videoModal.classList.remove('show');
+    overlay.style.display = 'none';
+    overlay.classList.remove('show');
+    openModal(mainModal, btn);
+}
+
+function typesetMathJax() {
+    const trainerQuestion = document.getElementById('trainerQuestion');
+    const trainerOptions = document.getElementById('trainerOptions');
+    if (trainerQuestion) trainerQuestion.classList.add('mathjax-pending');
+    if (trainerOptions) trainerOptions.classList.add('mathjax-pending');
+
+    if (window.MathJax && typeof window.MathJax.typeset === 'function') {
+        try {
+            window.MathJax.typeset([trainerQuestion, trainerOptions]);
+            if (trainerQuestion) {
+                trainerQuestion.classList.remove('mathjax-pending');
+                trainerQuestion.classList.add('mathjax-rendered');
+            }
+            if (trainerOptions) {
+                trainerOptions.classList.remove('mathjax-pending');
+                trainerOptions.classList.add('mathjax-rendered');
+            }
+        } catch (err) {
+            if (trainerQuestion) {
+                trainerQuestion.classList.remove('mathjax-pending');
+                trainerQuestion.classList.add('mathjax-rendered');
+            }
+            if (trainerOptions) {
+                trainerOptions.classList.remove('mathjax-pending');
+                trainerOptions.classList.add('mathjax-rendered');
+            }
+        }
+    } else {
+        if (trainerQuestion) {
+            trainerQuestion.classList.remove('mathjax-pending');
+            trainerQuestion.classList.add('mathjax-rendered');
+        }
+        if (trainerOptions) {
+            trainerOptions.classList.remove('mathjax-pending');
+            trainerOptions.classList.add('mathjax-rendered');
+        }
+    }
+}
+
+function updateQuestionIndicators() {
+    const currentIndicator = document.getElementById('currentQuestionIndicator');
+    currentIndicator.textContent = `Питання ${currentQuestion}`;
+}
+
+function showToast(message, isCorrect) {
+    const toast = document.createElement('div');
+    toast.classList.add('toast', isCorrect ? 'correct' : 'incorrect');
+    toast.innerHTML = message;
+    toastContainer.appendChild(toast);
+    setTimeout(() => toast.classList.add('show'), 100);
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 500);
+    }, 2000);
+}
+
+function drawCoordinateSystem() {
+    ctx.clearRect(0, 0, vectorCanvas.width, vectorCanvas.height);
+    ctx.save();
+    ctx.translate(vectorCanvas.width / 2, vectorCanvas.height / 2);
+    
+    ctx.strokeStyle = 'rgba(100, 100, 200, 0.3)';
+    ctx.lineWidth = 1;
+    for (let i = -5; i <= 5; i++) {
+        ctx.beginPath();
+        ctx.moveTo(i * 30, -180);
+        ctx.lineTo(i * 30, 180);
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.moveTo(-180, i * 30);
+        ctx.lineTo(180, i * 30);
+        ctx.stroke();
+    }
+    
+    ctx.strokeStyle = '#00f0ff';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(-180, 0);
+    ctx.lineTo(180, 0);
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.moveTo(0, -180);
+    ctx.lineTo(0, 180);
+    ctx.stroke();
+    
+    ctx.fillStyle = '#00f0ff';
+    ctx.beginPath();
+    ctx.moveTo(180, 0);
+    ctx.lineTo(170, -5);
+    ctx.lineTo(170, 5);
+    ctx.fill();
+    
+    ctx.beginPath();
+    ctx.moveTo(0, -180);
+    ctx.lineTo(-5, -170);
+    ctx.lineTo(5, -170);
+    ctx.fill();
+    
+    ctx.fillStyle = '#e0e0ff';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    for (let i = -5; i <= 5; i++) {
+        if (i === 0) continue;
+        ctx.fillText(i, i * 30, 5);
+        ctx.fillText(i, -15, -i * 30 + 3);
+    }
+    
+    ctx.fillText('x', 175, 10);
+    ctx.fillText('y', -10, -175);
+    
+    if (currentVector.a !== 0 || currentVector.b !== 0) {
+        const x = currentVector.a * 30;
+        const y = -currentVector.b * 30;
+        
+        ctx.strokeStyle = '#ff4081';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        
+        const angle = Math.atan2(y, x);
+        const arrowSize = 10;
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(-arrowSize, arrowSize / 2);
+        ctx.lineTo(-arrowSize, -arrowSize / 2);
+        ctx.closePath();
+        ctx.fillStyle = '#ff4081';
+        ctx.fill();
+        ctx.restore();
+    }
+    
+    ctx.restore();
+}
+
+function getRandomModule() {
+    const modules = [
+        "1", "2", "3", "4", "5",
+        "\\sqrt{2}", "\\sqrt{3}", "\\sqrt{5}", "\\sqrt{7}"
+    ];
+    return modules[Math.floor(Math.random() * modules.length)];
+}
+
+function getRandomAngle() {
+    const angles = [
+        { rad: "0", deg: "0", cos: "1", sin: "0" },
+        { rad: "\\frac{\\pi}{6}", deg: "30", cos: "\\frac{\\sqrt{3}}{2}", sin: "\\frac{1}{2}" },
+        { rad: "\\left(-\\frac{\\pi}{6}\\right)", deg: "-30", cos: "\\frac{\\sqrt{3}}{2}", sin: "-\\frac{1}{2}" },
+        { rad: "\\frac{\\pi}{4}", deg: "45", cos: "\\frac{\\sqrt{2}}{2}", sin: "\\frac{\\sqrt{2}}{2}" },
+        { rad: "\\left(-\\frac{\\pi}{4}\\right)", deg: "-45", cos: "\\frac{\\sqrt{2}}{2}", sin: "-\\frac{\\sqrt{2}}{2}" },
+        { rad: "\\frac{\\pi}{3}", deg: "60", cos: "\\frac{1}{2}", sin: "\\frac{\\sqrt{3}}{2}" },
+        { rad: "\\left(-\\frac{\\pi}{3}\\right)", deg: "-60", cos: "\\frac{1}{2}", sin: "-\\frac{\\sqrt{3}}{2}" },
+        { rad: "\\frac{\\pi}{2}", deg: "90", cos: "0", sin: "1" },
+        { rad: "\\left(-\\frac{\\pi}{2}\\right)", deg: "-90", cos: "0", sin: "-1" },
+        { rad: "\\frac{2\\pi}{3}", deg: "120", cos: "-\\frac{1}{2}", sin: "\\frac{\\sqrt{3}}{2}" },
+        { rad: "\\left(-\\frac{2\\pi}{3}\\right)", deg: "-120", cos: "-\\frac{1}{2}", sin: "-\\frac{\\sqrt{3}}{2}" },
+        { rad: "\\frac{3\\pi}{4}", deg: "135", cos: "-\\frac{\\sqrt{2}}{2}", sin: "\\frac{\\sqrt{2}}{2}" },
+        { rad: "\\left(-\\frac{3\\pi}{4}\\right)", deg: "-135", cos: "-\\frac{\\sqrt{2}}{2}", sin: "-\\frac{\\sqrt{2}}{2}" },
+        { rad: "\\frac{5\\pi}{6}", deg: "150", cos: "-\\frac{\\sqrt{3}}{2}", sin: "\\frac{1}{2}" },
+        { rad: "\\left(-\\frac{5\\pi}{6}\\right)", deg: "-150", cos: "-\\frac{\\sqrt{3}}{2}", sin: "-\\frac{1}{2}" },
+        { rad: "\\pi", deg: "180", cos: "-1", sin: "0" }
+    ];
+    return angles[Math.floor(Math.random() * angles.length)];
+}
+
+function getRandomComplexNumber() {
+    const integers = [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5];
+    let a, b;
+    do {
+        a = integers[Math.floor(Math.random() * integers.length)];
+        b = integers[Math.floor(Math.random() * integers.length)];
+    } while (a === 0 && b === 0);
+    return { a, b };
+}
+
+function getQuadrant(a, b) {
+    if (a > 0 && b >= 0) return 'I';
+    if (a < 0 && b >= 0) return 'II';
+    if (a < 0 && b < 0) return 'III';
+    if (a > 0 && b < 0) return 'IV';
+    if (a === 0 && b > 0) return 'на додатній півосі y';
+    if (a === 0 && b < 0) return 'на від’ємній півосі y';
+    if (a > 0 && b === 0) return 'на додатній півосі x';
+    if (a < 0 && b === 0) return 'на від’ємній півосі x';
+    return 'початок координат';
+}
+
+document.querySelectorAll('.sign-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const inputId = btn.dataset.input;
+        const input = document.getElementById(inputId);
+        const value = parseFloat(input.value) || 0;
+        const newValue = -Math.abs(value);
+        const selectionStart = input.selectionStart;
+        const selectionEnd = input.selectionEnd;
+        input.value = newValue;
+        input.setSelectionRange(selectionStart, selectionEnd);
+    });
+});
+
+calculateBtn.addEventListener('click', () => {
+    let a = parseFloat(inputA.value);
+    let b = parseFloat(inputB.value);
+
+    if (isNaN(a) || isNaN(b)) {
+        calculatorResult.innerHTML = 'Будь ласка, введіть числові значення для a та b.';
+        return;
+    }
+
+    if (a < -5 || a > 5 || b < -5 || b > 5) {
+        calculatorResult.innerHTML = 'Значення a та b повинні бути в межах від -5 до 5.';
+        return;
+    }
+
+    a = Math.round(a);
+    b = Math.round(b);
+
+    if (a !== currentVector.a || b !== currentVector.b) {
+        calculatorResult.innerHTML = 'Введені значення не відповідають зображеному вектору!';
+        return;
+    }
+
+    const sumOfSquares = a * a + b * b;
+    const perfectSquareRoot = Math.sqrt(sumOfSquares);
+    let r = Number.isInteger(perfectSquareRoot) ? perfectSquareRoot.toString() : `\\sqrt{${sumOfSquares}}`;
+
+    const phiRad = Math.atan2(b, a);
+    const phiDeg = (phiRad * 180 / Math.PI).toFixed(2);
+    const isNegativePhi = phiDeg.startsWith('-');
+    const phiDisplay = isNegativePhi ? `(${phiDeg}°)` : `${phiDeg}°`;
+
+    // Використовуємо формат r(cosφ + isinφ)
+    correctAnswer = normalizeString(r === "1" ? `\\cos${phiDisplay} + i\\sin${phiDisplay}` : `${r}(\\cos${phiDisplay} + i\\sin${phiDisplay})`);
+    const correctLatex = r === "1" ? `\\cos ${phiDisplay} + i \\sin ${phiDisplay}` : `${r}(\\cos ${phiDisplay} + i \\sin ${phiDisplay})`;
+
+    const wrongPhi1Rad = phiRad + 0.1;
+    const wrongPhi1Deg = (wrongPhi1Rad * 180 / Math.PI).toFixed(2);
+    const wrongPhi1Display = wrongPhi1Deg.startsWith('-') ? `(${wrongPhi1Deg}°)` : `${wrongPhi1Deg}°`;
+    const wrongLatex1 = r === "1" ? `\\cos ${wrongPhi1Display} + i \\sin ${wrongPhi1Display}` : `${r}(\\cos ${wrongPhi1Display} + i \\sin ${wrongPhi1Display})`;
+    const wrongValue1 = normalizeString(r === "1" ? `\\cos${wrongPhi1Display} + i\\sin${wrongPhi1Display}` : `${r}(\\cos${wrongPhi1Display} + i\\sin${wrongPhi1Display})`);
+
+    const wrongPhi2Rad = phiRad - 0.1;
+    const wrongPhi2Deg = (wrongPhi2Rad * 180 / Math.PI).toFixed(2);
+    const wrongPhi2Display = wrongPhi2Deg.startsWith('-') ? `(${wrongPhi2Deg}°)` : `${wrongPhi2Deg}°`;
+    const wrongLatex2 = r === "1" ? `\\cos ${wrongPhi2Display} + i \\sin ${wrongPhi2Display}` : `${r}(\\cos ${wrongPhi2Display} + i \\sin ${wrongPhi2Display})`;
+    const wrongValue2 = normalizeString(r === "1" ? `\\cos${wrongPhi2Display} + i\\sin${wrongPhi2Display}` : `${r}(\\cos${wrongPhi2Display} + i\\sin${wrongPhi2Display})`);
+
+    const wrongR = Number.isInteger(perfectSquareRoot) 
+        ? (perfectSquareRoot + 1).toString() 
+        : `\\sqrt{${sumOfSquares + 1}}`;
+    const wrongLatex3 = wrongR === "1" ? `\\cos ${phiDisplay} + i \\sin ${phiDisplay}` : `${wrongR}(\\cos ${phiDisplay} + i \\sin ${phiDisplay})`;
+    const wrongValue3 = normalizeString(wrongR === "1" ? `\\cos${phiDisplay} + i\\sin${phiDisplay}` : `${wrongR}(\\cos${phiDisplay} + i\\sin${phiDisplay})`);
+
+    const options = [
+        { value: correctAnswer, latex: correctLatex },
+        { value: wrongValue1, latex: wrongLatex1 },
+        { value: wrongValue2, latex: wrongLatex2 },
+        { value: wrongValue3, latex: wrongLatex3 }
+    ];
+
+    // Перемішуємо варіанти відповідей
+    shuffleArray(options);
+
+    trainerOptions.style.display = 'grid';
+    trainerOptions.innerHTML = '';
+
+    options.forEach((option, index) => {
+        const optionElement = document.createElement('div');
+        optionElement.classList.add('trainer-option', 'mathjax-pending');
+        optionElement.setAttribute('data-value', option.value);
+        optionElement.setAttribute('data-index', index);
+        optionElement.innerHTML = `\\(${option.latex}\\)`;
+        optionElement.addEventListener('click', () => {
+            document.querySelectorAll('.trainer-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            optionElement.classList.add('selected');
+            selectedOption = option.value;
+            submitButton.disabled = false;
+        });
+        trainerOptions.appendChild(optionElement);
+    });
+
+    calculatorResult.innerHTML = `
+        <p>Головне значення аргументу:</p>
+        <p>φ = ${phiRad.toFixed(4)} рад ≈ ${phiDeg}°</p>
+    `;
+
+    typesetMathJax();
+    isVectorCorrect = true;
+});
+
+function showCompletionMessage() {
+    document.querySelector('.question-indicators').style.display = 'none';
+    document.getElementById('trainerQuestion').style.display = 'none';
+    document.getElementById('trainerOptions').style.display = 'none';
+    document.getElementById('submitAnswer').style.display = 'none';
+    document.getElementById('canvasContainer').style.display = 'none';
+    document.getElementById('calculatorContainer').style.display = 'none';
+    document.getElementById('toastContainer').style.display = 'none';
+    
+    document.getElementById('completionMessage').style.display = 'block';
+}
+
+function resetTrainer() {
+    document.getElementById('completionMessage').style.display = 'none';
+    document.querySelector('.question-indicators').style.display = 'flex';
+    document.getElementById('trainerQuestion').style.display = 'block';
+    document.getElementById('trainerOptions').style.display = 'grid';
+    document.getElementById('submitAnswer').style.display = 'block';
+    document.getElementById('toastContainer').style.display = 'block';
+    document.getElementById('canvasContainer').style.display = 'none';
+    document.getElementById('calculatorContainer').style.display = 'none';
+    
+    currentQuestion = 1;
+    selectedOption = null;
+    isVectorCorrect = false;
+    correctAnswer = '';
+    submitButton.disabled = true;
+    
+    calculatorResult.innerHTML = '';
+    inputA.value = '';
+    inputB.value = '';
+    
+    generateQuestion();
+}
+
+function formatAlgebraic(real, imag) {
+    // Функція для коректного форматування алгебраїчної форми
+    real = real.trim();
+    imag = imag.trim();
+    
+    if (real === "0" && imag === "0") return "0";
+    if (real === "0") return imag;
+    if (imag === "0") return real;
+    
+    // Обробка знака уявної частини
+    const operator = imag.startsWith('-') ? " - " : " + ";
+    const imagValue = imag.startsWith('-') ? imag.slice(1) : imag;
+    
+    return real + operator + imagValue;
+}
+// Додати на початок файлу (після оголошення змінних, але перед функціями)
+let question4Tasks = [];
+let currentTaskIndex = 0;
+
+function initQuestion4Tasks() {
+    question4Tasks = [
+        {
+            question: "z=2(cos2π+isin2π);",
+            answers: ["2", "4", "-2+2i", "-2"],
+            correctAnswer: "2"
+        },
+        {
+            question: "z=3(cos π/2+isin π/2);",
+            answers: ["3", "-3i", "3+i", "3i"],
+            correctAnswer: "3i"
+        },
+        {
+            question: "z=4(cos π/3+isin π/3);",
+            answers: ["2√3+1/2 i", "2+2√3 i", "4+2√3 i", "4√3+1/2 i"],
+            correctAnswer: "2+2√3 i"
+        },
+        {
+            question: "z=8(cos(-π/6)+isin(-π/6));",
+            answers: ["4√3+4i", "-4√3+4i", "4√3-4i", "-4√3-4i"],
+            correctAnswer: "4√3-4i"
+        },
+        {
+            question: "z=√2 (cos 3π/4+isin 3π/4);",
+            answers: ["-1+i", "-1-i", "1+i", "-√2+√2 i"],
+            correctAnswer: "-1+i"
+        },
+        {
+            question: "z=7(cos0+isin0);",
+            answers: ["0", "7i", "7+7i", "7"],
+            correctAnswer: "7"
+        },
+        {
+            question: "√2 (сos〖(-45〗^0)+isin〖(-45〗^0));",
+            answers: ["-1-i", "-1+i", "1-i", "1+i"],
+            correctAnswer: "1-i"
+        },
+        {
+            question: "5(сos〖210〗^0+isin〖210〗^0 );",
+            answers: ["-(5√3)/2+5/2 i", "(5√3)/2-5/2 i", "-(5√3)/2-5/2 i", "-5/2-(5√3)/2 i"],
+            correctAnswer: "-(5√3)/2-5/2 i"
+        },
+        {
+            question: "сos〖135〗^0+isin〖135〗^0;",
+            answers: ["-√2/2+√2/2 i", "-√2/2-√2/2 i", "√2/2+√2/2 i", "√2/2-√2/2 i"],
+            correctAnswer: "-√2/2+√2/2 i"
+        },
+        {
+            question: "7(сos〖180〗^0+isin〖180〗^0 );",
+            answers: ["0", "7i", "7", "-7"],
+            correctAnswer: "-7"
+        },
+        {
+            question: "6(cos(-〖135〗^0 )+isin(-〖135〗^0 ))",
+            answers: ["3√2+3√2 i", "-3√2-3√2 i", "3√2-3√2 i", "-3√2+3√2 i"],
+            correctAnswer: "-3√2-3√2 i"
+        },
+        {
+            question: "2(cos〖120〗^0+isin〖120〗^0 );",
+            answers: ["-1+√3 i", "-1-√3 i", "1+√3 i", "1-√3 i"],
+            correctAnswer: "-1+√3 i"
+        },
+        {
+            question: "2(cos 3π/2+isin 3π/2);",
+            answers: ["2i", "-2i", "2-2i", "-2+2i"],
+            correctAnswer: "-2i"
+        },
+        {
+            question: "4(cos 5π/6+isin 5π/6);",
+            answers: ["-2√3+2i", "2√3+2i", "-2√3-2i", "2√3-2i"],
+            correctAnswer: "-2√3+2i"
+        },
+        {
+            question: "10√2 (cos 7π/4+isin 7π/4);",
+            answers: ["-10+10i", "-10-10i", "10+10i", "10-10i"],
+            correctAnswer: "10-10i"
+        },
+        {
+            question: "2(cos 5π/2+isin 5π/2);",
+            answers: ["2i", "-2i", "2-2i", "-2+2i"],
+            correctAnswer: "2i"
+        },
+        {
+            question: "2(cos π/6+isin π/6);",
+            answers: ["-√3+i", "-√3-i", "√3-i", "√3+i"],
+            correctAnswer: "√3+i"
+        },
+        {
+            question: "6(cos π/4+isin π/4);",
+            answers: ["3√2-3√2 i", "3√2+3√2 i", "-3√2+3√2 i", "√2/2+√2/2 i"],
+            correctAnswer: "3√2+3√2 i"
+        },
+        {
+            question: "4(cos〖150〗^0+isin〖150〗^0 );",
+            answers: ["-2√3-2i", "2√3-2i", "-2√3+2i", "2√3+2i"],
+            correctAnswer: "-2√3+2i"
+        },
+        {
+            question: "4(cos 2π/3+isin 2π/3);",
+            answers: ["2+2√3 i", "-2+2√3 i", "-2-2√3 i", "2-2√3 i"],
+            correctAnswer: "-2+2√3 i"
+        }
+    ];
+}
+
+function formatQuestion(questionStr) {
+    // Видаляємо крапку з комою в кінці
+    if (questionStr.endsWith(';')) {
+        questionStr = questionStr.slice(0, -1);
+    }
+    
+    // Обробка тригонометричних функцій з дробами в аргументах
+    questionStr = questionStr.replace(/(cos|sin)\(([^)]+)\)/g, (match, func, arg) => {
+        // Замінюємо дроби виду π/число, число/число або складні вирази
+        arg = arg.replace(/(\d*π|\d+)\/(\d+)/g, '\\frac{$1}{$2}');
+        // Обробляємо дроби в градусах, наприклад, 〖135〗^0
+        arg = arg.replace(/〖(\d+)〗\^0/g, '$1^\\circ');
+        // Обробляємо дроби виду число/число в градусах
+        arg = arg.replace(/(\d+)\/(\d+)/g, '\\frac{$1}{$2}');
+        return `\\${func} \\left( ${arg} \\right)`;
+    });
+    
+    // Обробка дробів поза тригонометричними функціями
+    questionStr = questionStr.replace(/(\d*π|\d+|\d*√\d+)\/(\d+)/g, '\\frac{$1}{$2}');
+    questionStr = questionStr.replace(/(\d+)\/(\d+)/g, '\\frac{$1}{$2}');
+    
+    // Обробка коренів та інших символів
+    return questionStr
+        .replace(/cos/g, '\\cos')
+        .replace(/sin/g, '\\sin')
+        .replace(/π/g, '\\pi')
+        .replace(/〖/g, '')
+        .replace(/〗/g, '')
+        .replace(/\^0/g, '^\\circ')
+        .replace(/z=/g, 'z = ')
+        .replace(/сos/g, '\\cos')
+        .replace(/і/g, 'i')
+        .replace(/√(\d+)/g, '\\sqrt{$1}')
+        .replace(/√/g, '\\sqrt{}');
+}
+function formatAnswer(answer) {
+    // Обробка дробів з коренями
+    answer = answer.replace(/(√?\d*)\/(\d+)/g, (_, num, den) => {
+        if (num.includes('√')) {
+            return `\\frac{${num}}{${den}}`;
+        }
+        return `\\frac{${num}}{${den}}`;
+    });
+    
+    // Обробка простих дробів
+    answer = answer.replace(/(\d+)\/(\d+)/g, '\\frac{$1}{$2}');
+    
+    // Обробка коренів
+    answer = answer.replace(/√(\d+)/g, '\\sqrt{$1}');
+    
+    // Оптимізація уявної одиниці
+    answer = answer
+        .replace(/(\d+)i/g, '$1i')
+        .replace(/1i/g, 'i')
+        .replace(/-1i/g, '-i')
+        .replace(/\s+/g, '');
+    
+    return answer;
+}
+function generateQuestion() {
+    document.getElementById('completionMessage').style.display = 'none';
+    const trainerQuestion = document.getElementById('trainerQuestion');
+    const trainerOptions = document.getElementById('trainerOptions');
+    
+    trainerQuestion.classList.add('mathjax-pending');
+    trainerOptions.classList.add('mathjax-pending');
+    
+    trainerQuestion.innerHTML = '';
+    trainerOptions.innerHTML = '';
+    toastContainer.innerHTML = '';
+    calculatorResult.innerHTML = '';
+    inputA.value = '';
+    inputB.value = '';
+    trainerQuestion.style.display = 'block';
+    trainerOptions.style.display = 'grid';
+    submitButton.style.display = 'block';
+    submitButton.disabled = true;
+    selectedOption = null;
+    isVectorCorrect = false;
+    correctAnswer = '';
+
+    trainerQuestion.classList.remove('mathjax-rendered');
+    trainerOptions.classList.remove('mathjax-rendered');
+
+    canvasContainer.style.display = 'none';
+    calculatorContainer.style.display = 'none';
+    
+    let questionText = '';
+    let options = [];
+
+    const complexNumbers = [
+        { a: "-\\sqrt{2}", b: "\\sqrt{6}", correctPhi: "\\frac{2\\pi}{3}", r: "2\\sqrt{2}" },
+        { a: "-3", b: "3", correctPhi: "\\frac{3\\pi}{4}", r: "3\\sqrt{2}" },
+        { a: "1", b: "-1", correctPhi: "\\left(-\\frac{\\pi}{4}\\right)", r: "\\sqrt{2}" },
+        { a: "-6", b: "0", correctPhi: "\\pi", r: "6" },
+        { a: "2", b: "2\\sqrt{3}", correctPhi: "\\frac{\\pi}{3}", r: "4" },
+        { a: "\\sqrt{3}", b: "-3", correctPhi: "\\left(-\\frac{\\pi}{3}\\right)", r: "\\sqrt{12}" },
+        { a: "0", b: "7", correctPhi: "\\frac{\\pi}{2}", r: "7" },
+        { a: "-4\\sqrt{3}", b: "-4", correctPhi: "\\left(-\\frac{2\\pi}{3}\\right)", r: "8" },
+        { a: "0", b: "-\\sqrt{5}", correctPhi: "\\left(-\\frac{\\pi}{2}\\right)", r: "\\sqrt{5}" },
+        { a: "\\sqrt{2}", b: "0", correctPhi: "0", r: "\\sqrt{2}" },
+        { a: "3", b: "\\sqrt{3}", correctPhi: "\\frac{\\pi}{6}", r: "\\sqrt{12}" },
+        { a: "-1", b: "1", correctPhi: "\\frac{3\\pi}{4}", r: "\\sqrt{2}" },
+        { a: "0", b: "-5", correctPhi: "\\left(-\\frac{\\pi}{2}\\right)", r: "5" },
+        { a: "0", b: "6", correctPhi: "\\frac{\\pi}{2}", r: "6" },
+        { a: "\\sqrt{3}", b: "1", correctPhi: "\\frac{\\pi}{6}", r: "2" },
+        { a: "2", b: "0", correctPhi: "0", r: "2" },
+        { a: "-1", b: "-1", correctPhi: "\\left(-\\frac{3\\pi}{4}\\right)", r: "\\sqrt{2}" },
+        { a: "-2", b: "-2", correctPhi: "\\left(-\\frac{3\\pi}{4}\\right)", r: "2\\sqrt{2}" },
+        { a: "-\\sqrt{2}", b: "\\sqrt{6}", correctPhi: "\\frac{2\\pi}{3}", r: "2\\sqrt{2}" }
+    ];
+
+     if (currentQuestion === 1) {
+                const r = getRandomModule();
+                const angle = getRandomAngle();
+                questionText = `Тригонометрична форма комплексного числа, яке має модуль \\( r = ${r} \\) і головне значення аргументу \\( \\phi = ${angle.deg}^\\circ \\), має вигляд:`;
+
+                const isNegative = angle.deg.startsWith('-');
+                const positiveDeg = isNegative ? angle.deg.slice(1) : angle.deg;
+
+                let correctLatex, wrong1, wrong1Latex, wrong2, wrong2Latex, wrong3, wrong3Latex;
+                if (isNegative) {
+                    correctAnswer = `${r}(\\cos${positiveDeg}^\\circ - i \\sin${positiveDeg}^\\circ)`;
+                    correctLatex = `${r}(\\cos ${positiveDeg}^\\circ - i \\sin ${positiveDeg}^\\circ)`;
+                    wrong1 = `${r}(-\\cos ${positiveDeg}^\\circ - i \\sin ${positiveDeg}^\\circ)`;
+                    wrong1Latex = `${r}(-\\cos ${positiveDeg}^\\circ - i \\sin ${positiveDeg}^\\circ)`;
+                    wrong2 = `${r}(\\sin${positiveDeg}^\\circ + i \\cos${positiveDeg}^\\circ)`;
+                    wrong2Latex = `${r}(\\sin ${positiveDeg}^\\circ + i \\cos ${positiveDeg}^\\circ)`;
+                    wrong3 = `${r}(\\sin${positiveDeg}^\\circ - i \\cos${positiveDeg}^\\circ)`;
+                    wrong3Latex = `${r}(\\sin ${positiveDeg}^\\circ - i \\cos ${positiveDeg}^\\circ)`;
+                } else {
+                    correctAnswer = `${r}(\\cos${angle.deg}^\\circ + i \\sin${angle.deg}^\\circ)`;
+                    correctLatex = `${r}(\\cos ${angle.deg}^\\circ + i \\sin ${angle.deg}^\\circ)`;
+                    wrong1 = `${r}(-\\cos${angle.deg}^\\circ - i \\sin${angle.deg}^\\circ)`;
+                    wrong1Latex = `${r}(-\\cos ${angle.deg}^\\circ - i \\sin ${angle.deg}^\\circ)`;
+                    wrong2 = `${r}(\\sin${angle.deg}^\\circ + i \\cos${angle.deg}^\\circ)`;
+                    wrong2Latex = `${r}(\\sin ${angle.deg}^\\circ + i \\cos ${angle.deg}^\\circ)`;
+                    wrong3 = `${r}(\\sin${angle.deg}^\\circ - i \\sin${angle.deg}^\\circ)`;
+                    wrong3Latex = `${r}(\\sin ${angle.deg}^\\circ - i \\sin ${angle.deg}^\\circ)`;
+                }
+
+                options = [
+                    { value: correctAnswer, latex: correctLatex },
+                    { value: wrong1, latex: wrong1Latex },
+                    { value: wrong2, latex: wrong2Latex },
+                    { value: wrong3, latex: wrong3Latex }
+                ];
+
+                options = options.filter((opt, index, self) =>
+                    index === self.findIndex(o => o.latex === opt.latex)
+                ).slice(0, 4);
+
+                options = shuffleArray(options);
+            }  else if (currentQuestion === 2) {
+        canvasContainer.style.display = 'block';
+        calculatorContainer.style.display = 'block';
+        trainerOptions.style.display = 'none';
+        submitButton.disabled = true;
+        
+        currentVector = getRandomComplexNumber();
+        questionText = `
+            <p>На малюнку зображено комплексне число у вигляді радіус-вектора на комплексній площині.</p>
+            <p>Введіть координати вектора (a та b) та натисніть "Порахувати".</p> 
+            <p>Після цього обчисліть довжину цього радіуса-вектора та оберіть правильний варіант тригонометричної форми комплексного числа.</p>
+        `;
+        
+        drawCoordinateSystem();
+        options = [];
+       } else if (currentQuestion === 3) {
+        const angle = getRandomAngle();
+        const phiDisplay = angle.rad;
+        questionText = `Які координати має точка \\( z = \\cos ${phiDisplay} + i \\sin ${phiDisplay} \\)?`;
+
+        let m = angle.cos;
+        let n = angle.sin;
+
+        function simplifyExpression(expr) {
+            if (expr === "0") return "0";
+            if (expr === "1") return "1";
+            if (expr === "-1") return "-1";
+            return expr;
+        }
+
+        m = simplifyExpression(m);
+        n = simplifyExpression(n);
+
+        let correctAnswerLatex;
+        if (m === "0" && n === "0") {
+            correctAnswer = "(0,0)";
+            correctAnswerLatex = "(0, 0)";
+        } else if (m === "0") {
+            correctAnswer = `(0,${n})`;
+            correctAnswerLatex = `(0, ${n})`;
+        } else if (n === "0") {
+            correctAnswer = `(${m},0)`;
+            correctAnswerLatex = `(${m}, 0)`;
+        } else {
+            correctAnswer = `(${m},${n})`;
+            correctAnswerLatex = `(${m}, ${n})`;
+        }
+
+        let wrong1, wrong2, wrong3, wrong1Latex, wrong2Latex, wrong3Latex;
+        if (m === "0" && n === "0") {
+            wrong1 = "(1,0)";
+            wrong2 = "(0,1)";
+            wrong3 = "(-1,-1)";
+            wrong1Latex = "(1, 0)";
+            wrong2Latex = "(0, 1)";
+            wrong3Latex = "(-1, -1)";
+        } else if (m === "0") {
+            wrong1 = `(1,${n})`;
+            wrong2 = `(0,${n.startsWith('-') ? n.replace('-', '') : '-' + n})`;
+            wrong3 = `(${n},0)`;
+            wrong1Latex = `(1, ${n})`;
+            wrong2Latex = `(0, ${n.startsWith('-') ? n.replace('-', '') : '-' + n})`;
+            wrong3Latex = `(${n}, 0)`;
+        } else if (n === "0") {
+            wrong1 = `(${m.startsWith('-') ? m.replace('-', '') : '-' + m},0)`;
+            wrong2 = `(0,${m})`;
+            wrong3 = `(${m},1)`;
+            wrong1Latex = `(${m.startsWith('-') ? m.replace('-', '') : '-' + m}, 0)`;
+            wrong2Latex = `(0, ${m})`;
+            wrong3Latex = `(${m}, 1)`;
+        } else {
+            wrong1 = `(${n},${m})`;
+            wrong2 = `(${m.startsWith('-') ? m.replace('-', '') : '-' + m},${n.startsWith('-') ? n.replace('-', '') : '-' + n})`;
+            wrong3 = `(${m},${n.startsWith('-') ? n.replace('-', '') : '-' + n})`;
+            wrong1Latex = `(${n}, ${m})`;
+            wrong2Latex = `(${m.startsWith('-') ? m.replace('-', '') : '-' + m}, ${n.startsWith('-') ? n.replace('-', '') : '-' + n})`;
+            wrong3Latex = `(${m}, ${n.startsWith('-') ? n.replace('-', '') : '-' + n})`;
+        }
+
+        correctAnswer = normalizeString(correctAnswer);
+        options = [
+            { value: correctAnswer, latex: correctAnswerLatex },
+            { value: normalizeString(wrong1), latex: wrong1Latex },
+            { value: normalizeString(wrong2), latex: wrong2Latex },
+            { value: normalizeString(wrong3), latex: wrong3Latex }
+        ];
+     }  else if (currentQuestion === 4) {
+        // Ініціалізуємо завдання при першому виклику
+        if (question4Tasks.length === 0) {
+            initQuestion4Tasks();
+        }
+        
+        // Вибираємо випадкове завдання
+        currentTaskIndex = Math.floor(Math.random() * question4Tasks.length);
+        const task = question4Tasks[currentTaskIndex];
+        
+        // Форматуємо питання
+        questionText = `Подайте комплексне число \\( ${formatQuestion(task.question)} \\) у алгебраїчній формі:
+        `;
+        
+        // Встановлюємо правильну відповідь
+        correctAnswer = normalizeString(task.correctAnswer);
+        
+        // Перемішуємо варіанти відповідей
+        const shuffledAnswers = shuffleArray([...task.answers]);
+        
+        // Форматуємо варіанти відповідей
+        options = shuffledAnswers.map(answer => ({
+            value: normalizeString(answer),
+            latex: formatAnswer(answer)
+        }));
+    } else if (currentQuestion === 5) {
+        const complexNumber = complexNumbers[Math.floor(Math.random() * complexNumbers.length)];
+        questionText = `Представте комплексне число \\( z = ${complexNumber.a} ${complexNumber.b === "0" ? "" : (complexNumber.b.startsWith("-") ? "" : "+") + complexNumber.b + "i"} \\) у тригонометричній формі:`;
+
+        // Виправлення для "1i" та "-1i"
+        const correctLatex = complexNumber.r === "1" ? 
+            `\\cos ${complexNumber.correctPhi} + i \\sin ${complexNumber.correctPhi}` : 
+            `${complexNumber.r}(\\cos ${complexNumber.correctPhi} + i \\sin ${complexNumber.correctPhi})`;
+        
+        correctAnswer = normalizeString(complexNumber.r === "1" ? 
+            `\\cos${complexNumber.correctPhi} + i\\sin${complexNumber.correctPhi}` : 
+            `${complexNumber.r}(\\cos${complexNumber.correctPhi} + i\\sin${complexNumber.correctPhi})`);
+
+        const wrongOptions = [
+            { phi: "\\frac{\\pi}{2}", r: complexNumber.r },
+            { phi: "\\frac{5\\pi}{6}", r: complexNumber.r },
+            { phi: "\\frac{\\pi}{3}", r: complexNumber.r }
+        ].filter(opt => opt.phi !== complexNumber.correctPhi);
+
+        const wrongR = complexNumber.r === "2\\sqrt{2}" ? "\\sqrt{2}" : (complexNumber.r === "\\sqrt{2}" ? "2\\sqrt{2}" : "2");
+        wrongOptions.push({ phi: complexNumber.correctPhi, r: wrongR });
+
+        options = [
+            { value: correctAnswer, latex: correctLatex },
+            { 
+                value: normalizeString(wrongOptions[0].r === "1" ? 
+                    `\\cos${wrongOptions[0].phi} + i\\sin${wrongOptions[0].phi}` : 
+                    `${wrongOptions[0].r}(\\cos${wrongOptions[0].phi} + i\\sin${wrongOptions[0].phi})`), 
+                latex: wrongOptions[0].r === "1" ? 
+                    `\\cos ${wrongOptions[0].phi} + i \\sin ${wrongOptions[0].phi}` : 
+                    `${wrongOptions[0].r}(\\cos ${wrongOptions[0].phi} + i \\sin ${wrongOptions[0].phi})` 
+            },
+            { 
+                value: normalizeString(wrongOptions[1].r === "1" ? 
+                    `\\cos${wrongOptions[1].phi} + i\\sin${wrongOptions[1].phi}` : 
+                    `${wrongOptions[1].r}(\\cos${wrongOptions[1].phi} + i\\sin${wrongOptions[1].phi})`), 
+                latex: wrongOptions[1].r === "1" ? 
+                    `\\cos ${wrongOptions[1].phi} + i \\sin ${wrongOptions[1].phi}` : 
+                    `${wrongOptions[1].r}(\\cos ${wrongOptions[1].phi} + i \\sin ${wrongOptions[1].phi})` 
+            },
+            { 
+                value: normalizeString(wrongOptions[2].r === "1" ? 
+                    `\\cos${wrongOptions[2].phi} + i\\sin${wrongOptions[2].phi}` : 
+                    `${wrongOptions[2].r}(\\cos${wrongOptions[2].phi} + i\\sin${wrongOptions[2].phi})`), 
+                latex: wrongOptions[2].r === "1" ? 
+                    `\\cos ${wrongOptions[2].phi} + i \\sin ${wrongOptions[2].phi}` : 
+                    `${wrongOptions[2].r}(\\cos ${wrongOptions[2].phi} + i \\sin ${wrongOptions[2].phi})` 
+            }
+        ];
+    }
+
+    // Встановлюємо текст питання
+    trainerQuestion.innerHTML = questionText;
+    
+    // Генеруємо варіанти відповідей (крім питання 2)
+    if (currentQuestion !== 2) {
+        // Перемішуємо варіанти
+        options = shuffleArray(options);
+
+        trainerOptions.innerHTML = '';
+        
+        options.forEach((option, index) => {
+            const optionElement = document.createElement('div');
+            optionElement.classList.add('trainer-option', 'mathjax-pending');
+            optionElement.setAttribute('data-value', option.value);
+            optionElement.setAttribute('data-index', index);
+            optionElement.innerHTML = `\\(${option.latex}\\)`;
+            optionElement.addEventListener('click', () => {
+                document.querySelectorAll('.trainer-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                optionElement.classList.add('selected');
+                selectedOption = option.value;
+                submitButton.disabled = false;
+            });
+            trainerOptions.appendChild(optionElement);
+        });
+    }
+
+    updateQuestionIndicators();
+    typesetMathJax();
+}
+
+function addEventListeners() {
+    const events = [
+        { btn: buttons.openTheory, modal: modals.theory, closeBtn: buttons.closeTheory },
+        { btn: buttons.openVideo, modal: modals.video, closeBtn: buttons.closeVideo },
+        { btn: buttons.openQuestions, modal: modals.questions, closeBtn: buttons.closeQuestions },
+        { btn: buttons.openTrainer, modal: modals.trainer, closeBtn: buttons.closeTrainer },
+        { btn: buttons.closeVideoPlayer1, modal: modals.videoPlayer1, closeBtn: buttons.openVideo, action: () => closeVideoModal(modals.videoPlayer1, 1, modals.video, buttons.openVideo) },
+        { btn: buttons.closeVideoPlayer2, modal: modals.videoPlayer2, closeBtn: buttons.openVideo, action: () => closeVideoModal(modals.videoPlayer2, 2, modals.video, buttons.openVideo) }
+    ];
+
+    events.forEach(({ btn, modal, closeBtn, action }) => {
+        if (btn && modal) {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (action) action();
+                else openModal(modal, btn);
+            });
+        }
+        if (closeBtn && modal && btn !== closeBtn) {
+            closeBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                closeModal(modal, btn);
+            });
+        }
+    });
+
+    if (overlay) {
+        overlay.addEventListener('click', () => {
+            Object.values(modals).forEach(modal => {
+                const btnKey = `open${modal.id.replace('Modal', '')}`;
+                if (modal.classList.contains('show')) {
+                    closeModal(modal, buttons[btnKey] || buttons.openVideo);
+                }
+            });
+        });
+    }
+
+    document.querySelectorAll('.card-inner').forEach(card => {
+        card.addEventListener('click', (e) => {
+            e.preventDefault();
+            card.classList.toggle('flipped');
+        });
+    });
+
+    const videoCards = document.querySelectorAll('.video-card');
+    videoCards.forEach(card => {
+        card.addEventListener('click', (e) => {
+            e.preventDefault();
+            const videoId = card.dataset.video;
+            if (videoId && modals[`videoPlayer${videoId}`]) {
+                openModal(modals[`videoPlayer${videoId}`], buttons.openVideo);
+            }
+        });
+    });
+
+    submitButton.addEventListener('click', () => {
+        if (!selectedOption) {
+            showToast('Будь ласка, оберіть варіант відповіді!', false);
+            return;
+        }
+        
+        if (currentQuestion === 2 && !isVectorCorrect) {
+            showToast('Спочатку введіть правильні координати вектора!', false);
+            return;
+        }
+
+        const normalizedSelected = normalizeString(selectedOption);
+        const normalizedCorrect = normalizeString(correctAnswer);
+
+        if (normalizedSelected === normalizedCorrect) {
+            showToast('<span style="color: white;">✅ Правильно!</span>', true);
+            setTimeout(() => {
+                if (currentQuestion < 5) {
+                    currentQuestion++;
+                    generateQuestion();
+                } else {
+                    showCompletionMessage();
+                }
+            }, 2000);
+        } else {
+            showToast('<span style="color: white;">❌ Неправильно. Спробуйте ще раз.</span>', false);
+            setTimeout(() => {
+                selectedOption = null;
+                submitButton.disabled = true;
+                document.querySelectorAll('.trainer-option').forEach(opt => opt.classList.remove('selected'));
+                generateQuestion();
+            }, 2000);
+        }
+    });
+
+    document.getElementById('resetTrainerBtn').addEventListener('click', resetTrainer);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    addEventListeners();
+    typesetMathJax();
+});
+
+window.addEventListener('resize', () => {
+    Object.values(modals).forEach(modal => {
+        if (modal.classList.contains('show')) {
+            adjustModalHeight(modal);
+        }
+    });
+});
+</script>
+</body>
+</html>
