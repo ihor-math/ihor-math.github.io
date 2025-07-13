@@ -1,0 +1,2822 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8. Арифметичні дії в тригонометричній формі</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js" async></script>
+    <script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']],
+            packages: ['base', 'ams']
+        }
+    };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        *, *:before, *:after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .figure {
+            display: block;
+            margin: 10px auto;
+            max-width: 100%;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            object-fit: contain;
+        }
+        
+        .figure.figure-2-14 {
+            width: 230px;
+            height: 210px;
+        }
+        
+        .figure.figure-2-15 {
+            width: 340px;
+            height: 230px;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a3c34, #4a2c5e);
+            font-family: 'Poppins', sans-serif;
+            color: #e6e6fa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 127, 127, 0.1), transparent 70%);
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        .nav-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            text-decoration: none;
+            color: #ffffff;
+            background: linear-gradient(135deg, #ff7f7f, #26a69a);
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            border: 1px solid rgba(38, 166, 154, 0.3);
+            transition: background 0.2s;
+        }
+
+        .nav-button:hover {
+            background: linear-gradient(135deg, #26a69a, #ff7f7f);
+        }
+
+        .nav-button svg {
+            vertical-align: middle;
+            fill: white;
+        }
+
+        .title-box {
+            margin-top: 60px;
+            padding: 25px 40px;
+            background: linear-gradient(135deg, rgba(52, 73, 94, 0.7), rgba(108, 92, 231, 0.7));
+            border-radius: 25px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            max-width: 90%;
+            text-align: center;
+            border: 2px solid rgba(255, 127, 127, 0.4);
+        }
+
+        .title-box h1 {
+            font-size: 28px;
+            color: #ff7f7f;
+            font-weight: 800;
+        }
+
+        .section-container {
+            margin-top: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .section {
+            width: 250px;
+            height: 220px;
+            background: linear-gradient(45deg, rgba(52, 73, 94, 0.8), rgba(108, 92, 231, 0.8));
+            border-radius: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            cursor: pointer;
+            color: #e6e6fa;
+            border: 2px solid rgba(38, 166, 154, 0.4);
+            transition: transform 0.2s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-4px);
+        }
+
+        .section img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 15px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .section h2 {
+            font-size: clamp(16px, 2.5vw, 18px);
+            color: #26a69a;
+            font-weight: 600;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(135deg, rgba(26, 60, 52, 0.9), rgba(74, 44, 94, 0.9));
+            z-index: 1001;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 0;
+            border: 2px solid rgba(255, 127, 127, 0.5);
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-header {
+            background: linear-gradient(90deg, rgba(26, 60, 52, 0.9), rgba(74, 44, 94, 0.9));
+            padding: 8px 12px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            width: 100%;
+            border-bottom: 1px solid rgba(38, 166, 154, 0.3);
+        }
+
+        .close-btn {
+            background: linear-gradient(135deg, #ff7f7f, #26a69a);
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .close-btn:hover {
+            background: linear-gradient(135deg, #26a69a, #ff7f7f);
+        }
+
+      .modal-content {
+    padding: 20px;
+    flex-grow: 1;
+    background: linear-gradient(135deg, rgba(108, 92, 231, 0.8), rgba(52, 73, 94, 0.8));
+    border-radius: 10px;
+    color: #e0e0ff;
+    width: 100%;
+    max-width: 95%;
+    max-height: calc(100vh - 80px);
+    overflow-y: auto; /* Єдина прокрутка для всього вмісту */
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 127, 127, 0.5) transparent;
+    box-sizing: border-box;
+}
+
+      .modal-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 127, 127, 0.5);
+    border-radius: 3px;
+}
+
+        .modal-content p {
+            font-size: clamp(18px, 3.1vw, 20px);
+            line-height: 1.7;
+            text-align: justify;
+        }
+
+        .modal-content ul {
+            list-style: none;
+            padding-left: 24px;
+        }
+
+        .modal-content li {
+            color: #ff7f7f;
+            padding-left: 24px;
+            margin-left: 10px;
+            position: relative;
+            font-size: 20px;
+        }
+
+        .modal-content h3.example {
+            color: #feca57;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+
+        .example-inline {
+            display: inline;
+            color: #feca57;
+            font-weight: 600;
+        }
+
+        .example-text {
+            display: inline;
+            color: #e6e6fa;
+            margin-left: 5px;
+        }
+
+        .math-container {
+            display: block;
+            text-align: center;
+            margin: 15px auto;
+            max-width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            box-sizing: border-box;
+        }
+
+        .math-container mjx-container {
+            display: inline-block !important;
+            margin: 0 auto !important;
+            color: #FFFF00 !important;
+            font-size: clamp(21px, 3.3vw, 23px) !important;
+        }
+
+        .math-container mjx-container[jax="CHTML"][display="true"] {
+            display: block !important;
+            text-align: center !important;
+            margin: 0 auto !important;
+        }
+
+       mjx-container[jax="CHTML"] mjx-mfrac > mjx-frac {
+    border-collapse: collapse;
+}
+mjx-container[jax="CHTML"] mjx-mfrac > mjx-frac > mjx-num {
+    
+    padding-bottom: 0.1em;
+}
+mjx-container[jax="CHTML"] mjx-mfrac > mjx-frac > mjx-den {
+    padding-top: 0 !important;
+}
+            mjx-mfrac > mjx-frac > mjx-line {
+    border-bottom: 1px solid #FFD700 !important;
+    min-width: 100%;
+}
+
+
+
+        mjx-container {
+            font-size: clamp(20px, 3.2vw, 22px) !important;
+            color: #FFD700 !important;
+            display: inline-block !important;
+            max-width: 100%;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 5px;
+            text-align: center;
+        }
+
+       details {
+    margin: 10px 0;
+    border-radius: 10px;
+    background: none;
+    cursor: pointer;
+    border: 2px solid rgba(38, 166, 154, 0.4);
+}
+        details p {
+    padding: 15px 20px;
+    color: #e6e6fa;
+    text-align: justify;
+    font-size: clamp(18px, 3.1vw, 20px);
+    line-height: 1.7;
+}
+
+        summary {
+            font-weight: 600;
+            padding: 10px;
+            background: linear-gradient(90deg, rgba(108, 92, 231, 0.8), rgba(52, 73, 94, 0.8));
+            border-radius: 10px;
+            color: #feca57;
+            font-size: clamp(16px, 2.9vw, 18px);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+            details summary {
+    font-weight: 600;
+    padding: 10px;
+    background: linear-gradient(90deg, rgba(108, 92, 231, 0.8), rgba(52, 73, 94, 0.8));
+    border-radius: 10px;
+    color: #feca57;
+    font-size: clamp(16px, 2.9vw, 18px);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+details[open] summary {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+
+
+        .video-card-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .video-card {
+            width: 360px;
+            height: 220px;
+            background: linear-gradient(135deg, rgba(52, 73, 94, 0.8), rgba(108, 92, 231, 0.8));
+            border-radius: 20px;
+            border: 2px solid rgba(38, 166, 154, 0.4);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            color: #AFEEEE;
+        }
+
+        .video-card:hover {
+            transform: scale(1.05);
+        }
+
+        .video-card img {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 10px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .video-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .video-player-container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: rgba(52, 73, 94, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(38, 166, 154, 0.5);
+            text-align: center;
+        }
+
+        .video-player-container iframe {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 2px solid rgba(38, 166, 154, 0.4);
+        }
+
+        .question-card {
+            margin: 20px auto;
+            max-width: 95%;
+            height: 200px;
+            perspective: 1000px;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.4s;
+            transform-style: preserve-3d;
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+        }
+
+        .card-inner.flipped {
+            transform: rotateY(180deg);
+        }
+
+       .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            min-height: 200px;
+            backface-visibility: hidden;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: clamp(16px, 3vw, 18px);
+            line-height: 1.5;
+            border: 2px solid rgba(255, 127, 127, 0.4);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+       .card-front {
+            background: linear-gradient(135deg, rgba(52, 73, 94, 0.8), rgba(108, 92, 231, 0.8));
+            color: #B0E0E6;
+            font-weight: 600;
+        }
+
+         .card-back {
+            background: linear-gradient(135deg, rgba(48, 35, 130, 0.9), rgba(128, 48, 48, 0.9));
+            color: #e6e6fa;
+            transform: rotateY(180deg);
+            overflow-y: auto;
+        }
+            
+        .trainer-container {
+            width: 95%;
+            max-width: 900px;
+            padding: 20px;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(52, 73, 94, 0.8), rgba(108, 92, 231, 0.8));
+            border-radius: 16px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(38, 166, 154, 0.4);
+            overflow-y: auto;
+            min-height: 400px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+       /* Оновлення стилів для .modal-content у #trainerModal */
+#trainerModal .modal-content {
+    padding: 20px;
+    flex-grow: 1;
+    background: linear-gradient(135deg, rgba(108, 92, 231, 0.8), rgba(52, 73, 94, 0.8));
+    border-radius: 10px;
+    color: #e0e0ff;
+    width: 100%;
+    max-width: 95%;
+    max-height: calc(100vh - 80px);
+    overflow-y: auto; /* Єдина прокрутка для всього вмісту */
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 127, 127, 0.5) transparent;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+            /* Новий контейнер для питання, варіантів і кнопки */
+.trainer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 900px;
+}
+        
+/* Видаляємо .trainer-question-container, використовуємо .trainer-question */
+.trainer-question {
+    color: #e6e6fa;
+    font-size: clamp(20px, 3.5vw, 22px);
+    text-align: center;
+    margin: 12px 0;
+    max-width: 95%;
+    word-wrap: break-word;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    width: 100%;
+}
+ .trainer-question mjx-container {
+            font-size: clamp(20px, 3.5vw, 22px) !important;
+        }
+
+      /* Оновлення стилів для trainer-options */
+.trainer-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto;
+    gap: 12px;
+    max-width: 95%;
+    margin: 20px auto;
+    justify-items: center;
+    align-items: stretch;
+    overflow-y: visible;
+}
+
+
+
+       .option {
+    padding: 12px;
+    background-color: #981c61;
+    border-radius: 8px;
+    border: 2px solid rgba(38, 166, 154, 0.4);
+    cursor: pointer;
+    text-align: center;
+    color: #e6e6fa;
+    font-size: clamp(18px, 3.2vw, 20px);
+    min-height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 450px;
+    box-sizing: border-box;
+    transition: background 0.2s, transform 0.1s;
+    touch-action: manipulation;
+}
+
+ .option:hover {
+            background-color: #144748;
+            transform: scale(1.02);
+        }
+
+        .option.selected {
+            background: linear-gradient(135deg, #ff7f7f, #26a69a);
+            transform: scale(1.02);
+        }
+
+        .option mjx-container {
+            font-size: clamp(18px, 3.2vw, 20px) !important;
+            color: #FFD700 !important;
+        }
+
+       
+ /* Стилі для кнопки "Відповісти" */
+.submit-answer-btn {
+    background: linear-gradient(135deg, #00008B, #800080);
+    color: #fff;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 25px;
+    font-size: clamp(16px, 2.8vw, 18px);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin: 15px auto;
+    display: block;
+}
+        .submit-answer-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .submit-answer-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+       .question-indicator {
+    width: 200px;
+    height: 60px;
+    background: linear-gradient(135deg, #ff7f7f, #26a69a);
+    border-radius: 20px;
+    border: 2px solid rgba(38, 166, 154, 0.4);
+    color: #e6e6fa;
+    font-size: clamp(16px, 2.8vw, 18px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px auto;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+       /* Стилі для сповіщень (toast) */
+.toast {
+    position: fixed;
+    bottom: 440px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, rgba(108, 92, 231, 0.95), rgba(255, 127, 127, 0.95));
+    color: #ffffff;
+    padding: 15px 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    font-size: clamp(16px, 2.8vw, 18px);
+    font-weight: 600;
+    text-align: center;
+    z-index: 1002;
+    display: none;
+    max-width: 90%;
+}
+
+        .toast.show {
+            display: block;
+        }
+
+        .toast.correct {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            border: 3px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .toast.incorrect {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            border: 3px solid rgba(255, 255, 255, 0.8);
+        }
+
+
+        #modalOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+        }
+
+        #modalOverlay.show {
+            display: block;
+        }
+.option-large {
+    padding: 15px;
+    min-height: 100px;
+    line-height: 1.6;
+    overflow: visible;
+}
+
+        @media (max-width: 768px) {
+            .title-box {
+                margin-top: 40px;
+                padding: 15px 20px;
+            }
+
+            .title-box h1 {
+                font-size: 20px;
+            }
+            
+            .figure.figure-2-14 {
+                width: 180px;
+                height: 180px;
+            }
+            
+            .figure.figure-2-15 {
+                width: 290px;
+                height: 200px;
+            }
+
+            .modal-content {
+                max-height: calc(100vh - 60px);
+                padding: 10px;
+            }
+
+            details {
+                margin: 10px 0;
+            }
+
+            summary {
+                padding: 10px 12px;
+                font-size: clamp(16px, 2.9vw, 18px);
+            }
+
+            details p {
+                padding: 15px;
+                font-size: clamp(16px, 2.8vw, 18px);
+            }
+            
+
+           .math-container mjx-container {
+                max-width: 100%;
+                display: inline-block !important;
+                margin: 0 auto !important;
+            }
+
+            .section-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+
+            .section {
+                width: 80%;
+                height: 180px;
+            }
+
+            .section h2 {
+                font-size: clamp(18px, 3vw, 20px);
+            }
+
+            .modal-content {
+                padding: 15px;
+                max-width: 100%;
+            }
+
+            .question-card {
+                min-height: 180px;
+            }
+
+            .card-inner {
+                min-height: 180px;
+            }
+
+       .question-card {
+        min-height: 180px;
+        max-width: 98%;
+        width: 100%;
+    }
+  .question-card {
+        min-height: 180px;
+        max-width: 100%; /* Максимальна ширина */
+        width: 100%;
+        margin: 20px 0;
+    }
+    .card-front, .card-back {
+        min-height: 220px;
+        padding: 16px 8px 16px 16px; /* Збільшуємо padding-left для зміщення вправо */
+        font-size: clamp(14px, 2.3vw, 15px) !important;
+        line-height: 1.2 !important;
+        white-space: normal; /* Дозволяємо перенос тексту */
+        text-align: center; /* Центруємо текст */
+        justify-content: center; /* Центруємо вертикально */
+        box-sizing: border-box;
+    }
+    .card-front *, .card-back * {
+        font-size: clamp(15px, 2.5vw, 16px) !important;
+        text-align: center;
+    }
+    .card-back {
+        padding-left: 24px; /* Додатковий відступ зліва для відповідей */
+    }
+    .card-front mjx-container, .card-back mjx-container {
+        font-size: clamp(15px, 2.5vw, 16px) !important;
+        max-width: 95%; /* Обмежуємо ширину формул */
+        white-space: nowrap; /* Формули не переносяться */
+    }
+
+            
+             .trainer-question {
+        font-size: clamp(15px, 2.6vw, 17px);
+    }
+
+    .trainer-question mjx-container {
+        font-size: clamp(15px, 2.6vw, 17px) !important;
+    }
+
+    .trainer-options {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        max-width: 90%;
+    }
+
+    .option {
+        padding: 10px;
+        min-height: 60px;
+        max-width: 100%;
+        font-size: clamp(15px, 2.6vw, 17px);
+    }
+
+    .option mjx-container {
+        font-size: clamp(15px, 2.6vw, 17px) !important;
+    }
+
+    .submit-answer-btn {
+        padding: 10px 20px;
+        font-size: clamp(15px, 2.6vw, 17px);
+    }
+            .question-indicator {
+        width: 120px;
+        height: 42px;
+        font-size: clamp(14px, 2.6vw, 16px);
+    }
+
+            .video-card {
+                width: 260px;
+                height: 210px;
+            }
+
+            .video-card img {
+                width: 40px;
+                height: 40px;
+            }
+
+            .video-card h3 {
+                font-size: 16px;
+            }
+
+            .video-player-container iframe {
+                max-height: 300px;
+            }
+        }
+
+
+         @media (max-width: 480px) {
+            .nav-button {
+                padding: 8px 12px;
+                font-size: clamp(14px, 2.8vw, 16px);
+            }
+
+            .title-box {
+                margin-top: 20px;
+                padding: 10px 15px;
+            }
+
+            .section {
+                width: 90%;
+                height: 150px;
+            }
+
+            .section img {
+                width: 50px;
+                height: 50px;
+            }
+
+            .section h2 {
+                font-size: clamp(16px, 3vw, 18px);
+            }
+
+            .modal-content {
+                max-height: calc(100vh - 50px);
+                padding: 10px;
+            }
+
+            summary {
+                padding: 8px 10px;
+                font-size: clamp(14px, 2.8vw, 16px);
+            }
+
+            details p {
+                padding: 10px;
+                font-size: clamp(15px, 2.8vw, 17px);
+            }
+
+            .math-container {
+                width: 100%;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+
+            .math-container mjx-container {
+                max-width: 100%;
+                display: inline-block !important;
+                margin: 0 auto !important;
+            }
+
+            .question-card {
+                min-height: 160px;
+            }
+
+            .card-inner {
+                min-height: 160px;
+            }
+
+          .question-card {
+        min-height: 160px;
+        max-width: 98%;
+        width: 100%;
+    }
+   .card-front, .card-back {
+        min-height: 200px;
+        padding: 14px 8px;
+        font-size: clamp(13px, 2.1vw, 14px) !important;
+        line-height: 1.2 !important;
+        overflow-x: auto;
+        white-space: normal;
+        text-align: left;
+       
+               justify-content: center;
+    }
+    .card-front *, .card-back * {
+        font-size: clamp(14px, 2.3vw, 15px) !important;
+        text-align: left;
+    }
+    .card-front mjx-container, .card-back mjx-container {
+        font-size: clamp(14px, 2.3vw, 15px) !important;
+        max-width: 100%;
+        white-space: nowrap;
+    }
+
+             .trainer-question {
+        font-size: clamp(16px, 3vw, 17px);
+    }
+
+    .trainer-question mjx-container {
+        font-size: clamp(16px, 3vw, 17px) !important;
+    }
+
+    .trainer-options {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        max-width: 95%;
+    }
+
+    .option {
+        padding: 8px;
+        min-height: 50px;
+        font-size: clamp(14px, 2.5vw, 16px);
+    }
+
+    .option mjx-container {
+        font-size: clamp(14px, 2.5vw, 16px) !important;
+    }
+
+    .submit-answer-btn {
+        padding: 8px 16px;
+        font-size: clamp(14px, 2.5vw, 16px);
+    }
+            .question-indicator {
+        width: 100px;
+        height: 42px;
+        font-size: clamp(14px, 2.5vw, 16px);
+    }
+
+           
+             .video-card {
+                width: 240px;
+                height: 200px;
+            }
+
+            .video-card img {
+                width: 36px;
+                height: 36px;
+            }
+
+            .video-card h3 {
+                font-size: 14px;
+            }
+
+            .video-player-container iframe {
+                max-height: 200px;
+            }
+        }
+    @media (max-width: 600px) {
+    .option-large {
+        padding: 10px;
+        min-height: 80px;
+        font-size: 0.9em;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="title-box">
+        <h1>8. Арифметичні дії в тригонометричній формі</h1>
+    </div>
+
+    <div class="section-container">
+        <div class="section" id="openTheoryBtn">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Книга">
+            <h2>Теоретичні відомості</h2>
+        </div>
+        <div class="section" id="openVideoBtn">
+            <img src="https://img.icons8.com/fluency/96/video.png" alt="Відео">
+            <h2>Відеоматеріали</h2>
+        </div>
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Картки">
+            <h2>Питання і відповіді</h2>
+        </div>
+        <div class="section" id="openTrainerBtn">
+            <img src="https://img.icons8.com/fluency/96/flash-on.png" alt="Тренажер">
+            <h2>Тренажер</h2>
+        </div>
+    </div>
+
+    <div class="navigation-buttons" style="margin: 40px 0; display: flex; gap: 20px; justify-content: center;">
+        <a class="nav-button" href="/tema2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            До теми 2
+        </a>
+        <a class="nav-button" href="{{ url_for('home') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            На головну
+        </a>
+    </div>
+
+   <div id="modalOverlay"></div>
+
+    <div id="theoryModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeTheoryBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+           <details class="addition-subtraction">
+               <summary>Множення комплексних чисел</summary>
+    <p>Нехай задано два комплексних числа в тригонометричній формі:</p>
+    <div class="math-container">
+        \[ z_1 = r_1 \left( \cos φ_1 + i \sin φ_1 \right), \quad z_2 = r_2 \left( \cos φ_2 + i \sin φ_2 \right). \]
+    </div>
+    <p>Виконаємо множення:</p>
+    <div class="math-container">
+        \[ z_1 \cdot z_2 = r_1 \left( \cos φ_1 + i \sin φ_1 \right) \cdot r_2 \left( \cos φ_2 + i \sin φ_2 \right). \]
+    </div>
+    <p>Розкриємо дужки, враховуючи, що \(i^2 = -1\):</p>
+    <div class="math-container">
+        \[ r_1 \cdot r_2 \left( \cos φ_1 \cos φ_2 + i \cos φ_1 \sin φ_2 + i \sin φ_1 \cos φ_2 + i^2 \sin φ_1 \sin φ_2 \right) = \]
+        \[ = r_1 \cdot r_2 \left( \cos φ_1 \cos φ_2 + i \cos φ_1 \sin φ_2 + i \sin φ_1 \cos φ_2 - \sin φ_1 \sin φ_2 \right). \]
+    </div>
+    <p>Групуємо дійсну та уявну частини:</p>
+    <div class="math-container">
+        \[ r_1 \cdot r_2 \left( \left( \cos φ_1 \cos φ_2 - \sinφ_1 \sin φ_2 \right) + i \left( \sin φ_1 \cos φ_2 + \cos \phi_1 \sin \phi_2 \right) \right). \]
+    </div>
+    <p>Застосовуємо тригонометричні формули суми аргументів:</p>
+    <div class="math-container">
+        \[ \cos φ_1 \cos φ_2 - \sin φ_1 \sin φ_2 = \cos (φ_1 + φ_2), \]
+        \[ \sin φ_1 \cos φ_2 + \cos φ_1 \sin φ_2 = \sin (φ_1 + φ_2). \]
+    </div>
+    <p>Результат множення:</p>
+    <div class="math-container">
+        \[ z_1 \cdot z_2 = r_1 \cdot r_2 \left( \cos (φ_1 + φ_2) + i \sin (φ_1 + φ_2) \right). \]
+    </div>
+    <p>Отже, при множенні комплексних чисел у тригонометричній формі модулі перемножуються (\( r_1 \cdot r_2 \)), а аргументи додаються (\( φ_1 + φ_2 \)). Геометрично це означає, що добуток двох векторів на комплексній площині дає новий радіус-вектор із новим кутом, що є сумою початкових кутів, і довжиною, яка є добутком модулів (довжин) цих векторів.</p>
+    
+    <p>Формула для множення комплексних чисел у тригонометричній формі має вигляд:</p>
+    <div class="math-container">
+        \[ z_1 \cdot z_2 = r_1 \cdot r_2 \left( \cos (φ_1 + φ_2) + i \sin (φ_1 + φ_2) \right). (2.5) \]
+    </div>
+  <p>
+    <span class="example-inline">Приклад 2.5.</span><span class="example-text"> Помножити числа:</span>
+
+    \[ z_1 = 2 \left( \cos 10^\circ + i \sin 10^\circ \right)\], \[\quad z_2 = 5 \left( \cos 20^\circ + i \sin 20^\circ \right). \]
+</p>
+             <p style="text-align: center;"><span class="example-inline">Розв’язок:</p></span>
+<p>За формулою для множення комплексних чисел у тригонометричній формі (2.5):</p>
+<div class="math-container">
+    \[ z_1 \cdot z_2 = 2 \cdot 5 \left( \cos (10^\circ + 20^\circ) + i \sin (10^\circ + 20^\circ) \right) = 10 \left( \cos 30^\circ + i \sin 30^\circ \right). \]
+</div>
+<p>Оскільки \( \cos 30^\circ = \frac{\sqrt{3}}{2} \), \( \sin 30^\circ = \frac{1}{2} \), маємо:</p>
+<div class="math-container">
+    \[ 10 \left( \frac{\sqrt{3}}{2} + \frac{1}{2} i \right) = 5\sqrt{3} + 5i. \]
+</div>
+<p><strong>Відповідь:</strong></p>
+<div class="math-container">
+    \[ 2 \left( \cos 10^\circ + i \sin 10^\circ \right) \cdot 5 \left( \cos 20^\circ + i \sin 20^\circ \right) = 5\sqrt{3} + 5i. \]
+</div>
+<p>
+    <span class="example-inline">Приклад 2.6.</span><span class="example-text"> Помножити числа:</span>
+
+    \[ z_1 = 2 \left( \cos \frac{\pi}{3} + i \sin \frac{\pi}{3} \right)\], \[\quad z_2 = 3 \left( \cos \frac{\pi}{6} + i \sin \frac{\pi}{6} \right). \]
+</p>
+            <p style="text-align: center;"><span class="example-inline">Розв’язок:</p></span>
+<p>За формулою для множення комплексних чисел у тригонометричній формі (2.5):</p>
+<div class="math-container">
+    \[ z_1 \cdot z_2 = 2 \cdot 3 \left( \cos \left( \frac{\pi}{3} + \frac{\pi}{6} \right) + i \sin \left( \frac{\pi}{3} + \frac{\pi}{6} \right) \right) = 6 \left( \cos \frac{\pi}{2} + i \sin \frac{\pi}{2} \right). \]
+</div>
+<p>Оскільки \( \cos \frac{\pi}{2} = 0 \), \( \sin \frac{\pi}{2} = 1 \), маємо:</p>
+<div class="math-container">
+    \[ 6 \left( 0 + i \cdot 1 \right) = 6i. \]
+</div>
+<p><strong>Відповідь:</strong></p>
+<div class="math-container">
+    \[ 2 \left( \cos \frac{\pi}{3} + i \sin \frac{\pi}{3} \right) \cdot 3 \left( \cos \frac{\pi}{6} + i \sin \frac{\pi}{6} \right) = 6i. \]
+</div>
+            
+           
+            </details>
+            <details>
+    <summary>Ділення комплексних чисел</summary>
+          
+        <p>Нехай задано два комплексних числа в тригонометричній формі:</p>
+        <div class="math-container">
+            \[ z_1 = r_1 \left( \cos φ_1 + i \sin φ_1 \right), \quad z_2 = r_2 \left( \cos φ_2 + i \sin φ_2 \right). \]
+        </div>
+        <p>Припустимо, \( z_2 \neq 0 \), поділимо ці числа:</p>
+        <div class="math-container">
+            \[ \frac{z_1}{z_2} = \frac{r_1 \left( \cos φ_1 + i \sin φ_1 \right)}{r_2 \left( \cos φ_2 + i \sin φ_2 \right)}. \]
+        </div>
+        <p>Для знаходження частки цих чисел скористаємося множенням чисельника і знаменника на спряжене до знаменника \( \left( \cos φ_2 - i \sin φ_2 \right) \), що дозволить у знаменнику застосувати формулу різниці квадратів, а також врахуємо, що \( i^2 = -1 \), і згрупуємо дійсну та уявну частини:</p>
+        <div class="math-container">
+            \[ \frac{z_1}{z_2} = \frac{r_1}{r_2} \cdot \frac{\left( \cos φ_1 + i \sin φ_1 \right) \left( \cos φ_2 - i \sin φ_2 \right)}{\left( \cos φ_2 + i \sin φ_2 \right) \left( \cos φ_2 - i \sin φ_2 \right)} = \]
+            \[ = \frac{r_1}{r_2} \cdot \frac{\cos φ_1 \cos φ_2 - i \cos φ_1 \sin φ_2 + i \sin φ_1 \cos φ_2 - i^2 \sin φ_1 \sin φ_2}{\cos^2 φ_2 + (-i^2) \sin^2 φ_2} = \]
+            \[ = \frac{r_1}{r_2} \cdot \frac{\cos φ_1 \cos φ_2 - i \sin φ_2 \cos φ_1 + i \sin φ_1 \cos φ_2 + \sin φ_1 \sin φ_2}{\cos^2 φ_2 + \sin^2 φ_2}. \]
+        </div>
+        <p>Знаменник перетворився на основну тригонометричну тотожність \( \cos^2 φ_2 + \sin^2 φ_2 = 1 \). У чисельнику застосовуємо формули для тригонометричних функцій різниці аргументів:</p>
+        <div class="math-container">
+            \[ \cos φ_1 \cos φ_2 + \sin φ_1 \sin φ_2 = \cos (φ_1 - φ_2), \]
+            \[ \sin φ_1 \cos φ_2 - \sin φ_2 \cos φ_1 = \sin (φ_1 - φ_2). \]
+        </div>
+        <p>Отримаємо:</p>
+        <div class="math-container">
+            \[ \frac{z_1}{z_2} = \frac{r_1}{r_2} \cdot \frac{\left( \cos (φ_1 - φ_2) + i \sin (φ_1 - φ_2) \right)}{1} = \frac{r_1}{r_2} \left( \cos (φ_1 - φ_2) + i \sin (φ_1 - φ_2) \right). \]
+        </div>
+        <p>Отже, при діленні комплексних чисел у тригонометричній формі модулі діляться \( \left( \frac{r_1}{r_2} \right) \), а аргументи віднімаються \( \left( φ_1 - φ_2 \right) \). Геометрично це означає, що ділення двох векторів на комплексній площині дає новий радіус-вектор з новим кутом, що є різницею початкових кутів, і довжиною, яка є відношенням модулів (довжин) цих векторів.</p>
+        <br><br>
+        <p>Формула для ділення комплексних чисел у тригонометричній формі має вигляд:</p>
+        <div class="math-container">
+            \[ \frac{z_1}{z_2} = \frac{r_1}{r_2} \left( \cos (φ_1 - φ_2) + i \sin (φ_1 - φ_2) \right). (2.6) \]
+        </div>
+        <p>
+            <span class="example-inline">Приклад 2.7.</span><span class="example-text"> Поділити числа:</span>
+             
+            \[ z_1 = 3 \left( \cos 20^\circ + i \sin 20^\circ \right)\], \[\quad z_2 = 2 \left( \cos 30^\circ + i \sin 30^\circ \right). \]
+       </p>
+        <p style="text-align: center;"><span class="example-inline">Розв’язок:</span></p>
+        <p><span class="example-icon-start"><i class="fas fa-play"></i></span> Згідно з формулою ділення комплексних чисел у тригонометричній формі (2.6):</p>
+        <div class="math-container">
+            \[ z = \frac{z_1}{z_2} = \frac{3}{2} \left( \cos (20^\circ - 30^\circ) + i \sin (20^\circ - 30^\circ) \right) = \frac{3}{2} \left( \cos (-10^\circ) + i \sin (-10^\circ) \right). \]
+        </div>
+        <p>Враховуючи, що косинус є парною функцією (\( \cos(-φ) = \cos φ \)), а синус – непарною (\( \sin(-φ) = -\sin φ \)), маємо:</p>
+        <div class="math-container">
+             \[ \frac{3}{2} \left( \cos 10^\circ - i \sin 10^\circ \right). \]
+        </div>
+        <p><strong>Відповідь:</strong></p>
+        <div class="math-container">
+            \[ \frac{3 \left( \cos 20^\circ + i \sin 20^\circ \right)}{2 \left( \cos 30^\circ + i \sin 30^\circ \right)} = \frac{3}{2} \left( \cos 10^\circ - i \sin 10^\circ \right). \]
+        </div>
+    </p>
+         
+</details>
+            <details>
+    <summary>Піднесення до степеня комплексних чисел у тригонометричній формі</summary>
+
+        <p>Піднесення комплексного числа \( z = r (\cos φ + i \sin φ) \) до \( n \)-го степеня, де \( n \) – ціле додатне число, еквівалентне добутку \( n \) однакових копій цього числа. За правилом множення комплексних чисел одержуємо:</p>
+        <div class="math-container">
+            \[ z^n = \left( r (\cos φ + i \sin φ) \right)^n = r^n (\cos nφ + i \sin nφ). \]
+        </div>
+        <p>Ця формула:</p>
+        <div class="math-container">
+            \[ z^n = r^n (\cos nφ + i \sin nφ). (2.7) \]
+        </div>
+        <p>називається формулою Муавра.</p>
+           <p> Завдяки цій формулі обчислення високих степенів комплексних чисел спрощуються: достатньо піднести модуль до степеня та помножити аргумент на \( n \).</p>
+        <p>
+            <span class="example-inline">Приклад 2.8.</span><span class="example-text"> Знайти \( z^3 \), якщо \( z = 2 (\cos 20^\circ + i \sin 20^\circ) \).</span>
+        </p>
+       
+        <p style="text-align: center;"><span class="example-inline">Розв’язок:</span></p>
+        <p><span class="example-icon-start"><i class="fas fa-play"></i></span> За формулою Муавра (2.7), маємо:</p>
+        <div class="math-container">
+            \[ z^3 = 2^3 \left( \cos (3 \cdot 20^\circ) + i \sin (3 \cdot 20^\circ) \right) = 8 \left( \cos 60^\circ + i \sin 60^\circ \right). \]
+        </div>
+        <p>Підставляємо значення тригонометричних функцій (\( \cos 60^\circ = \frac{1}{2} \), \( \sin 60^\circ = \frac{\sqrt{3}}{2} \)):</p>
+        <div class="math-container">
+            \[ z^3 = 8 \left( \frac{1}{2} + i \frac{\sqrt{3}}{2} \right) = 4 + 4\sqrt{3} \, i. \]
+        </div>
+        <span class="example-icon-end"><i class="fas fa-stop"></i></span>
+        <p><strong>Відповідь:</strong></p>
+        <div class="math-container">
+            \[ z^3 = 4 + 4\sqrt{3} \, i. \]
+        </div>
+    </p>
+           
+</details>
+            <details>
+    <summary>Добування кореня n-го степеня із комплексних чисел у тригонометричній формі</summary>
+   
+        <p>Добування кореня \( n \)-го степеня з комплексного числа \( z \) у тригонометричній формі полягає у знаходженні всіх комплексних чисел \( z_k \), які при піднесенні до \( n \)-го степеня дають число \( z \) (за винятком \( z = 0 \)).</p>
+        <p>Нехай задане комплексне число \( z \) у тригонометричній формі:</p>
+        <div class="math-container">
+            \[ z = r \left( \cos φ + i \sin φ \right), \]
+        </div>
+        <p>де \( r \) – модуль числа, а \( φ \) – його аргумент. Щоб знайти корені \( n \)-го степеня, припустимо, що кожен корінь має вигляд:</p>
+        <div class="math-container">
+            \[ z_k = \sqrt[n]{z} = \sqrt[n]{r \left( \cos φ + i \sin φ \right)} = \rho \left( \cos θ + i \sin θ \right), \]
+        </div>
+        <p>де \( \rho \) – модуль шуканого кореня, а \( θ \) – його аргумент. Щоб визначити \( \rho \) і \( θ \), піднесемо обидві частини рівності до \( n \)-го степеня:</p>
+        <div class="math-container">
+            \[ \left( z_k \right)^n = \left( \sqrt[n]{z} \right)^n \implies r \left( \cos φ + i \sin φ \right) = \left( \rho \left( \cos θ + i \sin θ \right) \right)^n. \]
+        </div>
+        <p>Застосовуючи формулу Муавра, одержуємо:</p>
+        <div class="math-container">
+            \[ r \left( \cos φ + i \sin φ \right) = \rho^n \left( \cos (n θ) + i \sin (n θ) \right). \]
+        </div>
+        <p>Оскільки модулі рівних комплексних чисел, відмінних від нуля, рівні, а аргументи можуть відрізнятися лише на кут \( 2\pi k \), де \( k \) – ціле число, маємо:</p>
+        <div class="math-container">
+            \[ \rho^n = r, \quad n θ = φ + 2\pi k. \]
+        </div>
+        <p>Звідси:</p>
+        <div class="math-container">
+            \[ \rho = \sqrt[n]{r}, \quad θ = \frac{φ + 2\pi k}{n}, \]
+        </div>
+        <p>де \( k = 0, 1, 2, \dots, n-1 \).</p>
+        <p>Зокрема:</p>
+        <ul>
+            <li>при \( k = 0 \), отримаємо \( θ = \frac{φ}{n} \);</li>
+            <li>при \( k = 1 \), отримаємо \( θ = \frac{φ + 2\pi}{n} \);</li>
+            <li>при \( k = 2 \), отримаємо \( θ = \frac{φ + 4\pi}{n} \);</li>
+            <li>\(\dots\)</li>
+            <li>при \( k = n-1 \), отримаємо \( θ = \frac{φ + 2\pi (n-1)}{n} \).</li>
+        </ul>
+        <p>При \( k = n, n+1, n+2 \) і т.д. значення \( θ \) повторюються, оскільки додаються кути, кратні \( 2\pi \). Тому нових коренів ці значення \( k \) не дають.</p>
+        <p>Отже, формула для коренів \( n \)-го степеня має вигляд:</p>
+        <div class="math-container">
+            \[ z_k = \sqrt[n]{r \left( \cos φ + i \sin φ \right)} = \sqrt[n]{r} \left( \cos \frac{φ + 2\pi k}{n} + i \sin \frac{φ + 2\pi k}{n} \right), (2.8) \]
+        </div>
+        <p>де \( k = 0, 1, 2, \dots, n-1 \).</p>
+        <p>Будь-яке ненульове комплексне число \( z \) у тригонометричній формі має рівно \( n \) різних коренів \( n \)-го степеня. Усі ці корені рівномірно розташовані на колі радіуса \( \sqrt[n]{r} \) у комплексній площині, причому кути між сусідніми коренями однакові і становлять \( \frac{2\pi}{n} \). Геометрично для \( n \geq 3 \) вони утворюють правильний \( n \)-кутник, вписаний у коло з центром у початку координат. У випадку \( n = 2 \) два корені лежать на діаметрі кола, і кут між ними дорівнює \( \pi \), що відповідає симетричному розміщенню.</p>
+        <p>
+            <span class="example-inline">Приклад 2.9.</span><span class="example-text"> Добути корені \( \sqrt{z} \) із комплексного числа, де \( z = -1 \).</span>
+        </p>
+        <p style="text-align: center;"><span class="example-inline">Розв’язок:</span></p>
+        <p><span class="example-icon-start"><i class="fas fa-play"></i></span> Ми знаємо, що для спрощення обчислень у комплексних числах приймають \( \sqrt{-1} = i \). Проте, коли йдеться про знаходження коренів рівняння, маються на увазі всі комплексні числа \( z_k \), які при піднесенні до \( n \)-го степеня дорівнюють \( z \). Таким чином, нам потрібно знайти всі корені \( z_k \), для яких \( z_k^2 = -1 \).</p>
+        <p>Спочатку запишемо \( z = -1 \) у тригонометричній формі.</p>
+        <p>Модуль:</p>
+        <div class="math-container">
+            \[ r = \sqrt{(-1)^2 + 0^2} = \sqrt{1} = 1. \]
+        </div>
+        <p>Аргумент: радіус-вектор комплексного числа \( z \) напрямлений протилежно осі \( x \) (\( a = -1 < 0, b = 0 \)), тому \( φ = \pi \).</p>
+        <p>Отже:</p>
+        <div class="math-container">
+            \[ z = \cos \pi + i \sin \pi. \]
+        </div>
+        <p>За формулою кореня \( n \)-го степеня (2.8), застосуємо її до випадку квадратного кореня (\( n = 2 \)):</p>
+        <div class="math-container">
+            \[ \sqrt{z} = \sqrt{r} \left( \cos \frac{φ + 2\pi k}{2} + i \sin \frac{φ + 2\pi k}{2} \right), \]
+        </div>
+        <p>де \( k = 0, 1 \) (два значення, оскільки шукаємо корінь другого степеня).</p>
+        <p>Підставимо значення \( r = 1 \) та \( φ = \pi \):</p>
+        <div class="math-container">
+            \[ \sqrt{z} = \left( \cos \frac{\pi + 2\pi k}{2} + i \sin \frac{\pi + 2\pi k}{2} \right). \]
+        </div>
+        <p>Обчислимо корені для кожного \( k \):</p>
+        <p>При \( k = 0 \), отримаємо:</p>
+        <div class="math-container">
+            \[ z_0 = \cos \frac{\pi}{2} + i \sin \frac{\pi}{2} = 0 + i = i. \]
+        </div>
+        <p>При \( k = 1 \), отримаємо:</p>
+        <div class="math-container">
+            \[ z_1 = \cos \frac{\pi + 2\pi}{2} + i \sin \frac{\pi + 2\pi}{2} = \cos \frac{3\pi}{2} + i \sin \frac{3\pi}{2} = 0 - i = -i. \]
+        </div>
+        <p>Геометрична інтерпретація (рис.2.14): корені \( z_0 \), \( z_1 \) лежать на колі \( r = 1 \) з аргументами \( φ_0 = \frac{\pi}{2} \), \( φ_1 = \frac{3\pi}{2} \). Кут між ними становить \( \pi \) радіан (або \( 180^\circ \)), що відповідає двом точкам на діаметрі кола.</p>
+<img src="static/figure2.14.jpg" alt="Рисунок 2.14" class="figure figure-2-14" />
+
+        <p>Таким чином:</p>
+        <div class="math-container">
+            \[ \sqrt{-1} = \pm i. \]
+        </div>
+        <span class="example-icon-end"><i class="fas fa-stop"></i></span>
+        <p><strong>Відповідь:</strong></p>
+        <div class="math-container">
+            \[ \sqrt{-1} = \pm i. \]
+        </div>
+        <p>
+            <span class="example-inline">Приклад 2.10.</span><span class="example-text"> Добути корені \( \sqrt[3]{z} \) із комплексного числа, де \( z = 1 - i \).</span>
+        </p>
+        <p style="text-align: center;"><span class="example-inline">Розв’язок:</span></p>
+        <p><span class="example-icon-start"><i class="fas fa-play"></i></span> Спочатку переведемо число \( z = 1 - i \) у тригонометричну форму.</p>
+        <p>Модуль комплексного числа \( z \):</p>
+        <div class="math-container">
+            \[ r = \sqrt{1^2 + (-1)^2} = \sqrt{1 + 1} = \sqrt{2}. \]
+        </div>
+        <p>Комплексне число \( z \) розташоване в IV чверті (\( a = 1 > 0, b = -1 < 0 \)), тому його головне значення аргументу обчислюємо як:</p>
+        <div class="math-container">
+            \[ φ = \arctan \left( \frac{-1}{1} \right) = -\arctan 1 = -\frac{\pi}{4}. \]
+        </div>
+        <p>Отже, тригонометрична форма числа \( z \) має вигляд:</p>
+        <div class="math-container">
+            \[ z = \sqrt{2} \left( \cos \left( -\frac{\pi}{4} \right) + i \sin \left( -\frac{\pi}{4} \right) \right). \]
+        </div>
+        <p>Застосуємо формулу для добування кореня \( n \)-го степеня (2.8) для знаходження кореня третього степеня (\( n = 3 \)):</p>
+        <div class="math-container">
+            \[ \sqrt[3]{z} = \sqrt[3]{r} \left( \cos \frac{φ + 2\pi k}{3} + i \sin \frac{φ + 2\pi k}{3} \right), \]
+        </div>
+        <p>де \( k = 0, 1, 2 \) (три значення, оскільки шукаємо корінь третього степеня).</p>
+        <p>Підставимо значення \( r = \sqrt{2} \) та \( φ = -\frac{\pi}{4} \):</p>
+        <div class="math-container">
+            \[ \sqrt[3]{z} = \sqrt[3]{\sqrt{2}} \left( \cos \frac{-\frac{\pi}{4} + 2\pi k}{3} + i \sin \frac{-\frac{\pi}{4} + 2\pi k}{3} \right) = \sqrt[6]{2} \left( \cos \frac{-\pi/4 + 2\pi k}{3} + i \sin \frac{-\pi/4 + 2\pi k}{3} \right). \]
+        </div>
+        <p>Обчислимо корені для кожного \( k \):</p>
+        <p>При \( k = 0 \), отримаємо:</p>
+        <div class="math-container">
+            \[ z_0 = \sqrt[6]{2} \left( \cos \frac{-\pi/4}{3} + i \sin \frac{-\pi/4}{3} \right) = \sqrt[6]{2} \left( \cos \left( -\frac{\pi}{12} \right) + i \sin \left( -\frac{\pi}{12} \right) \right) = \sqrt[6]{2} \left( \cos \frac{\pi}{12} - i \sin \frac{\pi}{12} \right). \]
+        </div>
+        <p>При \( k = 1 \), отримаємо:</p>
+        <div class="math-container">
+            \[ z_1 = \sqrt[6]{2} \left( \cos \frac{-\pi/4 + 2\pi}{3} + i \sin \frac{-\pi/4 + 2\pi}{3} \right) = \sqrt[6]{2} \left( \cos \frac{7\pi}{12} + i \sin \frac{7\pi}{12} \right). \]
+        </div>
+        <p>При \( k = 2 \), отримаємо:</p>
+        <div class="math-container">
+            \[ z_2 = \sqrt[6]{2} \left( \cos \frac{-\pi/4 + 4\pi}{3} + i \sin \frac{-\pi/4 + 4\pi}{3} \right) = \sqrt[6]{2} \left( \cos \frac{15\pi}{12} + i \sin \frac{15\pi}{12} \right) = \sqrt[6]{2} \left( \cos \frac{5\pi}{4} + i \sin \frac{5\pi}{4} \right). \]
+        </div>
+        <p>Геометрична інтерпретація коренів \( z_0 \), \( z_1 \), \( z_2 \) (рис. 2.15) полягає в тому, що ці три числа є вершинами правильного трикутника, рівномірно розташованими на колі радіуса \( r = \sqrt[6]{2} \) з центром у початку координат. Аргументи коренів:</p>
+        <div class="math-container">
+            \[ φ_0 = -\frac{\pi}{12}, \quad φ_1 = \frac{7\pi}{12}, \quad φ_2 = \frac{5\pi}{4}. \]
+        </div>
+            <img src="static/figure2.15.jpg" alt="Рисунок 2.15" class="figure figure-2-15" />
+
+        <p>Кути між сусідніми коренями становлять \( \frac{2\pi}{3} \) радіан (або \( 120^\circ \)), що відповідає рівносторонньому трикутнику.</p>
+        <span class="example-icon-end"><i class="fas fa-stop"></i></span>
+        <p><strong>Відповідь:</strong></p>
+        <div class="math-container">
+            \[ \sqrt[6]{2} \left( \cos \frac{\pi}{12} - i \sin \frac{\pi}{12} \right), \quad \sqrt[6]{2} \left( \cos \frac{7\pi}{12} + i \sin \frac{7\pi}{12} \right), \quad \sqrt[6]{2} \left( \cos \frac{5\pi}{4} + i \sin \frac{5\pi}{4} \right). \]
+        </div>
+    </p>
+    
+</details>
+        </div>
+    </div>
+
+   <div id="videoModal" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeVideoBtn">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="video-card-container">
+            <div class="video-card" data-video="1" data-url="https://www.youtube.com/embed/bJzUvzzmgBc">
+                <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
+                <h3>Множення комплексних чисел у тригонометричній формі</h3>
+            </div>
+            <div class="video-card" data-video="2" data-url="https://www.youtube.com/embed/tdQY16rq4Ks">
+                <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
+                <h3>Ділення комплексних чисел у тригонометричній формі</h3>
+            </div>
+            <div class="video-card" data-video="3" data-url="https://www.youtube.com/embed/h5gpaNx-Y9c">
+                <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
+                <h3>Піднесення до степеня комплексних чисел в тригонометричній формі</h3>
+            </div>
+            <div class="video-card" data-video="4" data-url="https://www.youtube.com/embed/pv1vdwLapK4">
+                <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
+                <h3>Добування кореня n-го степеня із комплексних чисел в тригонометричній формі</h3>
+            </div>
+        </div>
+    </div>
+</div>
+           <div id="videoPlayerModal1" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeVideoPlayerBtn1">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="video-player-container">
+            <iframe id="youtubePlayer1" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+<div id="videoPlayerModal2" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeVideoPlayerBtn2">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="video-player-container">
+            <iframe id="youtubePlayer2" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+<div id="videoPlayerModal3" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeVideoPlayerBtn3">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="video-player-container">
+            <iframe id="youtubePlayer3" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+<div id="videoPlayerModal4" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeVideoPlayerBtn4">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="video-player-container">
+            <iframe id="youtubePlayer4" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+  <div id="questionsModal" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeQuestionsBtn">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">
+                    <p>Які дії можна виконувати з комплексними числами в тригонометричній формі?</p>
+                </div>
+                <div class="card-back">
+                    <p>У тригонометричній формі зручно виконувати множення, ділення, піднесення до степеня та добування кореня. Додавання та віднімання виконуються зручніше в алгебраїчній формі і тут не розглядаються детально.</p>
+                </div>
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">
+                    <p>Як перемножити два комплексні числа у тригонометричній формі?</p>
+                </div>
+                <div class="card-back">
+                    <p>Модулі множаться, аргументи додаються.</p>
+    <p>Якщо \( z_1 = r_1 (\cos \phi_1 + i \sin \phi_1), z_2 = r_2 (\cos \phi_2 + i \sin \phi_2) \), то \( z_1 \cdot z_2 = r_1 r_2 (\cos (\phi_1 + \phi_2) + i \sin (\phi_1 + \phi_2)) \).</p>
+                </div>
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">
+                    <p>Як поділити два комплексні числа у тригонометричній формі?</p>
+                </div>
+                <div class="card-back">
+                    <p>Модулі діляться, аргументи віднімаються.</p>
+   <p> Якщо \( z_1 = r_1 (\cos \phi_1 + i \sin \phi_1), z_2 = r_2 (\cos \phi_2 + i \sin \phi_2) \), то \( \frac{z_1}{z_2} = \frac{r_1}{r_2} (\cos (\phi_1 - \phi_2) + i \sin (\phi_1 - \phi_2)) \).</p>
+                </div>
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">
+                    <p>Записати формулу Муавра.</p>
+                </div>
+                <div class="card-back">
+                    <p>Формула Муавра: \( z^n = r^n (\cos n\phi + i \sin n\phi) \), де \( z = r (\cos \phi + i \sin \phi), n \in \mathbb{N} \).</p>
+                </div>
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">
+                    <p>Що таке корінь \( n \)-го степеня з комплексного числа \( z \)?</p>
+                </div>
+                <div class="card-back">
+    <p>Це таке комплексне число \( z_k \), яке при піднесенні до степеня \( n \) дає початкове число \( z \).</p>
+    <p>Формула коренів:</p>
+    <p>\( z_k = \sqrt[n]{r} \left( \cos \frac{\phi + 2\pi k}{n} + i \sin \frac{\phi + 2\pi k}{n} \right) \)</p>
+    <p>\( k = 0, 1, 2, \dots, n-1 \)</p>
+</div>
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">
+                    <p>Скільки коренів \( n \)-го степеня має кожне комплексне число, відмінне від нуля?</p>
+                </div>
+                <div class="card-back">
+                    <p>Будь-яке ненульове комплексне число має рівно \( n \) різних коренів \( n \)-го степеня, рівномірно розташованих на колі радіуса \( \sqrt[n]{r} \) у комплексній площині.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+   <div id="trainerModal" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeTrainerBtn">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div id="currentQuestionIndicator" class="question-indicator"></div>
+        <div class="trainer-content">
+            <div id="trainerQuestion" class="trainer-question"></div>
+            <div id="trainerOptions" class="trainer-options"></div>
+            <button id="submitAnswer" class="submit-answer-btn" disabled>Відповісти</button>
+        </div>
+        <div id="toastContainer"></div>
+    </div>
+</div>
+
+<script>
+const modals = {
+    theory: document.getElementById('theoryModal'),
+    video: document.getElementById('videoModal'),
+    questions: document.getElementById('questionsModal'),
+    trainer: document.getElementById('trainerModal'),
+    videoPlayer1: document.getElementById('videoPlayerModal1'),
+    videoPlayer2: document.getElementById('videoPlayerModal2'),
+    videoPlayer3: document.getElementById('videoPlayerModal3'),
+    videoPlayer4: document.getElementById('videoPlayerModal4')
+};
+
+const buttons = {
+    openTheory: document.getElementById('openTheoryBtn'),
+    openVideo: document.getElementById('openVideoBtn'),
+    openQuestions: document.getElementById('openQuestionsBtn'),
+    openTrainer: document.getElementById('openTrainerBtn'),
+    closeTheory: document.getElementById('closeTheoryBtn'),
+    closeVideo: document.getElementById('closeVideoBtn'),
+    closeQuestions: document.getElementById('closeQuestionsBtn'),
+    closeTrainer: document.getElementById('closeTrainerBtn'),
+    closeVideoPlayer1: document.getElementById('closeVideoPlayerBtn1'),
+    closeVideoPlayer2: document.getElementById('closeVideoPlayerBtn2'),
+    closeVideoPlayer3: document.getElementById('closeVideoPlayerBtn3'),
+    closeVideoPlayer4: document.getElementById('closeVideoPlayerBtn4')
+};
+
+const youtubePlayers = {
+    1: document.getElementById('youtubePlayer1'),
+    2: document.getElementById('youtubePlayer2'),
+    3: document.getElementById('youtubePlayer3'),
+    4: document.getElementById('youtubePlayer4')
+};
+
+const overlay = document.getElementById('modalOverlay');
+const trainerQuestion = document.getElementById('trainerQuestion');
+const trainerOptions = document.getElementById('trainerOptions');
+const submitButton = document.getElementById('submitAnswer');
+const toastContainer = document.getElementById('toastContainer');
+const currentQuestionIndicator = document.getElementById('currentQuestionIndicator');
+
+let scrollPosition = 0;
+let currentQuestionIndex = 0;
+let selectedOption = null;
+let currentQuestionData = null;
+let secondQuestionOrder = [];
+let thirdQuestionOrder = [];
+let fourthQuestionOrder = [];
+let fifthQuestionOrder = [];
+let sixthQuestionOrder = []; // Added for Question 6
+let currentSecondQuestionIdx = 0;
+let currentThirdQuestionIdx = 0;
+let currentFourthQuestionIdx = 0;
+let currentFifthQuestionIdx = 0;
+let currentSixthQuestionIdx = 0; // Added for Question 6
+
+// List of 12 examples for Question 2
+const secondQuestionList = [
+    {
+        question: `3\\left(\\cos \\frac{\\pi}{6} + i \\sin \\frac{\\pi}{6}\\right) \\cdot 2\\left(\\cos \\frac{\\pi}{4} + i \\sin \\frac{\\pi}{4}\\right)`,
+        options: [
+            `6\\left(\\cos \\frac{\\pi}{24} + i \\sin \\frac{\\pi}{24}\\right)`,
+            `6\\left(\\cos \\frac{\\pi}{10} + i \\sin \\frac{\\pi}{10}\\right)`,
+            `6\\left(\\cos \\frac{5\\pi}{12} + i \\sin \\frac{5\\pi}{12}\\right)`,
+            `5\\left(\\cos \\frac{5\\pi}{12} + i \\sin \\frac{5\\pi}{12}\\right)`
+        ],
+        correctOption: 2,
+        correctAnswer: `6\\left(\\cos \\frac{5\\pi}{12} + i \\sin \\frac{5\\pi}{12}\\right)`
+    },
+    {
+        question: `5\\left(\\cos \\frac{5\\pi}{6} + i \\sin \\frac{5\\pi}{6}\\right) \\cdot \\frac{1}{5}\\left(\\cos \\frac{3\\pi}{4} + i \\sin \\frac{3\\pi}{4}\\right)`,
+        options: [
+            `\\cos \\frac{15\\pi}{24} + i \\sin \\frac{15\\pi}{24}`,
+            `\\cos \\frac{8\\pi}{10} + i \\sin \\frac{8\\pi}{10}`,
+            `\\cos \\frac{19\\pi}{12} - i \\sin \\frac{19\\pi}{12}`,
+            `\\cos \\frac{19\\pi}{12} + i \\sin \\frac{19\\pi}{12}`
+        ],
+        correctOption: 3,
+        correctAnswer: `\\cos \\frac{\\pi}{12} + i \\sin \\frac{\\pi}{12}`
+    },
+    {
+        question: `\\left(\\cos \\left(-\\frac{\\pi}{6}\\right) + i \\sin \\left(-\\frac{\\pi}{6}\\right)\\right) \\cdot 4\\left(\\cos \\frac{\\pi}{4} + i \\sin \\frac{\\pi}{4}\\right)`,
+        options: [
+            `4\\left(\\cos \\frac{\\pi}{12} + i \\sin \\frac{\\pi}{12}\\right)`,
+            `4\\left(\\cos \\left(-\\frac{\\pi}{24}\\right) + i \\sin \\left(-\\frac{\\pi}{24}\\right)\\right)`,
+            `\\cos \\frac{\\pi}{12} + i \\sin \\frac{\\pi}{12}`,
+            `\\cos \\left(-\\frac{\\pi}{12}\\right) + i \\sin \\left(-\\frac{\\pi}{12}\\right)`
+        ],
+        correctOption: 0,
+        correctAnswer: `4\\left(\\cos \\frac{\\pi}{12} + i \\sin \\frac{\\pi}{12}\\right)`
+    },
+    {
+        question: `3\\left(\\cos \\left(-\\frac{\\pi}{6}\\right) + i \\sin \\left(-\\frac{\\pi}{6}\\right)\\right) \\cdot 2\\left(\\cos \\left(-\\frac{\\pi}{4}\\right) + i \\sin \\left(-\\frac{\\pi}{4}\\right)\\right)`,
+        options: [
+            `6\\left(\\cos \\frac{\\pi}{12} - i \\sin \\frac{\\pi}{12}\\right)`,
+            `6\\left(\\cos \\frac{\\pi}{12} + i \\sin \\frac{\\pi}{12}\\right)`,
+            `5\\left(\\cos \\left(-\\frac{\\pi}{12}\\right) + i \\sin \\left(-\\frac{\\pi}{12}\\right)\\right)`,
+            `6\\left(\\cos \\left(-\\frac{\\pi}{12}\\right) + i \\sin \\left(-\\frac{\\pi}{12}\\right)\\right)`
+        ],
+        correctOption: 3,
+        correctAnswer: `6\\left(\\cos \\left(-\\frac{\\pi}{12}\\right) + i \\sin \\left(-\\frac{\\pi}{12}\\right)\\right)`
+    },
+    {
+        question: `2\\left(\\cos \\frac{\\pi}{14} + i \\sin \\frac{\\pi}{14}\\right) \\cdot \\frac{1}{2}\\left(\\cos \\frac{\\pi}{7} + i \\sin \\frac{\\pi}{7}\\right)`,
+        options: [
+            `\\cos \\frac{3\\pi}{14} + i \\sin \\frac{3\\pi}{14}`,
+            `\\cos \\frac{\\pi}{98} + i \\sin \\frac{\\pi}{98}`,
+            `\\cos \\frac{\\pi}{14} + i \\sin \\frac{\\pi}{14}`,
+            `\\cos \\frac{\\pi}{21} + i \\sin \\frac{\\pi}{21}`
+        ],
+        correctOption: 0,
+        correctAnswer: `\\cos \\frac{3\\pi}{14} + i \\sin \\frac{3\\pi}{14}`
+    },
+    {
+        question: `\\frac{1}{3}\\left(\\cos \\frac{\\pi}{5} + i \\sin \\frac{\\pi}{5}\\right) \\cdot 6\\left(\\cos \\left(-\\frac{2\\pi}{5}\\right) + i \\sin \\left(-\\frac{2\\pi}{5}\\right)\\right)`,
+        options: [
+            `\\cos \\left(-\\frac{\\pi}{5}\\right) + i \\sin \\left(-\\frac{\\pi}{5}\\right)`,
+            `2\\left(\\cos \\frac{2\\pi}{25} + i \\sin \\frac{2\\pi}{25}\\right)`,
+            `\\cos \\left(-\\pi\\right) + i \\sin \\left(-\\pi\\right)`,
+            `2\\left(\\cos \\left(-\\frac{\\pi}{5}\\right) + i \\sin \\left(-\\frac{\\pi}{5}\\right)\\right)`
+        ],
+        correctOption: 4,
+        correctAnswer: `2\\left(\\cos \\left(-\\frac{\\pi}{5}\\right) + i \\sin \\left(-\\frac{\\pi}{5}\\right)\\right)`
+    },
+    {
+        question: `6\\left(\\cos \\left(-\\frac{\\pi}{8}\\right) + i \\sin \\left(-\\frac{\\pi}{8}\\right)\\right) \\cdot 3\\left(\\cos \\left(-\\frac{3\\pi}{16}\\right) + i \\sin \\left(-\\frac{3\\pi}{16}\\right)\\right)`,
+        options: [
+            `\\cos \\left(-\\frac{5\\pi}{16}\\right) + i \\sin \\left(-\\frac{5\\pi}{16}\\right)`,
+            `18\\left(\\cos \\left(-\\frac{5\\pi}{16}\\right) + i \\sin \\left(-\\frac{5\\pi}{16}\\right)\\right)`,
+            `9\\left(\\cos \\frac{5\\pi}{16} + i \\sin \\frac{5\\pi}{16}\\right)`,
+            `18\\left(\\cos \\frac{5\\pi}{16} + i \\sin \\frac{5\\pi}{16}\\right)`
+        ],
+        correctOption: 1,
+        correctAnswer: `18\\left(\\cos \\left(-\\frac{5\\pi}{16}\\right) + i \\sin \\left(-\\frac{5\\pi}{16}\\right)\\right)`
+    },
+    {
+        question: `\\left(\\cos \\frac{\\pi}{10} + i \\sin \\frac{\\pi}{10}\\right) \\cdot 2\\left(\\cos \\frac{\\pi}{5} + i \\sin \\frac{\\pi}{5}\\right)`,
+        options: [
+            `3\\left(\\cos \\frac{3\\pi}{10} + i \\sin \\frac{3\\pi}{10}\\right)`,
+            `2\\left(\\cos \\frac{\\pi}{50} + i \\sin \\frac{\\pi}{50}\\right)`,
+            `2\\left(\\cos \\frac{3\\pi}{10} + i \\sin \\frac{3\\pi}{10}\\right)`,
+            `\\cos \\frac{3\\pi}{10} + i \\sin \\frac{3\\pi}{10}`
+        ],
+        correctOption: 2,
+        correctAnswer: `2\\left(\\cos \\frac{3\\pi}{10} + i \\sin \\frac{3\\pi}{10}\\right)`
+    },
+    {
+        question: `2\\left(\\cos \\frac{\\pi}{10} + i \\sin \\frac{\\pi}{10}\\right) \\cdot 7\\left(\\cos \\frac{\\pi}{10} + i \\sin \\frac{\\pi}{10}\\right)`,
+        options: [
+            `9\\left(\\cos \\frac{\\pi}{5} + i \\sin \\frac{\\pi}{5}\\right)`,
+            `14\\left(\\cos \\frac{\\pi}{5} + i \\sin \\frac{\\pi}{5}\\right)`,
+            `14\\left(\\cos \\frac{\\pi}{20} + i \\sin \\frac{\\pi}{20}\\right)`,
+            `9\\left(\\cos \\frac{\\pi}{100} + i \\sin \\frac{\\pi}{100}\\right)`
+        ],
+        correctOption: 1,
+        correctAnswer: `14\\left(\\cos \\frac{\\pi}{5} + i \\sin \\frac{\\pi}{5}\\right)`
+    },
+    {
+        question: `10\\left(\\cos \\frac{\\pi}{11} + i \\sin \\frac{\\pi}{11}\\right) \\cdot 10\\left(\\cos \\frac{10\\pi}{11} + i \\sin \\frac{10\\pi}{11}\\right)`,
+        options: [
+            `20\\left(\\cos \\frac{11\\pi}{22} + i \\sin \\frac{11\\pi}{22}\\right)`,
+            `100\\left(\\cos \\frac{11\\pi}{22} + i \\sin \\frac{11\\pi}{22}\\right)`,
+            `20\\left(\\cos \\pi + i \\sin \\pi\\right)`,
+            `100\\left(\\cos \\pi + i \\sin \\pi\\right)`
+        ],
+        correctOption: 3,
+        correctAnswer: `100\\left(\\cos \\pi + i \\sin \\pi\\right)`
+    },
+    {
+        question: `10\\left(\\cos \\frac{\\pi}{13} + i \\sin \\frac{\\pi}{13}\\right) \\cdot \\frac{1}{5}\\left(\\cos \\left(-\\frac{\\pi}{13}\\right) + i \\sin \\left(-\\frac{\\pi}{13}\\right)\\right)`,
+        options: [
+            `2\\left(\\cos \\frac{\\pi}{26} - i \\sin \\frac{\\pi}{26}\\right)`,
+            `10 \\frac{1}{5}\\left(\\cos 0 + i \\sin 0\\right)`,
+            `2\\left(\\cos 0 + i \\sin 0\\right)`,
+            `10 \\frac{1}{5}\\left(\\cos \\frac{\\pi}{26} - i \\sin \\frac{\\pi}{26}\\right)`
+        ],
+        correctOption: 2,
+        correctAnswer: `2\\left(\\cos 0 + i \\sin 0\\right)`
+    },
+    {
+        question: `5\\left(\\cos \\frac{\\pi}{14} + i \\sin \\frac{\\pi}{14}\\right) \\cdot 3\\left(\\cos \\frac{\\pi}{7} + i \\sin \\frac{\\pi}{7}\\right)`,
+        options: [
+            `8\\left(\\cos \\frac{3\\pi}{21} + i \\sin \\frac{3\\pi}{21}\\right)`,
+            `15\\left(\\cos \\frac{3\\pi}{21} + i \\sin \\frac{3\\pi}{21}\\right)`,
+            `8\\left(\\cos \\frac{3\\pi}{14} + i \\sin \\frac{3\\pi}{14}\\right)`,
+            `15\\left(\\cos \\frac{3\\pi}{14} + i \\sin \\frac{3\\pi}{14}\\right)`
+        ],
+        correctOption: 3,
+        correctAnswer: `15\\left(\\cos \\frac{3\\pi}{14} + i \\sin \\frac{3\\pi}{14}\\right)`
+    }
+];
+
+// List of 14 examples for Question 3
+const thirdQuestionList = [
+    {
+        question: `\\frac{1}{4}\\left(\\cos 20^\\circ + i \\sin 20^\\circ\\right) \\cdot 8\\left(\\cos 70^\\circ + i \\sin 70^\\circ\\right)`,
+        options: [
+            `2 + i`,
+            `2`,
+            `2i`,
+            `i`
+        ],
+        correctOption: 3,
+        correctAnswer: `2i`
+    },
+    {
+        question: `2\\left(\\cos \\frac{\\pi}{6} + i \\sin \\frac{\\pi}{6}\\right) \\cdot 3\\left(\\cos \\frac{\\pi}{12} + i \\sin \\frac{\\pi}{12}\\right)`,
+        options: [
+            `3\\sqrt{2} - 3\\sqrt{2} i`,
+            `6 + 6i`,
+            `3\\sqrt{2} + 3\\sqrt{2} i`,
+            `6 - 6i`
+        ],
+        correctOption: 2,
+        correctAnswer: `3\\sqrt{2} + 3\\sqrt{2} i`
+    },
+    {
+        question: `4\\left(\\cos 10^\\circ + i \\sin 10^\\circ\\right) \\cdot 2\\left(\\cos 35^\\circ + i \\sin 35^\\circ\\right)`,
+        options: [
+            `4 + 4i`,
+            `4\\sqrt{2} - 4\\sqrt{2} i`,
+            `4 - 4i`,
+            `4\\sqrt{2} + 4\\sqrt{2} i`
+        ],
+        correctOption: 3,
+        correctAnswer: `4\\sqrt{2} + 4\\sqrt{2} i`
+    },
+    {
+        question: `6\\left(\\cos \\frac{\\pi}{4} + i \\sin \\frac{\\pi}{4}\\right) \\cdot \\frac{1}{3}\\left(\\cos \\frac{\\pi}{2} + i \\sin \\frac{\\pi}{2}\\right)`,
+        options: [
+            `-\\sqrt{2} + \\sqrt{2} i`,
+            `\\sqrt{2} + \\sqrt{2} i`,
+            `-\\sqrt{2} - \\sqrt{2} i`,
+            `-2 + 2i`
+        ],
+        correctOption: 1,
+        correctAnswer: `-\\sqrt{2} + \\sqrt{2} i`
+    },
+    {
+        question: `6\\left(\\cos \\frac{\\pi}{8} + i \\sin \\frac{\\pi}{8}\\right) \\cdot \\left(\\cos \\frac{5\\pi}{24} + i \\sin \\frac{5\\pi}{24}\\right)`,
+        options: [
+            `3 - 3\\sqrt{3} i`,
+            `3 + 3\\sqrt{3} i`,
+            `3 + 3i`,
+            `3 - 3i`
+        ],
+        correctOption: 1,
+        correctAnswer: `3 + 3\\sqrt{3} i`
+    },
+    {
+        question: `6\\left(\\cos \\left(-135^\\circ\\right) + i \\sin \\left(-135^\\circ\\right)\\right) \\cdot \\sqrt{3}\\left(\\cos \\left(-15^\\circ\\right) + i \\sin \\left(-15^\\circ\\right)\\right)`,
+        options: [
+            `-9 - 3i`,
+            `9 - 3\\sqrt{3} i`,
+            `-9 + 3\\sqrt{3} i`,
+            `-9 - 3\\sqrt{3} i`
+        ],
+        correctOption: 2,
+        correctAnswer: `-9 - 3\\sqrt{3} i`
+    },
+    {
+        question: `4\\left(\\cos 150^\\circ + i \\sin 150^\\circ\\right) \\cdot \\frac{1}{6}\\left(\\cos 120^\\circ + i \\sin 120^\\circ\\right)`,
+        options: [
+            `2\\sqrt{3} i`,
+            `-2\\sqrt{3} i`,
+            `-\\frac{2}{3} i`,
+            `\\frac{2}{3} i`
+        ],
+        correctOption: 3,
+        correctAnswer: `-\\frac{2}{3} i`
+    },
+    {
+        question: `2\\left(\\cos \\frac{2\\pi}{3} + i \\sin \\frac{2\\pi}{3}\\right) \\cdot \\left(\\cos \\left(-\\frac{\\pi}{2}\\right) + i \\sin \\left(-\\frac{\\pi}{2}\\right)\\right)`,
+        options: [
+            `\\sqrt{3} + i`,
+            `\\sqrt{3} - i`,
+            `-\\sqrt{3} + i`,
+            `-\\sqrt{3} - i`
+        ],
+        correctOption: 2,
+        correctAnswer: `\\sqrt{3} + i`
+    },
+    {
+        question: `\\sqrt{6}\\left(\\cos 89^\\circ + i \\sin 89^\\circ\\right) \\cdot \\sqrt{3}\\left(\\cos 91^\\circ + i \\sin 91^\\circ\\right)`,
+        options: [
+            `3\\sqrt{2}`,
+            `-3\\sqrt{2} i`,
+            `-3\\sqrt{2}`,
+            `3\\sqrt{2} i`
+        ],
+        correctOption: 2,
+        correctAnswer: `-3\\sqrt{2}`
+    },
+    {
+        question: `7\\left(\\cos \\frac{4\\pi}{3} + i \\sin \\frac{4\\pi}{3}\\right) \\cdot 3\\left(\\cos \\frac{2\\pi}{3} + i \\sin \\frac{2\\pi}{3}\\right)`,
+        options: [
+            `-21i`,
+            `-21`,
+            `21i`,
+            `21`
+        ],
+        correctOption: 1,
+        correctAnswer: `21`
+    },
+    {
+        question: `\\left(\\cos 20^\\circ + i \\sin 20^\\circ\\right) \\cdot 6\\left(\\cos 25^\\circ + i \\sin 25^\\circ\\right)`,
+        options: [
+            `\\frac{\\sqrt{2}}{2} + \\frac{\\sqrt{2}}{2} i`,
+            `3\\sqrt{2} + 3\\sqrt{2} i`,
+            `\\sqrt{2} + \\sqrt{2} i`,
+            `\\frac{3}{\\sqrt{2}} + \\frac{3}{\\sqrt{2}} i`
+        ],
+        correctOption: 1,
+        correctAnswer: `3\\sqrt{2} + 3\\sqrt{2} i`
+    },
+    {
+        question: `\\left(\\cos 60^\\circ + i \\sin 60^\\circ\\right) \\cdot \\left(\\cos 120^\\circ + i \\sin 120^\\circ\\right)`,
+        options: [
+            `-i`,
+            `i`,
+            `-1`,
+            `1`
+        ],
+        correctOption: 2,
+        correctAnswer: `-1`
+    },
+    {
+        question: `\\left(\\cos \\left(-120^\\circ\\right) + i \\sin \\left(-120^\\circ\\right)\\right) \\cdot \\left(\\cos \\left(-150^\\circ\\right) + i \\sin \\left(-150^\\circ\\right)\\right)`,
+        options: [
+            `i`,
+            `-1`,
+            `-i`,
+            `1`
+        ],
+        correctOption: 1,
+        correctAnswer: `-1`
+    },
+    {
+       question: `2\\left(\\cos \\frac{\\pi}{4} + i \\sin \\frac{\\pi}{4}\\right) \\cdot \\left(\\cos \\frac{\\pi}{2} + i \\sin \\frac{\\pi}{2}\\right)`,
+        options: [
+            `\\sqrt{2} - \\sqrt{2} i`,
+            `-\\sqrt{2} + \\sqrt{2} i`,
+            `-\\sqrt{2} - \\sqrt{2} i`,
+            `\\sqrt{2} + \\sqrt{2} i`
+        ],
+        correctOption: 2,
+        correctAnswer: `-\\sqrt{2}+\\sqrt{2} i`
+    }
+];
+// List of 13 examples for Question 4
+const fourthQuestionList = [
+    {
+        question: `6\\left(\\cos 80^\\circ + i \\sin 80^\\circ\\right) : 3\\left(\\cos 35^\\circ + i \\sin 35^\\circ\\right)`,
+        options: [
+            `2 - 2i`,
+            `\\sqrt{2} - \\sqrt{2} i`,
+            `2 + 2i`,
+            `\\sqrt{2} + \\sqrt{2} i`
+        ],
+        correctOption: 2,
+        correctAnswer: `\\sqrt{2} + \\sqrt{2} i`
+    },
+    {
+        question: `2\\left(\\cos 100^\\circ + i \\sin 100^\\circ\\right) : 4\\left(\\cos 70^\\circ + i \\sin 70^\\circ\\right)`,
+        options: [
+            `\\frac{\\sqrt{3}}{4} + \\frac{1}{4} i`,
+            `\\frac{1}{2} + \\frac{1}{2} i`,
+            `\\frac{\\sqrt{3}}{4} - \\frac{1}{4} i`,
+            `\\frac{1}{2} - \\frac{1}{2} i`
+        ],
+        correctOption: 3,
+        correctAnswer: `\\frac{\\sqrt{3}}{4} + \\frac{1}{4} i`
+    },
+    {
+        question: `\\sqrt{6}\\left(\\cos 210^\\circ + i \\sin 210^\\circ\\right) : \\sqrt{3}\\left(\\cos 90^\\circ + i \\sin 90^\\circ\\right)`,
+        options: [
+            `\\frac{\\sqrt{2}}{2} - \\frac{\\sqrt{6}}{2} i`,
+            `-\\frac{\\sqrt{2}}{2} - \\frac{\\sqrt{6}}{2} i`,
+            `-\\frac{\\sqrt{2}}{2} + \\frac{\\sqrt{6}}{2} i`,
+            `\\frac{\\sqrt{2}}{2} + \\frac{\\sqrt{6}}{2} i`
+        ],
+        correctOption: 0,
+        correctAnswer: `-\\frac{\\sqrt{2}}{2} + \\frac{\\sqrt{6}}{2} i`
+    },
+    {
+        question: `10\\left(\\cos 105^\\circ + i \\sin 105^\\circ\\right) : 5\\left(\\cos 135^\\circ + i \\sin 135^\\circ\\right)`,
+        options: [
+            `2 - 2i`,
+            `\\sqrt{3} - i`,
+            `-\\sqrt{3} + i`,
+            `\\sqrt{3} + i`
+        ],
+        correctOption: 0,
+        correctAnswer:  `\\sqrt{3} - i`
+    },
+    {
+        question: `4\\left(\\cos 75^\\circ + i \\sin 75^\\circ\\right) : \\frac{1}{2}\\left(\\cos \\left(-15^\\circ\\right) + i \\sin \\left(-15^\\circ\\right)\\right)`,
+        options: [
+            `2 - 2i`,
+            `8i`,
+            `-8i`,
+            `2 + 2i`
+        ],
+        correctOption: 1,
+        correctAnswer: `8i`
+    },
+    {
+        question: `6\\left(\\cos \\left(-\\frac{3\\pi}{4}\\right) + i \\sin \\left(-\\frac{3\\pi}{4}\\right)\\right) : 3\\left(\\cos \\left(-\\frac{\\pi}{12}\\right) + i \\sin \\left(-\\frac{\\pi}{12}\\right)\\right)`,
+        options: [
+            `-2 - 2\\sqrt{3} i`,
+            `1 + \\sqrt{3} i`,
+            `-1 + \\sqrt{3} i`,
+            `-1 - \\sqrt{3} i`
+        ],
+        correctOption: 2,
+        correctAnswer: `-1 - \\sqrt{3} i`
+    },
+    {
+        question: `\\frac{8\\left(\\cos \\frac{5\\pi}{6} + i \\sin \\frac{5\\pi}{6}\\right)}{2\\left(\\cos \\frac{2\\pi}{3} + i \\sin \\frac{2\\pi}{3}\\right)}`,
+        options: [
+            `2\\sqrt{3} + 2i`,
+            `2 + 2\\sqrt{3} i`,
+            `-2\\sqrt{3} + 2i`,
+            `-2 + 2\\sqrt{3} i`
+        ],
+        correctOption: 0,
+        correctAnswer: `2\\sqrt{3} + 2i`
+    },
+    {
+        question: `\\frac{12\\left(\\cos 120^\\circ + i \\sin 120^\\circ\\right)}{2\\left(\\cos 60^\\circ + i \\sin 60^\\circ\\right)}`,
+        options: [
+            `-3 - 3\\sqrt{3} i`,
+            `-3 + 3\\sqrt{3} i`,
+            `3 - 3\\sqrt{3} i`,
+            `3 + 3\\sqrt{3} i`
+        ],
+        correctOption: 3,
+        correctAnswer: `3 + 3\\sqrt{3} i`
+    },
+    {
+        question: `\\frac{2\\left(\\cos 150^\\circ + i \\sin 150^\\circ\\right)}{5\\left(\\cos 105^\\circ + i \\sin 105^\\circ\\right)}`,
+        options: [
+            `-\\frac{\\sqrt{2}}{5} - \\frac{\\sqrt{2}}{5} i`,
+            `-\\frac{\\sqrt{2}}{5} + \\frac{\\sqrt{2}}{5} i`,
+            `\\frac{\\sqrt{2}}{5} + \\frac{\\sqrt{2}}{5} i`,
+            `\\frac{\\sqrt{2}}{5} - \\frac{\\sqrt{2}}{5} i`
+        ],
+        correctOption: 1,
+        correctAnswer: `\\frac{\\sqrt{2}}{5} + \\frac{\\sqrt{2}}{5} i`
+    },
+    {
+        question: `\\frac{\\cos 70^\\circ + i \\sin 70^\\circ}{\\cos 100^\\circ + i \\sin 100^\\circ}`,
+        options: [
+            `\\frac{\\sqrt{3}}{2} - \\frac{1}{2} i`,
+            `\\frac{1}{2} - \\frac{\\sqrt{3}}{2} i`,
+            `\\frac{\\sqrt{3}}{2} + \\frac{1}{2} i`,
+            `\\frac{1}{2} + \\frac{\\sqrt{3}}{2} i`
+        ],
+        correctOption: 0,
+        correctAnswer: `\\frac{\\sqrt{3}}{2} - \\frac{1}{2} i`
+    },
+    {
+        question: `\\frac{4\\left(\\cos \\frac{\\pi}{8} + i \\sin \\frac{\\pi}{8}\\right)}{6\\left(\\cos \\frac{7\\pi}{8} + i \\sin \\frac{7\\pi}{8}\\right)}`,
+        options: [
+            `-\\frac{\\sqrt{2}}{3} + \\frac{\\sqrt{2}}{3} i`,
+            `-\\frac{\\sqrt{2}}{3} - \\frac{\\sqrt{2}}{3} i`,
+            `\\frac{\\sqrt{2}}{3} + \\frac{\\sqrt{2}}{3} i`,
+            `\\frac{\\sqrt{2}}{3} - \\frac{\\sqrt{2}}{3} i`
+        ],
+        correctOption: 1,
+        correctAnswer: `-\\frac{\\sqrt{2}}{3} - \\frac{\\sqrt{2}}{3} i`
+    },
+    {
+        question: `\\frac{\\cos \\frac{13\\pi}{18} - i \\sin \\frac{13\\pi}{18}}{\\cos \\frac{2\\pi}{9} - i \\sin \\frac{2\\pi}{9}}`,
+        options: [
+            `-1`,
+            `1`,
+            `-i`,
+            `i`
+        ],
+        correctOption: 1,
+        correctAnswer:  `-i`
+    },
+    {
+    question: `\\frac{-\\cos \\frac{5\\pi}{9} + i \\sin \\frac{5\\pi}{9}}{\\cos \\frac{2\\pi}{9} - i \\sin \\frac{2\\pi}{9}}`,
+    options: [
+        `\\frac{\\sqrt{3}}{2} - \\frac{1}{2} i`,
+        `-\\frac{\\sqrt{3}}{2} + \\frac{1}{2} i`,
+        `-\\frac{1}{2} - \\frac{\\sqrt{3}}{2} i`,
+        `-\\frac{1}{2} + \\frac{\\sqrt{3}}{2} i`
+    ],
+    correctOption: 2,
+    correctAnswer: `-\\frac{1}{2} + \\frac{\\sqrt{3}}{2} i`
+}
+];
+    
+// List of 10 examples for Question 5
+const fifthQuestionList = [
+    {
+        question: `\\left(\\cos 25^\\circ + i \\sin 25^\\circ\\right)^6`,
+        options: [
+            `\\frac{\\sqrt{3}}{2} - \\frac{1}{2} i`,
+            `\\frac{\\sqrt{3}}{2} + \\frac{1}{2} i`,
+            `-\\frac{\\sqrt{3}}{2} + \\frac{1}{2} i`,
+            `-\\frac{\\sqrt{3}}{2} - \\frac{1}{2} i`
+        ],
+        correctOption: 0,
+        correctAnswer: `\\frac{\\sqrt{3}}{2} + \\frac{1}{2} i`
+    },
+    {
+        question: `\\left(2\\left(\\cos 22.5^\\circ + i \\sin 22.5^\\circ\\right)\\right)^8`,
+        options: [
+            `-256`,
+            `256`,
+            `-256i`,
+            `256i`
+        ],
+        correctOption: 1,
+        correctAnswer: `-256`
+    },
+    {
+        question: `\\left(\\cos \\frac{7\\pi}{36} + i \\sin \\frac{7\\pi}{36}\\right)^{12}`,
+        options: [
+            `-\\frac{1}{2} + \\frac{\\sqrt{3}}{2} i`,
+            `-\\frac{1}{2} - \\frac{\\sqrt{3}}{2} i`,
+            `\\frac{1}{2} - \\frac{\\sqrt{3}}{2} i`,
+            `\\frac{1}{2} + \\frac{\\sqrt{3}}{2} i`
+        ],
+        correctOption: 3,
+        correctAnswer: `\\frac{1}{2} + \\frac{\\sqrt{3}}{2} i`
+    },
+    {
+        question: `\\left(2\\left(\\cos 54^\\circ + i \\sin 54^\\circ\\right)\\right)^5`,
+        options: [
+            `32`,
+            `-32`,
+            `32i`,
+            `-32i`
+        ],
+        correctOption: 0,
+        correctAnswer: `-32i`
+    },
+    {
+        question: `\\left(\\sqrt{2} \\left(\\cos \\left(-36^\\circ\\right) + i \\sin \\left(-36^\\circ\\right)\\right)\\right)^{10}`,
+        options: [
+            `32`,
+            `-32`,
+            `32i`,
+            `-32i`
+        ],
+        correctOption: 0,
+        correctAnswer: `32`
+    },
+    {
+        question: `\\left(\\sqrt[10]{2} \\cdot \\left( \\cos 63^\\circ + i \\sin 63^\\circ \\right) \\right)^5`,
+        options: [
+            `1 + i`,
+            `1 - i`,
+            `-1 - i`,
+            `-1 + i`
+        ],
+        correctOption: 2,
+        correctAnswer: `1 - i`
+    },
+    {
+        question: `\\left(2\\left(\\cos \\left(-30^\\circ\\right) + i \\sin \\left(-30^\\circ\\right)\\right)\\right)^5`,
+        options: [
+            `-16 + 16\\sqrt{3} i`,
+            `-16 - 16\\sqrt{3} i`,
+            `16\\sqrt{3} - 16i`,
+            `-16\\sqrt{3} - 16i`
+        ],
+        correctOption: 0,
+        correctAnswer:  `-16\\sqrt{3} - 16i`
+    },
+    {
+        question: `\\left(2\\left(\\cos 120^\\circ + i \\sin 120^\\circ\\right)\\right)^9`,
+        options: [
+            `512i`,
+            `-512i`,
+            `512`,
+            `-512`
+        ],
+        correctOption: 2,
+        correctAnswer: `512`
+    },
+    {
+        question: `\\left(\\frac{\\sqrt{2}}{2} \\left(\\cos \\left(-45^\\circ\\right) + i \\sin \\left(-45^\\circ\\right)\\right)\\right)^4`,
+        options: [
+            `-\\frac{1}{4}`,
+            `-i`,
+            `\\frac{1}{4}`,
+            `i`
+        ],
+        correctOption: 2,
+        correctAnswer: `-\\frac{1}{4}`
+    },
+    {
+        question: `\\left(\\sqrt{3} \\left(\\cos \\left(-150^\\circ\\right) + i \\sin \\left(-150^\\circ\\right)\\right)\\right)^6`,
+        options: [
+            `27`,
+            `-27`,
+            `-27i`,
+            `27i`
+        ],
+        correctOption: 0,
+        correctAnswer: `-27`
+    }
+];
+
+    // New question list for Question 6
+const sixthQuestionList = [
+    {
+        question: `\\sqrt[3]{\\cos 60^\\circ + i \\sin 60^\\circ}`,
+        options: [
+            `\\begin{aligned} &\\cos (20^\\circ + 360^\\circ k) + i \\sin (20^\\circ + 360^\\circ k) \\\\ &k=0,1,2 \\end{aligned}`,
+            `\\begin{aligned} &\\cos (20^\\circ - 120^\\circ k) + i \\sin (20^\\circ - 120^\\circ k) \\\\ &k=0,1,2 \\end{aligned}`,
+            `\\begin{aligned} &\\cos (30^\\circ + 180^\\circ k) + i \\sin (30^\\circ + 180^\\circ k) \\\\ &k=0,1,2 \\end{aligned}`,
+            `\\begin{aligned} &\\cos (20^\\circ + 120^\\circ k) + i \\sin (20^\\circ + 120^\\circ k) \\\\ &k=0,1,2 \\end{aligned}`
+        ],
+        correctOption: 0,
+        correctAnswer: `\\begin{aligned} &\\cos (20^\\circ + 360^\\circ k) + i \\sin (20^\\circ + 360^\\circ k) \\\\ &k=0,1,2 \\end{aligned}`
+    },
+    {
+        question: `\\sqrt[4]{16 \\left( \\cos \\pi + i \\sin \\pi \\right)}`,
+        options: [
+            `\\begin{aligned} &2 \\left( \\cos \\frac{\\pi + 2\\pi k}{4} + i \\sin \\frac{\\pi + 2\\pi k}{4} \\right) \\\\ &k=0,1,2,3 \\end{aligned}`,
+            `\\begin{aligned} &2 \\left( \\cos \\left(\\frac{\\pi}{4} + 2\\pi k\\right) + i \\sin \\left(\\frac{\\pi}{4} + 2\\pi k\\right) \\right) \\\\ &k=0,1,2,3 \\end{aligned}`,
+            `\\begin{aligned} &16 \\left( \\cos \\frac{\\pi + 2\\pi k}{4} + i \\sin \\frac{\\pi + 2\\pi k}{4} \\right) \\\\ &k=0,1,2,3 \\end{aligned}`,
+            `\\begin{aligned} &16 \\left( \\cos \\left(\\frac{\\pi}{4} + 2\\pi k\\right) + i \\sin \\left(\\frac{\\pi}{4} + 2\\pi k\\right) \\right) \\\\ &k=0,1,2,3 \\end{aligned}`
+        ],
+        correctOption: 0,
+        correctAnswer: `\\begin{aligned} &2 \\left( \\cos \\frac{\\pi + 2\\pi k}{4} + i \\sin \\frac{\\pi + 2\\pi k}{4} \\right) \\\\ &k=0,1,2,3 \\end{aligned}`
+    },
+    {
+        question: `\\sqrt[5]{\\cos 150^\\circ + i \\sin 150^\\circ}`,
+        options: [
+            `\\begin{aligned} &\\cos (30^\\circ + 360^\\circ k) + i \\sin (30^\\circ + 360^\\circ k) \\\\ &k=0,1,2,3,4 \\end{aligned}`,
+            `\\begin{aligned} &\\cos (30^\\circ + 72^\\circ k) + i \\sin (30^\\circ + 72^\\circ k) \\\\ &k=0,1,2,3,4 \\end{aligned}`,
+            `\\begin{aligned} &\\cos (150^\\circ + 360^\\circ k) + i \\sin (150^\\circ + 360^\\circ k) \\\\ &k=0,1,2,3,4 \\end{aligned}`,
+            `\\begin{aligned} &\\cos (150^\\circ + 72^\\circ k) + i \\sin (150^\\circ + 72^\\circ k) \\\\ &k=0,1,2,3,4 \\end{aligned}`
+        ],
+        correctOption: 1,
+        correctAnswer: `\\begin{aligned} &\\cos (30^\\circ + 72^\\circ k) + i \\sin (30^\\circ + 72^\\circ k) \\\\ &k=0,1,2,3,4 \\end{aligned}`
+    },
+    {
+        question: `\\sqrt[7]{\\cos 0 + i \\sin 0}`,
+        options: [
+            `\\begin{aligned} &\\cos \\frac{2\\pi k}{7} + i \\sin \\frac{2\\pi k}{7} \\\\ &k \\in \\mathbb{R} \\end{aligned}`,
+            `\\begin{aligned} &\\cos \\frac{\\pi k}{7} + i \\sin \\frac{\\pi k}{7} \\\\ &k=0,1,2,3,4,5,6 \\end{aligned}`,
+            `\\begin{aligned} &\\cos \\frac{2\\pi k}{7} + i \\sin \\frac{2\\pi k}{7} \\\\ &k=0,1,2,3,4,5,6 \\end{aligned}`,
+            `\\begin{aligned} &\\cos \\frac{\\pi k}{7} + i \\sin \\frac{\\pi k}{7} \\\\ &k \\in \\mathbb{R} \\end{aligned}`
+        ],
+        correctOption: 2,
+        correctAnswer: `\\begin{aligned} &\\cos \\frac{2\\pi k}{7} + i \\sin \\frac{2\\pi k}{7} \\\\ &k=0,1,2,3,4,5,6 \\end{aligned}`
+    },
+    {
+        question: `\\sqrt[3]{27 \\left( \\cos (-135^\\circ) + i \\sin (-135^\\circ) \\right)}`,
+        options: [
+            `\\begin{aligned} &27 \\left( \\cos \\frac{-135^\\circ + 360^\\circ k}{3} + i \\sin \\frac{-135^\\circ + 360^\\circ k}{3} \\right) \\\\ &k=0,1,2 \\end{aligned}`,
+            `\\begin{aligned} &3 \\left( \\cos \\frac{-45^\\circ + 360^\\circ k}{3} + i \\sin \\frac{-45^\\circ + 360^\\circ k}{3} \\right) \\\\ &k=0,1,2 \\end{aligned}`,
+            `\\begin{aligned} &27 \\left( \\cos (-45^\\circ + 360^\\circ k) + i \\sin (-45^\\circ + 360^\\circ k) \\right) \\\\ &k=0,1,2 \\end{aligned}`,
+            `\\begin{aligned} &3 \\left( \\cos \\frac{-45^\\circ + 120^\\circ k}{3} + i \\sin \\frac{-45^\\circ + 120^\\circ k}{3} \\right) \\\\ &k=0,1,2 \\end{aligned}`
+        ],
+        correctOption: 1,
+        correctAnswer: `\\begin{aligned} &3 \\left( \\cos \\frac{-45^\\circ + 360^\\circ k}{3} + i \\sin \\frac{-45^\\circ + 360^\\circ k}{3} \\right) \\\\ &k=0,1,2 \\end{aligned}`
+    },
+    {
+        question: `\\sqrt[5]{32 \\left( \\cos \\frac{\\pi}{2} + i \\sin \\frac{\\pi}{2} \\right)}`,
+        options: [
+            `\\begin{aligned} &2 \\left( \\cos \\frac{\\frac{\\pi}{2} + 2\\pi k}{5} + i \\sin \\frac{\\frac{\\pi}{2} + 2\\pi k}{5} \\right) \\\\ &k \\in \\mathbb{N} \\end{aligned}`,
+            `\\begin{aligned} &\\cos \\frac{\\frac{\\pi}{2} + 2\\pi k}{5} + i \\sin \\frac{\\frac{\\pi}{2} + 2\\pi k}{5} \\\\ &k=0,1,2,3,4 \\end{aligned}`,
+            `\\begin{aligned} &32 \\left( \\cos \\frac{\\frac{\\pi}{2} + 2\\pi k}{5} + i \\sin \\frac{\\frac{\\pi}{2} + 2\\pi k}{5} \\right) \\\\ &k=0,1,2,3,4 \\end{aligned}`,
+            `\\begin{aligned} &2 \\left( \\cos \\frac{\\frac{\\pi}{2} + 2\\pi k}{5} + i \\sin \\frac{\\frac{\\pi}{2} + 2\\pi k}{5} \\right) \\\\ &k=0,1,2,3,4 \\end{aligned}`
+        ],
+        correctOption: 3,
+        correctAnswer: `\\begin{aligned} &2 \\left( \\cos \\frac{\\frac{\\pi}{2} + 2\\pi k}{5} + i \\sin \\frac{\\frac{\\pi}{2} + 2\\pi k}{5} \\right) \\\\ &k=0,1,2,3,4 \\end{aligned}`
+    },
+    {
+        question: `\\sqrt[2]{16\\sqrt{2} \\left( \\cos (-45^\\circ) + i \\sin (-45^\\circ) \\right)}`,
+        options: [
+            `\\begin{aligned} &32 \\left( \\cos \\frac{-\\frac{\\pi}{4} + 2\\pi k}{2} + i \\sin \\frac{-\\frac{\\pi}{4} + 2\\pi k}{2} \\right) \\\\ &k=0,1 \\end{aligned}`,
+            `\\begin{aligned} &4\\sqrt[4]{2} \\left( \\cos \\frac{-\\frac{\\pi}{4} + 2\\pi k}{2} + i \\sin \\frac{-\\frac{\\pi}{4} + 2\\pi k}{2} \\right) \\\\ &k=0,1 \\end{aligned}`,
+            `\\begin{aligned} &16 \\left( \\cos \\frac{-\\frac{\\pi}{4} + 2\\pi k}{2} + i \\sin \\frac{-\\frac{\\pi}{4} + 2\\pi k}{2} \\right) \\\\ &k=0,1 \\end{aligned}`,
+            `\\begin{aligned} &4 \\left( \\cos \\frac{-\\frac{\\pi}{4} + 2\\pi k}{2} + i \\sin \\frac{-\\frac{\\pi}{4} + 2\\pi k}{2} \\right) \\\\ &k=0,1 \\end{aligned}`
+        ],
+        correctOption: 1,
+        correctAnswer: `\\begin{aligned} &4\\sqrt[4]{2} \\left( \\cos \\frac{-\\frac{\\pi}{4} + 2\\pi k}{2} + i \\sin \\frac{-\\frac{\\pi}{4} + 2\\pi k}{2} \\right) \\\\ &k=0,1 \\end{aligned}`
+    },
+    {
+        question: `\\sqrt[3]{12 \\left( \\cos (-60^\\circ) + i \\sin (-60^\\circ) \\right)}`,
+        options: [
+            `\\begin{aligned} &\\sqrt[3]{6} \\left( \\cos \\left(-\\frac{\\pi}{9} + 2\\pi k\\right) + i \\sin \\left(-\\frac{\\pi}{9} + 2\\pi k\\right) \\right) \\\\ &k=0,1,2 \\end{aligned}`,
+            `\\begin{aligned} &\\sqrt[3]{12} \\left( \\cos \\left(-\\frac{\\pi}{9} + 2\\pi k\\right) + i \\sin \\left(-\\frac{\\pi}{9} + 2\\pi k\\right) \\right) \\\\ &k=0,1,2 \\end{aligned}`,
+            `\\begin{aligned} &\\sqrt[3]{6} \\left( \\cos \\frac{-\\frac{\\pi}{3} + 2\\pi k}{3} + i \\sin \\frac{-\\frac{\\pi}{3} + 2\\pi k}{3} \\right) \\\\ &k=0,1,2 \\end{aligned}`,
+            `\\begin{aligned} &\\sqrt[3]{12} \\left( \\cos \\frac{-\\frac{\\pi}{3} + 2\\pi k}{3} + i \\sin \\frac{-\\frac{\\pi}{3} + 2\\pi k}{3} \\right) \\\\ &k=0,1,2 \\end{aligned}`
+        ],
+        correctOption: 3,
+        correctAnswer: `\\begin{aligned} &\\sqrt[3]{12} \\left( \\cos \\frac{-\\frac{\\pi}{3} + 2\\pi k}{3} + i \\sin \\frac{-\\frac{\\pi}{3} + 2\\pi k}{3} \\right) \\\\ &k=0,1,2 \\end{aligned}`
+    },
+    {
+        question: `\\sqrt[3]{125 \\left( \\cos 0 + i \\sin 0 \\right)}`,
+        options: [
+            `\\begin{aligned} &5 \\left( \\cos \\frac{2\\pi k}{3} + i \\sin \\frac{2\\pi k}{3} \\right) \\\\ &k=0,1,2 \\end{aligned}`,
+            `\\begin{aligned} &125 \\left( \\cos \\frac{2\\pi k}{3} + i \\sin \\frac{2\\pi k}{3} \\right) \\\\ &k=0,1,2 \\end{aligned}`,
+            `\\begin{aligned} &5 \\left( \\cos \\frac{\\pi k}{3} + i \\sin \\frac{\\pi k}{3} \\right) \\\\ &k=0,1,2 \\end{aligned}`,
+            `\\begin{aligned} &5 \\left( \\cos \\frac{2\\pi k}{3} + i \\sin \\frac{2\\pi k}{3} \\right) \\\\ &k \\in \\mathbb{R} \\end{aligned}`
+        ],
+        correctOption: 0,
+        correctAnswer: `\\begin{aligned} &5 \\left( \\cos \\frac{2\\pi k}{3} + i \\sin \\frac{2\\pi k}{3} \\right) \\\\ &k=0,1,2 \\end{aligned}`
+    },
+    {
+        question: `\\sqrt[4]{16 \\left( \\cos 90^\\circ + i \\sin 90^\\circ \\right)}`,
+        options: [
+            `\\begin{aligned} &16 \\left( \\cos \\frac{\\frac{\\pi}{2} + 2\\pi k}{4} + i \\sin \\frac{\\frac{\\pi}{2} + 2\\pi k}{4} \\right) \\\\ &k=0,1,2,3 \\end{aligned}`,
+            `\\begin{aligned} &2 \\left( \\cos \\frac{\\frac{\\pi}{2} + 2\\pi k}{4} + i \\sin \\frac{\\frac{\\pi}{2} + 2\\pi k}{4} \\right) \\\\ &k=0,1,2,3 \\end{aligned}`,
+            `\\begin{aligned} &2 \\left( \\cos \\frac{\\frac{\\pi}{2} + 2\\pi k}{4} + i \\sin \\frac{\\frac{\\pi}{2} + 2\\pi k}{4} \\right) \\\\ &k \\in \\mathbb{R} \\end{aligned}`,
+            `\\begin{aligned} &2 \\left( \\cos \\left(\\frac{\\pi}{8} + 2\\pi k\\right) + i \\sin \\left(\\frac{\\pi}{8} + 2\\pi k\\right) \\right) \\\\ &k=0,1,2,3 \\end{aligned}`
+        ],
+        correctOption: 1,
+        correctAnswer: `\\begin{aligned} &2 \\left( \\cos \\frac{\\frac{\\pi}{2} + 2\\pi k}{4} + i \\sin \\frac{\\frac{\\pi}{2} + 2\\pi k}{4} \\right) \\\\ &k=0,1,2,3 \\end{aligned}`
+    },
+    {
+        question: `\\sqrt[6]{64 \\left( \\cos \\pi + i \\sin \\pi \\right)}`,
+        options: [
+            `\\begin{aligned} &2 \\left( \\cos \\left(\\frac{\\pi}{6} + 2\\pi k\\right) + i \\sin \\left(\\frac{\\pi}{6} + 2\\pi k\\right) \\right) \\\\ &k=0,1,2,3,4,5 \\end{aligned}`,
+            `\\begin{aligned} &\\cos \\frac{\\pi + 2\\pi k}{6} + i \\sin \\frac{\\pi + 2\\pi k}{6} \\\\ &k=0,1,2,3,4,5 \\end{aligned}`,
+            `\\begin{aligned} &2 \\left( \\cos \\frac{\\pi + 2\\pi k}{6} + i \\sin \\frac{\\pi + 2\\pi k}{6} \\right) \\\\ &k \\in \\mathbb{R} \\end{aligned}`,
+            `\\begin{aligned} &2 \\left( \\cos \\frac{\\pi + 2\\pi k}{6} + i \\sin \\frac{\\pi + 2\\pi k}{6} \\right) \\\\ &k=0,1,2,3,4,5 \\end{aligned}`
+        ],
+        correctOption: 3,
+        correctAnswer: `\\begin{aligned} &2 \\left( \\cos \\frac{\\pi + 2\\pi k}{6} + i \\sin \\frac{\\pi + 2\\pi k}{6} \\right) \\\\ &k=0,1,2,3,4,5 \\end{aligned}`
+    },
+    {
+        question: `\\sqrt[4]{\\cos (-150^\\circ) + i \\sin (-150^\\circ)}`,
+        options: [
+            `\\begin{aligned} &\\frac{1}{2} \\left( \\cos \\frac{-150^\\circ + 2\\pi k}{4} + i \\sin \\frac{-150^\\circ + 2\\pi k}{4} \\right) \\\\ &k=0,1,2,3 \\end{aligned}`,
+            `\\begin{aligned} &\\cos \\frac{-150^\\circ + 2\\pi k}{4} + i \\sin \\frac{-150^\\circ + 2\\pi k}{4} \\\\ &k=0,1,2,3 \\end{aligned}`,
+            `\\begin{aligned} &\\cos \\frac{150^\\circ + 2\\pi k}{4} + i \\sin \\frac{150^\\circ + 2\\pi k}{4} \\\\ &k=0,1,2,3 \\end{aligned}`,
+            `\\begin{aligned} &\\cos (-150^\\circ + 2\\pi k) + i \\sin (-150^\\circ + 2\\pi k) \\\\ &k=0,1,2,3 \\end{aligned}`
+        ],
+        correctOption: 1,
+        correctAnswer: `\\begin{aligned} &\\cos \\frac{-150^\\circ + 2\\pi k}{4} + i \\sin \\frac{-150^\\circ + 2\\pi k}{4} \\\\ &k=0,1,2,3 \\end{aligned}`
+    }
+];
+
+function normalizeString(str) {
+    return str
+        .replace(/\s+/g, '')
+        .replace(/\\{2,}/g, '\\')
+        .replace(/\\circ/g, '°')
+        .replace(/\\cdot/g, '')
+        .replace(/\*i/g, 'i')
+        .replace(/1i/g, 'i')
+        .replace(/-1i/g, '-i')
+        .replace(/\\left/g, '')
+        .replace(/\\right/g, '')
+        .replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '\\frac{$1}{$2}')
+        .replace(/√(\d+)/g, '\\sqrt{$1}')
+        .replace(/(\d+)i/g, '$1 i')
+        .replace(/(\d+)-(\d+)i/g, '$1 - $2 i')
+        .replace(/(\d+)\+i/g, '$1 + i')
+        .replace(/(\d+)-i/g, '$1 - i');
+}
+
+function openModal(modal, btn) {
+    if (!modal || !btn) {
+        console.error('openModal: modal or btn is null', { modal, btn });
+        return;
+    }
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
+    scrollPosition = window.scrollY;
+    modal.style.display = 'flex';
+    modal.classList.add('show');
+    overlay.style.display = 'block';
+    overlay.classList.add('show');
+    modal.focus();
+    console.log(`openModal: Opened ${modal.id}`);
+    if (modal.id === 'trainerModal') {
+        resetTrainer();
+    }
+    let startY = 0;
+    modal.addEventListener('touchstart', function(e) {
+        startY = e.touches[0].clientY;
+    }, { passive: false });
+    modal.addEventListener('touchmove', function(e) {
+        const modalContent = modal.querySelector('.modal-content');
+        const scrolled = modalContent.scrollTop;
+        const contentHeight = modalContent.scrollHeight;
+        const containerHeight = modalContent.clientHeight;
+        if (contentHeight > containerHeight) {
+            const deltaY = e.touches[0].clientY - startY;
+            if (deltaY > 0 && scrolled <= 0) {
+                e.preventDefault();
+            } else if (deltaY < 0 && (scrolled + containerHeight >= contentHeight)) {
+                e.preventDefault();
+            }
+        } else {
+            e.preventDefault();
+        }
+    }, { passive: false });
+}
+            
+
+function closeModal(modal, btn) {
+    if (!modal || !btn) {
+        console.error('closeModal: modal or btn is null', { modal, btn });
+        return;
+    }
+    document.body.style.overflow = '';
+    document.body.style.position = '';
+    document.body.style.width = '';
+    window.scrollTo(0, scrollPosition);
+    modal.style.display = 'none';
+    modal.classList.remove('show');
+    overlay.style.display = 'none';
+    overlay.classList.remove('show');
+    modal.removeEventListener('touchstart', null);
+    modal.removeEventListener('touchmove', null);
+    console.log(`closeModal: Closed ${modal.id}`);
+}
+
+function closeVideoModal(videoModal, playerId, mainModal, btn) {
+    if (!videoModal || !mainModal || !btn) {
+        console.error('closeVideoModal: videoModal, mainModal or btn is null', { videoModal, mainModal, btn });
+        return;
+    }
+    if (playerId && youtubePlayers[playerId]) {
+        youtubePlayers[playerId].src = '';
+    }
+    videoModal.style.display = 'none';
+    videoModal.classList.remove('show');
+    overlay.style.display = 'none';
+    overlay.classList.remove('show');
+    openModal(mainModal, btn);
+    console.log(`closeVideoModal: Closed videoPlayerModal${playerId}, opened ${mainModal.id}`);
+}
+
+function typesetMathJax() {
+    if (window.MathJax && typeof window.MathJax.typeset === 'function') {
+        try {
+            window.MathJax.typeset([trainerQuestion, trainerOptions, modals.questions]);
+            setTimeout(() => {
+                adjustModalHeight(modals.trainer);
+                console.log('MathJax typeset completed with delay');
+            }, 100);
+        } catch (err) {
+            console.error('MathJax typeset error:', err);
+        }
+    } else {
+        console.error('MathJax not loaded');
+    }
+}
+
+// Оновлюємо функцію adjustModalHeight
+function adjustModalHeight(modal) {
+  if (!modal) return;
+  const modalContent = modal.querySelector('.modal-content');
+  const modalHeader = modal.querySelector('.modal-header');
+  if (!modalContent || !modalHeader) return;
+
+  const setHeight = () => {
+    const contentHeight = modalContent.scrollHeight;
+    const headerHeight = modalHeader.offsetHeight;
+    const windowHeight = window.innerHeight;
+    const maxModalHeight = windowHeight * 0.95;
+    let requiredHeight = contentHeight + headerHeight + 40;
+
+    modal.style.height = requiredHeight < maxModalHeight 
+      ? `${requiredHeight}px` 
+      : `${maxModalHeight}px`;
+      
+    modalContent.style.height = requiredHeight < maxModalHeight 
+      ? `${requiredHeight - headerHeight - 20}px` 
+      : `${maxModalHeight - headerHeight - 20}px`;
+      
+    modalContent.style.overflowY = requiredHeight <= maxModalHeight 
+      ? 'hidden' 
+      : 'auto';
+      
+    modalContent.scrollTop = 0;
+  };
+
+  // Викликаємо після рендерингу MathJax
+  if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+    window.MathJax.typesetPromise([modalContent]).then(setHeight).catch(setHeight);
+  } else {
+    setHeight();
+  }
+}
+
+
+function showToast(message, isCorrect) {
+    if (!toastContainer) {
+        console.error('toastContainer is null');
+        return;
+    }
+    const toast = document.createElement('div');
+    toast.classList.add('toast', isCorrect ? 'correct' : 'incorrect');
+    toast.innerHTML = message;
+    toastContainer.appendChild(toast);
+    setTimeout(() => toast.classList.add('show'), 100);
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 500);
+    }, 2000);
+}
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+function generateFirstQuestion() {
+    try {
+        const r1 = Math.floor(Math.random() * 5) + 1; // 1–5
+        const r2 = Math.floor(Math.random() * 5) + 1; // 1–5
+        const phi1 = [0, 10, 15, 30, 45, 60, 90][Math.floor(Math.random() * 7)];
+        const phi2 = [0, 10, 15, 30, 45, 60, 90][Math.floor(Math.random() * 7)];
+        const correctR = r1 * r2;
+        const correctPhi = (phi1 + phi2) % 360;
+
+        const question = `
+            <p>Знайдіть добуток комплексних чисел:</p>
+            <p>\\[ ${r1 === 1 ? '' : r1}\\left(\\cos ${phi1}^\\circ + i \\sin ${phi1}^\\circ\\right) \\cdot ${r2 === 1 ? '' : r2}\\left(\\cos ${phi2}^\\circ + i \\sin ${phi2}^\\circ\\right) \\]</p>
+        `;
+        const correctAnswer = `${correctR === 1 ? '' : correctR}\\left(\\cos ${correctPhi}^\\circ + i \\sin ${correctPhi}^\\circ\\right)`;
+
+        const wrongAnswers = [
+            `${correctR}\\left(\\cos ${(correctPhi + 90) % 360}^\\circ + i \\sin ${(correctPhi + 90) % 360}^\\circ\\right)`,
+            `${Math.max(correctR + 2, 1)}\\left(\\cos ${correctPhi}^\\circ + i \\sin ${correctPhi}^\\circ\\right)`,
+            `${Math.max(correctR - 1, 1)}\\left(\\cos ${(correctPhi + 180) % 360}^\\circ + i \\sin ${(correctPhi + 180) % 360}^\\circ\\right)`,
+            `${correctR}\\left(\\cos ${(correctPhi + 45) % 360}^\\circ + i \\sin ${(correctPhi + 45) % 360}^\\circ\\right)`
+        ];
+
+        const allAnswers = [correctAnswer, ...wrongAnswers.slice(0, 3)];
+        shuffleArray(allAnswers);
+
+        console.log('generateFirstQuestion: Generated question:', { question, correctAnswer });
+        return { question, options: allAnswers, correctOption: allAnswers.indexOf(correctAnswer), correctAnswer };
+    } catch (error) {
+        console.error('Error in generateFirstQuestion:', error);
+        throw error;
+    }
+}
+
+function generateSecondQuestion() {
+    try {
+        const idx = secondQuestionOrder[currentSecondQuestionIdx];
+        const data = secondQuestionList[idx];
+        const question = `
+            <p>Знайдіть добуток комплексних чисел:</p>
+            <p>\\[ ${data.question} \\]</p>
+        `;
+        console.log('generateSecondQuestion: Generated question:', { question, correctAnswer: data.correctAnswer, idx });
+        return {
+            question,
+            options: data.options,
+            correctOption: data.correctOption,
+            correctAnswer: data.correctAnswer
+        };
+    } catch (error) {
+        console.error('Error in generateSecondQuestion:', error);
+        throw error;
+    }
+}
+
+function generateThirdQuestion() {
+    try {
+        const idx = thirdQuestionOrder[currentThirdQuestionIdx];
+        const data = thirdQuestionList[idx];
+        const question = `
+            <p>Обчислити добуток комплексних чисел, заданих у тригонометричній формі, та подати результат в алгебраїчній формі:</p>
+            <p>\\[ ${data.question} \\]</p>
+        `;
+        console.log('generateThirdQuestion: Generated question:', { question, correctAnswer: data.correctAnswer, idx });
+        return {
+            question,
+            options: data.options,
+            correctOption: data.correctOption,
+            correctAnswer: data.correctAnswer
+        };
+    } catch (error) {
+        console.error('Error in generateThirdQuestion:', error);
+        throw error;
+    }
+}
+
+function generateFourthQuestion() {
+    try {
+        const idx = fourthQuestionOrder[currentFourthQuestionIdx];
+        const data = fourthQuestionList[idx];
+        const question = `
+            <p>Обчислити частку комплексних чисел, заданих у тригонометричній формі, та подати результат в алгебраїчній формі:</p>
+            <p>\\[ ${data.question} \\]</p>
+        `;
+        console.log('generateFourthQuestion: Generated question:', { question, correctAnswer: data.correctAnswer, idx });
+        return {
+            question,
+            options: data.options,
+            correctOption: data.correctOption,
+            correctAnswer: data.correctAnswer
+        };
+    } catch (error) {
+        console.error('Error in generateFourthQuestion:', error);
+        throw error;
+    }
+}
+
+function generateFifthQuestion() {
+    try {
+        const idx = fifthQuestionOrder[currentFifthQuestionIdx];
+        const data = fifthQuestionList[idx];
+        const question = `
+            <p>Знайти значення наступних виразів, використовуючи формулу Муавра, та подати результат в алгебраїчній формі:</p>
+            <p>\\[ ${data.question} \\]</p>
+        `;
+        console.log('generateFifthQuestion: Generated question:', { question, correctAnswer: data.correctAnswer, idx });
+        return {
+            question,
+            options: data.options,
+            correctOption: data.correctOption,
+            correctAnswer: data.correctAnswer
+        };
+    } catch (error) {
+        console.error('Error in generateFifthQuestion:', error);
+        throw error;
+    }
+}
+            // New function for Question 6
+function generateSixthQuestion() {
+    try {
+        const idx = sixthQuestionOrder[currentSixthQuestionIdx];
+        const data = sixthQuestionList[idx];
+        const question = `
+            <p>Знайти всі корені комплексного числа:</p>
+            <p>\\[ ${data.question} \\]</p>
+        `;
+        console.log('generateSixthQuestion: Generated question:', { question, correctAnswer: data.correctAnswer, idx });
+        return {
+            question,
+            options: data.options,
+            correctOption: data.correctOption,
+            correctAnswer: data.correctAnswer
+        };
+    } catch (error) {
+        console.error('Error in generateSixthQuestion:', error);
+        throw error;
+    }
+}
+
+
+// Updated loadQuestion function
+function loadQuestion(index) {
+    try {
+        console.log(`loadQuestion: Loading question ${index + 1}, currentQuestionIndex: ${currentQuestionIndex}, currentSecondQuestionIdx: ${currentSecondQuestionIdx}, currentThirdQuestionIdx: ${currentThirdQuestionIdx}, currentFourthQuestionIdx: ${currentFourthQuestionIdx}, currentFifthQuestionIdx: ${currentFifthQuestionIdx}, currentSixthQuestionIdx: ${currentSixthQuestionIdx}`);
+        currentQuestionIndex = index;
+        if (index === 0) {
+            currentQuestionData = generateFirstQuestion();
+        } else if (index === 1) {
+            currentQuestionData = generateSecondQuestion();
+        } else if (index === 2) {
+            currentQuestionData = generateThirdQuestion();
+        } else if (index === 3) {
+            currentQuestionData = generateFourthQuestion();
+        } else if (index === 4) {
+            currentQuestionData = generateFifthQuestion();
+        } else if (index === 5) {
+            currentQuestionData = generateSixthQuestion();
+        }
+
+        trainerQuestion.innerHTML = currentQuestionData.question;
+        trainerOptions.innerHTML = '';
+        currentQuestionData.options.forEach((option, i) => {
+            const optionElement = document.createElement('div');
+            optionElement.classList.add('option');
+            optionElement.innerHTML = `<p>\\[ ${option} \\]</p>`;
+            optionElement.addEventListener('click', () => {
+                document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+                optionElement.classList.add('selected');
+                selectedOption = option;
+                submitButton.disabled = false;
+                console.log(`Option selected: ${option}`);
+            });
+            trainerOptions.appendChild(optionElement);
+        });
+        currentQuestionIndicator.textContent = `Питання ${index + 1}`;
+        submitButton.disabled = true;
+        trainerOptions.style.pointerEvents = 'auto';
+        console.log(`loadQuestion: Displayed question ${index + 1}, options:`, currentQuestionData.options);
+        typesetMathJax();
+    } catch (error) {
+        console.error('Error in loadQuestion:', error);
+        showToast('Помилка при завантаженні питання. Спробуйте ще раз.', false);
+    }
+}
+
+// Updated resetTrainer function
+function resetTrainer() {
+    console.log('resetTrainer: Resetting trainer');
+    currentQuestionIndex = 0;
+    currentSecondQuestionIdx = 0;
+    currentThirdQuestionIdx = 0;
+    currentFourthQuestionIdx = 0;
+    currentFifthQuestionIdx = 0;
+    currentSixthQuestionIdx = 0;
+    secondQuestionOrder = shuffleArray([...Array(secondQuestionList.length).keys()]);
+    thirdQuestionOrder = shuffleArray([...Array(thirdQuestionList.length).keys()]);
+    fourthQuestionOrder = shuffleArray([...Array(fourthQuestionList.length).keys()]);
+    fifthQuestionOrder = shuffleArray([...Array(fifthQuestionList.length).keys()]);
+    sixthQuestionOrder = shuffleArray([...Array(sixthQuestionList.length).keys()]);
+    selectedOption = null;
+    currentQuestionData = null;
+    loadQuestion(0);
+}
+
+
+// Existing addEventListeners function with updated submitButton logic
+function addEventListeners() {
+    const events = [
+        { btn: buttons.openTheory, modal: modals.theory, closeBtn: buttons.closeTheory },
+        { btn: buttons.openVideo, modal: modals.video, closeBtn: buttons.closeVideo },
+        { btn: buttons.openQuestions, modal: modals.questions, closeBtn: buttons.closeQuestions },
+        { btn: buttons.openTrainer, modal: modals.trainer, closeBtn: buttons.closeTrainer },
+        { btn: buttons.closeVideoPlayer1, modal: modals.videoPlayer1, closeBtn: buttons.openVideo, action: () => closeVideoModal(modals.videoPlayer1, 1, modals.video, buttons.openVideo) },
+        { btn: buttons.closeVideoPlayer2, modal: modals.videoPlayer2, closeBtn: buttons.openVideo, action: () => closeVideoModal(modals.videoPlayer2, 2, modals.video, buttons.openVideo) },
+        { btn: buttons.closeVideoPlayer3, modal: modals.videoPlayer3, closeBtn: buttons.openVideo, action: () => closeVideoModal(modals.videoPlayer3, 3, modals.video, buttons.openVideo) },
+        { btn: buttons.closeVideoPlayer4, modal: modals.videoPlayer4, closeBtn: buttons.openVideo, action: () => closeVideoModal(modals.videoPlayer4, 4, modals.video, buttons.openVideo) }
+    ];
+
+    events.forEach(({ btn, modal, closeBtn, action }) => {
+        if (btn && modal) {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log(`Button clicked: ${btn.id}, opening modal: ${modal.id}`);
+                if (action) action();
+                else openModal(modal, btn);
+                adjustModalHeight(modal);
+            });
+        } else {
+            console.warn(`Button or modal missing: btn=${btn}, modal=${modal}`);
+        }
+        if (closeBtn && modal && btn !== closeBtn) {
+            closeBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log(`Close button clicked: ${closeBtn.id}, closing modal: ${modal.id}`);
+                if (modal.id.includes('videoPlayer')) {
+                    const playerId = modal.id.replace('videoPlayerModal', '');
+                    closeVideoModal(modal, playerId, modals.video, buttons.openVideo);
+                } else {
+                    closeModal(modal, closeBtn);
+                }
+            });
+        } else {
+            console.warn(`Close button or modal missing: closeBtn=${closeBtn}, modal=${modal}`);
+        }
+    });
+
+    overlay.addEventListener('click', (e) => {
+        e.stopPropagation();
+        console.log('Overlay clicked, checking for open modals');
+        Object.values(modals).forEach(modal => {
+            if (modal.classList.contains('show')) {
+                console.log(`Closing modal: ${modal.id}`);
+                if (modal.id.includes('videoPlayer')) {
+                    const playerId = modal.id.replace('videoPlayerModal', '');
+                    closeVideoModal(modal, playerId, modals.video, buttons.openVideo);
+                } else {
+                    const btnKey = `open${modal.id.replace('Modal', '')}`;
+                    closeModal(modal, buttons[btnKey] || buttons.openVideo);
+                }
+            }
+        });
+    });
+
+    document.querySelectorAll('.card-inner').forEach(card => {
+        card.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Card clicked, toggling flipped class');
+            card.classList.toggle('flipped');
+        });
+    });
+
+    const videoCards = document.querySelectorAll('.video-card');
+    videoCards.forEach((card) => {
+        card.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const videoId = card.dataset.video;
+            const videoUrl = card.dataset.url;
+            console.log(`Video card clicked: videoId=${videoId}, url=${videoUrl}`);
+            if (videoId && modals[`videoPlayer${videoId}`] && youtubePlayers[videoId]) {
+                youtubePlayers[videoId].src = videoUrl;
+                closeModal(modals.video, buttons.openVideo);
+                openModal(modals[`videoPlayer${videoId}`], buttons.openVideo);
+                adjustModalHeight(modals[`videoPlayer${videoId}`]);
+            } else {
+                console.error(`Error: videoId=${videoId}, modal=${modals[`videoPlayer${videoId}`]}, player=${youtubePlayers[videoId]}`);
+            }
+        });
+    });
+
+    if (submitButton) {
+        submitButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Submit button clicked, selectedOption:', selectedOption, 'correctAnswer:', currentQuestionData.correctAnswer);
+            if (!selectedOption) {
+                showToast('Будь ласка, оберіть варіант відповіді!', false);
+                console.log('No option selected');
+                return;
+            }
+            if (normalizeString(selectedOption) === normalizeString(currentQuestionData.correctAnswer)) {
+                showToast('<span style="color: white;">✓ Правильно! Молодець!</span>', true);
+                submitButton.disabled = true;
+                trainerOptions.style.pointerEvents = 'none';
+                console.log(`Correct answer, moving to next question. Current index: ${currentQuestionIndex}`);
+                if (currentQuestionIndex < 5) { // Updated to 5 to allow progression to Question 6
+                    currentQuestionIndex++;
+                    setTimeout(() => loadQuestion(currentQuestionIndex), 2500);
+                } else {
+                    setTimeout(() => {
+                        showToast('<span style="color: white;">✓ Вітаємо! Ви завершили тренажер!</span>', true);
+                        setTimeout(() => closeModal(modals.trainer, buttons.closeTrainer), 2500);
+                    }, 2500);
+                }
+            } else {
+                showToast('<span style="color: white;">✗ Неправильно, спробуй ще раз!</span>', false);
+                console.log(`Incorrect answer, reloading question ${currentQuestionIndex + 1}`);
+                if (currentQuestionIndex === 1) {
+                    currentSecondQuestionIdx++;
+                    if (currentSecondQuestionIdx >= secondQuestionList.length) {
+                        currentSecondQuestionIdx = 0;
+                        secondQuestionOrder = shuffleArray([...Array(secondQuestionList.length).keys()]);
+                    }
+                    setTimeout(() => loadQuestion(currentQuestionIndex), 2500);
+                } else if (currentQuestionIndex === 2) {
+                    currentThirdQuestionIdx++;
+                    if (currentThirdQuestionIdx >= thirdQuestionList.length) {
+                        currentThirdQuestionIdx = 0;
+                        thirdQuestionOrder = shuffleArray([...Array(thirdQuestionList.length).keys()]);
+                    }
+                    setTimeout(() => loadQuestion(currentQuestionIndex), 2500);
+                } else if (currentQuestionIndex === 3) {
+                    currentFourthQuestionIdx++;
+                    if (currentFourthQuestionIdx >= fourthQuestionList.length) {
+                        currentFourthQuestionIdx = 0;
+                        fourthQuestionOrder = shuffleArray([...Array(fourthQuestionList.length).keys()]);
+                    }
+                    setTimeout(() => loadQuestion(currentQuestionIndex), 2500);
+                } else if (currentQuestionIndex === 4) {
+                    currentFifthQuestionIdx++;
+                    if (currentFifthQuestionIdx >= fifthQuestionList.length) {
+                        currentFifthQuestionIdx = 0;
+                        fifthQuestionOrder = shuffleArray([...Array(fifthQuestionList.length).keys()]);
+                    }
+                    setTimeout(() => loadQuestion(currentQuestionIndex), 2500);
+                } else if (currentQuestionIndex === 5) {
+                    currentSixthQuestionIdx++;
+                    if (currentSixthQuestionIdx >= sixthQuestionList.length) {
+                        currentSixthQuestionIdx = 0;
+                        sixthQuestionOrder = shuffleArray([...Array(sixthQuestionList.length).keys()]);
+                    }
+                    setTimeout(() => loadQuestion(currentQuestionIndex), 2500);
+                } else {
+                    setTimeout(() => loadQuestion(currentQuestionIndex), 2500);
+                }
+            }
+        });
+    } else {
+        console.error('submitButton is null');
+    }
+}
+
+// Existing DOMContentLoaded and resize event listeners (unchanged)
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM loaded, initializing event listeners');
+    if (!trainerQuestion || !trainerOptions || !submitButton || !toastContainer) {
+        console.error('Trainer elements missing on DOMContentLoaded:', { trainerQuestion, trainerOptions, submitButton, toastContainer });
+    }
+    addEventListeners();
+    typesetMathJax();
+    document.querySelectorAll('.modal-content').forEach(content => {
+        content.addEventListener('click', (e) => {
+            e.stopPropagation();
+        }, { passive: true });
+    });
+
+    if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+        window.MathJax.typesetPromise().then(() => {
+            console.log('MathJax initial typeset completed');
+            if (modals.theory.classList.contains('show')) {
+                adjustModalHeight(modals.theory);
+            }
+            if (modals.trainer.classList.contains('show')) {
+                resetTrainer();
+            }
+        }).catch(err => console.error('MathJax initial typeset error:', err));
+    } else {
+        console.warn('MathJax not available on initial load');
+    }
+});
+
+window.addEventListener('resize', () => {
+    Object.values(modals).forEach(modal => {
+        if (modal.classList.contains('show')) {
+            adjustModalHeight(modal);
+        }
+    });
+});
+</script>
+
+</body>
+</html>
