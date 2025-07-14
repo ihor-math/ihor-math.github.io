@@ -677,6 +677,74 @@ details[open] summary {
     line-height: 1.6;
     overflow: visible;
 }
+.completion-emoji {
+    width: clamp(80px, 15vw, 100px);
+    height: clamp(80px, 15vw, 100px);
+    margin: 20px auto;
+    font-size: clamp(40px, 8vw, 50px);
+    text-align: center;
+    line-height: clamp(80px, 15vw, 100px);
+    background: linear-gradient(135deg, #ff7f7f, #26a69a); /* Colorful gradient background */
+    border-radius: 50%;
+    border: 2px dashed #ffd700;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.completion-emoji::after {
+    content: '🎉';
+    font-size: clamp(40px, 8vw, 60px);
+    color: #ffff00;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+    .completion-message {
+    text-align: center;
+    color: #e6e6fa;
+    margin: 20px 0;
+}
+
+.completion-message h2 {
+    font-size: clamp(20px, 3.5vw, 24px);
+    color: #ff7f7f;
+    font-weight: 600;
+    margin-bottom: 10px;
+     text-align: center;
+}
+
+.completion-message p {
+    font-size: clamp(16px, 3vw, 18px);
+    color: #e6e6fa;
+    margin: 0 auto 20px; /* Center with auto margins */
+    text-align: center; /* Ensure text is centered */
+    width: fit-content; /* Shrink-wrap the text */
+}
+
+
+#resetTrainerBtn {
+    background: linear-gradient(135deg, #ff7f7f, #26a69a);
+    color: #ffffff;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 25px;
+    font-size: clamp(16px, 2.8vw, 18px);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#resetTrainerBtn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+.hidden {
+  display: none;
+}
 
         @media (max-width: 768px) {
             .title-box {
@@ -1015,13 +1083,13 @@ details[open] summary {
     </div>
 
     <div class="navigation-buttons" style="margin: 40px 0; display: flex; gap: 20px; justify-content: center;">
-               <a class="nav-button" href='tema2.html'>
+       <a class="nav-button" href='tema2.html'>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white">
                 <path d="M15 18l-6-6 6-6"/>
             </svg>
             До теми 2
         </a>
-        <a class="nav-button" href='index.html'>
+       <a class="nav-button" href='index.html'>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white">
                 <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
             </svg>
@@ -1433,7 +1501,7 @@ details[open] summary {
                 </div>
                 <div class="card-back">
                     <p>Модулі множаться, аргументи додаються.</p>
-    <p>Якщо \( z_1 = r_1 (\cos \phi_1 + i \sin \phi_1), z_2 = r_2 (\cos \phi_2 + i \sin \phi_2) \), то \( z_1 \cdot z_2 = r_1 r_2 (\cos (\phi_1 + \phi_2) + i \sin (\phi_1 + \phi_2)) \).</p>
+    <p>Якщо \( z_1 = r_1 (\cos φ_1 + i \sin φ_1), z_2 = r_2 (\cos φ_2 + i \sin φ_2) \), то \( z_1 \cdot z_2 = r_1 r_2 (\cos (φ_1 + φ_2) + i \sin (φ_1 + φ_2)) \).</p>
                 </div>
             </div>
         </div>
@@ -1444,7 +1512,7 @@ details[open] summary {
                 </div>
                 <div class="card-back">
                     <p>Модулі діляться, аргументи віднімаються.</p>
-   <p> Якщо \( z_1 = r_1 (\cos \phi_1 + i \sin \phi_1), z_2 = r_2 (\cos \phi_2 + i \sin \phi_2) \), то \( \frac{z_1}{z_2} = \frac{r_1}{r_2} (\cos (\phi_1 - \phi_2) + i \sin (\phi_1 - \phi_2)) \).</p>
+   <p> Якщо \( z_1 = r_1 (\cos φ _1 + i \sin φ _1), z_2 = r_2 (\cos φ _2 + i \sin φ _2) \), то \( \frac{z_1}{z_2} = \frac{r_1}{r_2} (\cos (φ_1 - φ_2) + i \sin (φ_1 - φ_2)) \).</p>
                 </div>
             </div>
         </div>
@@ -1454,7 +1522,7 @@ details[open] summary {
                     <p>Записати формулу Муавра.</p>
                 </div>
                 <div class="card-back">
-                    <p>Формула Муавра: \( z^n = r^n (\cos n\phi + i \sin n\phi) \), де \( z = r (\cos \phi + i \sin \phi), n \in \mathbb{N} \).</p>
+                    <p>Формула Муавра: \( z^n = r^n (\cos nφ + i \sin nφ) \), де \( z = r (\cos φ + i \sin φ), n \in \mathbb{N} \).</p>
                 </div>
             </div>
         </div>
@@ -1466,7 +1534,7 @@ details[open] summary {
                 <div class="card-back">
     <p>Це таке комплексне число \( z_k \), яке при піднесенні до степеня \( n \) дає початкове число \( z \).</p>
     <p>Формула коренів:</p>
-    <p>\( z_k = \sqrt[n]{r} \left( \cos \frac{\phi + 2\pi k}{n} + i \sin \frac{\phi + 2\pi k}{n} \right) \)</p>
+    <p>\( z_k = \sqrt[n]{r} \left( \cos \frac{φ + 2\pi k}{n} + i \sin \frac{φ + 2\pi k}{n} \right) \)</p>
     <p>\( k = 0, 1, 2, \dots, n-1 \)</p>
 </div>
             </div>
@@ -1483,22 +1551,31 @@ details[open] summary {
         </div>
     </div>
 </div>
-   <div id="trainerModal" class="modal">
-    <div class="modal-header">
-        <button class="close-btn" id="closeTrainerBtn">× Закрити</button>
+
+  <div id="trainerModal" class="modal">
+  <div class="modal-header">
+    <button class="close-btn" id="closeTrainerBtn">× Закрити</button>
+  </div>
+
+  <div class="modal-content">
+    <div class="trainer-content" id="trainerContent">
+      <div class="question-indicator" id="currentQuestionIndicator">Питання 1</div>
+      <div class="trainer-question" id="trainerQuestion"></div>
+      <div class="trainer-options" id="trainerOptions"></div>
+      <button class="submit-answer-btn" id="submitAnswerBtn" disabled>Відповісти</button>
     </div>
-    <div class="modal-content">
-        <div id="currentQuestionIndicator" class="question-indicator"></div>
-        <div class="trainer-content">
-            <div id="trainerQuestion" class="trainer-question"></div>
-            <div id="trainerOptions" class="trainer-options"></div>
-            <button id="submitAnswer" class="submit-answer-btn" disabled>Відповісти</button>
-        </div>
-        <div id="toastContainer"></div>
+
+    <!-- ✅ ДОДАЙ сюди completionBlock -->
+    <div id="completionBlock" class="completion-message hidden">
+      <div class="completion-emoji"></div>
+      <h2>Тренування завершено!</h2>
+      <p>Молодець!</p>
+      <button id="resetTrainerBtn">Спробувати ще раз</button>
     </div>
-</div>
+
 
 <script>
+// Ініціалізація елементів DOM
 const modals = {
     theory: document.getElementById('theoryModal'),
     video: document.getElementById('videoModal'),
@@ -1512,12 +1589,12 @@ const modals = {
 
 const buttons = {
     openTheory: document.getElementById('openTheoryBtn'),
-    openVideo: document.getElementById('openVideoBtn'),
-    openQuestions: document.getElementById('openQuestionsBtn'),
-    openTrainer: document.getElementById('openTrainerBtn'),
     closeTheory: document.getElementById('closeTheoryBtn'),
+    openVideo: document.getElementById('openVideoBtn'),
     closeVideo: document.getElementById('closeVideoBtn'),
+    openQuestions: document.getElementById('openQuestionsBtn'),
     closeQuestions: document.getElementById('closeQuestionsBtn'),
+    openTrainer: document.getElementById('openTrainerBtn'),
     closeTrainer: document.getElementById('closeTrainerBtn'),
     closeVideoPlayer1: document.getElementById('closeVideoPlayerBtn1'),
     closeVideoPlayer2: document.getElementById('closeVideoPlayerBtn2'),
@@ -1532,27 +1609,27 @@ const youtubePlayers = {
     4: document.getElementById('youtubePlayer4')
 };
 
-const overlay = document.getElementById('modalOverlay');
 const trainerQuestion = document.getElementById('trainerQuestion');
 const trainerOptions = document.getElementById('trainerOptions');
-const submitButton = document.getElementById('submitAnswer');
-const toastContainer = document.getElementById('toastContainer');
+const submitButton = document.getElementById('submitAnswerBtn');
+const toastContainer = document.body;
 const currentQuestionIndicator = document.getElementById('currentQuestionIndicator');
-
-let scrollPosition = 0;
-let currentQuestionIndex = 0;
+const trainerContent = document.getElementById('trainerContent');
 let selectedOption = null;
-let currentQuestionData = null;
-let secondQuestionOrder = [];
-let thirdQuestionOrder = [];
-let fourthQuestionOrder = [];
-let fifthQuestionOrder = [];
-let sixthQuestionOrder = []; // Added for Question 6
+let currentQuestionIndex = 0;
 let currentSecondQuestionIdx = 0;
 let currentThirdQuestionIdx = 0;
 let currentFourthQuestionIdx = 0;
 let currentFifthQuestionIdx = 0;
-let currentSixthQuestionIdx = 0; // Added for Question 6
+let currentSixthQuestionIdx = 0;
+let secondQuestionOrder = [];
+let thirdQuestionOrder = [];
+let fourthQuestionOrder = [];
+let fifthQuestionOrder = [];
+let sixthQuestionOrder = [];
+let currentQuestionData = null;
+const overlay = document.getElementById('modalOverlay');
+let scrollPosition = 0;
 
 // List of 12 examples for Question 2
 const secondQuestionList = [
@@ -1847,6 +1924,7 @@ const thirdQuestionList = [
         correctAnswer: `-\\sqrt{2}+\\sqrt{2} i`
     }
 ];
+
 // List of 13 examples for Question 4
 const fourthQuestionList = [
     {
@@ -1905,7 +1983,7 @@ const fourthQuestionList = [
         correctAnswer: `8i`
     },
     {
-        question: `6\\left(\\cos \\left(-\\frac{3\\pi}{4}\\right) + i \\sin \\left(-\\frac{3\\pi}{4}\\right)\\right) : 3\\left(\\cos \\left(-\\frac{\\pi}{12}\\right) + i \\sin \\left(-\\frac{\\pi}{12}\\right)\\right)`,
+        question: `\\frac{6\\left(\\cos \\left(-\\frac{3\\pi}{4}\\right) + i \\sin \\left(-\\frac{3\\pi}{4}\\right)\\right)}{3\\left(\\cos \\left(-\\frac{\\pi}{12}\\right) + i \\sin \\left(-\\frac{\\pi}{12}\\right)\\right)} \\`,
         options: [
             `-2 - 2\\sqrt{3} i`,
             `1 + \\sqrt{3} i`,
@@ -1993,7 +2071,7 @@ const fourthQuestionList = [
     correctAnswer: `-\\frac{1}{2} + \\frac{\\sqrt{3}}{2} i`
 }
 ];
-    
+
 // List of 10 examples for Question 5
 const fifthQuestionList = [
     {
@@ -2108,7 +2186,7 @@ const fifthQuestionList = [
     }
 ];
 
-    // New question list for Question 6
+// List of 12 examples for Question 6
 const sixthQuestionList = [
     {
         question: `\\sqrt[3]{\\cos 60^\\circ + i \\sin 60^\\circ}`,
@@ -2302,7 +2380,6 @@ function openModal(modal, btn) {
         }
     }, { passive: false });
 }
-            
 
 function closeModal(modal, btn) {
     if (!modal || !btn) {
@@ -2339,58 +2416,61 @@ function closeVideoModal(videoModal, playerId, mainModal, btn) {
 }
 
 function typesetMathJax() {
-    if (window.MathJax && typeof window.MathJax.typeset === 'function') {
+    console.log('typesetMathJax called at:', new Date().toISOString());
+    if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
         try {
-            window.MathJax.typeset([trainerQuestion, trainerOptions, modals.questions]);
-            setTimeout(() => {
+            window.MathJax.typesetPromise([trainerQuestion, trainerOptions, modals.questions]).then(() => {
+                console.log('MathJax typeset completed with promise');
                 adjustModalHeight(modals.trainer);
-                console.log('MathJax typeset completed with delay');
-            }, 100);
+            }).catch(err => {
+                console.error('MathJax typeset error:', err);
+                adjustModalHeight(modals.trainer); // Коригуємо висоту навіть у разі помилки
+            });
         } catch (err) {
             console.error('MathJax typeset error:', err);
+            adjustModalHeight(modals.trainer);
         }
     } else {
-        console.error('MathJax not loaded');
+        console.error('MathJax not loaded or typesetPromise not available');
+        adjustModalHeight(modals.trainer);
+        showToast('Помилка: MathJax не завантажено', false);
     }
 }
 
-// Оновлюємо функцію adjustModalHeight
 function adjustModalHeight(modal) {
-  if (!modal) return;
-  const modalContent = modal.querySelector('.modal-content');
-  const modalHeader = modal.querySelector('.modal-header');
-  if (!modalContent || !modalHeader) return;
+    if (!modal) return;
+    const modalContent = modal.querySelector('.modal-content');
+    const modalHeader = modal.querySelector('.modal-header');
+    if (!modalContent || !modalHeader) return;
 
-  const setHeight = () => {
-    const contentHeight = modalContent.scrollHeight;
-    const headerHeight = modalHeader.offsetHeight;
-    const windowHeight = window.innerHeight;
-    const maxModalHeight = windowHeight * 0.95;
-    let requiredHeight = contentHeight + headerHeight + 40;
+    const setHeight = () => {
+        const contentHeight = modalContent.scrollHeight;
+        const headerHeight = modalHeader.offsetHeight;
+        const windowHeight = window.innerHeight;
+        const maxModalHeight = windowHeight * 0.95;
+        let requiredHeight = contentHeight + headerHeight + 40;
 
-    modal.style.height = requiredHeight < maxModalHeight 
-      ? `${requiredHeight}px` 
-      : `${maxModalHeight}px`;
-      
-    modalContent.style.height = requiredHeight < maxModalHeight 
-      ? `${requiredHeight - headerHeight - 20}px` 
-      : `${maxModalHeight - headerHeight - 20}px`;
-      
-    modalContent.style.overflowY = requiredHeight <= maxModalHeight 
-      ? 'hidden' 
-      : 'auto';
-      
-    modalContent.scrollTop = 0;
-  };
+        modal.style.height = requiredHeight < maxModalHeight 
+            ? `${requiredHeight}px` 
+            : `${maxModalHeight}px`;
+        
+        modalContent.style.height = requiredHeight < maxModalHeight 
+            ? `${requiredHeight - headerHeight - 20}px` 
+            : `${maxModalHeight - headerHeight - 20}px`;
+        
+        modalContent.style.overflowY = requiredHeight <= maxModalHeight 
+            ? 'hidden' 
+            : 'auto';
+        
+        modalContent.scrollTop = 0;
+    };
 
-  // Викликаємо після рендерингу MathJax
-  if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
-    window.MathJax.typesetPromise([modalContent]).then(setHeight).catch(setHeight);
-  } else {
-    setHeight();
-  }
+    if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+        window.MathJax.typesetPromise([modalContent]).then(setHeight).catch(setHeight);
+    } else {
+        setHeight();
+    }
 }
-
 
 function showToast(message, isCorrect) {
     if (!toastContainer) {
@@ -2555,7 +2635,7 @@ function generateSixthQuestion() {
 }
 
 
-// Updated loadQuestion function
+// Функція для завантаження питання
 function loadQuestion(index) {
     try {
         console.log(`loadQuestion: Loading question ${index + 1}, currentQuestionIndex: ${currentQuestionIndex}, currentSecondQuestionIdx: ${currentSecondQuestionIdx}, currentThirdQuestionIdx: ${currentThirdQuestionIdx}, currentFourthQuestionIdx: ${currentFourthQuestionIdx}, currentFifthQuestionIdx: ${currentFifthQuestionIdx}, currentSixthQuestionIdx: ${currentSixthQuestionIdx}`);
@@ -2572,6 +2652,12 @@ function loadQuestion(index) {
             currentQuestionData = generateFifthQuestion();
         } else if (index === 5) {
             currentQuestionData = generateSixthQuestion();
+        }
+
+        if (!trainerQuestion || !trainerOptions || !currentQuestionIndicator) {
+            console.error('loadQuestion: Required elements are missing', { trainerQuestion, trainerOptions, currentQuestionIndicator });
+            showToast('Помилка: елементи питання недоступні', false);
+            return;
         }
 
         trainerQuestion.innerHTML = currentQuestionData.question;
@@ -2600,28 +2686,80 @@ function loadQuestion(index) {
     }
 }
 
-// Updated resetTrainer function
+// Функція для скидання тренажера
 function resetTrainer() {
-    console.log('resetTrainer: Resetting trainer');
+    if (!trainerContent || !modals.trainer || !buttons.openTrainer) {
+        console.error('resetTrainer: Required elements are missing:', {
+            trainerContent: !!trainerContent,
+            trainerModal: !!modals.trainer,
+            openTrainerBtn: !!buttons.openTrainer
+        });
+        showToast('Помилка: елементи тренажера недоступні', false);
+        return;
+    }
+
+    console.log('resetTrainer: Resetting trainer to initial state');
+
+    // 🔁 Обов'язково сховай завершальний блок і покажи основний
+    document.getElementById('completionBlock').classList.add('hidden');
+    document.getElementById('trainerContent').classList.remove('hidden');
+
     currentQuestionIndex = 0;
     currentSecondQuestionIdx = 0;
     currentThirdQuestionIdx = 0;
     currentFourthQuestionIdx = 0;
     currentFifthQuestionIdx = 0;
     currentSixthQuestionIdx = 0;
+
+    console.log('resetTrainer: Reset indices:', {
+        currentQuestionIndex,
+        currentSecondQuestionIdx,
+        currentThirdQuestionIdx,
+        currentFourthQuestionIdx,
+        currentFifthQuestionIdx,
+        currentSixthQuestionIdx
+    });
+
     secondQuestionOrder = shuffleArray([...Array(secondQuestionList.length).keys()]);
     thirdQuestionOrder = shuffleArray([...Array(thirdQuestionList.length).keys()]);
     fourthQuestionOrder = shuffleArray([...Array(fourthQuestionList.length).keys()]);
     fifthQuestionOrder = shuffleArray([...Array(fifthQuestionList.length).keys()]);
     sixthQuestionOrder = shuffleArray([...Array(sixthQuestionList.length).keys()]);
+
+    console.log('resetTrainer: Shuffled question orders:', {
+        secondQuestionOrder,
+        thirdQuestionOrder,
+        fourthQuestionOrder,
+        fifthQuestionOrder,
+        sixthQuestionOrder
+    });
+
     selectedOption = null;
-    currentQuestionData = null;
+    submitButton.disabled = true;
+    trainerOptions.style.pointerEvents = 'auto';
+
+    console.log('resetTrainer: Calling loadQuestion(0)');
     loadQuestion(0);
+
+    // Переконуємось, що модальне вікно відкрите
+    if (!modals.trainer.classList.contains('show')) {
+        console.log('resetTrainer: trainerModal is not visible, calling openModal');
+        openModal(modals.trainer, buttons.openTrainer);
+    }
+
+    // Додаємо затримку для забезпечення рендерингу
+    setTimeout(() => {
+        adjustModalHeight(modals.trainer);
+        console.log('resetTrainer: trainerModal display:', modals.trainer.style.display);
+        console.log('resetTrainer: trainerModal show class:', modals.trainer.classList.contains('show'));
+    }, 100);
 }
 
 
-// Existing addEventListeners function with updated submitButton logic
+// Функція для додавання обробників подій
 function addEventListeners() {
+    console.log('addEventListeners: Attaching event listeners');
+
     const events = [
         { btn: buttons.openTheory, modal: modals.theory, closeBtn: buttons.closeTheory },
         { btn: buttons.openVideo, modal: modals.video, closeBtn: buttons.closeVideo },
@@ -2644,7 +2782,7 @@ function addEventListeners() {
                 adjustModalHeight(modal);
             });
         } else {
-            console.warn(`Button or modal missing: btn=${btn}, modal=${modal}`);
+            console.warn(`Button or modal missing: btn=${btn?.id}, modal=${modal?.id}`);
         }
         if (closeBtn && modal && btn !== closeBtn) {
             closeBtn.addEventListener('click', (e) => {
@@ -2659,33 +2797,19 @@ function addEventListeners() {
                 }
             });
         } else {
-            console.warn(`Close button or modal missing: closeBtn=${closeBtn}, modal=${modal}`);
+            console.warn(`Close button or modal missing: closeBtn=${closeBtn?.id}, modal=${modal?.id}`);
         }
     });
 
-    overlay.addEventListener('click', (e) => {
-        e.stopPropagation();
-        console.log('Overlay clicked, checking for open modals');
-        Object.values(modals).forEach(modal => {
-            if (modal.classList.contains('show')) {
-                console.log(`Closing modal: ${modal.id}`);
-                if (modal.id.includes('videoPlayer')) {
-                    const playerId = modal.id.replace('videoPlayerModal', '');
-                    closeVideoModal(modal, playerId, modals.video, buttons.openVideo);
-                } else {
-                    const btnKey = `open${modal.id.replace('Modal', '')}`;
-                    closeModal(modal, buttons[btnKey] || buttons.openVideo);
-                }
-            }
-        });
-    });
-
-    document.querySelectorAll('.card-inner').forEach(card => {
-        card.addEventListener('click', (e) => {
+    // Add event listener for flashcard flipping
+    const questionCards = document.querySelectorAll('.question-card .card-inner');
+    questionCards.forEach((cardInner, index) => {
+        cardInner.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            console.log('Card clicked, toggling flipped class');
-            card.classList.toggle('flipped');
+            console.log(`Flashcard ${index + 1} clicked, toggling flipped class`);
+            cardInner.classList.toggle('flipped');
+            typesetMathJax(); // Re-render MathJax to ensure formulas display correctly
         });
     });
 
@@ -2703,7 +2827,8 @@ function addEventListeners() {
                 openModal(modals[`videoPlayer${videoId}`], buttons.openVideo);
                 adjustModalHeight(modals[`videoPlayer${videoId}`]);
             } else {
-                console.error(`Error: videoId=${videoId}, modal=${modals[`videoPlayer${videoId}`]}, player=${youtubePlayers[videoId]}`);
+                console.error(`Error: videoId=${videoId}, modal=${modals[`videoPlayer${videoId}`]?.id}, player=${youtubePlayers[videoId]}`);
+                showToast('Помилка: не вдалося відкрити відео', false);
             }
         });
     });
@@ -2712,7 +2837,7 @@ function addEventListeners() {
         submitButton.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            console.log('Submit button clicked, selectedOption:', selectedOption, 'correctAnswer:', currentQuestionData.correctAnswer);
+            console.log('Submit button clicked, selectedOption:', selectedOption, 'correctAnswer:', currentQuestionData?.correctAnswer);
             if (!selectedOption) {
                 showToast('Будь ласка, оберіть варіант відповіді!', false);
                 console.log('No option selected');
@@ -2723,13 +2848,21 @@ function addEventListeners() {
                 submitButton.disabled = true;
                 trainerOptions.style.pointerEvents = 'none';
                 console.log(`Correct answer, moving to next question. Current index: ${currentQuestionIndex}`);
-                if (currentQuestionIndex < 5) { // Updated to 5 to allow progression to Question 6
+                if (currentQuestionIndex < 5) {
                     currentQuestionIndex++;
                     setTimeout(() => loadQuestion(currentQuestionIndex), 2500);
                 } else {
                     setTimeout(() => {
-                        showToast('<span style="color: white;">✓ Вітаємо! Ви завершили тренажер!</span>', true);
-                        setTimeout(() => closeModal(modals.trainer, buttons.closeTrainer), 2500);
+                        document.getElementById('trainerContent').classList.add('hidden');
+                        const completionBlock = document.getElementById('completionBlock');
+                        if (completionBlock) {
+                            completionBlock.classList.remove('hidden');
+                            adjustModalHeight(modals.trainer);
+                            typesetMathJax();
+                        } else {
+                            console.error('completionBlock not found');
+                            showToast('Помилка: не вдалося відобразити екран завершення', false);
+                        }
                     }, 2500);
                 }
             } else {
@@ -2777,20 +2910,47 @@ function addEventListeners() {
         });
     } else {
         console.error('submitButton is null');
+        showToast('Помилка: кнопка підтвердження недоступна', false);
     }
 }
-
-// Existing DOMContentLoaded and resize event listeners (unchanged)
-document.addEventListener('DOMContentLoaded', () => {
+// Ініціалізація при завантаженні сторінки
+document.addEventListener("DOMContentLoaded", () => {
     console.log('DOM loaded, initializing event listeners');
-    if (!trainerQuestion || !trainerOptions || !submitButton || !toastContainer) {
-        console.error('Trainer elements missing on DOMContentLoaded:', { trainerQuestion, trainerOptions, submitButton, toastContainer });
+
+    // Додаємо обробник кнопки "Спробувати ще раз"
+    const resetBtn = document.getElementById("resetTrainerBtn");
+    if (resetBtn) {
+        resetBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            console.log("🔁 Клік по кнопці resetTrainerBtn");
+            document.getElementById('completionBlock').classList.add('hidden');
+            resetTrainer();
+        });
+    } else {
+        console.warn("❌ Кнопка resetTrainerBtn не знайдена при DOMContentLoaded");
     }
+
+    if (!trainerQuestion || !trainerOptions || !submitButton || !toastContainer || !trainerContent || !overlay) {
+        console.error('Trainer elements missing on DOMContentLoaded:', {
+            trainerQuestion: !!trainerQuestion,
+            trainerOptions: !!trainerOptions,
+            submitButton: !!submitButton,
+            toastContainer: !!toastContainer,
+            trainerContent: !!trainerContent,
+            overlay: !!overlay
+        });
+        showToast('Помилка ініціалізації елементів тренажера', false);
+        return;
+    }
+
     addEventListeners();
     typesetMathJax();
+
     document.querySelectorAll('.modal-content').forEach(content => {
         content.addEventListener('click', (e) => {
-            e.stopPropagation();
+            if (!e.target.closest('#resetTrainerBtn')) {
+                e.stopPropagation();
+            }
         }, { passive: true });
     });
 
@@ -2808,7 +2968,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.warn('MathJax not available on initial load');
     }
 });
-
+// Обробник події зміни розміру вікна
 window.addEventListener('resize', () => {
     Object.values(modals).forEach(modal => {
         if (modal.classList.contains('show')) {
@@ -2816,7 +2976,7 @@ window.addEventListener('resize', () => {
         }
     });
 });
-</script>
 
+</script>
 </body>
 </html>
