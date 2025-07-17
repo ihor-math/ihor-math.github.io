@@ -1,0 +1,1998 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>9. Перехід між алгебраїчною та тригонометричною формами комплексного числа</title>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    console.log("MathJax is loaded and ready!");
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" onerror="console.error('Failed to load MathJax')"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Roboto:wght@400;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        *, *:before, *:after {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            background: linear-gradient(135deg, #1e1b4b, #134e4a);
+            font-family: 'Roboto', sans-serif;
+            color: #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: start;
+            min-height: 100vh;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        body.loaded {
+            visibility: visible;
+            opacity: 1;
+        }
+        .title-box {
+            margin-top: 60px;
+            padding: 20px 40px;
+            background: linear-gradient(135deg, #22d3ee, #fb7185);
+            border-radius: 15px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+            max-width: 90%;
+            text-align: center;
+        }
+        .title-box h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            font-family: 'Merriweather', serif;
+        }
+        .section-container {
+            margin-top: 80px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .section {
+            width: 260px;
+            height: 200px;
+            background: linear-gradient(45deg, #1e293b, #475569);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            color: #e2e8f0;
+            text-decoration: none;
+        }
+        .section:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+            background: linear-gradient(45deg, #1e293b, #4ade80);
+        }
+        .section img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 15px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        .section h2 {
+            font-size: 20px;
+            margin: 0;
+            font-family: 'Merriweather', serif;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 5%;
+            left: 5%;
+            width: 90%;
+            height: 90%;
+            background: linear-gradient(135deg, #2dd4bf, #1e3a8a);
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            z-index: 1001;
+            overflow: hidden;
+            flex-direction: column;
+        }
+        #modalOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+        .modal-content {
+            padding: 20px;
+            overflow-y: auto;
+            flex-grow: 1;
+            background: #f1f5f9;
+            border-radius: 10px;
+            margin: 10px;
+            color: #1e293b;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: flex-end;
+            background: linear-gradient(0deg, #2dd4bf, #1e3a8a);
+            padding: 10px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        #trainerModal .modal-header {
+            background: #6b21a8;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+        .close-btn {
+            background: #fb7185;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            font-family: 'Roboto', sans-serif;
+        }
+        .close-btn:hover {
+            background: #10b981;
+        }
+        #trainerModal .close-btn {
+            background: #a855f7;
+        }
+        #trainerModal .close-btn:hover {
+            background: #ec4899;
+        }
+        details {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 6px;
+            background: #003153;
+            cursor: pointer;
+        }
+        summary {
+            font-weight: bold;
+            padding: 8px;
+            background: #b81414;
+            border-radius: 6px;
+            color: #ffffff;
+            font-family: 'Merriweather', serif;
+        }
+        summary:hover {
+            background: #10b981;
+        }
+        details p {
+            padding: 0 15px 10px;
+            color: #e2e8f0;
+            margin: 8px 0;
+        }
+        .math-notation {
+            font-style: italic;
+            color: #fef08a;
+        }
+        .highlight-term {
+            background: #e0f7fa;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #0ea5e9;
+        }
+        .formula-line {
+            display: inline-block;
+            white-space: nowrap;
+        }
+        .question-block {
+            margin: 15px 0;
+            padding: 10px;
+            background: linear-gradient(135deg, #22d3ee, #fb7185);
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            cursor: pointer;
+        }
+        .question-block summary {
+            font-size: 16px;
+            background: #2dd4bf;
+            color: #ffffff;
+        }
+        .question-block details summary {
+            background: #fb7185;
+        }
+        .question-block details p {
+            color: #1e293b;
+            background: #f1f5f9;
+            padding: 10px;
+            border-radius: 6px;
+        }
+        #questionsModal mjx-container {
+            color: #FFFF00 !important;
+            font-style: italic;
+            font-size: 20px !important;
+        }
+        .trainer-container {
+            width: 90%;
+            max-width: 800px;
+            padding: 3vw 4vw;
+            text-align: center;
+            background-color: #ffffffc7;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0);
+            transition: all 0.3s ease;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100%;
+        }
+        .question-circle {
+            width: clamp(80px, 15vw, 120px);
+            height: clamp(80px, 15vw, 120px);
+            margin: 0 auto 3vw;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+        }
+        .question-circle h3 {
+            color: #ffffff;
+            font-family: 'Lora', serif;
+            font-size: clamp(16px, 2.5vw, 20px);
+            margin: 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        .completion-emoji {
+            width: clamp(80px, 15vw, 120px);
+            height: clamp(80px, 15vw, 120px);
+            margin: 0 auto 3vw;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            border: 2px dashed #fb7185;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .completion-emoji::after {
+            content: '🎉';
+            font-size: clamp(40px, 8vw, 60px);
+            color: #fb7185;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2vw;
+            justify-content: center;
+            margin-bottom: 3vw;
+            width: 100%;
+        }
+        .option {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5vw 3vw;
+            border: 1.5px solid #a855f7;
+            border-radius: 8px;
+            background: #ffedd5;
+            cursor: pointer;
+            font-size: clamp(15px, 3.5vw, 18px);
+            min-height: 45px;
+            min-width: 90px;
+            max-width: 45%;
+            text-align: center;
+            font-family: 'Lora', serif;
+            position: relative;
+            z-index: 1; /* Забезпечує, що .option вище за дочірні елементи */
+            overflow: hidden;
+            box-sizing: border-box;
+            touch-action: manipulation;
+            pointer-events: auto !important; /* Гарантує, що .option отримує події */
+                        user-select: none;
+            transition: background 0.3s ease, transform 0.3s ease, border 0.3s ease;
+        }
+        .option mjx-container {
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            width: 100% !important;
+            height: 100% !important;
+            pointer-events: none !important;
+            font-size: inherit !important;
+            color: #800000 !important;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+       .option::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    pointer-events: none !important; /* Вимкнення подій для псевдоелемента */
+}
+        .option:hover {
+            background: #fed7aa;
+            transform: scale(1.03);
+        }
+        .option.selected {
+            background-color: #FFFF00 !important;
+            color: #000000 !important;
+            border: 2px solid #FFD700 !important;
+            font-weight: bold;
+        }
+        .option:focus {
+            outline: 2px solid #FFD700;
+            outline-offset: 2px;
+        }
+            .option {
+            min-height: 50px !important;
+            padding: 12px 20px !important;
+        }
+        
+        mjx-container, mjx-container * {
+    pointer-events: none !important;
+    user-select: none !important;
+}
+        mjx-frac {
+            font-size: 1.2em !important;
+            padding: 2px !important;
+        }
+        mjx-num, mjx-den {
+            padding: 2px !important;
+        }
+        button {
+            background-color: #fb7185;
+            color: #ffffff;
+            border: none;
+            border-radius: 25px;
+            padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 24px);
+            font-size: clamp(16px, 3vw, 18px);
+            font-family: 'Lora', serif;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover:not(:disabled) {
+            background-color: #10b981;
+        }
+        button:disabled {
+            background-color: #cbd5e1;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 3vw;
+            font-size: clamp(16px, 2.5vw, 18px);
+            font-family: 'Lora', serif;
+        }
+        .completion-message {
+            font-family: 'Lora', serif;
+            font-weight: 700;
+            color: #1e3a8a;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            background: linear-gradient(135deg, #bae6fd, #a5f3fc);
+            border: 2.5px solid #1e3a8a;
+            border-radius: 15px;
+            padding: clamp(12px, 3vw, 18px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+            margin: 2vw auto;
+            max-width: 90%;
+        }
+        .completion-message h2 {
+            font-size: clamp(22px, 4.5vw, 30px);
+            margin: 0 0 1vw;
+        }
+        .completion-message p {
+            font-size: clamp(18px, 3.5vw, 22px);
+            margin: 0;
+        }
+        .math-notation-centered {
+            display: block;
+            text-align: center;
+            width: 100%;
+            font-size: clamp(16px, 2.8vw, 18px);
+            margin: 5px 0;
+            line-height: 1.4;
+            color: #800000;
+            font-family: 'Roboto', sans-serif;
+        }
+        mjx-container.math-notation-centered {
+            display: inline-block !important;
+            text-align: center !important;
+            vertical-align: middle !important;
+            white-space: nowrap !important;
+            line-height: 1.4 !important;
+            font-size: clamp(16px, 2.8vw, 18px) !important;
+            color: #ff6f00 !important;
+            margin: 5px auto !important;
+            padding: 0 !important;
+        }
+        mjx-container.math-notation-centered * {
+            color: #800000 !important;
+            font-style: italic !important;
+        }
+        #trainerModal .math-notation-centered {
+            font-size: clamp(18px, 3vw, 20px);
+            color: #800000;
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.5;
+            text-align: center;
+            margin: 5px 0;
+        }
+        #trainerModal .math-notation-centered mjx-container {
+            font-size: clamp(18px, 3vw, 20px) !important;
+            color: #92000a !important;
+            font-style: italic !important;
+            display: inline-block !important;
+            text-align: center !important;
+            vertical-align: middle !important;
+            margin: 5px auto !important;
+        }
+        .feedback {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(24px, 5.8vw, 30px);
+            font-family: 'Lora', serif;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+            z-index: 1001;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            text-align: center;
+        }
+        .correct-feedback {
+            color: #1e3a8a;
+            background: #bae6fd;
+            border: 2px solid #1e3a8a;
+        }
+        .incorrect-feedback {
+            color: #dc2626;
+            background: #fecaca;
+            border: 2px solid #dc2626;
+        }
+        .navigation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px auto;
+            max-width: 1000px;
+        }
+        .nav-button {
+            display: flex;
+            align-items: center;
+            background: #4682B4;
+            color: #ffff00;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .nav-button:hover {
+            background: #1e3a8a;
+            color: #ffffff;
+            transform: scale(1.03);
+        }
+        .nav-button svg {
+            margin-right: 8px;
+            fill: currentColor;
+        }
+        .question-card {
+            perspective: 1000px;
+            margin: 20px auto;
+            max-width: 964px;
+            width: 100%;
+            min-height: 150px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            cursor: pointer;
+        }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            min-height: 150px;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            cursor: inherit;
+        }
+        .question-card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            min-height: 150px;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            text-align: center;
+            cursor: inherit;
+        }
+        .card-front {
+            background: #005159;
+            color: #fffadd;
+        }
+        .card-back {
+            background: #6b21a8;
+            color: #ffffff;
+            transform: rotateY(180deg);
+            text-align: justify;
+            padding: 20px;
+            overflow: auto;
+            white-space: normal;
+        }
+        .card-front span {
+            display: block;
+            text-align: center;
+            color: #fffadd;
+            font-weight: 700;
+            font-family: 'Lora', serif;
+            font-size: clamp(16px, 2.8vw, 18px);
+            line-height: 1.4;
+            width: 100%;
+        }
+        .card-back span {
+            display: block;
+            max-width: 100%;
+            word-wrap: break-word;
+        }
+        .hidden {
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .title-box {
+                margin-top: 40px;
+                padding: 15px 20px;
+            }
+            .title-box h1 {
+                font-size: 24px;
+            }
+            .section-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            .section {
+                width: 80%;
+                height: 180px;
+            }
+            .modal {
+                top: 2%;
+                left: 2%;
+                width: 96%;
+                height: 96%;
+            }
+            .modal-content {
+                padding: 15px;
+            }
+            .question-card {
+                min-height: 180px;
+            }
+            .card-front, .card-back {
+                font-size: 14px;
+                padding: 11px;
+                line-height: 1.2;
+                text-align: justify;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+            }
+            .card-front span {
+                font-size: 14px;
+                line-height: 1.2;
+            }
+            .trainer-container {
+                width: 95%;
+                padding: 4vw;
+            }
+            .question-circle, .completion-emoji {
+                width: 25vw;
+                height: 25vw;
+                min-width: 80px;
+                min-height: 80px;
+            }
+            .question-circle h3 {
+                font-size: clamp(14px, 3vw, 16px);
+            }
+            .completion-emoji::after {
+                font-size: clamp(30px, 7vw, 40px);
+            }
+            .options-container {
+                gap: 1.5vw;
+                flex-direction: column;
+                align-items: center;
+            }
+            .option {
+        font-size: clamp(14px, 4vw, 16px);
+        padding: 10px !important; /* Уніфікований відступ */
+        min-height: 60px !important; /* Фіксована мінімальна висота */
+        min-width: 100% !important; /* Повна ширина контейнера */
+        max-width: 100% !important; /* Обмеження максимальної ширини */
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        overflow: hidden; /* Запобігає виходу вмісту за межі */
+    }
+    .option mjx-container {
+        font-size: clamp(14px, 4vw, 16px) !important;
+        width: 100% !important;
+        text-align: center;
+        overflow: hidden; /* Запобігає переповненню */
+    }
+            button {
+                padding: 3vw 5vw;
+                font-size: clamp(12px, 3vw, 14px);
+            }
+            .feedback {
+                font-size: clamp(24px, 5.8vw, 32px);
+                padding: clamp(12px, 3.5vw, 18px) clamp(18px, 5vw, 25px);
+                max-width: 95vw;
+                word-wrap: break-word;
+            }
+            .completion-message {
+                padding: clamp(10px, 3vw, 15px);
+            }
+            .completion-message h2 {
+                font-size: clamp(20px, 4vw, 26px);
+            }
+            .completion-message p {
+                font-size: clamp(16px, 3vw, 20px);
+            }
+            .navigation-buttons {
+                margin: 20px auto;
+                gap: 15px;
+            }
+            .nav-button {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+        }
+        @media (max-width: 600px) {
+            .option {
+                font-size: clamp(14px, 4vw, 16px);
+                padding: 3vw 5vw;
+                min-height: 50px;
+                min-width: 100px;
+            }
+            .option mjx-container {
+                font-size: clamp(14px, 4vw, 16px) !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .title-box {
+                margin-top: 20px;
+                padding: 10px 15px;
+            }
+            .title-box h1 {
+                font-size: 20px;
+            }
+            .section {
+                width: 90%;
+                height: 150px;
+            }
+            .section img {
+                width: 50px;
+                height: 50px;
+            }
+            .section h2 {
+                font-size: 18px;
+            }
+            .modal-content {
+                padding: 10px;
+            }
+            .modal-header {
+                padding: 5px 8px;
+            }
+            .close-btn {
+                font-size: 14px;
+                padding: 4px 10px;
+            }
+            .question-card {
+                min-height: 200px;
+            }
+            .card-inner {
+                min-height: 200px;
+            }
+            .card-front, .card-back {
+                min-height: 200px;
+                font-size: 13px;
+                padding: 6px;
+                line-height: 1.1;
+                text-align: justify;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+            }
+            .card-front span {
+                font-size: 13px;
+                line-height: 1.1;
+            }
+            .trainer-container {
+                padding: 5vw;
+            }
+            .question-circle, .completion-emoji {
+                width: 25vw;
+                height: 25vw;
+                min-width: 60px;
+                min-height: 60px;
+            }
+            .completion-emoji::after {
+                font-size: clamp(25px, 6vw, 35px);
+            }
+            .option {
+        font-size: 16px !important;
+        padding: 10px !important;
+        min-height: 60px !important; /* Фіксована висота для всіх прямокутників */
+        min-width: 100% !important; /* Повна ширина контейнера */
+        max-width: 100% !important;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        overflow: hidden;
+    }
+    .option mjx-container {
+        font-size: clamp(13px, 4vw, 15px) !important;
+        width: 100% !important;
+        text-align: center;
+        overflow: hidden;
+    }
+            .feedback {
+                font-size: clamp(22px, 5.2vw, 28px);
+                padding: clamp(10px, 3vw, 15px) clamp(15px, 4.5vw, 20px);
+                max-width: 95vw;
+            }
+            .completion-message {
+                padding: clamp(10px, 3vw, 15px);
+            }
+            .completion-message h2 {
+                font-size: clamp(18px, 3.5vw, 22px);
+            }
+            .completion-message p {
+                font-size: clamp(14px, 3vw, 18px);
+            }
+            .navigation-buttons {
+                margin: 15px auto;
+                gap: 10px;
+            }
+            .nav-button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+            .math-notation-centered {
+                font-size: clamp(14px, 2.5vw, 16px);
+                line-height: 1.2;
+            }
+            mjx-container.math-notation-centered {
+                font-size: clamp(14px, 2.5vw, 16px) !important;
+                line-height: 1.2 !important;
+            }
+            mjx-container {
+                font-size: 13px !important;
+            }
+        }
+        mjx-frac {
+            font-size: 1.2em !important;
+        }
+        mjx-container:not(:has(mjx-frac)) {
+            font-size: inherit !important;
+        }
+        mjx-frac mjx-num, mjx-frac mjx-den {
+            padding: 2px !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="title-box">
+        <h1>9. Перехід між алгебраїчною та тригонометричною формами комплексного числа</h1>
+    </div>
+
+    <div class="section-container">
+        <div class="section" id="openTheoryBtn">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Книга">
+            <h2>Теоретичні відомості</h2>
+        </div>
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Картки">
+            <h2>Питання і відповіді</h2>
+        </div>
+        <div class="section" id="openTrainerBtn">
+            <img src="https://img.icons8.com/fluency/96/flash-on.png" alt="Тренажер">
+            <h2>Тренажер</h2>
+        </div>
+    </div>
+
+    <div class="navigation-buttons">
+        <a class="nav-button" href="{{ url_for('tema2') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            До теми 2
+        </a>
+        <a class="nav-button" href="{{ url_for('home') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            На головну
+        </a>
+    </div>
+            
+   <div id="theoryModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="theoryTitle">
+    <div class="modal-header">
+        <button class="close-btn" id="closeTheoryBtn" aria-label="Закрити">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <h2 style="text-align: center; color: #1e3a8a;">Перехід між алгебраїчною та тригонометричною формами комплексного числа</h2>
+        <p>Перехід між алгебраїчною (\( z = a + bi \)) та тригонометричною (\( z = r(\cos\phi + i\sin\phi) \)) формами комплексного числа є важливим інструментом для роботи з комплексними числами. Він спрощує виконання таких арифметичних дій, як множення, ділення, піднесення до степеня та знаходження коренів.</p>
+        <p>Розглянемо приклад, у якому буде два завдання: <span style="font-style: italic;">перше</span> – переведення комплексного числа з тригонометричної форми в алгебраїчну,<span style="font-style: italic;"> друге </span>– переведення комплексного числа з алгебраїчної форми в тригонометричну.</p>
+           <p> <span style="color: #fb7185; font-weight: bold;">Приклад 2.11.</span> </p>
+                <h3 style="color: #1e3a8a;">1) Записати комплексне число \( z = 2(\cos \frac{\pi}{6} + i\sin \frac{\pi}{6}) \) <span style="font-style: italic;">в алгебраїчній формі.</span></h3>
+        <p><span style="color: #fb7185; font-weight: bold; display: block; text-align: center;">Розв'язання. </span></p>
+           <p> Використовуємо значення тригонометричних функцій для кута \( \frac{\pi}{6} \):</p>
+        <p class="math-notation-centered">\( \cos \frac{\pi}{6} = \frac{\sqrt{3}}{2}, \quad \sin \frac{\pi}{6} = \frac{1}{2}. \)</p>
+        <p>Тоді:</p>
+        <p class="math-notation-centered">\( z = 2 \left( \frac{\sqrt{3}}{2} + \frac{1}{2}i \right) = 2 \cdot \frac{\sqrt{3}}{2} + 2 \cdot \frac{1}{2}i = \sqrt{3} + i. \)</p>
+        <p><strong><span style="color: #fb7185; font-weight: bold;">Відповідь:</span></strong> \( z = \sqrt{3} + i. \)</p>
+        
+        <h3 style="color: #1e3a8a;">2) Записати комплексне число \( z = -5\sqrt{2} - 5\sqrt{2}i \) <span style="font-style: italic;">в тригонометричній формі.</span></h3>
+        <p><span style="color: #fb7185; font-weight: bold; display: block; text-align: center;">Розв'язання. </span></p>
+           <p> Обчислимо модуль комплексного числа \( z \):</p>
+        <p class="math-notation-centered">\( r = \sqrt{a^2 + b^2}, \)</p>
+        <p class="math-notation-centered">\( r = \sqrt{(-5\sqrt{2})^2 + (-5\sqrt{2})^2} = \sqrt{50 + 50} = \sqrt{100} = 10. \)</p>
+        <p>Знаходимо аргумент комплексного числа. Комплексне число \( z \) розташоване в ІІІ чверті (\( a = -5\sqrt{2} < 0 \), \( b = -5\sqrt{2} < 0 \)), тому головне значення аргументу обчислюємо як:</p>
+        <p class="math-notation-centered">\( φ = \arctan \frac{b}{a} - \pi, \)</p>
+        <p class="math-notation-centered">\( φ = \arctan \left| \frac{-5\sqrt{2}}{-5\sqrt{2}} \right| - \pi, \)</p>
+        <p class="math-notation-centered">\( φ = \arctan 1 - \pi = \frac{\pi}{4} - \pi = -\frac{3\pi}{4}. \)</p>
+        <p>Запишемо комплексне число в тригонометричній формі за формулою \( z = r(\cosφ + i\sinφ) \):</p>
+        <p class="math-notation-centered">\( z = 10 \left( \cos \left(-\frac{3\pi}{4}\right) + i \sin \left(-\frac{3\pi}{4}\right) \right). \)</p>
+        <p>Оскільки:</p>
+        <p class="math-notation-centered">\( \cos \left(-\frac{3\pi}{4}\right) = \cos \frac{3\pi}{4}, \quad \sin \left(-\frac{3\pi}{4}\right) = -\sin \frac{3\pi}{4}, \)</p>
+        <p>отримуємо:</p>
+        <p class="math-notation-centered">\( z = 10 \left( \cos \frac{3\pi}{4} - i \sin \frac{3\pi}{4} \right). \)</p>
+        <p><strong><span style="color: #fb7185; font-weight: bold;">Відповідь:</span></strong> \( z = 10 \left( \cos \frac{3\pi}{4} - i \sin \frac{3\pi}{4} \right). \)</p>
+    </div>
+</div>
+
+    
+   <div id="questionsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="questionsTitle">
+    <div class="modal-header">
+        <button class="close-btn" id="closeQuestionsBtn" aria-label="Закрити">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <h2 style="text-align: center; color: #1e3a8a;">Питання і відповіді</h2>
+        
+        <!-- Flashcard 1 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>Як виглядає алгебраїчна форма комплексного числа?</span>
+                </div>
+                <div class="card-back">
+                    <span>\( z = a + bi \), де \( a \) — дійсна частина, \( b \) — уявна частина.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flashcard 2 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>Як виглядає тригонометрична форма комплексного числа?</span>
+                </div>
+                <div class="card-back">
+                    <span>\( z = r(\cosφ + i\sinφ) \), де \( r \) — модуль, \( φ \) — аргумент.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flashcard 3 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>Як обчислити модуль числа \( z = a + bi \)?</span>
+                </div>
+                <div class="card-back">
+                    <span>\( r = \sqrt{a^2 + b^2} \)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flashcard 4 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>Що означає аргумент комплексного числа?</span>
+                </div>
+                <div class="card-back">
+                    <span>Це кут між додатним напрямом осі \( Ox \) та радіус-вектором, що зображає число на комплексній площині.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flashcard 5 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>Чому при переході до тригонометричної форми важлива чверть, у якій лежить число?</span>
+                </div>
+                <div class="card-back">
+                    <span>Бо від неї залежить правильний знак синуса і косинуса — це впливає на аргумент \( φ \).</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flashcard 6 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>Як знайти аргумент числа \( z = a + bi \)?</span>
+                </div>
+                <div class="card-back">
+                    <span>\( φ = \arg z = \arctan \frac{b}{a} \), з урахуванням чверті.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flashcard 7 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>Перетвори \( z = 2(\cos \frac{\pi}{6} + i\sin \frac{\pi}{6}) \) в алгебраїчну форму.</span>
+                </div>
+                <div class="card-back">
+                    <span>Так як \( \cos \frac{\pi}{6} = \frac{\sqrt{3}}{2} \), \( \sin \frac{\pi}{6} = \frac{1}{2} \),<br>
+                    тоді \( z = 2 \left( \frac{\sqrt{3}}{2} + \frac{1}{2}i \right) = 2 \cdot \frac{\sqrt{3}}{2} + 2 \cdot \frac{1}{2}i = \sqrt{3} + i \).</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flashcard 8 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>Перетвори \( z = -5\sqrt{2} - 5\sqrt{2}i \) у тригонометричну форму.</span>
+                </div>
+                <div class="card-back">
+                    <span>\( r = 10 \), \( φ = -\frac{3\pi}{4} \)<br>
+                    \( \implies z = 10 \left( \cos \left(-\frac{3\pi}{4}\right) + i \sin \left(-\frac{3\pi}{4}\right) \right) \).</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+  <div id="trainerModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="trainerTitle">
+        <div class="modal-header">
+            <button class="close-btn" id="closeTrainerBtn" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="trainer-container" id="trainerContent">
+                <div class="question-circle">
+                    <h3 id="questionNumber">Питання 1</h3>
+                </div>
+                <p id="questionText" class="math-notation-centered"></p>
+                <div class="options-container" id="optionsContainer"></div>
+                <button id="submitAnswer" disabled>Відповісти</button>
+                <div id="feedback" class="feedback"></div>
+                <div id="completionBlock" class="completion-message hidden">
+                    <div class="completion-emoji"></div>
+                    <h2>Тренування завершено!</h2>
+                    <p>Молодець!</p>
+                    <button id="resetTrainerBtn">Спробувати ще раз</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="modalOverlay"></div>
+
+  <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log("DOM fully loaded");
+            document.body.classList.add('loaded');
+
+            const elements = {
+                openTheoryBtn: document.getElementById('openTheoryBtn'),
+                openQuestionsBtn: document.getElementById('openQuestionsBtn'),
+                openTrainerBtn: document.getElementById('openTrainerBtn'),
+                theoryModal: document.getElementById('theoryModal'),
+                questionsModal: document.getElementById('questionsModal'),
+                trainerModal: document.getElementById('trainerModal'),
+                closeTheoryBtn: document.getElementById('closeTheoryBtn'),
+                closeQuestionsBtn: document.getElementById('closeQuestionsBtn'),
+                closeTrainerBtn: document.getElementById('closeTrainerBtn'),
+                modalOverlay: document.getElementById('modalOverlay'),
+                questionNumber: document.getElementById('questionNumber'),
+                questionText: document.getElementById('questionText'),
+                optionsContainer: document.getElementById('optionsContainer'),
+                submitAnswer: document.getElementById('submitAnswer'),
+                feedback: document.getElementById('feedback'),
+                completionBlock: document.getElementById('completionBlock'),
+                resetTrainerBtn: document.getElementById('resetTrainerBtn')
+            };
+        
+        // Пул питань 1 (з тригонометричної в алгебраїчну форму)
+        const question1Pool = [
+            {
+                question: "Перетворіть у алгебраїчну форму комплексне число \\( \\sqrt{2} \\left( \\cos \\frac{\\pi}{4} + i \\sin \\frac{\\pi}{4} \\right) \\)",
+                options: ["\\sqrt{2} + \\sqrt{2}i", "1+i", "1-i", "\\frac{\\sqrt{2}}{2} + \\frac{\\sqrt{2}}{2}i"],
+                correct: "1+i"
+            },
+            {
+                question: "Перетворіть у алгебраїчну форму комплексне число \\( 2 \\left( \\cos \\frac{\\pi}{3} + i \\sin \\frac{\\pi}{3} \\right) \\)",
+                options: ["1 + \\sqrt{3}i", "-1 + \\sqrt{3}i", "\\sqrt{3} - i", "2 - 2i"],
+                correct: "1 + \\sqrt{3}i"
+            },
+            {
+                question: "Перетворіть у алгебраїчну форму комплексне число \\( \\cos \\frac{\\pi}{6} + i \\sin \\frac{\\pi}{6} \\)",
+                options: ["\\frac{\\sqrt{3}}{2} + \\frac{1}{2}i", "\\frac{1}{2} + \\frac{\\sqrt{3}}{2}i", "-\\frac{\\sqrt{3}}{2} + \\frac{1}{2}i", "\\frac{\\sqrt{3}}{2} - \\frac{1}{2}i"],
+                correct: "\\frac{\\sqrt{3}}{2} + \\frac{1}{2}i"
+            },
+            {
+                question: "Перетворіть у алгебраїчну форму комплексне число \\( 4 \\left( \\cos \\frac{\\pi}{4} + i \\sin \\frac{\\pi}{4} \\right) \\)",
+                options: ["2\\sqrt{2} + 2\\sqrt{2}i", "-2\\sqrt{2} + 2\\sqrt{2}i", "2\\sqrt{2} - 2\\sqrt{2}i", "4 + 4i"],
+                correct: "2\\sqrt{2} + 2\\sqrt{2}i"
+            },
+        
+
+                   {
+                question: "Перетворіть у алгебраїчну форму комплексне число \\( \\cos \\left(-\\frac{\\pi}{4}\\right) + i \\sin \\left(-\\frac{\\pi}{4}\\right) \\)",
+                options: ["\\frac{\\sqrt{2}}{2} + \\frac{\\sqrt{2}}{2}i", "-\\frac{\\sqrt{2}}{2} - \\frac{\\sqrt{2}}{2}i", "\\frac{\\sqrt{2}}{2} - \\frac{\\sqrt{2}}{2}i", "\\frac{\\sqrt{2}}{2} + \\frac{\\sqrt{2}}{2}i"],
+                correct: "\\frac{\\sqrt{2}}{2} - \\frac{\\sqrt{2}}{2}i"
+            },
+            {
+                question: "Перетворіть у алгебраїчну форму комплексне число \\( 2 \\left( \\cos \\frac{3\\pi}{4} + i \\sin \\frac{3\\pi}{4} \\right) \\)",
+                options: ["\\sqrt{2} - \\sqrt{2}i", "-\\sqrt{2} + \\sqrt{2}i", "\\sqrt{2} + \\sqrt{2}i", "-\\sqrt{2} - \\sqrt{2}i"],
+                correct: "-\\sqrt{2} + \\sqrt{2}i"
+            },
+            {
+                question: "Перетворіть у алгебраїчну форму комплексне число \\( 11 \\left( \\cos \\pi + i \\sin \\pi \\right) \\)",
+                options: ["-11", "11", "11i", "-11i"],
+                correct: "-11"
+            },
+            {
+                question: "Перетворіть у алгебраїчну форму комплексне число \\( 7 \\left( \\cos \\frac{\\pi}{2} + i \\sin \\frac{\\pi}{2} \\right) \\)",
+                options: ["-7", "7", "-7i", "7i"],
+                correct: "7i"
+            },
+            {
+                question: "Перетворіть у алгебраїчну форму комплексне число \\( 10 \\left( \\cos \\left(-\\frac{\\pi}{2}\\right) + i \\sin \\left(-\\frac{\\pi}{2}\\right) \\right) \\)",
+                options: ["-10", "10", "-10i", "10i"],
+                correct: "-10i"
+            },
+            {
+                question: "Перетворіть у алгебраїчну форму комплексне число \\( 6 \\left( \\cos \\left(-\\pi\\right) + i \\sin \\left(-\\pi\\right) \\right) \\)",
+                options: ["-6", "6", "6i", "-6i"],
+                correct: "-6"
+            },
+            {
+                question: "Перетворіть у алгебраїчну форму комплексне число \\( 4 \\left( \\cos \\left(-\\frac{3\\pi}{4}\\right) + i \\sin \\left(-\\frac{3\\pi}{4}\\right) \\right) \\)",
+                options: ["-2\\sqrt{2} + 2\\sqrt{2}i", "-2\\sqrt{2} - 2\\sqrt{2}i", "2\\sqrt{2} - 2\\sqrt{2}i", "2\\sqrt{2} + 2\\sqrt{2}i"],
+                correct: "-2\\sqrt{2} - 2\\sqrt{2}i"
+            },
+            {
+                question: "Перетворіть у алгебраїчну форму комплексне число \\( 2\\sqrt{3} \\left( \\cos \\left(-\\frac{2\\pi}{3}\\right) + i \\sin \\left(-\\frac{2\\pi}{3}\\right) \\right) \\)",
+                options: ["\\sqrt{3} - 3i", "-\\sqrt{3} + 3i", "-\\frac{1}{2} - \\frac{\\sqrt{3}}{2}i", "-\\sqrt{3} - 3i"],
+                correct: "-\\sqrt{3} - 3i"
+            },
+            {
+                question: "Перетворіть у алгебраїчну форму комплексне число \\( \\sqrt{3} \\left( \\cos \\frac{2\\pi}{3} + i \\sin \\frac{2\\pi}{3} \\right) \\)",
+                options: ["\\frac{\\sqrt{3}}{2} - \\frac{3}{2}i", "-\\frac{3}{2} + \\frac{\\sqrt{3}}{2}i", "-\\frac{\\sqrt{3}}{2} + \\frac{3}{2}i", "-\\frac{\\sqrt{3}}{2} - \\frac{3}{2}i"],
+                correct: "-\\frac{\\sqrt{3}}{2} + \\frac{3}{2}i"
+            },
+            {
+                question: "Перетворіть у алгебраїчну форму комплексне число \\( 4\\sqrt{3} \\left( \\cos \\frac{\\pi}{3} + i \\sin \\frac{\\pi}{3} \\right) \\)",
+                options: ["6 + 2\\sqrt{3}i", "2\\sqrt{3} + 6i", "\\sqrt{3} + 3i", "\\frac{1}{2} + \\frac{\\sqrt{3}}{2}i"],
+                correct: "2\\sqrt{3} + 6i"
+            },
+            {
+                question: "Перетворіть у алгебраїчну форму комплексне число \\( 20 \\left( \\cos \\left(-\\frac{\\pi}{3}\\right) + i \\sin \\left(-\\frac{\\pi}{3}\\right) \\right) \\)",
+                options: ["10 - 10\\sqrt{3}i", "-10 - 10\\sqrt{3}i", "-10 + 10\\sqrt{3}i", "10\\sqrt{3} - 10i"],
+                correct: "10 - 10\\sqrt{3}i"
+            },
+            {
+                question: "Перетворіть у алгебраїчну форму комплексне число \\( 6\\sqrt{3} \\left( \\cos \\left(-\\frac{\\pi}{6}\\right) + i \\sin \\left(-\\frac{\\pi}{6}\\right) \\right) \\)",
+                options: ["-9 - 3\\sqrt{3}i", "9 - 3\\sqrt{3}i", "-9 + 3\\sqrt{3}i", "3\\sqrt{3} - 9i"],
+                correct: "9 - 3\\sqrt{3}i"
+            },
+            {
+                question: "Перетворіть у алгебраїчну форму комплексне число \\( 2\\sqrt{3} \\left( \\cos \\frac{\\pi}{6} + i \\sin \\frac{\\pi}{6} \\right) \\)",
+                options: ["\\frac{\\sqrt{3}}{2} + \\frac{3}{2}i", "\\frac{3}{2} + \\frac{\\sqrt{3}}{2}i", "\\sqrt{3} + 3i", "3 + \\sqrt{3}i"],
+                correct: "3 + \\sqrt{3}i"
+            },
+            {
+                question: "Перетворіть у алгебраїчну форму комплексне число \\( 25 \\left( \\cos 0 + i \\sin 0 \\right) \\)",
+                options: ["25i", "25", "-25", "-25i"],
+                correct: "25"
+             }
+        ];
+            // Пул питань 2 (з алгебраїчної в тригонометричну форму)
+        const question2Pool = [
+              {
+                question: "Перетворіть у тригонометричну форму комплексне число \\( z = -5\\sqrt{2} - 5\\sqrt{2}i \\)",
+                options: [
+                    "10 \\left( \\cos \\frac{3\\pi}{4} + i \\sin \\frac{3\\pi}{4} \\right)",
+                    "10 \\left( \\cos \\left(-\\frac{3\\pi}{4}\\right) + i \\sin \\left(-\\frac{3\\pi}{4}\\right) \\right)",
+                    "5 \\left( \\cos \\frac{3\\pi}{4} + i \\sin \\frac{3\\pi}{4} \\right)",
+                    "5 \\left( \\cos \\left(-\\frac{3\\pi}{4}\\right) + i \\sin \\left(-\\frac{3\\pi}{4}\\right) \\right)"
+                ],
+                correct: "10 \\left( \\cos \\left(-\\frac{3\\pi}{4}\\right) + i \\sin \\left(-\\frac{3\\pi}{4}\\right) \\right)"
+            },
+            {
+                question: "Перетворіть у тригонометричну форму комплексне число \\( z = 1 + i \\)",
+                options: [
+                    "\\sqrt{2} \\left( \\cos \\frac{\\pi}{4} + i \\sin \\frac{\\pi}{4} \\right)",
+                    "\\sqrt{2} \\left( \\cos \\frac{3\\pi}{4} + i \\sin \\frac{3\\pi}{4} \\right)",
+                    "2 \\left( \\cos \\frac{\\pi}{4} + i \\sin \\frac{\\pi}{4} \\right)",
+                    "\\sqrt{2} \\left( \\cos \\left(-\\frac{\\pi}{4}\\right) + i \\sin \\left(-\\frac{\\pi}{4}\\right) \\right)"
+                ],
+                correct: "\\sqrt{2} \\left( \\cos \\frac{\\pi}{4} + i \\sin \\frac{\\pi}{4} \\right)"
+            },
+            {
+                question: "Перетворіть у тригонометричну форму комплексне число \\( z = -1 + i \\)",
+                options: [
+                    "\\sqrt{2} \\left( \\cos \\frac{3\\pi}{4} + i \\sin \\frac{3\\pi}{4} \\right)",
+                    "\\sqrt{2} \\left( \\cos \\frac{\\pi}{4} + i \\sin \\frac{\\pi}{4} \\right)",
+                    "2 \\left( \\cos \\frac{3\\pi}{4} + i \\sin \\frac{3\\pi}{4} \\right)",
+                    "\\sqrt{2} \\left( \\cos \\left(-\\frac{3\\pi}{4}\\right) + i \\sin \\left(-\\frac{3\\pi}{4}\\right) \\right)"
+                ],
+                correct: "\\sqrt{2} \\left( \\cos \\frac{3\\pi}{4} + i \\sin \\frac{3\\pi}{4} \\right)"
+            },
+            {
+    question: "Перетворіть у тригонометричну форму комплексне число \\( z = -1 - i \\)",
+    options: [
+        "\\sqrt{2} \\left( \\cos \\left( -\\frac{3\\pi}{4} \\right) + i \\sin \\left( -\\frac{3\\pi}{4} \\right) \\right)",
+        "\\sqrt{2} \\left( \\cos \\frac{3\\pi}{4} + i \\sin \\frac{3\\pi}{4} \\right)",
+        "2 \\left( \\cos \\left( -\\frac{3\\pi}{4} \\right) + i \\sin \\left( -\\frac{3\\pi}{4} \\right) \\right)",
+        "\\sqrt{2} \\left( \\cos \\left( -\\frac{\\pi}{4} \\right) + i \\sin \\left( -\\frac{\\pi}{4} \\right) \\right)"
+    ],
+    correct: "\\sqrt{2} \\left( \\cos \\left( -\\frac{3\\pi}{4} \\right) + i \\sin \\left( -\\frac{3\\pi}{4} \\right) \\right)"
+},
+        {
+    question: "Перетворіть у тригонометричну форму комплексне число \\( z = 0 + i \\)",
+    options: [
+        "\\cos \\frac{\\pi}{2} + i \\sin \\frac{\\pi}{2}",
+        "\\cos \\frac{3\\pi}{2} + i \\sin \\frac{3\\pi}{2}",
+        "\\cos 0 + i \\sin 0",
+        "\\cos \\pi + i \\sin \\pi"
+    ],
+    correct: "\\cos \\frac{\\pi}{2} + i \\sin \\frac{\\pi}{2}"
+},
+            {
+                question: "Перетворіть у тригонометричну форму комплексне число \\( z = \\sqrt{3} + i \\)",
+                options: [
+                    "2 \\left( \\cos \\frac{\\pi}{6} + i \\sin \\frac{\\pi}{6} \\right)",
+                    "2 \\left( \\cos \\frac{\\pi}{3} + i \\sin \\frac{\\pi}{3} \\right)",
+                    "\\sqrt{3} \\left( \\cos \\frac{\\pi}{6} + i \\sin \\frac{\\pi}{6} \\right)",
+                    "2 \\left( \\cos \\left(-\\frac{\\pi}{6}\\right) + i \\sin \\left(-\\frac{\\pi}{6}\\right) \\right)"
+                ],
+                correct: "2 \\left( \\cos \\frac{\\pi}{6} + i \\sin \\frac{\\pi}{6} \\right)"
+            },
+            {
+                question: "Перетворіть у тригонометричну форму комплексне число \\( z = -\\sqrt{3} - i \\)",
+                options: [
+                    "2 \\left( \\cos \\frac{5\\pi}{6} + i \\sin \\frac{5\\pi}{6} \\right)",
+                    "2 \\left( \\cos \\frac{7\\pi}{6} + i \\sin \\frac{7\\pi}{6} \\right)",
+                    "\\sqrt{3} \\left( \\cos \\frac{5\\pi}{6} + i \\sin \\frac{5\\pi}{6} \\right)",
+                    "2 \\left( \\cos \\left(-\\frac{5\\pi}{6}\\right) + i \\sin \\left(-\\frac{5\\pi}{6}\\right) \\right)"
+                ],
+                correct: "2 \\left( \\cos \\left(-\\frac{5\\pi}{6}\\right) + i \\sin \\left(-\\frac{5\\pi}{6}\\right) \\right)"
+            },
+            {
+                question: "Перетворіть у тригонометричну форму комплексне число \\( z = 2 + 2\\sqrt{3}i \\)",
+                options: [
+                    "4 \\left( \\cos \\frac{\\pi}{3} + i \\sin \\frac{\\pi}{3} \\right)",
+                    "4 \\left( \\cos \\frac{\\pi}{6} + i \\sin \\frac{\\pi}{6} \\right)",
+                    "2\\sqrt{3} \\left( \\cos \\frac{\\pi}{3} + i \\sin \\frac{\\pi}{3} \\right)",
+                    "4 \\left( \\cos \\left(-\\frac{\\pi}{3}\\right) + i \\sin \\left(-\\frac{\\pi}{3}\\right) \\right)"
+                ],
+                correct: "4 \\left( \\cos \\frac{\\pi}{3} + i \\sin \\frac{\\pi}{3} \\right)"
+            },
+            {
+    question: "Перетворіть у тригонометричну форму комплексне число \\( z = -2 - 2i \\)",
+    options: [
+        "2 \\left( \\cos \\left(-\\frac{3\\pi}{4}\\right) + i \\sin \\left(-\\frac{3\\pi}{4}\\right) \\right)",
+        "2\\sqrt{2} \\left( \\cos \\frac{3\\pi}{4} + i \\sin \\frac{3\\pi}{4} \\right)",
+        "\\cos \\frac{3\\pi}{4} + i \\sin \\frac{3\\pi}{4}",
+        "2\\sqrt{2} \\left( \\cos \\left(-\\frac{3\\pi}{4}\\right) + i \\sin \\left(-\\frac{3\\pi}{4}\\right) \\right)"
+    ],
+    correct: "2\\sqrt{2} \\left( \\cos \\left(-\\frac{3\\pi}{4}\\right) + i \\sin \\left(-\\frac{3\\pi}{4}\\right) \\right)"
+},
+            {
+                question: "Перетворіть у тригонометричну форму комплексне число \\( z = 3 - 3\\sqrt{3}i \\)",
+                options: [
+                    "6 \\left( \\cos \\left(-\\frac{\\pi}{3}\\right) + i \\sin \\left(-\\frac{\\pi}{3}\\right) \\right)",
+                    "6 \\left( \\cos \\frac{\\pi}{3} + i \\sin \\frac{\\pi}{3} \\right)",
+                    "3\\sqrt{3} \\left( \\cos \\left(-\\frac{\\pi}{3}\\right) + i \\sin \\left(-\\frac{\\pi}{3}\\right) \\right)",
+                    "6 \\left( \\cos \\frac{5\\pi}{3} + i \\sin \\frac{5\\pi}{3} \\right)"
+                ],
+                correct: "6 \\left( \\cos \\left(-\\frac{\\pi}{3}\\right) + i \\sin \\left(-\\frac{\\pi}{3}\\right) \\right)"
+            },
+            {
+                question: "Перетворіть у тригонометричну форму комплексне число \\( z = -3 + 3i \\)",
+                options: [
+                    "3\\sqrt{2} \\left( \\cos \\frac{3\\pi}{4} + i \\sin \\frac{3\\pi}{4} \\right)",
+                    "3\\sqrt{2} \\left( \\cos \\frac{\\pi}{4} + i \\sin \\frac{\\pi}{4} \\right)",
+                    "3 \\left( \\cos \\frac{3\\pi}{4} + i \\sin \\frac{3\\pi}{4} \\right)",
+                    "3\\sqrt{2} \\left( \\cos \\left(-\\frac{3\\pi}{4}\\right) + i \\sin \\left(-\\frac{3\\pi}{4}\\right) \\right)"
+                ],
+                correct: "3\\sqrt{2} \\left( \\cos \\frac{3\\pi}{4} + i \\sin \\frac{3\\pi}{4} \\right)"
+            },
+            {
+                question: "Перетворіть у тригонометричну форму комплексне число \\( z = 4 + 4i \\)",
+                options: [
+                    "4\\sqrt{2} \\left( \\cos \\frac{\\pi}{4} + i \\sin \\frac{\\pi}{4} \\right)",
+                    "4 \\left( \\cos \\frac{\\pi}{4} + i \\sin \\frac{\\pi}{4} \\right)",
+                    "4\\sqrt{2} \\left( \\cos \\frac{3\\pi}{4} + i \\sin \\frac{3\\pi}{4} \\right)",
+                    "4\\sqrt{2} \\left( \\cos \\left(-\\frac{\\pi}{4}\\right) + i \\sin \\left(-\\frac{\\pi}{4}\\right) \\right)"
+                ],
+                correct: "4\\sqrt{2} \\left( \\cos \\frac{\\pi}{4} + i \\sin \\frac{\\pi}{4} \\right)"
+            },
+            {
+                question: "Перетворіть у тригонометричну форму комплексне число \\( z = -4 \\)",
+                options: [
+                    "4 \\left( \\cos \\pi + i \\sin \\pi \\right)",
+                    "4 \\left( \\cos 0 + i \\sin 0 \\right)",
+                    "4 \\left( \\cos \\frac{\\pi}{2} + i \\sin \\frac{\\pi}{2} \\right)",
+                    "4 \\left( \\cos \\frac{3\\pi}{2} + i \\sin \\frac{3\\pi}{2} \\right)"
+                ],
+                correct: "4 \\left( \\cos \\pi + i \\sin \\pi \\right)"
+            },
+            {
+                question: "Перетворіть у тригонометричну форму комплексне число \\( z = 5i \\)",
+                options: [
+                    "5 \\left( \\cos \\frac{\\pi}{2} + i \\sin \\frac{\\pi}{2} \\right)",
+                    "5 \\left( \\cos \\frac{3\\pi}{2} + i \\sin \\frac{3\\pi}{2} \\right)",
+                    "5 \\left( \\cos 0 + i \\sin 0 \\right)",
+                    "5 \\left( \\cos \\pi + i \\sin \\pi \\right)"
+                ],
+                correct: "5 \\left( \\cos \\frac{\\pi}{2} + i \\sin \\frac{\\pi}{2} \\right)"
+            },
+            {
+                question: "Перетворіть у тригонометричну форму комплексне число \\( z = -2\\sqrt{3} + 2i \\)",
+                options: [
+                    "4 \\left( \\cos \\frac{5\\pi}{6} + i \\sin \\frac{5\\pi}{6} \\right)",
+                    "4 \\left( \\cos \\frac{\\pi}{6} + i \\sin \\frac{\\pi}{6} \\right)",
+                    "2\\sqrt{3} \\left( \\cos \\frac{5\\pi}{6} + i \\sin \\frac{5\\pi}{6} \\right)",
+                    "4 \\left( \\cos \\left(-\\frac{5\\pi}{6}\\right) + i \\sin \\left(-\\frac{5\\pi}{6}\\right) \\right)"
+                ],
+                correct: "4 \\left( \\cos \\frac{5\\pi}{6} + i \\sin \\frac{5\\pi}{6} \\right)"
+            }
+        ];
+// Пул питань 3 (множення тригонометричної форми)
+        const question3Pool = [
+    {
+        question: "Знайдіть добуток комплексних чисел у тригонометричній формі: \\( (3\\sqrt{3} + 3i) \\cdot \\left( \\cos \\frac{\\pi}{4} + i \\sin \\frac{\\pi}{4} \\right) \\)",
+        options: [
+            "6 \\left( \\cos \\frac{\\pi}{24} + i \\sin \\frac{\\pi}{24} \\right)",
+            "6 \\left( \\cos \\frac{5\\pi}{12} + i \\sin \\frac{5\\pi}{12} \\right)",
+            "6 \\left( \\cos \\frac{\\pi}{10} + i \\sin \\frac{\\pi}{10} \\right)",
+            "6 \\left( \\cos \\frac{5\\pi}{24} + i \\sin \\frac{5\\pi}{24} \\right)"
+        ],
+        correct: "6 \\left( \\cos \\frac{5\\pi}{12} + i \\sin \\frac{5\\pi}{12} \\right)"
+    },
+    {
+        question: "Знайдіть добуток комплексних чисел у тригонометричній формі: \\( \\left( \\cos \\frac{5\\pi}{6} + i \\sin \\frac{5\\pi}{6} \\right) \\cdot \\left( -\\frac{\\sqrt{2}}{2} + \\frac{\\sqrt{2}}{2}i \\right) \\)",
+        options: [
+            "\\cos \\frac{7\\pi}{12} + i \\sin \\frac{7\\pi}{12}",
+            "\\cos \\frac{10\\pi}{12} + i \\sin \\frac{10\\pi}{12}",
+            "\\cos \\frac{19\\pi}{12} - i \\sin \\frac{19\\pi}{12}",
+            "\\cos \\frac{19\\pi}{12} + i \\sin \\frac{19\\pi}{12}"
+        ],
+        correct: "\\cos \\frac{19\\pi}{12} + i \\sin \\frac{19\\pi}{12}"
+    },
+    {
+        question: "Знайдіть добуток комплексних чисел у тригонометричній формі: \\( \\left( \\cos \\left(-\\frac{\\pi}{6}\\right) + i \\sin \\left(-\\frac{\\pi}{6}\\right) \\right) \\cdot (2\\sqrt{2} + 2\\sqrt{2}i) \\)",
+        options: [
+            "\\cos \\left(-\\frac{\\pi}{24}\\right) + i \\sin \\left(-\\frac{\\pi}{24}\\right)",
+            "\\cos \\frac{\\pi}{12} + i \\sin \\frac{\\pi}{12}",
+            "\\cos \\frac{\\pi}{24} + i \\sin \\frac{\\pi}{24}",
+            "\\cos \\left(-\\frac{\\pi}{12}\\right) + i \\sin \\left(-\\frac{\\pi}{12}\\right)"
+        ],
+        correct: "\\cos \\frac{\\pi}{12} + i \\sin \\frac{\\pi}{12}"
+    },
+    {
+        question: "Знайдіть добуток комплексних чисел у тригонометричній формі: \\( 3 \\left( \\frac{\\sqrt{3}}{2} - \\frac{1}{2}i \\right) \\cdot 2 \\left( \\cos \\left(-\\frac{\\pi}{4}\\right) + i \\sin \\left(-\\frac{\\pi}{4}\\right) \\right) \\)",
+        options: [
+            "6 \\left( \\cos \\frac{\\pi}{12} - i \\sin \\frac{\\pi}{12} \\right)",
+            "6 \\left( \\cos \\frac{\\pi}{12} + i \\sin \\frac{\\pi}{12} \\right)",
+            "6 \\left( \\cos \\left(-\\frac{\\pi}{12}\\right) + i \\sin \\left(-\\frac{\\pi}{12}\\right) \\right)",
+            "5 \\left( \\cos \\left(-\\frac{\\pi}{12}\\right) + i \\sin \\left(-\\frac{\\pi}{12}\\right) \\right)"
+        ],
+        correct: "6 \\left( \\cos \\left(-\\frac{\\pi}{12}\\right) + i \\sin \\left(-\\frac{\\pi}{12}\\right) \\right)"
+    },
+    {
+        question: "Знайдіть добуток комплексних чисел у тригонометричній формі: \\( 2 \\left( \\cos \\frac{4\\pi}{3} + i \\sin \\frac{4\\pi}{3} \\right) \\cdot \\frac{1}{2} \\left( -\\frac{1}{2} + \\frac{\\sqrt{3}}{2}i \\right) \\)",
+        options: [
+            "\\cos \\pi + i \\sin \\pi",
+            "\\cos 0 - i \\sin 0",
+            "\\cos 1 + i \\sin 1",
+            "\\cos 0 + i \\sin 0"
+        ],
+        correct: "\\cos 0 + i \\sin 0"
+    },
+    {
+        question: "Знайдіть добуток комплексних чисел у тригонометричній формі: \\( \\frac{1}{3} \\left( -\\frac{\\sqrt{2}}{2} + \\frac{\\sqrt{2}}{2}i \\right) \\cdot 6 \\left( \\cos \\left(-\\frac{2\\pi}{5}\\right) + i \\sin \\left(-\\frac{2\\pi}{5}\\right) \\right) \\)",
+        options: [
+            "2 \\left( \\cos \\frac{7\\pi}{20} + i \\sin \\frac{7\\pi}{20} \\right)",
+            "2 \\left( \\cos \\left(-\\pi\\right) + i \\sin \\left(-\\pi\\right) \\right)",
+            "2 \\left( \\cos \\left(-\\frac{6\\pi}{20}\\right) + i \\sin \\left(-\\frac{6\\pi}{20}\\right) \\right)",
+            "2 \\left( \\cos \\left(-\\frac{\\pi}{5}\\right) + i \\sin \\left(-\\frac{\\pi}{5}\\right) \\right)"
+        ],
+        correct: "2 \\left( \\cos \\frac{7\\pi}{20} + i \\sin \\frac{7\\pi}{20} \\right)"
+    },
+    {
+        question: "Знайдіть добуток комплексних чисел у тригонометричній формі: \\( 6 \\left( \\frac{\\sqrt{3}}{2} - \\frac{1}{2}i \\right) \\cdot 3 \\left( \\cos \\frac{3\\pi}{16} + i \\sin \\frac{3\\pi}{16} \\right) \\)",
+        options: [
+            "18 \\left( \\cos \\frac{\\pi}{16} + i \\sin \\frac{\\pi}{16} \\right)",
+            "\\cos \\frac{\\pi}{48} + i \\sin \\frac{\\pi}{48}",
+            "9 \\left( \\cos \\frac{\\pi}{48} + i \\sin \\frac{\\pi}{48} \\right)",
+            "18 \\left( \\cos \\frac{\\pi}{48} + i \\sin \\frac{\\pi}{48} \\right)"
+        ],
+        correct: "18 \\left( \\cos \\frac{\\pi}{48} + i \\sin \\frac{\\pi}{48} \\right)"
+    },
+    {
+        question: "Знайдіть добуток комплексних чисел у тригонометричній формі: \\( 2 \\left( \\cos \\frac{\\pi}{10} + i \\sin \\frac{\\pi}{10} \\right) \\cdot (1 + \\sqrt{3}i) \\)",
+        options: [
+            "3 \\left( \\cos \\frac{13\\pi}{10} + i \\sin \\frac{13\\pi}{10} \\right)",
+            "2 \\left( \\cos \\frac{13\\pi}{10} + i \\sin \\frac{13\\pi}{10} \\right)",
+            "4 \\left( \\cos \\frac{13\\pi}{10} + i \\sin \\frac{13\\pi}{10} \\right)",
+            "\\cos \\frac{13\\pi}{10} + i \\sin \\frac{13\\pi}{10}"
+        ],
+        correct: "4 \\left( \\cos \\frac{13\\pi}{10} + i \\sin \\frac{13\\pi}{10} \\right)"
+    },
+    {
+        question: "Знайдіть добуток комплексних чисел у тригонометричній формі: \\( \\frac{\\sqrt{3}}{2} \\left( \\cos \\frac{\\pi}{10} + i \\sin \\frac{\\pi}{10} \\right) \\cdot (\\sqrt{3} + 3i) \\)",
+        options: [
+            "\\frac{1}{3} \\left( \\cos \\frac{13\\pi}{30} + i \\sin \\frac{13\\pi}{30} \\right)",
+            "\\cos \\frac{2\\pi}{13} + i \\sin \\frac{2\\pi}{13}",
+            "3 \\left( \\cos \\frac{2\\pi}{13} + i \\sin \\frac{2\\pi}{13} \\right)",
+            "3 \\left( \\cos \\frac{13\\pi}{30} + i \\sin \\frac{13\\pi}{30} \\right)"
+        ],
+        correct: "3 \\left( \\cos \\frac{13\\pi}{30} + i \\sin \\frac{13\\pi}{30} \\right)"
+    },
+    {
+        question: "Знайдіть добуток комплексних чисел у тригонометричній формі: \\( 10 \\left( \\cos \\frac{4\\pi}{3} + i \\sin \\frac{4\\pi}{3} \\right) \\cdot 10 \\left( \\frac{1}{2} - \\frac{\\sqrt{3}}{2}i \\right) \\)",
+        options: [
+            "20 \\left( \\cos \\frac{11\\pi}{22} + i \\sin \\frac{11\\pi}{22} \\right)",
+            "100 \\left( \\cos \\frac{11\\pi}{22} + i \\sin \\frac{11\\pi}{22} \\right)",
+            "100 \\left( \\cos \\pi + i \\sin \\pi \\right)",
+            "20 \\left( \\cos \\pi + i \\sin \\pi \\right)"
+        ],
+        correct: "100 \\left( \\cos \\pi + i \\sin \\pi \\right)"
+    },
+    {
+        question: "Знайдіть добуток комплексних чисел у тригонометричній формі: \\( 10 \\left( -\\frac{1}{2} - \\frac{\\sqrt{3}}{2}i \\right) \\cdot \\frac{1}{5} \\left( \\cos \\frac{5\\pi}{6} + i \\sin \\frac{5\\pi}{6} \\right) \\)",
+        options: [
+            "2 \\left( \\cos \\frac{\\pi}{2} + i \\sin \\frac{\\pi}{2} \\right)",
+            "2 \\left( \\cos 0 + i \\sin 0 \\right)",
+            "2 \\left( \\cos \\frac{\\pi}{6} + i \\sin \\frac{\\pi}{6} \\right)",
+            "\\frac{10}{5} \\left( \\cos \\frac{\\pi}{6} + i \\sin \\frac{\\pi}{6} \\right)"
+        ],
+        correct: "2 \\left( \\cos \\frac{\\pi}{6} + i \\sin \\frac{\\pi}{6} \\right)"
+    },
+    {
+        question: "Знайдіть добуток комплексних чисел у тригонометричній формі: \\( 8 \\left( \\cos \\left(-\\frac{\\pi}{2}\\right) + i \\sin \\left(-\\frac{\\pi}{2}\\right) \\right) \\cdot (-\\sqrt{2} + \\sqrt{2}i) \\)",
+        options: [
+            "2 \\left( \\cos \\frac{\\pi}{4} + i \\sin \\frac{\\pi}{4} \\right)",
+            "2 \\left( \\cos \\frac{\\pi}{2} + i \\sin \\frac{\\pi}{2} \\right)",
+            "\\cos \\frac{\\pi}{4} + i \\sin \\frac{\\pi}{4}",
+            "\\cos \\frac{\\pi}{2} + i \\sin \\frac{\\pi}{2}"
+        ],
+        correct: "2 \\left( \\cos \\frac{\\pi}{4} + i \\sin \\frac{\\pi}{4} \\right)"
+    }
+];
+
+const question4Pool = [
+    {
+        question: "Знайдіть добуток комплексних чисел в алгебраїчній формі: \\( 2(1 - \\sqrt{3}i) \\cdot 8 \\left( \\cos \\frac{\\pi}{3} + i \\sin \\frac{\\pi}{3} \\right) \\)",
+        options: ["16 - 16\\sqrt{3}", "-32", "32", "16 + 16\\sqrt{3}"],
+        correct: "32"
+    },
+    {
+        question: "Знайдіть добуток комплексних чисел в алгебраїчній формі: \\( 2 \\left( \\cos \\frac{\\pi}{6} + i \\sin \\frac{\\pi}{6} \\right) \\cdot 3(\\sqrt{3} - i) \\)",
+        options: ["13", "12", "3\\sqrt{3} + 3i", "12i"],
+        correct: "12"
+    },
+    {
+        question: "Знайдіть добуток комплексних чисел в алгебраїчній формі: \\( 4(\\sqrt{2} - \\sqrt{2}i) \\cdot 2 \\left( \\cos \\frac{\\pi}{4} + i \\sin \\frac{\\pi}{4} \\right) \\)",
+        options: ["4i", "4 - 4i", "4 + 4i", "16"],
+        correct: "16"
+    },
+    {
+        question: "Знайдіть добуток комплексних чисел в алгебраїчній формі: \\( 6 \\left( \\cos \\frac{\\pi}{4} + i \\sin \\frac{\\pi}{4} \\right) \\cdot \\frac{1}{3}(1 - i) \\)",
+        options: ["2\\sqrt{2}", "2\\sqrt{2}i", "\\sqrt{2} - \\sqrt{2}i", "\\sqrt{2} + \\sqrt{2}i"],
+        correct: "2\\sqrt{2}"
+    },
+    {
+        question: "Знайдіть добуток комплексних чисел в алгебраїчній формі: \\( 6 \\left( \\cos \\left(-\\frac{\\pi}{6}\\right) + i \\sin \\left(-\\frac{\\pi}{6}\\right) \\right) \\cdot (\\sqrt{3} - i) \\)",
+        options: ["3 - 3\\sqrt{3}i", "3 + 3i", "6 - 6\\sqrt{3}i", "3 - 3i"],
+        correct: "6 - 6\\sqrt{3}i"
+    },
+    {
+        question: "Знайдіть добуток комплексних чисел в алгебраїчній формі: \\( 6 \\left( \\cos \\left(-\\frac{3\\pi}{4}\\right) + i \\sin \\left(-\\frac{3\\pi}{4}\\right) \\right) \\cdot \\sqrt{3}(\\sqrt{2} + \\sqrt{2}i) \\)",
+        options: ["12i", "-12i", "-6 - 6i", "12"],
+        correct: "-12i"
+    },
+    {
+        question: "Знайдіть добуток комплексних чисел в алгебраїчній формі: \\( 12 \\left( \\cos \\frac{5\\pi}{6} + i \\sin \\frac{5\\pi}{6} \\right) \\cdot \\frac{1}{6} \\left( -\\frac{1}{2} - \\frac{\\sqrt{3}}{2}i \\right) \\)",
+        options: ["2i", "-\\sqrt{3} + i", "-\\sqrt{3}i", "\\sqrt{3} + i"],
+        correct: "\\sqrt{3} + i"
+    },
+    {
+        question: "Знайдіть добуток комплексних чисел в алгебраїчній формі: \\( 2(-5 + 2i) \\cdot \\left( \\cos \\left(-\\frac{\\pi}{2}\\right) + i \\sin \\left(-\\frac{\\pi}{2}\\right) \\right) \\)",
+        options: ["4 - 10i", "-4 - 10i", "4 + 10i", "-4 + 10i"],
+        correct: "4 + 10i"
+    },
+    {
+        question: "Знайдіть добуток комплексних чисел в алгебраїчній формі: \\( 2 \\left( \\cos \\left(-\\frac{\\pi}{6}\\right) + i \\sin \\left(-\\frac{\\pi}{6}\\right) \\right) \\cdot \\sqrt{3}(\\sqrt{3} + i) \\)",
+        options: ["4\\sqrt{3}i", "-4\\sqrt{3}i", "-4\\sqrt{3}", "4\\sqrt{3}"],
+        correct: "4\\sqrt{3}"
+    },
+    {
+        question: "Знайдіть добуток комплексних чисел в алгебраїчній формі: \\( 8(1 - \\sqrt{3}i) \\cdot \\left( \\cos \\frac{2\\pi}{3} + i \\sin \\frac{2\\pi}{3} \\right) \\)",
+        options: ["8 - 8\\sqrt{3}i", "8 + 8\\sqrt{3}i", "8\\sqrt{3} + 8i", "16 + 16\\sqrt{3}i"],
+        correct: "8 + 8\\sqrt{3}i"
+    },
+    {
+        question: "Знайдіть добуток комплексних чисел в алгебраїчній формі: \\( 2 \\left( \\cos \\left(-\\frac{2\\pi}{3}\\right) + i \\sin \\left(-\\frac{2\\pi}{3}\\right) \\right) \\cdot 2(\\sqrt{3} + i) \\)",
+        options: ["8 - 8i", "8i", "-8i", "8 + 8i"],
+        correct: "-8i"
+    },
+    {
+        question: "Знайдіть добуток комплексних чисел в алгебраїчній формі: \\( 2\\sqrt{3}(-2 + \\sqrt{3}i) \\cdot \\left( \\cos \\frac{2\\pi}{3} + i \\sin \\frac{2\\pi}{3} \\right) \\)",
+        options: ["-\\sqrt{3} + 9i", "\\sqrt{3} - 9i", "\\sqrt{3} + 9i", "-\\sqrt{3} - 9i"],
+        correct: "-\\sqrt{3} - 9i"
+    }
+];
+       const question5Pool = [
+    {
+        question: "Знайдіть частку комплексних чисел у тригонометричній формі: \\( \\frac{6 (\\cos 105^\\circ + i \\sin 105^\\circ)}{\\sqrt{2} + \\sqrt{2} i} \\)",
+        options: [
+            "3 (\\cos 120^\\circ + i \\sin 120^\\circ)",
+            "\\cos 60^\\circ + i \\sin 60^\\circ",
+            "3 (\\cos 60^\\circ + i \\sin 60^\\circ)",
+            "4 (\\cos 60^\\circ + i \\sin 60^\\circ)"
+        ],
+        correct: "3 (\\cos 60^\\circ + i \\sin 60^\\circ)"
+    },
+    {
+        question: "Знайдіть частку комплексних чисел у тригонометричній формі: \\( \\frac{16 (\\cos 15^\\circ + i \\sin 15^\\circ)}{4 (\\sqrt{3} - i)} \\)",
+        options: [
+            "2 (\\cos (-45^\\circ) + i \\sin (-45^\\circ))",
+            "4 (\\cos 45^\\circ + i \\sin 45^\\circ)",
+            "\\cos 45^\\circ + i \\sin 45^\\circ",
+            "2 (\\cos 45^\\circ + i \\sin 45^\\circ)"
+        ],
+        correct: "2 (\\cos 45^\\circ + i \\sin 45^\\circ)"
+    },
+    {
+        question: "Знайдіть частку комплексних чисел у тригонометричній формі: \\( \\frac{4\\sqrt{2} (\\cos 210^\\circ + i \\sin 210^\\circ)}{2 (-\\sqrt{2} - \\sqrt{6} i)} \\)",
+        options: [
+            "2\\sqrt{2} (\\cos (-30^\\circ) + i \\sin (-30^\\circ))",
+            "\\cos (-30^\\circ) + i \\sin (-30^\\circ)",
+            "2\\sqrt{2} (\\cos 30^\\circ + i \\sin 30^\\circ)",
+            "\\cos 30^\\circ + i \\sin 30^\\circ"
+        ],
+        correct: "\\cos (-30^\\circ) + i \\sin (-30^\\circ)"
+    },
+    {
+        question: "Знайдіть частку комплексних чисел у тригонометричній формі: \\( \\frac{10 (\\cos 255^\\circ + i \\sin 255^\\circ)}{5 (-\\sqrt{3} + i)} \\)",
+        options: [
+            "2 (\\cos 105^\\circ + i \\sin 105^\\circ)",
+            "\\cos 105^\\circ - i \\sin 105^\\circ",
+            "\\cos 105^\\circ + i \\sin 105^\\circ",
+            "2 (\\cos 105^\\circ - i \\sin 105^\\circ)"
+        ],
+        correct: "\\cos 105^\\circ + i \\sin 105^\\circ"
+    },
+    {
+        question: "Знайдіть частку комплексних чисел у тригонометричній формі: \\( \\frac{16 (\\cos 70^\\circ + i \\sin 70^\\circ)}{2 (-1 + \\sqrt{3} i)} \\)",
+        options: [
+            "4 (\\cos (-50^\\circ) + i \\sin (-50^\\circ))",
+            "8 (\\cos (-50^\\circ) + i \\sin (-50^\\circ))",
+            "4 (\\cos (-50^\\circ) - i \\sin (-50^\\circ))",
+            "8 (\\cos (-50^\\circ) - i \\sin (-50^\\circ))"
+        ],
+        correct: "4 (\\cos (-50^\\circ) + i \\sin (-50^\\circ))"
+    },
+    {
+        question: "Знайдіть частку комплексних чисел у тригонометричній формі: \\( \\frac{6 (\\cos (-80^\\circ) + i \\sin (-80^\\circ))}{-2 - 2\\sqrt{3} i} \\)",
+        options: [
+            "\\frac{2}{3} (\\cos 40^\\circ + i \\sin 40^\\circ)",
+            "\\cos 40^\\circ + i \\sin 40^\\circ",
+            "\\frac{3}{2} (\\cos 40^\\circ + i \\sin 40^\\circ)",
+            "\\frac{3}{2} (\\cos 40^\\circ - i \\sin 40^\\circ)"
+        ],
+        correct: "\\frac{3}{2} (\\cos 40^\\circ + i \\sin 40^\\circ)"
+    },
+    {
+        question: "Знайдіть частку комплексних чисел у тригонометричній формі: \\( \\frac{8 (\\cos 150^\\circ + i \\sin 150^\\circ)}{-2\\sqrt{3} + 2i} \\)",
+        options: [
+            "2 (\\cos 0^\\circ - i \\sin 0^\\circ)",
+            "2 (\\cos 0^\\circ + i \\sin 0^\\circ)",
+            "\\cos 0^\\circ + i \\sin 0^\\circ",
+            "4 (\\cos 0^\\circ + i \\sin 0^\\circ)"
+        ],
+        correct: "2 (\\cos 0^\\circ + i \\sin 0^\\circ)"
+    },
+    {
+        question: "Знайдіть частку комплексних чисел у тригонометричній формі: \\( \\frac{12 (\\cos 120^\\circ + i \\sin 120^\\circ)}{3 - 3\\sqrt{3} i} \\)",
+        options: [
+            "4 (\\cos 180^\\circ + i \\sin 180^\\circ)",
+            "2 (\\cos 180^\\circ - i \\sin 180^\\circ)",
+            "\\cos 180^\\circ + i \\sin 180^\\circ",
+            "2 (\\cos 180^\\circ + i \\sin 180^\\circ)"
+        ],
+        correct: "2 (\\cos 180^\\circ + i \\sin 180^\\circ)"
+    },
+    {
+        question: "Знайдіть частку комплексних чисел у тригонометричній формі: \\( \\frac{2 (\\cos 150^\\circ + i \\sin 150^\\circ)}{5 \\left( \\frac{\\sqrt{2}}{5} + \\frac{\\sqrt{2}}{5} i \\right)} \\)",
+        options: [
+            "\\frac{5}{2} (\\cos 105^\\circ - i \\sin 105^\\circ)",
+            "\\cos 105^\\circ + i \\sin 105^\\circ",
+            "\\frac{5}{2} (\\cos 105^\\circ + i \\sin 105^\\circ)",
+            "\\cos 105^\\circ - i \\sin 105^\\circ"
+        ],
+        correct: "\\cos 105^\\circ + i \\sin 105^\\circ"
+    },
+    {
+        question: "Знайдіть частку комплексних чисел у тригонометричній формі: \\( \\frac{\\cos 70^\\circ + i \\sin 70^\\circ}{\\frac{1}{2} - \\frac{\\sqrt{3}}{2} i} \\)",
+        options: [
+            "2 (\\cos 130^\\circ + i \\sin 130^\\circ)",
+            "2 (\\cos 130^\\circ - i \\sin 130^\\circ)",
+            "\\cos 130^\\circ + i \\sin 130^\\circ",
+            "\\cos 130^\\circ - i \\sin 130^\\circ"        ],
+        correct: "\\cos 130^\\circ + i \\sin 130^\\circ"
+    },
+    {
+        question: "Знайдіть частку комплексних чисел у тригонометричній формі: \\( \\frac{4 (\\cos 100^\\circ + i \\sin 100^\\circ)}{6 \\left( -\\frac{\\sqrt{2}}{3} - \\frac{\\sqrt{2}}{3} i \\right)} \\)",
+        options: [
+            "2 (\\cos (-125^\\circ) + i \\sin (-125^\\circ))",
+            "\\cos (-125^\\circ) + i \\sin (-125^\\circ)",
+            "\\cos 125^\\circ + i \\sin 125^\\circ",
+            "2 (\\cos 125^\\circ + i \\sin 125^\\circ)"        ],
+        correct: "\\cos (-125^\\circ) + i \\sin (-125^\\circ)"
+    }
+];
+        const question6Pool = [
+            {
+                question: "Обчисліть \\( (1 + i)^6 \\) в алгебраїчній формі",
+                options: ["-8", "8", "-8i", "8i"],
+                correct: "-8i"
+            },
+            {
+                question: "Обчисліть \\( (\\sqrt{3} - i)^4 \\) в алгебраїчній формі",
+                options: ["-8 - 8\\sqrt{3}i", "8 - 8\\sqrt{3}i", "8 + 8\\sqrt{3}i", "-8 + 8\\sqrt{3}i"],
+                correct: "-8 - 8\\sqrt{3}i"
+            },
+            {
+                question: "Обчисліть \\( (-1 + \\sqrt{3}i)^4 \\) в алгебраїчній формі",
+                options: ["-8 - 8\\sqrt{3}i", "8 - 8\\sqrt{3}i", "8 + 8\\sqrt{3}i", "-8 + 8\\sqrt{3}i"],
+                correct: "-8 + 8\\sqrt{3}i"
+            },
+            {
+                question: "Обчисліть \\( (2\\sqrt{2} + 2\\sqrt{2}i)^5 \\) в алгебраїчній формі",
+                options: ["32\\sqrt{2} - 32\\sqrt{2}i", "-32\\sqrt{2} + 32\\sqrt{2}i", "-32\\sqrt{2} - 32\\sqrt{2}i", "32\\sqrt{2} + 32\\sqrt{2}i"],
+                correct: "-32\\sqrt{2} - 32\\sqrt{2}i"
+            },
+            {
+                question: "Обчисліть \\( (\\sqrt{2} - \\sqrt{2}i)^6 \\) в алгебраїчній формі",
+                options: ["64", "-64", "64i", "-64i"],
+                correct: "-64i"
+            },
+            {
+                question: "Обчисліть \\( (\\sqrt{2} + \\sqrt{2}i)^5 \\) в алгебраїчній формі",
+                options: ["-16\\sqrt{2} - 16\\sqrt{2}i", "-16\\sqrt{2} + 16\\sqrt{2}i", "16\\sqrt{2} + 16\\sqrt{2}i", "16\\sqrt{2} - 16\\sqrt{2}i"],
+                correct: "-16\\sqrt{2} + 16\\sqrt{2}i"
+            },
+            {
+                question: "Обчисліть \\( (-\\sqrt{3} - i)^4 \\) в алгебраїчній формі",
+                options: ["-8 - 8\\sqrt{3}i", "8 - 8\\sqrt{3}i", "8 + 8\\sqrt{3}i", "-8 + 8\\sqrt{3}i"],
+                correct: "-8 + 8\\sqrt{3}i"
+            },
+            {
+                question: "Обчисліть \\( (-\\sqrt{2} - \\sqrt{2}i)^5 \\) в алгебраїчній формі",
+                options: ["-16\\sqrt{2} - 16\\sqrt{2}i", "16\\sqrt{2} + 16\\sqrt{2}i", "16\\sqrt{2} - 16\\sqrt{2}i", "-16\\sqrt{2} + 16\\sqrt{2}i"],
+                correct: "16\\sqrt{2} - 16\\sqrt{2}i"
+            },
+            {
+                question: "Обчисліть \\( (1 - i)^5 \\) в алгебраїчній формі",
+                options: ["-4 - 4i", "-4i", "4 - 4i", "4i"],
+                correct: "-4 - 4i"
+            },
+            {
+                question: "Обчисліть \\( (-1 - i)^8 \\) в алгебраїчній формі",
+                options: ["-16", "-16i", "16i", "16"],
+                correct: "16"
+            },
+            {
+                question: "Обчисліть \\( (-\\sqrt{3} - i)^5 \\) в алгебраїчній формі",
+                options: ["16 + 16\\sqrt{3}i", "16\\sqrt{3} - 16i", "16\\sqrt{3} + 16i", "-16\\sqrt{3} - 16i"],
+                correct: "16\\sqrt{3} + 16i"
+            },
+            {
+                question: "Обчисліть \\( (\\sqrt{3} + i)^4 \\) в алгебраїчній формі",
+                options: ["-8 - 8\\sqrt{3}i", "8 - 8\\sqrt{3}i", "8 + 8\\sqrt{3}i", "-8 + 8\\sqrt{3}i"],
+                correct: "-8 + 8\\sqrt{3}i"
+            }
+        ];
+
+        
+        let questions = [];
+            let currentQuestionIndex = 0;
+            let selectedOption = null;
+            let usedQuestion1Indices = [];
+            let usedQuestion2Indices = [];
+            let usedQuestion3Indices = [];
+            let usedQuestion4Indices = [];
+            let usedQuestion5Indices = [];
+            let usedQuestion6Indices = [];
+
+            function initializeQuestions() {
+                usedQuestion1Indices = [];
+                usedQuestion2Indices = [];
+                usedQuestion3Indices = [];
+                usedQuestion4Indices = [];
+                usedQuestion5Indices = [];
+                usedQuestion6Indices = [];
+                const question1 = getRandomQuestion1();
+                const question2 = getRandomQuestion2();
+                const question3 = getRandomQuestion3();
+                const question4 = getRandomQuestion4();
+                const question5 = getRandomQuestion5();
+                const question6 = getRandomQuestion6();
+                questions = [question1, question2, question3, question4, question5, question6];
+            }
+
+            function getRandomQuestion1() {
+                let availableIndices = question1Pool.map((_, i) => i).filter(i => !usedQuestion1Indices.includes(i));
+                if (availableIndices.length === 0) {
+                    usedQuestion1Indices = [];
+                    availableIndices = question1Pool.map((_, i) => i);
+                }
+                const randomIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
+                usedQuestion1Indices.push(randomIndex);
+                return question1Pool[randomIndex];
+            }
+
+            function getRandomQuestion2() {
+                let availableIndices = question2Pool.map((_, i) => i).filter(i => !usedQuestion2Indices.includes(i));
+                if (availableIndices.length === 0) {
+                    usedQuestion2Indices = [];
+                    availableIndices = question2Pool.map((_, i) => i);
+                }
+                const randomIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
+                usedQuestion2Indices.push(randomIndex);
+                return question2Pool[randomIndex];
+            }
+            function getRandomQuestion3() {
+    let availableIndices = question3Pool.map((_, i) => i).filter(i => !usedQuestion3Indices.includes(i));
+    if (availableIndices.length === 0) {
+        usedQuestion3Indices = [];
+        availableIndices = question3Pool.map((_, i) => i);
+    }
+    const randomIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
+    usedQuestion3Indices.push(randomIndex);
+    return question3Pool[randomIndex];
+}
+        function getRandomQuestion4() {
+    let availableIndices = question4Pool.map((_, i) => i).filter(i => !usedQuestion4Indices.includes(i));
+    if (availableIndices.length === 0) {
+        usedQuestion4Indices = [];
+        availableIndices = question4Pool.map((_, i) => i);
+    }
+    const randomIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
+    usedQuestion4Indices.push(randomIndex);
+    return question4Pool[randomIndex];
+}
+        function getRandomQuestion5() {
+    let availableIndices = question5Pool.map((_, i) => i).filter(i => !usedQuestion5Indices.includes(i));
+    if (availableIndices.length === 0) {
+        usedQuestion5Indices = [];
+        availableIndices = question5Pool.map((_, i) => i);
+    }
+    const randomIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
+    usedQuestion5Indices.push(randomIndex);
+    return question5Pool[randomIndex];
+}
+        function getRandomQuestion6() {
+            let availableIndices = question6Pool.map((_, i) => i).filter(i => !usedQuestion6Indices.includes(i));
+            if (availableIndices.length === 0) {
+                usedQuestion6Indices = [];
+                availableIndices = question6Pool.map((_, i) => i);
+            }
+            const randomIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
+            usedQuestion6Indices.push(randomIndex);
+            return question6Pool[randomIndex];
+        }
+        
+       
+
+     function waitForMathJax(callback, maxAttempts = 10, attempt = 0) {
+    if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([elements.questionText, elements.optionsContainer]).then(() => {
+            console.log("MathJax typesetting completed for question"); // Дебаг
+            callback();
+        }).catch(err => console.error('MathJax error:', err));
+    } else if (attempt < maxAttempts) {
+        console.warn(`MathJax not loaded, attempt ${attempt + 1}/${maxAttempts}`);
+        setTimeout(() => waitForMathJax(callback, maxAttempts, attempt + 1), 200);
+    } else {
+        console.warn('MathJax not loaded after max attempts, proceeding without typesetting');
+        callback();
+    }
+}
+
+          function displayQuestion() {
+    console.log("Displaying question:", currentQuestionIndex, questions[currentQuestionIndex]);
+    selectedOption = null;
+    elements.submitAnswer.disabled = true;
+    elements.optionsContainer.innerHTML = '';
+
+    // Відновлення видимості елементів
+    elements.questionNumber.parentElement.style.display = 'flex';
+    elements.questionText.style.display = 'block';
+    elements.optionsContainer.style.display = 'flex';
+    elements.submitAnswer.style.display = 'block';
+    elements.completionBlock.classList.add('hidden');
+
+    elements.questionNumber.textContent = `Питання ${currentQuestionIndex + 1}`;
+    elements.questionText.innerHTML = questions[currentQuestionIndex].question;
+
+    questions[currentQuestionIndex].options.forEach((option, index) => {
+        const optionElement = document.createElement('div');
+        optionElement.className = 'option';
+        optionElement.innerHTML = `\\(${option}\\)`;
+        optionElement.setAttribute('tabindex', '0');
+        optionElement.setAttribute('data-option', option);
+        optionElement.setAttribute('role', 'button');
+        optionElement.setAttribute('aria-label', `Варіант відповіді ${index + 1}: ${option}`);
+        elements.optionsContainer.appendChild(optionElement);
+    });
+
+    waitForMathJax(() => {
+        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        const eventTypes = isTouchDevice ? ['touchstart', 'touchend'] : ['click'];
+
+        document.querySelectorAll('.option').forEach((optionElement, index) => {
+            const option = questions[currentQuestionIndex].options[index];
+
+            // Видаляємо всі обробники подій для безпеки
+            const newOptionElement = optionElement.cloneNode(true);
+            optionElement.parentNode.replaceChild(newOptionElement, optionElement);
+
+            // Додаємо обробники подій
+            eventTypes.forEach(eventType => {
+                newOptionElement.addEventListener(eventType, (e) => {
+                    console.log(`Event ${eventType} on option ${index + 1}: ${option}`); // Логування для дебагу
+                    if (eventType === 'touchstart') e.preventDefault();
+                    handleOptionSelection(e, newOptionElement, option);
+                }, { passive: eventType !== 'touchstart' });
+            });
+
+            if (!isTouchDevice) {
+                newOptionElement.addEventListener('mouseover', () => {
+                    if (!newOptionElement.classList.contains('selected')) {
+                        newOptionElement.style.background = '#fed7aa';
+                        newOptionElement.style.transform = 'scale(1.03)';
+                    }
+                });
+                newOptionElement.addEventListener('mouseout', () => {
+                    if (!newOptionElement.classList.contains('selected')) {
+                        newOptionElement.style.background = '#ffedd5';
+                        newOptionElement.style.transform = 'scale(1)';
+                    }
+                });
+            }
+
+            newOptionElement.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleOptionSelection(e, newOptionElement, option);
+                }
+            });
+
+            // Переконуємося, що дочірні MathJax-елементи не перехоплюють події
+            newOptionElement.querySelectorAll('mjx-container, mjx-container *').forEach(el => {
+                el.style.pointerEvents = 'none';
+            });
+        });
+    });
+}
+
+            function handleOptionSelection(e, optionElement, option) {
+    console.log(`Handling selection: Option = ${option}, Target = ${e.target.tagName}, Class = ${e.target.className}`); // Дебаг
+    e.preventDefault();
+    
+    document.querySelectorAll('.option').forEach(opt => {
+        opt.classList.remove('selected');
+        opt.setAttribute('aria-selected', 'false');
+        opt.style.background = '#ffedd5';
+        opt.style.transform = 'scale(1)';
+        opt.style.border = '1.5px solid #a855f7';
+    });
+    
+    optionElement.classList.add('selected');
+    optionElement.setAttribute('aria-selected', 'true');
+    optionElement.style.background = '#FFFF00';
+    optionElement.style.border = '2px solid #FFD700';
+    selectedOption = option;
+    elements.submitAnswer.disabled = false;
+}
+function resetTrainer() {
+    console.log("Resetting trainer"); // Дебаг
+    currentQuestionIndex = 0;
+    initializeQuestions();
+    elements.questionNumber.parentElement.style.display = 'flex';
+    elements.questionText.style.display = 'block';
+    elements.optionsContainer.style.display = 'flex';
+    elements.submitAnswer.style.display = 'block';
+    elements.completionBlock.classList.add('hidden');
+    elements.feedback.style.opacity = '0';
+    displayQuestion();
+}
+
+elements.resetTrainerBtn.addEventListener('click', resetTrainer);
+            function showFeedback(message, isCorrect) {
+                elements.feedback.innerHTML = message;
+                elements.feedback.className = `feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'}`;
+                elements.feedback.style.opacity = '1';
+                setTimeout(() => {
+                    elements.feedback.style.opacity = '0';
+                }, 2000);
+            }
+
+            elements.submitAnswer.addEventListener('click', () => {
+                if (!selectedOption) return;
+                const correctAnswer = questions[currentQuestionIndex].correct;
+                if (selectedOption === correctAnswer) {
+                    showFeedback('✓ Правильно! Молодець!', true);
+                    setTimeout(() => {
+                        currentQuestionIndex++;
+                        if (currentQuestionIndex < questions.length) {
+                            displayQuestion();
+                        } else {
+                            elements.questionNumber.parentElement.style.display = 'none';
+                            elements.questionText.style.display = 'none';
+                            elements.optionsContainer.style.display = 'none';
+                            elements.submitAnswer.style.display = 'none';
+                            elements.feedback.style.opacity = '0';
+                            elements.completionBlock.classList.remove('hidden');
+                            elements.resetTrainerBtn.focus();
+                            if (window.MathJax && MathJax.typesetPromise) {
+                                MathJax.typesetPromise([elements.trainerContent]).catch(err => console.error('MathJax error:', err));
+                            }
+                        }
+                    }, 2000);
+                } else {
+                    showFeedback('✗ Неправильно, спробуй ще раз!', false);
+                    document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+                    selectedOption = null;
+                    elements.submitAnswer.disabled = true;
+                    if (currentQuestionIndex === 0) {
+                        setTimeout(() => {
+                            questions[0] = getRandomQuestion1();
+                            displayQuestion();
+                        }, 2000);
+                    } else if (currentQuestionIndex === 1) {
+                        setTimeout(() => {
+                            questions[1] = getRandomQuestion2();
+                            displayQuestion();
+                        }, 2000);
+                    } else if (currentQuestionIndex === 2) {
+                        setTimeout(() => {
+                            questions[2] = getRandomQuestion3();
+                            displayQuestion();
+                        }, 2000);
+                    } else if (currentQuestionIndex === 3) {
+                        setTimeout(() => {
+                            questions[3] = getRandomQuestion4();
+                            displayQuestion();
+                        }, 2000);
+                    } else if (currentQuestionIndex === 4) {
+                        setTimeout(() => {
+                            questions[4] = getRandomQuestion5();
+                            displayQuestion();
+                        }, 2000);
+                    } else if (currentQuestionIndex === 5) {
+                        setTimeout(() => {
+                            questions[5] = getRandomQuestion6();
+                            displayQuestion();
+                        }, 2000);
+                    }
+                }
+            });
+
+          elements.resetTrainerBtn.addEventListener('click', () => {
+    console.log("Reset button clicked"); // Дебаг
+    currentQuestionIndex = 0;
+    initializeQuestions();
+    displayQuestion();
+});
+            function toggleModal(modal, show) {
+                const allModals = [elements.theoryModal, elements.questionsModal, elements.trainerModal].filter(Boolean);
+                allModals.forEach(m => {
+                    if (m && m !== modal) m.style.display = 'none';
+                });
+                modal.style.display = show ? 'flex' : 'none';
+                elements.modalOverlay.style.display = show ? 'block' : 'none';
+                document.body.style.overflow = show ? 'hidden' : 'auto';
+                if (show) {
+                    const closeBtn = modal.querySelector('.close-btn');
+                    if (closeBtn) closeBtn.focus();
+                    if (modal === elements.trainerModal) {
+                        currentQuestionIndex = 0;
+                        initializeQuestions();
+                        displayQuestion();
+                    }
+                    if (window.MathJax && MathJax.typesetPromise) {
+                        MathJax.typesetPromise(['#trainerContent', '#questionsModal', '#theoryModal']).catch(err => console.error('MathJax error:', err));
+                    }
+                }
+            }
+
+            elements.openTheoryBtn?.addEventListener('click', () => toggleModal(elements.theoryModal, true));
+            elements.openQuestionsBtn?.addEventListener('click', () => toggleModal(elements.questionsModal, true));
+            elements.openTrainerBtn?.addEventListener('click', () => toggleModal(elements.trainerModal, true));
+
+            elements.closeTheoryBtn?.addEventListener('click', () => toggleModal(elements.theoryModal, false));
+            elements.closeQuestionsBtn?.addEventListener('click', () => toggleModal(elements.questionsModal, false));
+            elements.closeTrainerBtn?.addEventListener('click', () => toggleModal(elements.trainerModal, false));
+
+            elements.modalOverlay?.addEventListener('click', () => {
+                toggleModal(elements.theoryModal, false);
+                toggleModal(elements.questionsModal, false);
+                toggleModal(elements.trainerModal, false);
+            });
+
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') {
+                    toggleModal(elements.theoryModal, false);
+                    toggleModal(elements.questionsModal, false);
+                    toggleModal(elements.trainerModal, false);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
