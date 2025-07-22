@@ -1,0 +1,1946 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10. Показникове представлення комплексного числа</title>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        *, *:before, *:after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background: linear-gradient(135deg, #022c22, #047857);
+            font-family: 'Inter', sans-serif;
+            color: #ecfccb;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        body.modal-open {
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
+        .title-box {
+            margin-top: 60px;
+            padding: 25px 40px;
+            background: linear-gradient(135deg, #065f46, #10b981);
+            border-radius: 25px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), inset 0 0 8px rgba(255, 255, 255, 0.1);
+            max-width: 90%;
+            text-align: center;
+            border: 1px solid rgba(110, 231, 183, 0.3);
+        }
+        .title-box h1 {
+            font-size: 28px;
+            color: #ecfccb;
+            text-shadow: 0 0 8px rgba(110, 231, 183, 0.5);
+            font-weight: 800;
+        }
+        .section-container {
+            margin-top: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+        .section {
+            width: 250px;
+            height: 220px;
+            background: linear-gradient(135deg, #065f46, #059669);
+            border-radius: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4), inset 0 0 6px rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            color: inherit;
+            border: 1px solid rgba(110, 231, 183, 0.3);
+        }
+        .section:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(110, 231, 183, 0.2);
+        }
+        .section img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 15px;
+            object-fit: cover;
+            border-radius: 8px;
+            filter: drop-shadow(0 0 4px rgba(110, 231, 183, 0.3));
+        }
+        .section h2 {
+            font-size: clamp(16px, 2.5vw, 18px);
+            color: #ecfccb;
+            font-weight: 600;
+            text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.95);
+            width: 95%;
+            max-width: 95vw;
+            height: 95vh;
+            max-height: 95vh;
+            background: linear-gradient(135deg, #022c22, #047857);
+            z-index: 1001;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            opacity: 0;
+            border-radius: 15px;
+            overflow: hidden;
+            transform: translateZ(0);
+        }
+        .modal.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        .modal-header {
+            background: linear-gradient(90deg, #065f46, #10b981);
+            padding: 8px 12px;
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            flex-shrink: 0;
+        }
+        .close-btn {
+            background: #177245;
+            color: #ffff00;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .close-btn:hover {
+            background: #213877;
+        }
+        .modal-content {
+            padding: 20px;
+            flex-grow: 1;
+            background: linear-gradient(135deg, #059669, #10b981);
+            border-radius: 10px;
+            margin: 10px;
+            color: #ecfccb;
+            width: 100%;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(110, 231, 183, 0.5) transparent;
+        }
+        .modal-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .modal-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .modal-content::-webkit-scrollbar-thumb {
+            background: rgba(110, 231, 183, 0.5);
+            border-radius: 3px;
+        }
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(110, 231, 183, 0.8);
+        }
+        #theoryModal .modal-content p {
+            font-size: clamp(16px, 2.8vw, 18px);
+            line-height: 1.7;
+            text-align: justify;
+            max-width: 100%;
+        }
+        #theoryModal .modal-content ul {
+            list-style: none;
+            padding-left: 20px;
+        }
+       
+       #theoryModal mjx-container {
+    font-size: clamp(20px, 3.3vw, 22px) !important;
+    color:  #ffff00!important; /* насичений яскравий жовтий */
+    display: inline-block !important;
+    max-width: 100%;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 5px;
+    text-align: center;
+    font-weight: bold !important; /* робить текст жирнішим */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    
+}
+#trainerModal mjx-container {
+    font-size: clamp(21px, 3vw, 23px) !important;
+    color: #ffff00 !important; /* Жовтий, як у #theoryModal */
+    display: inline-block !important;
+    max-width: 100%;
+    width: fit-content;
+    margin: 0 0.2em;
+    padding: 2px;
+    text-align: center;
+    font-weight: bold !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+#theoryModal mjx-container.math-notation-centered {
+    display: block !important;
+    text-align: center !important;
+    max-width: 100%;
+    width: fit-content;
+    margin: 10px auto;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+#theoryModal mjx-container[jax="CHTML"][display="true"] {
+    display: block !important;
+    text-align: center !important;
+    margin: 10px auto;
+    max-width: 100%;
+    width: fit-content;
+    padding: 5px;
+    box-sizing: border-box;
+}
+#trainerModal mjx-container[display="true"] {
+    display: block !important;
+    text-align: center !important;
+    margin: 5px auto;
+    padding: 2px;
+    box-sizing: border-box;
+}
+
+
+
+        #modalOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            will-change: opacity;
+            transition: opacity 0.25s ease;
+            transform: translateZ(0);
+        }
+        details {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #065f46, #10b981);
+            cursor: pointer;
+            border: 1px solid rgba(110, 231, 183, 0.3);
+        }
+        summary {
+            font-weight: 600;
+            padding: 10px;
+            background: linear-gradient(90deg, #047857, #059669);
+            border-radius: 8px;
+            color: #ecfccb;
+            text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+        }
+        summary:hover {
+            background: linear-gradient(90deg, #059669, #34d399);
+        }
+        details p {
+            padding: 0 20px 10px;
+            color: #ecfccb;
+        }
+        .video-card-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .video-card {
+            width: 300px;
+            height: 180px;
+            background: linear-gradient(135deg, #047857, #059669);
+            border-radius: 15px;
+            border: 1px solid rgba(110, 231, 183, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 10px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            color: #ecfccb;
+        }
+        .video-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+        }
+        .video-card img {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 8px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+        .video-card h3 {
+            font-size: clamp(16px, 2.5vw, 18px);
+            font-weight: 600;
+        }
+        .video-player-container {
+            max-width: 95%;
+            margin: 0 auto;
+        }
+        .video-player-container iframe {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            height: auto;
+        }
+        .glow-title {
+            text-align: center;
+            font-size: 2em;
+            color: #ecfccb;
+            font-family: 'Verdana', sans-serif;
+            text-shadow: 0 0 10px #ecfccb, 0 0 20px #a3e635, 0 0 30px #a3e635;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 5px #ecfccb, 0 0 10px #a3e635;
+            }
+            to {
+                text-shadow: 0 0 20px #ecfccb, 0 0 30px #a3e635;
+            }
+        }
+        .question-card {
+            perspective: 1000px;
+            margin: 20px auto;
+            max-width: 95%;
+            height: 200px;
+        }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+            cursor: pointer;
+            will-change: transform;
+        }
+        .card-inner.flipped {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            padding: 12px;
+            border-radius: 15px;
+            font-size: clamp(16px, 3vw, 18px);
+            line-height: 1.5;
+            border: 1px solid rgba(110, 231, 183, 0.3);
+            box-sizing: border-box;
+        }
+        .card-front {
+    background: #7b3f00;
+    color: #ffffff;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    flex-wrap: wrap;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    padding: 12px 15px;
+    max-width: 100%;
+    font-size: clamp(16px, 3vw, 18px);
+}
+
+.card-back {
+    background: #6d351a;
+    color: #ffffff;
+    transform: rotateY(180deg);
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 15px;
+    word-break: break-word;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+}
+
+.card-back-content {
+    display: block; /* Текстовий потік для одного рядка */
+    text-align: center; /* Центрування тексту і формул */
+    max-width: 90%; /* Обмеження ширини */
+    line-height: 1.4; /* Зменшено для компактності */
+    font-size: clamp(14px, 2.5vw, 16px); /* Менший шрифт для тексту */}
+
+#questionsModal mjx-container {
+    color: #ffffff !important;
+    font-size: clamp(20px, 2.5vw, 22px) !important;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    text-shadow: none !important;
+}
+
+/* Стилі для вбудованих формул (inline math) у .card-front і .card-back */
+#questionsModal .card-front mjx-container,
+#questionsModal .card-back mjx-container {
+    display: inline !important;
+    margin: 0 0.2em !important; /* Невеликі горизонтальні відступи */
+    padding: 0 !important;
+    vertical-align: -0.1em !important; /* Точне вирівнювання по вертикалі */
+}
+
+/* Стилі для блокових формул (display math) у .card-back */
+#questionsModal .card-back mjx-container[display="true"] {
+    display: block !important;
+    text-align: center !important;
+    margin: 2px auto;
+    padding: 2px;
+}
+            
+        .trainer-container {
+            width: 95%;
+            max-width: 95%;
+            padding: 20px;
+            padding-bottom: 40px;
+            text-align: center;
+            background: #4b5320;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(110, 231, 183, 0.3);
+            position: relative;
+            
+            min-height: 400px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+                  }
+           
+        .navigation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px auto;
+            flex-wrap: wrap;
+        }
+        .nav-button {
+            background: linear-gradient(135deg, #065f46, #10b981);
+            color: #ecfccb;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: clamp(15px, 2.5vw, 17px);
+            font-weight: 600;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(110, 231, 183, 0.3);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        .nav-button:hover {
+            background: linear-gradient(135deg, #10b981, #34d399);
+            color: #ecfccb;
+            text-decoration: none;
+        }
+        .nav-button svg {
+            margin-right: 8px;
+            fill: currentColor;
+            width: 18px;
+            height: 18px;
+        }
+        .trainer-question {
+            font-size: clamp(18px, 3vw, 20px);
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+        /* Стили для контейнера варіантів і самих варіантів */
+
+.trainer-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Два стовпці для десктопів */
+    grid-template-rows: repeat(2, auto); /* Два рядки */
+    gap: 12px;
+    max-width: 700px;
+    margin: 20px auto;
+    justify-items: center;
+    align-items: stretch;
+}
+
+.trainer-option {
+    background: #0c2d6e;
+    color: #022c22;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: clamp(20px, 3.2vw, 22px);
+    text-align: center;
+    border: 1px solid rgba(110, 231, 183, 0.3);
+    transition: background 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+        .trainer-option:hover {
+            background:#800000;
+        }
+        .trainer-option.selected {
+            background: #ab2e52;
+        }
+        .trainer-submit {
+            background: #6ee7b7;
+            color: #022c22;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: clamp(16px, 2.5vw, 18px);
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.3s ease;
+        }
+        .trainer-submit:hover {
+            background: #fdb5c2;
+        }
+        .trainer-feedback {
+            margin-top: 20px;
+            font-size: clamp(18px, 3vw, 20px);
+            color: #ecfccb;
+        }
+        .question-circle {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #047857, #059669);
+            border-radius: 60%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ecfccb;
+            font-size: clamp(16px, 2.5vw, 18px);
+            font-weight: 600;
+            text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+            margin: 0 auto 20px;
+            border: 1px solid rgba(110, 231, 183, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        #complexPlaneCanvas {
+            display: block;
+            margin: 20px auto;
+            border: 1px solid rgba(110, 231, 183, 0.3);
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            width: 250px;
+            height: 250px;
+        }
+        .feedback {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 15px 30px;
+    border-radius: 10px;
+    color: #fff;
+    font-size: clamp(18px, 3vw, 20px);
+    font-weight: 600;
+    text-align: center;
+    z-index: 1002;
+    opacity: 0;
+    display: none;
+    max-width: 80%;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(110, 231, 183, 0.3);
+    transition: opacity 0.3s ease;
+}
+
+.feedback.show {
+    opacity: 1;
+    display: block;
+}
+        .correct-feedback {
+            background: #00735b;
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.5);
+            opacity: 1;
+        }
+        .incorrect-feedback {
+            background: #ff0000;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.5);
+            opacity: 1;
+        }
+        .feedback.show {
+            opacity: 1;
+        }
+        .completion-emoji {
+            font-size: 60px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .completion-message {
+            text-align: center;
+        }
+        .completion-message h2 {
+            font-size: clamp(20px, 3.5vw, 24px);
+            color: #ecfccb;
+            margin-bottom: 10px;
+        }
+        .completion-message p {
+            font-size: clamp(16px, 2.5vw, 18px);
+            color: #ecfccb;
+            margin-bottom: 20px;
+        }
+        .completion-message button {
+            background: #6ee7b7;
+            color: #022c22;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: clamp(16px, 2.5vw, 18px);
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .completion-message button:hover {
+            background: #34d399;
+        }
+        .accordion {
+            width: 100%;
+            max-width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .accordion-item {
+            width: 100%;
+        }
+        .accordion-header {
+            width: 100%;
+            padding: 12px 20px;
+            background: linear-gradient(90deg, #047857, #059669);
+            color: #ecfccb;
+            border: none;
+            border-radius: 8px;
+            font-size: clamp(16px, 2.5vw, 18px);
+            font-weight: 600;
+            text-align: left;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            border: 1px solid rgba(110, 231, 183, 0.3);
+            position: relative;
+        }
+        .accordion-header:hover {
+            background: linear-gradient(90deg, #059669, #34d399);
+        }
+        .accordion-header.active {
+            background: linear-gradient(90deg, #10b981, #34d399);
+            box-shadow: inset 0 0 6px rgba(110, 231, 183, 0.5);
+            border-radius: 8px 8px 0 0;
+        }
+        .accordion-header::after {
+            content: '▼';
+            position: absolute;
+            right: 20px;
+            color: #ecfccb;
+            font-size: 14px;
+            transition: transform 0.3s ease;
+        }
+        .accordion-header.active::after {
+            transform: rotate(180deg);
+        }
+        .accordion-content {
+            display: none;
+            padding: 20px;
+            background: #344b77;
+            border-radius: 0 0 8px 8px;
+            border: 1px solid rgba(110, 231, 183, 0.3);
+            border-top: none;
+            color: #ecfccb;
+        }
+        .accordion-content.active {
+            display: block;
+        }
+        .accordion-content p {
+            font-size: clamp(16px, 2.8vw, 18px);
+            line-height: 1.7;
+            text-align: justify;
+        }
+            #questionsModal mjx-container {
+    font-size: clamp(22px, 3vw, 24px) !important;
+    color: #ffff00 !important; /* Жовтий, як у #theoryModal */
+}
+             .example-inline {
+            display: inline;
+            color: #feca57;
+            font-weight: 600;
+        }
+            .completion-message {
+    text-align: center;
+    padding: 20px;
+    background: #144748;
+    border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(110, 231, 183, 0.3);
+    max-width: 90%;
+    margin: 20px auto;
+}
+
+.completion-emoji {
+    width: clamp(80px, 15vw, 120px);
+    height: clamp(80px, 15vw, 120px);
+    margin: 0 auto 3vw;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    border: 2px dashed #fb7185;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.completion-emoji::after {
+    content: '🎉';
+    font-size: clamp(40px, 8vw, 60px);
+    color: #ffff00;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+#resetTrainerBtn {
+    background: linear-gradient(135deg, #6ee7b7, #34d399);
+    color: #022c22;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 24px;
+    font-size: clamp(16px, 2.5vw, 18px);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(110, 231, 183, 0.3);
+}
+
+#resetTrainerBtn:hover {
+    background: linear-gradient(135deg, #34d399, #6ee7b7);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+}
+
+#resetTrainerBtn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+            
+
+        @media (max-width: 768px) {
+            .title-box {
+                margin-top: 20px;
+                padding: 15px 20px;
+            }
+            .title-box h1 {
+                font-size: 22px;
+            }
+            .section-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+            .section {
+                width: 80%;
+                height: 150px;
+            }
+            .modal-content {
+                padding: 15px;
+            }
+            .video-card {
+                width: 300px;
+                height: 200px;
+            }
+            .video-player-container {
+                max-width: 95%;
+            }
+            
+            .card-front, .card-back {
+                font-size: clamp(14px, 2.5vw, 16px);
+                padding: 15px;
+            }
+            .trainer-container {
+                padding: 15px;
+            }
+             .trainer-options {
+        grid-template-columns: 1fr; /* Один стовпець для мобільних */
+        grid-template-rows: repeat(4, auto); /* Чотири рядки */
+        gap: 12px;
+        max-width: 90%;
+    }
+
+    .trainer-option {
+        font-size: clamp(18px, 2.8vw, 20px);
+        padding: 12px;
+    }
+            #complexPlaneCanvas {
+                width: 200px;
+                height: 200px;
+            }
+            .question-circle {
+                width: 80px;
+                height: 80px;
+                font-size: clamp(14px, 2.3vw, 16px);
+            }
+            .accordion-header {
+                font-size: clamp(15px, 2.5vw, 17px);
+                padding: 10px 15px;
+            }
+            .accordion-content {
+                padding: 15px;
+            }
+            #questionsModal .modal-content {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+      #questionsModal .modal-content {
+        display: grid;
+        grid-template-columns: 1fr; /* Змінено з 2 колонок на 1 */
+        gap: 20px;
+    }
+    .question-card {
+        margin: 0;
+        max-width: 100%; /* Додано для кращого заповнення */
+    }
+            #questionsModal mjx-container {
+    
+    font-size: clamp(18px, 2.2vw, 20px) !important;
+   
+}
+               
+        gap: 10px;
+        max-width: 90%;
+    }
+    .trainer-option {
+        font-size: clamp(16px, 2.8vw, 18px);
+        padding: 8px;
+    }
+    #trainerModal mjx-container {
+        font-size: clamp(16px, 2.3vw, 18px) !important;
+    }
+        /* Стили для формул у питанні тренажера */
+#trainerModal #questionText mjx-container {
+    font-size: clamp(22px, 3vw, 23px) !important; /* Більший розмір */
+    color: #ffff00 !important;
+    display: inline-block !important;
+    max-width: 100%;
+    width: fit-content;
+    margin: 0 0.2em;
+    padding: 2px;
+    text-align: center;
+    font-weight: bold !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+#trainerModal #questionText mjx-container[display="true"] {
+    display: block !important;
+    text-align: center !important;
+    margin: 5px auto;
+    padding: 2px;
+    box-sizing: border-box;
+}
+
+
+
+    #trainerModal #questionText mjx-container {
+        font-size: clamp(22px, 3vw, 24px) !important;
+    }
+    #trainerModal .trainer-option mjx-container {
+        font-size: clamp(20px, 2.8vw, 22px) !important;
+    }
+     .question-circle {
+            width: 100px;
+            height: 100px;
+                       font-size: clamp(16px, 2.5vw, 18px);
+                                }
+        }
+        @media (max-width: 480px) {
+            .section {
+                width: 90%;
+                height: 170px;
+            }
+            .section img {
+                width: 40px;
+                height: 40px;
+            }
+            .section h2 {
+                font-size: 17px;
+            }
+            .modal-content {
+                padding: 10px;
+            }
+            .video-card {
+                width: 260px;
+                height: 160px;
+            }
+             .question-card {
+        height: 140px; /* Зменшена висота для мобільних */
+    }
+    .card-front, .card-back {
+        font-size: 14px; /* Зменшений розмір шрифту */
+        padding: 8px;
+    }
+            .question-circle {
+                width: 75px;
+                height: 75px;
+                font-size: clamp(13px, 2.2vw, 15px);
+            }
+           
+            
+            #complexPlaneCanvas {
+                width: 180px;
+                height: 180px;
+            }
+            
+            .accordion-content {
+                padding: 10px;
+            }
+             .trainer-options {
+        grid-template-columns: 1fr; /* Один стовпець */
+        grid-template-rows: repeat(4, auto); /* Чотири рядки */
+        gap: 10px;
+        max-width: 95%;
+    }
+
+    .trainer-option {
+        font-size: clamp(16px, 2.5vw, 18px);
+        padding: 10px;
+    }
+    #trainerModal #questionText mjx-container {
+        font-size: clamp(20px, 2.8vw, 22px) !important;
+    }
+    #trainerModal .trainer-option mjx-container {
+        font-size: clamp(18px, 2.5vw, 20px) !important;
+    }
+        }
+    </style>
+</head>
+<body>
+    <div class="title-box">
+        <h1>10. Показникове представлення комплексного числа</h1>
+    </div>
+
+    <div class="section-container">
+        <div class="section" id="openTheoryBtn">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Книга">
+            <h2>Теоретичні відомості</h2>
+        </div>
+        <div class="section" id="openVideoBtn">
+            <img src="https://img.icons8.com/fluency/96/video.png" alt="Відео">
+            <h2>Відеоматеріали</h2>
+        </div>
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Картки">
+            <h2>Питання і відповіді</h2>
+        </div>
+        <div class="section" id="openTrainerBtn">
+            <img src="https://img.icons8.com/fluency/96/flash-on.png" alt="Тренажер">
+            <h2>Тренажер</h2>
+        </div>
+    </div>
+
+    <div class="navigation-buttons">
+        <a class="nav-button" href="/tema3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            До теми 3
+        </a>
+        <a class="nav-button" href="/">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            На головну
+        </a>
+    </div>
+
+    <div id="modalOverlay"></div>
+
+    <div id="theoryModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeTheoryBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="accordion">
+                <div class="accordion-item">
+                    <button class="accordion-header">Показникове подання: зв'язок з тригонометричною формою</button>
+                    <div class="accordion-content">
+                        <p>У різних галузях науки й техніки, зокрема в електротехніці, радіотехніці, гідравліці, а також у математичних і фізичних задачах, широко використовують корисну форму представлення комплексних чисел – показникову форму. Вона базується на формулі Ейлера, яка встановлює зв'язок між тригонометричним і показниковим виразами комплексного числа:</p>
+                        <mjx-container class="math-notation-centered" jax="CHTML" display="true">
+                            \[ e^{iφ} = \cosφ + i\sinφ, \quad φ \in \mathbb{R}, \]
+                        </mjx-container>
+                        <p>де \( e \approx 2.72 \) — ірраціональне число (основа натурального логарифма). Таким чином, комплексне число в тригонометричній формі \( z = r(\cosφ + i\sinφ) \) можна записати у показниковій формі:</p>
+                        <mjx-container class="math-notation-centered" jax="CHTML" display="true">
+                            \[ z = re^{iφ}, \tag{3.1} \]
+                        </mjx-container>
+                        <p>де \( r \) – модуль (додатне число), а \( φ \) – аргумент (кут у радіанах, головне значення в \( (-\pi; \pi] \)).</p>
+                        <p>Формула (3.1) є важливим інструментом для роботи з комплексними числами, що використовується в авіації та військових науках для аналізу радіолокаційних сигналів, розробки навігаційних систем та моделювання аеродинамічних процесів. Вона також має важливе значення у вищій математиці, зокрема для розв’язування диференціальних рівнянь.</p>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <button class="accordion-header">Приклад</button>
+                    <div class="accordion-content">
+                        <p><strong><span class="example-inline">Приклад 3.1.</strong> </span>Представити комплексні числа в показниковій формі:</p>
+                        <p>а) \( z = -\sqrt{3} + i \); б) \( z = i \).</p>
+<p style="text-align: center;"><span class="example-inline">Розв’язок:</p></span>
+                        <p><strong>а)</strong> Для числа \( z = -\sqrt{3} + i \) обчислимо його модуль \( r \) та аргумент \( φ\).</p>
+                        <p><em>Модуль:</em></p>
+                        <mjx-container class="math-notation-centered" jax="CHTML" display="true">
+                        \[ \begin{aligned}
+                        r &= \sqrt{(-\sqrt{3})^2 + 1^2}, \\
+                        r &= \sqrt{3 + 1} = \sqrt{4} = 2,
+                        \end{aligned} \]
+                    </mjx-container>
+                        <p>отже, \( r = 2 \).</p>
+                        <p><em>Аргумент:</em></p>
+                        <p>Комплексне число \( z \) розташоване в ІІ чверті (\( a = -\sqrt{3} < 0 \), \( b = 1 > 0 \)), тому аргумент: </p>
+                        <mjx-container class="math-notation-centered" jax="CHTML" display="true">
+                            \[ φ = \arctan\left(\frac{1}{-\sqrt{3}}\right) + \pi, \]
+                        </mjx-container>
+                        <mjx-container class="math-notation-centered" jax="CHTML" display="true">
+                            \[ φ = -\arctan\frac{1}{\sqrt{3}} + \pi, \]
+                        </mjx-container>
+                        <mjx-container class="math-notation-centered" jax="CHTML" display="true">
+                            \[ φ = -\frac{\pi}{6} + \pi = \frac{5\pi}{6}. \]
+                        </mjx-container>
+                        <p>Отже, комплексне число в показниковій формі:</p>
+                        <mjx-container class="math-notation-centered" jax="CHTML" display="true">
+                            \[ z = -\sqrt{3} + i = 2e^{i \frac{5\pi}{6}}. \]
+                        </mjx-container>
+                        <p><strong>б)</strong> Для числа \( z = i \) обчислимо його модуль \( r \) та аргумент \( φ \):</p>
+                        <p><em>Модуль:</em></p>
+                        <mjx-container class="math-notation-centered" jax="CHTML" display="true">
+                            \[ r = |i| = 1. \]
+                        </mjx-container>
+                        <p><em>Аргумент:</em></p>
+                        <p>Комплексне число \( z \) на додатній уявній осі в точці \( (0;1) \), тому аргумент:</p>
+                        <mjx-container class="math-notation-centered" jax="CHTML" display="true">
+                            \[ φ = \frac{\pi}{2}. \]
+                        </mjx-container>
+                        <p>Отже, комплексне число в показниковій формі:</p>
+                        <mjx-container class="math-notation-centered" jax="CHTML" display="true">
+                            \[ z = i = e^{i \frac{\pi}{2}}. \]
+                        </mjx-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="videoModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <h2 class="glow-title">Оберіть відео</h2>
+            <div class="video-card-container">
+                <div class="video-card" data-video="1">
+                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
+                    <h3>Комплексні числа в показниковій формі</h3>
+                </div>
+                <div class="video-card" data-video="2">
+                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
+                    <h3>Показникова форма комплексного числа</h3>
+                </div>
+                <div class="video-card" data-video="3">
+                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
+                    <h3>Exponential Form Examples</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="videoPlayerModal1" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoPlayerBtn1">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-player-container">
+                <iframe id="youtubePlayer1" width="100%" src="https://www.youtube.com/embed/fA-pK9fxKfU" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div id="videoPlayerModal2" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoPlayerBtn2">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-player-container">
+                <iframe id="youtubePlayer2" width="100%" src="https://www.youtube.com/embed/9c2fMBP8i8M" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div id="videoPlayerModal3" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoPlayerBtn3">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-player-container">
+                <iframe id="youtubePlayer3" width="100%" src="https://www.youtube.com/embed/V3rBZL5QGFY" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+<div id="questionsModal" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeQuestionsBtn">× Закрити</button>
+    </div>
+    <div class="modal-content">
+                <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">
+                    1. На якій формулі базується показникова форма комплексного числа?
+                </div>
+                <div class="card-back">
+                    <div class="card-back-content">
+                        На формулі Ейлера: \( e^{iφ} = \cosφ + i\sinφ, \quad φ \in \mathbb{R}. \)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">
+                    2. Що таке \( e \) у формулі Ейлера?
+                </div>
+                <div class="card-back">
+                    <div class="card-back-content">
+                        Це ірраціональне число, що дорівнює приблизно 2,72 (основа натурального логарифма).
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">
+                    3. Що називають показниковою формою комплексного числа?
+                </div>
+                <div class="card-back">
+                    <div class="card-back-content">
+                        Це подання \( z = re^{iφ} \), де \( r \) — модуль, \( φ \) — аргумент.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">
+                    4. У яких галузях використовують показникову форму комплексних чисел?
+                </div>
+                <div class="card-back">
+                    <div class="card-back-content">
+                        Електротехніка, радіотехніка, гідравліка, математика та фізика.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">
+                    5. Як виглядає показникова форма числа \( z = i \)?
+                </div>
+                <div class="card-back">
+                    <div class="card-back-content">
+                        Головне значення аргументу: \( φ = \frac{\pi}{2} \). Показникова форма: \( z = e^{i \frac{\pi}{2}} \).
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">
+                    6. Запишіть показникову форму для \( z = -\sqrt{3} + i \).
+                </div>
+                <div class="card-back">
+                    <div class="card-back-content">
+                        Комплексне число знаходиться у ІІ чверті, тоді головне значення аргументу: \( φ = -\frac{\pi}{6} + \pi = \frac{5\pi}{6}. \) Показникова форма: \( z = 2e^{i \frac{5\pi}{6}}. \)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="trainerModal" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeTrainerBtn">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="trainer-container" id="trainerContent">
+            <div class="question-circle" id="questionCircle">Питання 1</div>
+            <canvas id="complexPlaneCanvas" width="250" height="250" style="display: none;"></canvas>
+            <div class="trainer-question" id="questionText">Тут буде питання тренажера.</div>
+            <div class="trainer-options" id="optionsContainer"></div>
+            <button class="trainer-submit" id="submitAnswer">Перевірити</button>
+            <div class="trainer-feedback" id="feedback"></div>
+        </div>
+        <div class="completion-message" id="completionMessage" style="display: none;">
+            <div class="completion-emoji"></div>
+            <h2>Тренування завершено!</h2>
+            <p>Молодець!</p>
+            <button id="resetTrainerBtn">Спробувати ще раз</button>
+        </div>
+    </div>
+</div>
+
+    <script>
+const modals = {
+    theory: document.getElementById('theoryModal'),
+    video: document.getElementById('videoModal'),
+    questions: document.getElementById('questionsModal'),
+    trainer: document.getElementById('trainerModal'),
+    videoPlayer1: document.getElementById('videoPlayerModal1'),
+    videoPlayer2: document.getElementById('videoPlayerModal2'),
+    videoPlayer3: document.getElementById('videoPlayerModal3')
+};
+const buttons = {
+    openTheory: document.getElementById('openTheoryBtn'),
+    openVideo: document.getElementById('openVideoBtn'),
+    openQuestions: document.getElementById('openQuestionsBtn'),
+    openTrainer: document.getElementById('openTrainerBtn'),
+    closeTheory: document.getElementById('closeTheoryBtn'),
+    closeVideo: document.getElementById('closeVideoBtn'),
+    closeQuestions: document.getElementById('closeQuestionsBtn'),
+    closeTrainer: document.getElementById('closeTrainerBtn'),
+    closeVideoPlayer1: document.getElementById('closeVideoPlayerBtn1'),
+    closeVideoPlayer2: document.getElementById('closeVideoPlayerBtn2'),
+    closeVideoPlayer3: document.getElementById('closeVideoPlayerBtn3')
+};
+const overlay = document.getElementById('modalOverlay');
+const youtubePlayers = {
+    1: document.getElementById('youtubePlayer1'),
+    2: document.getElementById('youtubePlayer2'),
+    3: document.getElementById('youtubePlayer3')
+};
+let scrollPosition = 0;
+
+// Перевірка елементів
+Object.entries(buttons).forEach(([key, value]) => {
+    if (!value) console.error(`Елемент з ID для ${key} не знайдено!`);
+});
+Object.entries(modals).forEach(([key, value]) => {
+    if (!value) console.error(`Модальне вікно ${key} не знайдено!`);
+});
+
+function openModal(modal, btn) {
+    if (!modal || !btn) {
+        console.error('Помилка: модальне вікно або кнопка не знайдені.');
+        return;
+    }
+    scrollPosition = window.scrollY;
+    modal.style.display = 'flex';
+    modal.classList.add('show');
+    overlay.style.display = 'block';
+    overlay.style.opacity = '1';
+    document.body.classList.add('modal-open');
+    document.body.style.top = `-${scrollPosition}px`;
+    btn.setAttribute('aria-pressed', 'true');
+    const questionCards = modal.querySelectorAll('.question-card');
+    questionCards.forEach(card => {
+        card.style.opacity = '1';
+    });
+    setTimeout(() => {
+        if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+            MathJax.typesetPromise().catch(err => {
+                console.error('Помилка MathJax:', err);
+                questionCards.forEach(card => card.style.opacity = '1');
+            });
+        } else {
+            console.warn('MathJax не завантажено.');
+            questionCards.forEach(card => card.style.opacity = '1');
+        }
+    }, 50);
+}
+
+function closeModal(modal, btn) {
+    if (!modal || !btn) return;
+    modal.style.display = 'none';
+    overlay.style.display = 'none';
+    document.body.classList.remove('modal-open');
+    btn.setAttribute('aria-pressed', 'false');
+    btn.focus();
+    if (modal === modals.questions) {
+        const cards = modal.querySelectorAll('.card-inner');
+        cards.forEach(card => card.classList.remove('flipped'));
+    }
+}
+
+function closeVideoPlayerModal(videoModal, player, mainModal, btn) {
+    if (player) {
+        player.src = '';
+        player.src = player.getAttribute('data-src');
+    }
+    if (videoModal) videoModal.style.display = 'none';
+    overlay.style.display = 'none';
+    openModal(mainModal, btn);
+}
+
+if (buttons.openTheory) buttons.openTheory.addEventListener('click', () => openModal(modals.theory, buttons.openTheory));
+if (buttons.openVideo) buttons.openVideo.addEventListener('click', () => openModal(modals.video, buttons.openVideo));
+if (buttons.openQuestions) buttons.openQuestions.addEventListener('click', () => openModal(modals.questions, buttons.openQuestions));
+if (buttons.openTrainer) buttons.openTrainer.addEventListener('click', () => {
+    openModal(modals.trainer, buttons.openTrainer);
+    resetTrainer();
+});
+if (buttons.closeTheory) buttons.closeTheory.addEventListener('click', () => closeModal(modals.theory, buttons.openTheory));
+if (buttons.closeVideo) buttons.closeVideo.addEventListener('click', () => closeModal(modals.video, buttons.openVideo));
+if (buttons.closeQuestions) buttons.closeQuestions.addEventListener('click', () => closeModal(modals.questions, buttons.openQuestions));
+if (buttons.closeTrainer) buttons.closeTrainer.addEventListener('click', () => closeModal(modals.trainer, buttons.openTrainer));
+if (buttons.closeVideoPlayer1) buttons.closeVideoPlayer1.addEventListener('click', () => closeVideoPlayerModal(modals.videoPlayer1, youtubePlayers[1], modals.video, buttons.openVideo));
+if (buttons.closeVideoPlayer2) buttons.closeVideoPlayer2.addEventListener('click', () => closeVideoPlayerModal(modals.videoPlayer2, youtubePlayers[2], modals.video, buttons.openVideo));
+if (buttons.closeVideoPlayer3) buttons.closeVideoPlayer3.addEventListener('click', () => closeVideoPlayerModal(modals.videoPlayer3, youtubePlayers[3], modals.video, buttons.openVideo));
+
+if (overlay) {
+    overlay.addEventListener('click', () => {
+        Object.values(modals).forEach(modal => {
+            modal.classList.remove('show');
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                modal.style.display = 'none';
+                overlay.style.display = 'none';
+                document.body.classList.remove('modal-open');
+                document.body.style.top = '';
+                window.scrollTo(0, scrollPosition);
+                Object.values(youtubePlayers).forEach(player => {
+                    if (player) {
+                        player.src = '';
+                        player.src = player.getAttribute('data-src');
+                    }
+                });
+                if (modal === modals.questions) {
+                    const cards = modal.querySelectorAll('.card-inner');
+                    cards.forEach(card => card.classList.remove('flipped'));
+                }
+            }, 250);
+        });
+    });
+}
+
+document.querySelectorAll('.accordion-header').forEach(header => {
+    header.addEventListener('click', () => {
+        const content = header.nextElementSibling;
+        const isActive = header.classList.contains('active');
+        document.querySelectorAll('.accordion-header').forEach(h => {
+            h.classList.remove('active');
+            h.nextElementSibling.classList.remove('active');
+        });
+        if (!isActive) {
+            header.classList.add('active');
+            content.classList.add('active');
+        }
+        if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+            MathJax.typesetPromise().catch(err => console.error('Помилка MathJax:', err));
+        }
+    });
+});
+
+document.querySelectorAll('.video-card').forEach(card => {
+    card.addEventListener('click', () => {
+        const videoId = card.dataset.video;
+        openModal(modals[`videoPlayer${videoId}`], buttons.openVideo);
+    });
+});
+
+document.querySelectorAll('.card-inner').forEach(card => {
+    card.addEventListener('click', () => {
+        card.classList.toggle('flipped');
+        setTimeout(() => {
+            if (typeof MathJax !== 'undefined') {
+                MathJax.typesetPromise();
+            }
+        }, 600);
+    });
+});
+
+Object.values(youtubePlayers).forEach(player => {
+    if (player) {
+        player.setAttribute('data-src', player.src);
+    }
+});
+
+// Логіка тренажера
+const questionCircle = document.getElementById('questionCircle');
+const questionText = document.getElementById('questionText');
+const optionsContainer = document.getElementById('optionsContainer');
+const submitButton = document.getElementById('submitAnswer');
+const feedback = document.getElementById('feedback');
+const trainerContent = document.getElementById('trainerContent');
+const completionMessage = document.getElementById('completionMessage');
+let currentQuestion = 1;
+let selectedOption = null;
+let currentR = null;
+let currentPhi = null;
+let currentExampleIndex = null;
+
+// Масив прикладів для третього питання
+const thirdQuestionExamples = [
+    {
+        question: '6e^{\\frac{\\pi}{3} i}',
+        options: [
+            { text: '6e^{-\\frac{\\pi}{3} i}', isCorrect: false },
+            { text: '6e^{\\pi i}', isCorrect: false },
+            { text: '-6e^{\\frac{\\pi}{3} i}', isCorrect: false },
+            { text: '6e^{-\\frac{2\\pi}{3} i}', isCorrect: true }
+        ]
+    },
+    {
+        question: '2e^{-\\frac{\\pi}{3} i}',
+        options: [
+            { text: '2e^{-\\frac{2\\pi}{3} i}', isCorrect: false },
+            { text: '2e^{\\frac{\\pi}{3} i}', isCorrect:false  },
+            { text: '-2e^{-\\frac{\\pi}{3} i}', isCorrect: false },
+            { text: '2e^{\\frac{2\\pi}{3} i}', isCorrect: true }
+        ]
+    },
+    {
+        question: '\\sqrt{3} e^{-\\frac{2\\pi}{3} i}',
+        options: [
+            { text: '\\sqrt{3} e^{\\frac{\\pi}{3} i}', isCorrect: true },
+            { text: '-\\sqrt{3} e^{-\\frac{2\\pi}{3} i}', isCorrect: false },
+            { text: '\\sqrt{3} e^{\\frac{2\\pi}{3} i}', isCorrect: false },
+            { text: '\\sqrt{3} e^{-\\frac{\\pi}{3} i}', isCorrect: false }
+        ]
+    },
+    {
+        question: 'e^{\\frac{\\pi}{2} i}',
+        options: [
+            { text: 'e^{-\\pi i}', isCorrect: false },
+            { text: 'e^{\\pi i}', isCorrect: false },
+            { text: '-e^{\\frac{\\pi}{2} i}', isCorrect: false },
+            { text: 'e^{-\\frac{\\pi}{2} i}', isCorrect: true }
+        ]
+    },
+    {
+        question: '2\\sqrt{2} e^{\\frac{\\pi}{6} i}',
+        options: [
+            { text: '2\\sqrt{2} e^{\\frac{5\\pi}{6} i}', isCorrect: false },
+            { text: '2\\sqrt{2} e^{-\\frac{\\pi}{6} i}', isCorrect: false },
+            { text: '2\\sqrt{2} e^{-\\frac{5\\pi}{6} i}', isCorrect: true },
+            { text: '-2\\sqrt{2} e^{\\frac{\\pi}{6} i}', isCorrect: false }
+        ]
+    },
+    {
+        question: '3e^{-\\frac{3\\pi}{4} i}',
+        options: [
+            { text: '-3e^{-\\frac{3\\pi}{4} i}', isCorrect: false },
+            { text: '3e^{\\frac{3\\pi}{4} i}', isCorrect:false  },
+            { text: '3e^{-\\frac{\\pi}{4} i}', isCorrect: false },
+            { text: '3e^{\\frac{\\pi}{4} i}', isCorrect: true }
+        ]
+    },
+    {
+        question: '\\sqrt{3} e^{\\frac{3\\pi}{4} i}',
+        options: [
+            { text: '-\\sqrt{3} e^{\\frac{3\\pi}{4} i}', isCorrect: false },
+            { text: '\\sqrt{3} e^{-\\frac{3\\pi}{4} i}', isCorrect: false  },
+            { text: '\\sqrt{3} e^{-\\frac{\\pi}{4} i}', isCorrect: true },
+            { text: '\\sqrt{3} e^{\\frac{\\pi}{4} i}', isCorrect: false }
+        ]
+    },
+    {
+        question: '5e^{\\frac{5\\pi}{6} i}',
+        options: [
+            { text: '5e^{-\\frac{5\\pi}{6} i}', isCorrect:false  },
+            { text: '5e^{-\\frac{\\pi}{6} i}', isCorrect: true },
+            { text: '-5e^{\\frac{5\\pi}{6} i}', isCorrect: false },
+            { text: '5e^{\\frac{\\pi}{6} i}', isCorrect: false }
+        ]
+    },
+    {
+        question: '6e^{-\\frac{5\\pi}{6} i}',
+        options: [
+            { text: '6e^{-\\frac{\\pi}{6} i}', isCorrect: false },
+            { text: '6e^{\\frac{\\pi}{6} i}', isCorrect:false  },
+            { text: '6e^{\\frac{5\\pi}{6} i}', isCorrect: true },
+            { text: '-6e^{-\\frac{5\\pi}{6} i}', isCorrect: false }
+        ]
+    },
+    {
+        question: '3\\sqrt{2} e^{-\\frac{\\pi}{6} i}',
+        options: [
+            { text: '-3\\sqrt{2} e^{-\\frac{\\pi}{6} i}', isCorrect: false },
+            { text: '3\\sqrt{2} e^{\\frac{\\pi}{6} i}', isCorrect: true },
+            { text: '3\\sqrt{2} e^{\\frac{5\\pi}{6} i}', isCorrect: false },
+            { text: '3\\sqrt{2} e^{-\\frac{5\\pi}{6} i}', isCorrect: false }
+        ]
+    },
+    {
+        question: '7e^{-\\frac{\\pi}{2} i}',
+        options: [
+            { text: '7', isCorrect: false },
+            { text: '7e^{\\frac{3\\pi}{2} i}', isCorrect: false },
+            { text: '-7e^{-\\frac{\\pi}{2} i}', isCorrect: false },
+            { text: '7e^{\\frac{\\pi}{2} i}', isCorrect: true }
+        ]
+    },
+    {
+        question: '8e^{-\\pi i}',
+        options: [
+            { text: '8e^{\\frac{\\pi}{2} i}', isCorrect: false },
+            { text: '8e^{\\pi i}', isCorrect: true },
+            { text: '-8e^{\\pi i}', isCorrect: false },
+            { text: '-8e^{-\\pi i}', isCorrect: false }
+        ]
+    }
+];
+
+// Масив прикладів для четвертого питання (перенесено з попереднього третього)
+const fourthQuestionExamples = [
+     {
+        question: 'z = 2\\sqrt{3} - 2i',
+        options: [
+            { text: '4e^{\\frac{\\pi}{6} i}', isCorrect: false },
+            { text: '4e^{-\\frac{\\pi}{6} i}', isCorrect: true },
+            { text: '4e^{-\\frac{\\pi}{3} i}', isCorrect: false },
+            { text: '4e^{\\frac{\\pi}{3} i}', isCorrect:  false}
+        ]
+    },
+    {
+        question: 'z = 10i',
+        options: [
+            { text: '10e^{\\pi i}', isCorrect: false },
+            { text: '10e^{-\\pi i}', isCorrect: false },
+            { text: '10e^{\\frac{\\pi}{2} i}', isCorrect: true },
+            { text: '10e^{-\\frac{\\pi}{2} i}', isCorrect: false }
+        ]
+    },
+    {
+        question: 'z = 5 - 5i',
+        options: [
+            { text: '5\\sqrt{2} e^{-\\frac{\\pi}{4} i}', isCorrect: true },
+            { text: '5\\sqrt{2} e^{\\frac{\\pi}{4} i}', isCorrect: false },
+            { text: '5\\sqrt{2} e^{-\\frac{3\\pi}{4} i}', isCorrect: false },
+            { text: '5\\sqrt{2} e^{\\frac{3\\pi}{4} i}', isCorrect: false }
+        ]
+    },
+    {
+        question: 'z = -1 + i',
+        options: [
+            { text: '\\sqrt{2} e^{-\\frac{\\pi}{4} i}', isCorrect: false },
+            { text: '\\sqrt{2} e^{\\frac{\\pi}{4} i}', isCorrect: false },
+            { text: '\\sqrt{2} e^{-\\frac{3\\pi}{4} i}', isCorrect: false },
+            { text: '\\sqrt{2} e^{\\frac{3\\pi}{4} i}', isCorrect: true }
+        ]
+    },
+    {
+        question: 'z = \\sqrt{3} + i',
+        options: [
+            { text: '2e^{-\\frac{\\pi}{3} i}', isCorrect: false },
+            { text: '2e^{-\\frac{\\pi}{6} i}', isCorrect: false },
+            { text: '2e^{\\frac{\\pi}{6} i}', isCorrect: true },
+            { text: '2e^{\\frac{\\pi}{3} i}', isCorrect: false }
+        ]
+    },
+    {
+        question: 'z = -\\sqrt{2} + \\sqrt{2} i',
+        options: [
+            { text: '2\\sqrt{2} e^{\\frac{3\\pi}{4} i}', isCorrect: true },
+            { text: '2\\sqrt{2} e^{\\frac{\\pi}{4} i}', isCorrect: false },
+            { text: '2e^{-\\frac{3\\pi}{4} i}', isCorrect: false },
+            { text: '2e^{\\frac{3\\pi}{4} i}', isCorrect: false }
+        ]
+    },
+    {
+        question: 'z = -2 - 2\\sqrt{3} i',
+        options: [
+            { text: '4e^{\\frac{\\pi}{3} i}', isCorrect: false },
+            { text: '4e^{-\\frac{2\\pi}{3} i}', isCorrect: true },
+            { text: '4e^{-\\frac{\\pi}{3} i}', isCorrect: false },
+            { text: '4e^{\\frac{2\\pi}{3} i}', isCorrect: false }
+        ]
+    },
+    {
+        question: 'z = 2\\sqrt{3} + 2i',
+        options: [
+            { text: '4e^{\\frac{\\pi}{6} i}', isCorrect: true },
+            { text: '4e^{-\\frac{\\pi}{6} i}', isCorrect: false },
+            { text: '4e^{-\\frac{\\pi}{3} i}', isCorrect: false },
+            { text: '4e^{\\frac{\\pi}{3} i}', isCorrect: false }
+        ]
+    },
+    {
+        question: 'z = 4 + 4i',
+        options: [
+            { text: '4\\sqrt{2} e^{\\frac{3\\pi}{4} i}', isCorrect: false },
+            { text: '4\\sqrt{2} e^{\\frac{\\pi}{4} i}', isCorrect: true },
+            { text: '4\\sqrt{2} e^{-\\frac{3\\pi}{4} i}', isCorrect: false },
+            { text: '4e^{\\frac{3\\pi}{4} i}', isCorrect: false }
+        ]
+    },
+    {
+        question: 'z = -1',
+        options: [
+            { text: 'e^{-\\pi i}', isCorrect: false },
+            { text: 'e^{-\\frac{\\pi}{2} i}', isCorrect: false },
+            { text: 'e^{\\frac{\\pi}{2} i}', isCorrect: false },
+            { text: 'e^{\\pi i}', isCorrect: true }
+        ]
+    },
+    {
+        question: 'z = \\frac{1}{2} - \\frac{\\sqrt{3}}{2} i',
+        options: [
+            { text: 'e^{\\frac{\\pi}{3} i}', isCorrect: false },
+            { text: 'e^{-\\frac{2\\pi}{3} i}', isCorrect: false },
+            { text: 'e^{-\\frac{\\pi}{3} i}', isCorrect: true },
+            { text: 'e^{\\frac{2\\pi}{3} i}', isCorrect: false }
+        ]
+    },
+    {
+        question: 'z = \\sqrt{3} + 3i',
+        options: [
+            { text: '2\\sqrt{3} e^{-\\frac{\\pi}{6} i}', isCorrect: false },
+            { text: '2\\sqrt{3} e^{\\frac{\\pi}{3} i}', isCorrect: true },
+            { text: '2\\sqrt{3} e^{-\\frac{\\pi}{3} i}', isCorrect: false },
+            { text: '2\\sqrt{3} e^{\\frac{\\pi}{6} i}', isCorrect: false }
+        ]
+    },
+    {
+        question: 'z = i',
+        options: [
+            { text: 'e^{\\pi i}', isCorrect: false },
+            { text: 'e^{-\\frac{\\pi}{2} i}', isCorrect: false },
+            { text: 'e^{-\\pi i}', isCorrect: false },
+            { text: 'e^{\\frac{\\pi}{2} i}', isCorrect: true }
+        ]
+    },
+    {
+        question: 'z = -1 + \\sqrt{3} i',
+        options: [
+            { text: '2e^{\\frac{\\pi}{3} i}', isCorrect: false },
+            { text: '2e^{\\frac{2\\pi}{3} i}', isCorrect: true },
+            { text: '2e^{-\\frac{2\\pi}{3} i}', isCorrect: false },
+            { text: '2e^{-\\frac{\\pi}{3} i}', isCorrect: false }
+        ]
+    },
+    {
+        question: 'z = \\sqrt{2} - \\sqrt{6} i',
+        options: [
+            { text: '2\\sqrt{2} e^{-\\frac{\\pi}{3} i}', isCorrect: true },
+            { text: '2\\sqrt{2} e^{\\frac{\\pi}{3} i}', isCorrect: false },
+            { text: '2\\sqrt{2} e^{-\\frac{\\pi}{6} i}', isCorrect: false },
+            { text: '2\\sqrt{2} e^{\\frac{\\pi}{6} i}', isCorrect: false }
+        ]
+    },
+    {
+        question: 'z = -2 - 2\\sqrt{3} i',
+        options: [
+            { text: '4e^{\\frac{\\pi}{3} i}', isCorrect: false },
+            { text: '4e^{-\\frac{\\pi}{3} i}', isCorrect: false },
+            { text: '4e^{-\\frac{2\\pi}{3} i}', isCorrect: true },
+            { text: '4e^{\\frac{2\\pi}{3} i}', isCorrect: false }
+        ]
+    },
+    {
+        question: 'z = -3 - \\sqrt{3} i',
+        options: [
+            { text: '2\\sqrt{3} e^{\\frac{5\\pi}{6} i}', isCorrect: false },
+            { text: '2\\sqrt{3} e^{-\\frac{\\pi}{3} i}', isCorrect: false },
+            { text: '2\\sqrt{3} e^{-\\frac{\\pi}{6} i}', isCorrect: false },
+            { text: '2\\sqrt{3} e^{-\\frac{5\\pi}{6} i}', isCorrect: true }
+        ]
+    }
+];
+
+// Функція для генерації випадкового натурального числа r (1–10)
+function getRandomR(exclude = []) {
+    let r;
+    do {
+        r = Math.floor(Math.random() * 10) + 1;
+    } while (exclude.includes(r));
+    return r;
+}
+
+// Функція для генерації випадкового аргументу φ в межах [-π, π]
+function getRandomPhi(exclude = []) {
+    const angles = [
+        '-\\pi', '-\\frac{3\\pi}{4}', '-\\frac{2\\pi}{3}', '-\\frac{\\pi}{2}', '-\\frac{\\pi}{3}', '-\\frac{\\pi}{4}',
+        '0', '\\frac{\\pi}{4}', '\\frac{\\pi}{3}', '\\frac{\\pi}{2}', '\\frac{2\\pi}{3}', '\\frac{3\\pi}{4}', '\\pi'
+    ];
+    let availableAngles = angles.filter(angle => !exclude.includes(angle));
+    if (availableAngles.length === 0) availableAngles = angles;
+    return availableAngles[Math.floor(Math.random() * availableAngles.length)];
+}
+
+// Функція для перемішування масиву
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[i], array[j]];
+    }
+    return array;
+}
+
+// Функція для генерації варіантів відповідей для першого питання
+function generateOptions(correctR, correctPhi) {
+    const options = [{ r: correctR, phi: correctPhi, isCorrect: true }];
+    const usedR = [correctR];
+    const usedPhi = [correctPhi];
+
+    while (options.length < 4) {
+        const r = getRandomR(usedR);
+        const phi = getRandomPhi(usedPhi);
+        const isDuplicate = options.some(opt => opt.r === r && opt.phi === phi);
+        if (!isDuplicate) {
+            options.push({ r, phi, isCorrect: false });
+            usedR.push(r);
+            usedPhi.push(phi);
+        }
+    }
+
+    return shuffleArray(options);
+}
+
+// Функція для генерації варіантів відповідей для другого питання
+function generateTrigonometricOptions(r, phi) {
+    const absPhi = phi.startsWith('-') ? phi.substring(1) : phi;
+    const isNegative = phi.startsWith('-');
+    const correctAnswer = isNegative
+        ? `${r}\\left(\\cos ${absPhi} - i \\sin ${absPhi}\\right)`
+        : `${r}\\left(\\cos ${phi} + i \\sin ${phi}\\right)`;
+
+    const options = [{ text: correctAnswer, isCorrect: true }];
+
+    const wrongVariations = [
+        `${r}\\left(\\sin ${absPhi} + i \\cos ${absPhi}\\right)`,
+        `${r}\\left(\\sin ${absPhi} - i \\cos ${absPhi}\\right)`,
+        isNegative
+            ? `${r}\\left(\\cos ${absPhi} + i \\sin ${absPhi}\\right)`
+            : `${r}\\left(\\cos ${absPhi} - i \\sin ${absPhi}\\right)`
+    ];
+
+    const usedOptions = [correctAnswer];
+    for (let variation of wrongVariations) {
+        if (!usedOptions.includes(variation)) {
+            options.push({ text: variation, isCorrect: false });
+            usedOptions.push(variation);
+        }
+    }
+
+    while (options.length < 4) {
+        const newR = getRandomR([r]);
+        const newOption = isNegative
+            ? `${newR}\\left(\\cos ${absPhi} - i \\sin ${absPhi}\\right)`
+            : `${newR}\\left(\\cos ${phi} + i \\sin ${phi}\\right)`;
+        if (!usedOptions.includes(newOption)) {
+            options.push({ text: newOption, isCorrect: false });
+            usedOptions.push(newOption);
+        }
+    }
+
+    return shuffleArray(options);
+}
+
+// Функція для перезапуску тренажера
+function resetTrainer() {
+    currentQuestion = 1;
+    currentR = null;
+    currentPhi = null;
+    currentExampleIndex = null;
+    trainerContent.style.display = 'block';
+    completionMessage.style.display = 'none';
+    generateQuestion();
+}
+
+// Функція для генерації питання
+async function generateQuestion() {
+    questionText.style.opacity = '0';
+    optionsContainer.style.opacity = '0';
+    questionCircle.textContent = `Питання ${currentQuestion}`;
+    optionsContainer.innerHTML = '';
+    feedback.textContent = '';
+    feedback.className = 'feedback';
+    feedback.style.display = 'none';
+    selectedOption = null;
+
+    if (currentQuestion === 1) {
+        currentR = getRandomR();
+        currentPhi = getRandomPhi();
+        questionText.innerHTML = `Комплексне число, задане у показниковій формі \\( z = ${currentR}e^{${currentPhi} \\cdot i} \\), має відповідно модуль і головне значення аргументу`;
+        
+        const options = generateOptions(currentR, currentPhi);
+        options.forEach((option, index) => {
+            const optionElement = document.createElement('div');
+            optionElement.classList.add('trainer-option');
+            optionElement.innerHTML = `\\( r = ${option.r}, φ = ${option.phi} \\)`;
+            optionElement.dataset.correct = option.isCorrect;
+            optionElement.addEventListener('click', () => {
+                document.querySelectorAll('.trainer-option').forEach(opt => opt.classList.remove('selected'));
+                optionElement.classList.add('selected');
+                selectedOption = optionElement;
+            });
+            optionsContainer.appendChild(optionElement);
+        });
+    } else if (currentQuestion === 2) {
+        questionText.innerHTML = `Тригонометрична форма комплексного числа \\( z = ${currentR}e^{${currentPhi} \\cdot i} \\) має вигляд`;
+        
+        const options = generateTrigonometricOptions(currentR, currentPhi);
+        options.forEach((option, index) => {
+            const optionElement = document.createElement('div');
+            optionElement.classList.add('trainer-option');
+            optionElement.innerHTML = `\\( ${option.text} \\)`;
+            optionElement.dataset.correct = option.isCorrect;
+            optionElement.addEventListener('click', () => {
+                document.querySelectorAll('.trainer-option').forEach(opt => opt.classList.remove('selected'));
+                optionElement.classList.add('selected');
+                selectedOption = optionElement;
+            });
+            optionsContainer.appendChild(optionElement);
+        });
+    } else if (currentQuestion === 3) {
+        currentExampleIndex = Math.floor(Math.random() * thirdQuestionExamples.length);
+        const example = thirdQuestionExamples[currentExampleIndex];
+        questionText.innerHTML = `Як виглядає число, протилежне до \\( ${example.question} \\)?`;
+        
+        const options = shuffleArray([...example.options]);
+        options.forEach((option, index) => {
+            const optionElement = document.createElement('div');
+            optionElement.classList.add('trainer-option');
+            optionElement.innerHTML = `\\( ${option.text} \\)`;
+            optionElement.dataset.correct = option.isCorrect;
+            optionElement.addEventListener('click', () => {
+                document.querySelectorAll('.trainer-option').forEach(opt => opt.classList.remove('selected'));
+                optionElement.classList.add('selected');
+                selectedOption = optionElement;
+            });
+            optionsContainer.appendChild(optionElement);
+        });
+    } else if (currentQuestion === 4) {
+        currentExampleIndex = Math.floor(Math.random() * fourthQuestionExamples.length);
+        const example = fourthQuestionExamples[currentExampleIndex];
+        questionText.innerHTML = `Представити комплексне число \\( ${example.question} \\) в показниковій формі`;
+        
+        const options = shuffleArray([...example.options]);
+        options.forEach((option, index) => {
+            const optionElement = document.createElement('div');
+            optionElement.classList.add('trainer-option');
+            optionElement.innerHTML = `\\( ${option.text} \\)`;
+            optionElement.dataset.correct = option.isCorrect;
+            optionElement.addEventListener('click', () => {
+                document.querySelectorAll('.trainer-option').forEach(opt => opt.classList.remove('selected'));
+                optionElement.classList.add('selected');
+                selectedOption = optionElement;
+            });
+            optionsContainer.appendChild(optionElement);
+        });
+    }
+
+    try {
+        if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+            await MathJax.typesetPromise();
+        }
+        questionText.style.opacity = '1';
+        optionsContainer.style.opacity = '1';
+    } catch (err) {
+        console.error('Помилка MathJax:', err);
+        questionText.style.opacity = '1';
+        optionsContainer.style.opacity = '1';
+    }
+}
+
+// Функція для показу зворотного зв’язку
+function showFeedback(message, isCorrect) {
+    feedback.style.display = 'block';
+    feedback.textContent = message;
+    feedback.className = 'feedback show ' + (isCorrect ? 'correct-feedback' : 'incorrect-feedback');
+    setTimeout(() => {
+        feedback.className = 'feedback';
+        feedback.textContent = '';
+        feedback.style.display = 'none';
+    }, 2000);
+}
+
+// Функція для показу повідомлення про завершення
+function showCompletionMessage() {
+    trainerContent.style.display = 'none';
+    completionMessage.style.display = 'block';
+    setTimeout(() => {
+        if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+            MathJax.typesetPromise().catch(err => console.error('Помилка MathJax:', err));
+        }
+    }, 50);
+}
+
+// Обробник кнопки "Перевірити"
+submitButton.addEventListener('click', () => {
+    if (!selectedOption) {
+        showFeedback('✗ Виберіть варіант відповіді!', false);
+        return;
+    }
+    const isCorrect = selectedOption.dataset.correct === 'true';
+    if (isCorrect) {
+        showFeedback('✓ Правильно! Молодець!', true);
+        setTimeout(() => {
+            if (currentQuestion < 4) {
+                currentQuestion++;
+                generateQuestion();
+            } else {
+                showCompletionMessage();
+            }
+        }, 2000);
+    } else {
+        showFeedback('✗ Неправильно, спробуй ще раз!', false);
+        setTimeout(() => {
+            if (currentQuestion === 1) {
+                currentR = getRandomR();
+                currentPhi = getRandomPhi();
+            } else if (currentQuestion === 2) {
+                currentR = getRandomR();
+                currentPhi = getRandomPhi();
+            } else if (currentQuestion === 3) {
+                let newIndex;
+                do {
+                    newIndex = Math.floor(Math.random() * thirdQuestionExamples.length);
+                } while (newIndex === currentExampleIndex);
+                currentExampleIndex = newIndex;
+            } else if (currentQuestion === 4) {
+                let newIndex;
+                do {
+                    newIndex = Math.floor(Math.random() * fourthQuestionExamples.length);
+                } while (newIndex === currentExampleIndex);
+                currentExampleIndex = newIndex;
+            }
+            generateQuestion();
+            selectedOption = null;
+        }, 2000);
+    }
+});
+
+// Обробник кнопки "Спробувати ще раз"
+document.getElementById('resetTrainerBtn').addEventListener('click', () => {
+    resetTrainer();
+});
+
+// Ініціалізація першого питання
+resetTrainer();
+</script>
+</body>
+</html>
