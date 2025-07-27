@@ -1,0 +1,2010 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>13. Визначник 2-го порядку</title>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        *, *:before, ::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        .figure {
+            display: block;
+            margin: 10px auto;
+            max-width: 100%;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            object-fit: contain;
+        }
+        .figure.figure-2-1 {
+            width: 150px;
+            height: 150px;
+        }
+        body {
+            background: linear-gradient(135deg, #1a2a1a, #3c4a3c);
+            font-family: 'Poppins', sans-serif;
+            color: #e6e6e6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100dvh;
+        }
+        body.modal-open {
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
+        .title-box {
+            margin-top: 60px;
+            padding: 25px 40px;
+            background: linear-gradient(135deg, #2e2e2e, #4a7043);
+            border-radius: 25px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.1);
+            max-width: 90%;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .title-box h1 {
+            font-size: 28px;
+            color: #9ca3af;
+            text-shadow: 0 0 10px rgba(108, 117, 125, 0.5);
+            font-weight: 800;
+        }
+        .section-container {
+            margin-top: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+        .section {
+            width: 250px;
+            height: 220px;
+            background: linear-gradient(135deg, #2e4a2e, #4a7043);
+            border-radius: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3), inset 0 0 8px rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            color: inherit;
+            border: 1px solid rgba(108, 117, 125, 0.3);
+        }
+        .section:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5), inset 0 0 12px rgba(108, 117, 125, 0.2);
+        }
+        .section img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 15px;
+            padding: object-fit: cover;
+            object-fit: cover;
+            border-radius: 8px;
+            filter: drop-shadow(0 0 5px rgba(108, 117, 125, 0.3));
+        }
+        .section h2 {
+            font-size: 20px;
+            color: #e6e6e6;
+            font-weight: 600;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a2a1a, #3c4a3c);
+            border-radius: 0;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            z-index: 1001;
+            overflow: hidden;
+            flex-direction: column;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: flex-end;
+            background: linear-gradient(90deg, #2e2e2e, #4a7043);
+            padding: 8px 10px;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+        .close-btn {
+            background: #9ca3af;
+            color: #1a2a1a;
+            border: none;
+            border-radius: 6px;
+            padding: 5px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .close-btn:hover {
+            background: #6b7280;
+        }
+        #theoryModal, #questionsModal, #trainerModal {
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            min-height: 100vh;
+            border-radius: 0;
+        }
+        .modal-content {
+            padding: 20px;
+            overflow-y: auto;
+            flex-grow: 1;
+            background: linear-gradient(135deg, #4a7043, #2e2e2e);
+            border-radius: 10px;
+            margin: 10px;
+            color: #e6e6e6;
+            width: auto;
+            min-width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            overflow-x: auto;
+        }
+        #questionsModal .modal-content {
+            background: linear-gradient(135deg, #4a7043, #2e2e2e);
+            color: #e6e6e6;
+        }
+        #theoryModal .modal-content p {
+            font-size: 18px !important;
+            line-height: 1.6;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            text-align: justify;
+            max-width: 100%;
+        }
+        #theoryModal .modal-content p.math-notation-centered {
+            max-width: 100%;
+            text-align: center;
+            padding: 5px 0;
+        }
+        #theoryModal .modal-content ul {
+            list-style: none;
+            padding-left: 20px;
+        }
+        #theoryModal .modal-content li {
+            color: #e6e6e6;
+            padding-left: 20px;
+            margin-left: 10px;
+            max-width: calc(100% - 30px);
+            white-space: normal;
+            text-align: justify;
+            position: relative;
+        }
+        #theoryModal .modal-content li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #9ca3af;
+            font-size: 16px;
+        }
+        #theoryModal .modal-content img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 10px auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        #theoryModal mjx-container {
+            font-size: clamp(17px, 2.8vw, 19px) !important;
+            color: #FFFF00 !important;
+            display: inline-block !important;
+            max-width: 100%;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 5px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        #theoryModal mjx-container.math-notation-centered {
+            display: block !important;
+            text-align: center !important;
+            max-width: 100%;
+            width: fit-content;
+            margin: 10px auto;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+        #theoryModal mjx-container[jax="CHTML"][display="true"] {
+            display: block !important;
+            text-align: center !important;
+            margin: 10px auto;
+            max-width: 100%;
+            width: fit-content;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+        #theoryModal mjx-container[jax="CHTML"][display="true"] mjx-mtable {
+            display: inline-block;
+            text-align: center;
+        }
+        #theoryModal mjx-container[jax="CHTML"][display="true"] mjx-mtag {
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 5px;
+        }
+        #modalOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+        .question-card {
+            perspective: 1000px;
+            margin: 20px auto;
+            max-width: 95%;
+            height: 200px;
+        }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+            cursor: pointer;
+        }
+        .card-inner.flipped {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            padding: 12px;
+            border-radius: 15px;
+            font-size: clamp(16px, 3vw, 18px);
+            line-height: 1.5;
+            border: 1px solid rgba(108, 117, 125, 0.3);
+            font-family: 'Poppins', sans-serif;
+            box-sizing: border-box;
+        }
+        .card-front {
+            background: linear-gradient(135deg, #2e4a2e, #4a7043);
+            color: #e6e6e6;
+            font-weight: 600;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            flex-wrap: wrap;
+            overflow-wrap: break-word;
+            word-break: break-word;
+            padding: 12px 15px;
+            max-width: 100%;
+        }
+        .card-back {
+            background: linear-gradient(135deg, #3c3c3c, #5a5a5a);
+            color: #e6e6e6;
+            transform: rotateY(180deg);
+            overflow-y: auto;
+            text-align: justify;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100%;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            padding: 12px 15px;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+        .question-card:nth-child(3) .card-front {
+            white-space: normal;
+            overflow-wrap: break-word;
+            word-break: break-word;
+            flex-wrap: wrap;
+        }
+        .card-back p {
+            margin: 5px 0;
+            font-size: clamp(16px, 3vw, 18px);
+            color: #e6e6e6;
+            box-sizing: border-box;
+        }
+        #questionsModal mjx-container {
+            color: #FFFF00 !important;
+            font-size: clamp(18px, 3.2vw, 20px) !important;
+            max-width: 100%;
+            width: fit-content;
+            margin: 5px auto;
+            padding: 3px;
+            box-sizing: border-box;
+        }
+        #questionsModal .math-notation-centered {
+            text-align: center !important;
+            margin: 5px 0;
+        }
+        .card-front span.yellow {
+            color: #FFFF00;
+            font-weight: 600;
+            display: inline;
+            margin-right: 0.1em;
+        }
+        #trainerModal .modal-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-y: auto;
+            flex-grow: 1;
+            background: linear-gradient(135deg, #4a7043, #2e2e2e);
+            border-radius: 10px;
+            margin: 10px;
+            color: #e6e6e6;
+            width: auto;
+            min-width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            overflow-x: auto;
+        }
+        .trainer-container {
+            width: 95%;
+            max-width: 900px;
+            padding: 4vw 5vw;
+            text-align: center;
+            background: linear-gradient(135deg, #2e4a2e, #4a7043);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(108, 117, 125, 0.3);
+            box-sizing: border-box;
+            margin: auto;
+        }
+        .trainer-container p {
+            font-size: clamp(18px, 3vw, 20px);
+            color: #FFFF00;
+            margin: 10px 0;
+        }
+        .question-circle {
+            width: 15vw;
+            height: 15vw;
+            min-width: 80px;
+            min-height: 80px;
+            max-width: 120px;
+            max-height: 120px;
+            margin: 0 auto 3vw;
+            background: linear-gradient(135deg, #9ca3af, #6b7280);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+        .question-circle h3 {
+            color: #1a2a1a;
+            font-size: clamp(16px, 2.5vw, 20px);
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1vw;
+            justify-content: center;
+            margin-bottom: 3vw;
+        }
+        .option {
+            padding: 1vw 2vw;
+            border: 1.5px solid #9ca3af;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #3c3c3c, #5a5a5a);
+            cursor: pointer;
+            font-size: clamp(16px, 2.6vw, 18px);
+            color: #e6e6e6;
+            min-width: 60px;
+            text-align: center;
+            flex: 0 0 auto;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            position: relative;
+            z-index: 10;
+        }
+        .option:hover {
+            background: linear-gradient(135deg, #5a5a5a, #6b7280);
+        }
+        .option.selected {
+            background: linear-gradient(135deg, #9ca3af, #6b7280);
+            color: #1a2a1a;
+        }
+        .result-text {
+            margin-top: 10px;
+            font-size: clamp(18px, 2.9vw, 20px);
+            color: #9ca3af;
+        }
+        .result-text.incorrect {
+            color: #ff4d4d;
+        }
+        button {
+            padding: 2vw 4vw;
+            background: linear-gradient(135deg, #9ca3af, #6b7280);
+            color: #1a2a1a;
+            border: none;
+            border-radius: 10px;
+            font-size: clamp(16px, 2.8vw, 18px);
+            cursor: pointer;
+        }
+        button:hover {
+            background: linear-gradient(135deg, #6b7280, #4a7043);
+        }
+        .navigation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 40px auto;
+            max-width: 1000px;
+            padding: 0 20px;
+        }
+        .nav-button {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #2e2e2e, #4a7043);
+            color: #9ca3af;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(108, 117, 125, 0.3);
+            text-decoration: none;
+        }
+        .nav-button:hover {
+            background: linear-gradient(135deg, #4a7043, #5a5a5a);
+            color: #e6e6e6;
+            text-decoration: none;
+        }
+        .nav-button svg {
+            margin-right: 8px;
+            fill: currentColor;
+        }
+        .feedback {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 40px 65px;
+            border-radius: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffffff;
+            z-index: 1002;
+            text-align: center;
+            background: linear-gradient(135deg, #2e2e2e, #4a7043);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        }
+        .correct-feedback {
+            background: linear-gradient(135deg, #9ca3af, #6b7280);
+        }
+        .incorrect-feedback {
+            background: linear-gradient(135deg, #ff4d4d, #cc3333);
+        }
+        details {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #2e4a2e, #4a7043);
+            cursor: pointer;
+            border: 1px solid rgba(108, 117, 125, 0.3);
+        }
+        summary {
+            font-weight: 600;
+            padding: 10px;
+            background: linear-gradient(90deg, #3c3c3c, #5a5a5a);
+            border-radius: 10px;
+            color: #9ca3af;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+        summary:hover {
+            background: linear-gradient(90deg, #5a5a5a, #6b7280);
+        }
+        details p {
+            padding: 0 20px 10px;
+            color: #e6e6e6;
+        }
+        .solution {
+            color: #F4A261 !important;
+            font-weight: bold;
+        }
+        .example-title {
+            color: #F4A261 !important;
+            font-weight: bold;
+        }
+        .example-condition {
+            color: #e6e6e6 !important;
+        }
+        .solution.centered {
+            text-align: center;
+        }
+        .completion-emoji {
+            font-size: 60px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .completion-message {
+            text-align: center;
+        }
+.completion-message {
+    text-align: center;
+    padding: 20px;
+    background: #144748;
+    border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(110, 231, 183, 0.3);
+    max-width: 90%;
+    margin: 20px auto;
+}
+
+.completion-emoji {
+    width: clamp(80px, 15vw, 120px);
+    height: clamp(80px, 15vw, 120px);
+    margin: 0 auto 3vw;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    border: 2px dashed #fb7185;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.completion-emoji::after {
+    content: '🎉';
+    font-size: clamp(40px, 8vw, 60px);
+    color: #ffff00;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+            
+        .completion-message h2 {
+            font-size: clamp(20px, 3.5vw, 24px);
+            color: #e6e6e6;
+            margin-bottom: 10px;
+        }
+        .completion-message p {
+            font-size: clamp(18px, 3vw, 20px);
+            color: #FFFF00;
+        }
+        .completion-message button {
+            margin-top: 20px;
+        }
+        @media (max-width: 768px) {
+            .title-box {
+                margin-top: 40px;
+                padding: 15px 20px;
+            }
+            .figure.figure-2-1 {
+                width: 200px;
+                height: 120px;
+                max-width: 100%;
+            }
+            .title-box h1 {
+                font-size: 24px;
+            }
+            .section-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            .section {
+                width: 80%;
+                height: 180px;
+            }
+            .modal-content {
+                padding: 15px;
+                max-height: calc(100dvh - 60px);
+                overflow-x: auto;
+            }
+            #theoryModal .modal-content p {
+                font-size: 18px !important;
+                line-height: 1.7;
+            }
+            #theoryModal .modal-content li {
+                font-size: 18px !important;
+                max-width: calc(100% - 20px);
+                white-space: normal;
+            }
+            #theoryModal mjx-container, #theoryModal mjx-container.math-notation-centered {
+                font-size: clamp(18px, 3vw, 20px) !important;
+                max-width: 100%;
+                width: fit-content;
+                margin-left: auto;
+                margin-right: auto;
+                padding: 4px;
+                box-sizing: border-box;
+                transform: scale(1);
+                text-align: center;
+            }
+            .question-card {
+                height: 190px;
+                max-width: 90%;
+            }
+            .card-front, .card-back {
+                font-size: clamp(17px, 3vw, 19px);
+                padding: 8px 10px;
+                overflow-wrap: break-word;
+                word-break: break-word;
+            }
+            .card-back {
+                padding: 8px 10px;
+                font-size: clamp(16px, 2.9vw, 18px);
+            }
+            #questionsModal mjx-container {
+                font-size: clamp(18px, 3.2vw, 20px) !important;
+                max-width: 100%;
+                margin: 2px auto;
+                padding: 2px;
+            }
+            .card-back p {
+                font-size: clamp(16px, 2.9vw, 18px);
+                margin: 5px 0;
+            }
+            .options-container {
+                gap: 2vw;
+                flex-wrap: wrap;
+            }
+            .option {
+                padding: 1.5vw 2.5vw;
+                font-size: clamp(12px, 2vw, 14px);
+                min-width: 50px;
+            }
+            .navigation-buttons {
+                margin: 20px auto;
+                gap: 15px;
+            }
+            .nav-button {
+                font-size: 16px;
+                padding: 8px 18px;
+            }
+            .trainer-container {
+                padding: 4vw 5vw;
+                width: 95%;
+                max-width: 800px;
+            }
+            .trainer-container p {
+                font-size: clamp(16px, 2.8vw, 18px);
+            }
+            .question-circle h3 {
+                font-size: clamp(17px, 2.7vw, 21px);
+            }
+            .option {
+                font-size: clamp(14px, 2.2vw, 16px);
+                padding: 1.5vw 2.5vw;
+            }
+            #trainerModal button {
+                font-size: clamp(15px, 2.6vw, 17px);
+                padding: 2.5vw 5vw;
+            }
+            .result-text {
+                font-size: clamp(15px, 2.6vw, 17px);
+            }
+            .feedback {
+                font-size: clamp(19px, 2.9vw, 21px);
+                padding: 12px 25px;
+            }
+            .completion-emoji {
+                font-size: 50px;
+            }
+            .completion-message h2 {
+                font-size: clamp(18px, 3.2vw, 22px);
+            }
+            .completion-message p {
+                font-size: clamp(18px, 3.0vw, 22px);
+            }
+        }
+        @media (max-width: 480px) {
+            .title-box {
+                margin-top: 20px;
+                padding: 10px 15px;
+            }
+            .figure.figure-2-1 {
+                width: 150px;
+                height: 90px;
+            }
+            .float-left {
+                float: none;
+                margin: 10px auto;
+                display: block;
+            }
+            .title-box h1 {
+                font-size: 20px;
+            }
+            .section {
+                width: 90%;
+                height: 150px;
+            }
+            .section img {
+                width: 50px;
+                height: 50px;
+            }
+            .section h2 {
+                font-size: 20px;
+            }
+            .modal-content {
+                padding: 10px;
+            }
+            #theoryModal .modal-content p {
+                font-size: 16px !important;
+                line-height: 1.7;
+            }
+            #theoryModal .modal-content li {
+                font-size: 16px !important;
+            }
+            #theoryModal mjx-container, #theoryModal-content.math-notation-modal {
+                font-size: clamp(16px, 2.8vw, 18px) !important;
+                max-width: 100%;
+                width: fit-content;
+                margin-left: auto;
+                margin-right: auto;
+                padding: 4px;
+                box-sizing: border-box;
+                transform: scale(1);
+                text-align: center;
+            }
+            .question-card {
+                height: 180px;
+                max-width: 90%;
+            }
+            .card-front {
+                font-size: clamp(16px, 2.9vw, 18px);
+                padding: 6px 8px;
+            }
+            .card-back {
+                padding: 6px 8px;
+                font-size: clamp(15px, 2.7vw, 17px);
+            }
+            #questionsModal mjx-container {
+                font-size: clamp(17px, 3.1vw, 19px) !important;
+                max-width: 100%;
+                margin: 2px auto;
+                padding: 2px;
+            }
+            .card-back p {
+                font-size: clamp(15px, 2.7vw, 17px);
+            }
+            .options-container {
+                gap: 3vw;
+            }
+            .option {
+                padding: 2vw 3vw;
+                font-size: clamp(11px, 1.8vw, 13px);
+                min-width: 45px;
+            }
+            .trainer-container {
+                padding: 5vw 6vw;
+                width: 95%;
+                max-width: 700px;
+            }
+            .trainer-container p {
+                font-size: clamp(15px, 2.7vw, 17px);
+            }
+            .question-circle h3 {
+                font-size: clamp(16px, 2.6vw, 20px);
+            }
+            .option {
+                font-size: clamp(13px, 2.1vw, 15px);
+                padding: 2vw 3vw;
+                min-width: 50px;
+            }
+            #trainerModal button {
+                font-size: clamp(14px, 2.5vw, 16px);
+                padding: 3vw 6vw;
+            }
+            .result-text {
+                font-size: clamp(14px, 2.5vw, 16px);
+            }
+            .feedback {
+                font-size: clamp(18px, 2.8vw, 20px);
+                padding: 12px 25px;
+            }
+            .completion-emoji {
+                font-size: 40px;
+            }
+            .completion-message h2 {
+                font-size: clamp(16px, 3vw, 20px);
+            }
+            .completion-message p {
+                font-size: clamp(16px, 3vw, 20px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="title-box">
+        <h1>13. Визначник 2-го порядку</h1>
+    </div>
+
+    <div class="section-container">
+        <div class="section" id="openTheoryBtn">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Книга">
+            <h2>Теоретичні відомості</h2>
+        </div>
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Картки">
+            <h2>Питання і відповіді</h2>
+        </div>
+        <div class="section" id="openTrainerBtn">
+            <img src="https://img.icons8.com/fluency/96/flash-on.png" alt="Тренажер">
+            <h2>Тренажер</h2>
+        </div>
+    </div>
+
+    <div class="navigation-buttons">
+        <a class="nav-button" href="{{ url_for('tema4') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M15 18l-6-6l6-6"/>
+            </svg>
+            До теми 4
+        </a>
+        <a class="nav-button" href="{{ url_for('home') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            На головну
+        </a>
+    </div>
+
+    <div id="modalOverlay"></div>
+
+    <div id="theoryModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeTheoryBtn">× Закрити</button>
+        </div>
+         <div class="modal-content">
+            <details>
+                <summary>Визначник 2-го порядку</summary>
+                <p>Визначник другого порядку – це число, яке обчислюють для чотирьох чисел, записаних у вигляді двох рядків і двох стовпців. Він виглядає так:</p>
+                <p class="math-notation-centered">\(\Delta = \begin{vmatrix} a_{11} & a_{12} \\ a_{21} & a_{22} \end{vmatrix},\) (4.1)</p>
+                <p>де \(\Delta\) (читається як «дельта») – загальноприйняте позначення визначника будь-якого порядку.</p>
+                <p>Щоб знайти його значення визначника (4.1), користуються формулою:</p>
+                <p class="math-notation-centered">\(\Delta = a_{11}a_{22} - a_{12}a_{21}.\) (4.2)</p>
+                <p>Числа \(a_{11}, a_{12}, a_{21}, a_{22}\) називаються елементами визначника. Індекси вказують на позицію елемента: перша цифра – номер рядка, друга – номер стовпця. Наприклад, \(a_{11}\) – елемент у першому рядку та першому стовпці, \(a_{21}\) – елемент у другому рядку та першому стовпці.</p>
+                <p>Елементи \(a_{11}, a_{12}\) утворюють перший рядок, \(a_{21}, a_{22}\) – другий рядок; \(a_{11}, a_{21}\) – перший стовпець, \(a_{12}, a_{22}\) – другий стовпець. Елементи \(a_{11}, a_{22}\) розташовані на головній діагоналі визначника, а \(a_{12}, a_{21}\) – на побічній (допоміжній).</p>
+                <p>Примітка. Загальний запис елемента визначника позначається як \(a_{ij}\), де індекс \(i\) вказує номер рядка, а \(j\) – номер стовпця.</p>
+                <p>Отже, визначник другого порядку дорівнює різниці між добутком елементів головної діагоналі (\(a_{11}a_{22}\)) та добутком елементів побічної діагоналі (\(a_{12}a_{21}\)), як показано на схемі (рис. 4.1).</p>
+                <img src="/static/figure4.1.jpg" alt="Схема визначника 2-го порядку" class="figure figure-2-1">
+            </details>
+            <details>
+                <summary>Приклади</summary>
+                <p><span class="example-title">Приклад 4.1.</span> <span class="example-condition">Обчислити визначник \(\begin{vmatrix} 3 & -1 \\ 2 & 5 \end{vmatrix}\).</span></p>
+                <p class="solution" style="text-align: center;"><strong>Розв’язання</strong></p>
+                <p>Для обчислення визначника другого порядку використаємо формулу (4.1):</p>
+                <p class="math-notation-centered">\(\begin{vmatrix} 3 & -1 \\ 2 & 5 \end{vmatrix} = 3 \cdot 5 - (-1 \cdot 2) = 15 - (-2) = 15 + 2 = 17.\)</p>
+                <p><strong>Відповідь.</strong> \(\begin{vmatrix} 3 & -1 \\ 2 & 5 \end{vmatrix} = 17.\)</p>
+                <p><span class="example-title">Приклад 4.2.</span> <span class="example-condition">Розв’язати рівняння \(\begin{vmatrix} 2x & 5 \\ -4 & x \end{vmatrix} = 36.\)</span></p>
+                <p class="solution" style="text-align: center;"><strong>Розв’язання</strong></p>
+                <p>За правилом обчислення визначника другого порядку, отримаємо:</p>
+                <p class="math-notation-centered">\(\begin{vmatrix} 2x & 5 \\ -4 & x \end{vmatrix} = 2x \cdot x - 5 \cdot (-4) = 2x^2 + 20.\)</p>
+                <p>За умовою задачі, визначник дорівнює 36, тому складаємо рівняння:</p>
+                <p class="math-notation-centered">\(2x^2 + 20 = 36.\)</p>
+                <p>Розв’яжемо його:</p>
+                <p class="math-notation-centered">\(x^2 = 8, \quad x = \pm 2\sqrt{2}.\)</p>
+                <p><strong>Відповідь.</strong> \(x = \pm 2\sqrt{2}.\)</p>
+            </details>
+        </div>
+    </div>
+
+    <div id="questionsModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeQuestionsBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="question-card">
+                <div class="card-inner">
+                    <div class="card-front">
+                        1. Як зазвичай позначаються визначники?
+                    </div>
+                    <div class="card-back">
+                        <p>Позначаються великою літерою грецького алфавіту \(\Delta\) (дельта) або обрамлюють елементи вертикальними рисами:</p>
+                        <p class="math-notation-centered">\(\Delta = \begin{vmatrix} a_{11} & a_{12} \\ a_{21} & a_{22} \end{vmatrix}\).</p>
+                    </div>
+                </div>
+            </div>
+            <div class="question-card">
+                <div class="card-inner">
+                    <div class="card-front">
+                        2. Як обчислити визначник другого порядку за допомогою формули?
+                    </div>
+                    <div class="card-back">
+                        <p>Скористатися формулою:</p>
+                        <p class="math-notation-centered">\(\Delta = a_{11}a_{22} - a_{12}a_{21}\).</p>
+                    </div>
+                </div>
+            </div>
+            <div class="question-card">
+                <div class="card-inner">
+                    <div class="card-front">
+                        3. Які елементи утворюють головну діагональ визначника?
+                    </div>
+                    <div class="card-back">
+                        <p>Елементи \(a_{11}\) та \(a_{22}\).</p>
+                    </div>
+                </div>
+            </div>
+            <div class="question-card">
+                <div class="card-inner">
+                    <div class="card-front">
+                        4. Які елементи утворюють побічну (допоміжну) діагональ?
+                    </div>
+                    <div class="card-back">
+                        <p>Елементи \(a_{12}\) та \(a_{21}\).</p>
+                    </div>
+                </div>
+            </div>
+            <div class="question-card">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <span>5. Що означають індекси в позначенні якого-небудь елемента визначника \(a_{ij}\)?</span>
+                    </div>
+                    <div class="card-back">
+                        <p>Індекс \(i\) вказує номер рядка, а \(j\) — номер стовпця.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="question-card">
+                <div class="card-inner">
+                    <div class="card-front">
+                        6. Що таке визначник другого порядку?
+                    </div>
+                    <div class="card-back">
+                        <p>Це число, яке обчислюють за формулою:</p>
+                        <p class="math-notation-centered">\(\begin{vmatrix} a_{11} & a_{12} \\ a_{21} & a_{22} \end{vmatrix} = a_{11}a_{22} - a_{12}a_{21}\).</p>
+                    </div>
+                </div>
+            </div>
+            <div class="question-card">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <span>7. Обчислити визначник \(\begin{vmatrix} 3 & -1 \\ 2 & 5 \end{vmatrix}\).</span>
+                    </div>
+                    <div class="card-back">
+                        <p>\(\begin{vmatrix} 3 & -1 \\ 2 & 5 \end{vmatrix} = 15 - (-2) = 15 + 2 = 17\).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="trainerModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeTrainerBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="trainer-container" id="trainerContent">
+                <div class="question-circle">
+                    <h3>Питання 1</h3>
+                </div>
+                <p id="questionText">Вкажіть елементи головної діагоналі визначника \(\begin{vmatrix} a & b \\ c & d \end{vmatrix}\).</p>
+                <div class="options-container" id="optionsContainer"></div>
+                <button id="checkAnswerBtn">Перевірити</button>
+                <p class="result-text" id="resultText"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    const modals = {
+        theory: document.getElementById('theoryModal'),
+        questions: document.getElementById('questionsModal'),
+        trainer: document.getElementById('trainerModal')
+    };
+    const buttons = {
+        openTheory: document.getElementById('openTheoryBtn'),
+        openQuestions: document.getElementById('openQuestionsBtn'),
+        openTrainer: document.getElementById('openTrainerBtn'),
+        closeTheory: document.getElementById('closeTheoryBtn'),
+        closeQuestions: document.getElementById('closeQuestionsBtn'),
+        closeTrainer: document.getElementById('closeTrainerBtn')
+    };
+    const overlay = document.getElementById('modalOverlay');
+
+    if (!Object.values(modals).every(el => el) || !Object.values(buttons).every(el => el) || !overlay) {
+        console.error('DOM elements missing. Check HTML IDs.');
+    }
+
+    function adjustModalHeight(modal) {
+        try {
+            if (!modal) return;
+            const modalContent = modal.querySelector('.modal-content');
+            const modalHeader = modal.querySelector('.modal-header');
+            if (!modalContent || !modalHeader) return;
+
+            modalContent.style.height = 'auto';
+            const contentHeight = modalContent.scrollHeight;
+            const headerHeight = modalHeader.offsetHeight;
+            const windowHeight = window.innerHeight;
+            const maxModalHeight = windowHeight * 0.85;
+
+            const requiredHeight = contentHeight + headerHeight + 20;
+            if (requiredHeight < maxModalHeight) {
+                modal.style.height = `${requiredHeight}px`;
+                modalContent.style.overflowY = 'hidden';
+            } else {
+                modal.style.height = `${maxModalHeight}px`;
+                modalContent.style.overflowY = 'auto';
+            }
+            modalContent.scrollTop = 0;
+            console.log('Adjusted modal height:', modal.style.height);
+        } catch (err) {
+            console.error('Error adjusting modal height:', err);
+        }
+    }
+
+    function openModal(modal, btn) {
+        try {
+            if (!modal || !btn) return;
+            modal.style.display = 'flex';
+            overlay.style.display = 'block';
+            document.body.classList.add('modal-open');
+            btn.setAttribute('aria-pressed', 'true');
+            setTimeout(() => {
+                if (typeof MathJax !== 'undefined') {
+                    MathJax.typesetPromise().then(() => {
+                        adjustModalHeight(modal);
+                        console.log('MathJax typeset complete for modal');
+                    }).catch(err => {
+                        console.error('MathJax error:', err);
+                        adjustModalHeight(modal);
+                    });
+                } else {
+                    console.warn('MathJax not loaded, rendering without typesetting');
+                    adjustModalHeight(modal);
+                }
+            }, 200);
+        } catch (err) {
+            console.error('Error opening modal:', err);
+        }
+    }
+
+    function closeModal(modal, btn) {
+        try {
+            if (!modal || !btn) return;
+            modal.style.display = 'none';
+            overlay.style.display = 'none';
+            document.body.classList.remove('modal-open');
+            btn.setAttribute('aria-pressed', 'false');
+            btn.focus();
+            console.log('Modal closed');
+        } catch (err) {
+            console.error('Error closing modal:', err);
+        }
+    }
+
+    if (buttons.openTheory) buttons.openTheory.addEventListener('click', () => openModal(modals.theory, buttons.openTheory));
+    if (buttons.openQuestions) buttons.openQuestions.addEventListener('click', () => openModal(modals.questions, buttons.openQuestions));
+    if (buttons.openTrainer) buttons.openTrainer.addEventListener('click', () => {
+        openModal(modals.trainer, buttons.openTrainer);
+        resetTrainer();
+    });
+    if (buttons.closeTheory) buttons.closeTheory.addEventListener('click', () => closeModal(modals.theory, buttons.openTheory));
+    if (buttons.closeQuestions) buttons.closeQuestions.addEventListener('click', () => closeModal(modals.questions, buttons.openQuestions));
+    if (buttons.closeTrainer) buttons.closeTrainer.addEventListener('click', () => closeModal(modals.trainer, buttons.openTrainer));
+
+    if (overlay) {
+        overlay.addEventListener('click', () => {
+            Object.values(modals).forEach(modal => {
+                if (modal) modal.style.display = 'none';
+            });
+            overlay.style.display = 'none';
+            document.body.classList.remove('modal-open');
+            console.log('Overlay clicked, modals closed');
+        });
+    }
+
+    document.querySelectorAll('.card-inner').forEach(card => {
+        card.addEventListener('click', () => {
+            card.classList.toggle('flipped');
+            setTimeout(() => {
+                if (typeof MathJax !== 'undefined') {
+                    MathJax.typesetPromise().catch(err => console.error('MathJax error:', err));
+                }
+            }, 600);
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const detailsElements = document.querySelectorAll('details');
+        detailsElements.forEach(details => {
+            details.addEventListener('toggle', () => {
+                if (modals.theory.style.display === 'flex') {
+                    adjustModalHeight(modals.theory);
+                }
+            });
+        });
+        console.log('DOM loaded, details listeners added');
+    });
+
+    let selectedOption = null;
+    let currentQuestion = 1;
+
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function generateQuestion1() {
+        try {
+            console.log('Generating Question 1');
+            const a = getRandomInt(-10, 10);
+            const b = getRandomInt(-10, 10);
+            const c = getRandomInt(-10, 10);
+            const d = getRandomInt(-10, 10);
+            const correctAnswer = `${a} і ${d}`;
+            const options = [
+                correctAnswer,
+                `${b} і ${c}`,
+                `${a} і ${b}`,
+                `${c} і ${d}`
+            ];
+            const shuffledOptions = shuffleArray(options);
+
+            const trainerContent = document.getElementById('trainerContent');
+            if (!trainerContent) {
+                console.error('trainerContent element not found');
+                return;
+            }
+            trainerContent.innerHTML = `
+                <div class="question-circle">
+                    <h3>Питання 1</h3>
+                </div>
+                <p id="questionText">Вкажіть елементи головної діагоналі визначника \\(\\begin{vmatrix} ${a} & ${b} \\\\ ${c} & ${d} \\end{vmatrix}\\). ${typeof MathJax === 'undefined' ? '[Формула не завантажена]' : ''}</p>
+                <div class="options-container" id="optionsContainer"></div>
+                <button id="checkAnswerBtn">Перевірити</button>
+                <p class="result-text" id="resultText"></p>
+            `;
+
+            const optionsContainer = document.getElementById('optionsContainer');
+            if (!optionsContainer) {
+                console.error('optionsContainer not found');
+                return;
+            }
+            shuffledOptions.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option');
+                optionElement.textContent = option;
+                optionElement.setAttribute('data-option', option);
+                optionElement.addEventListener('click', () => {
+                    document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+                    optionElement.classList.add('selected');
+                    selectedOption = option;
+                    console.log('Click selected option:', selectedOption);
+                });
+                optionElement.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+                    optionElement.classList.add('selected');
+                    selectedOption = option;
+                    console.log('Touch selected option:', selectedOption);
+                }, { passive: false });
+                optionsContainer.appendChild(optionElement);
+            });
+
+            const checkButton = document.getElementById('checkAnswerBtn');
+            const resultText = document.getElementById('resultText');
+            if (!checkButton || !resultText) {
+                console.error('checkButton or resultText not found');
+                return;
+            }
+            resultText.textContent = '';
+            checkButton.onclick = () => {
+                if (!selectedOption) {
+                    resultText.textContent = 'Будь ласка, виберіть варіант!';
+                    resultText.classList.add('incorrect');
+                    console.log('No option selected');
+                    return;
+                }
+                const feedback = document.createElement('div');
+                feedback.classList.add('feedback');
+                if (selectedOption === correctAnswer) {
+                    feedback.classList.add('correct-feedback');
+                    feedback.textContent = '✓ Правильно! Молодець!';
+                    document.body.appendChild(feedback);
+                    setTimeout(() => {
+                        feedback.remove();
+                        currentQuestion = 2;
+                        generateQuestion2();
+                    }, 1000);
+                } else {
+                    feedback.classList.add('incorrect-feedback');
+                    feedback.textContent = '✗ Неправильно, спробуй ще раз!';
+                    document.body.appendChild(feedback);
+                    setTimeout(() => {
+                        feedback.remove();
+                        generateQuestion1();
+                    }, 1000);
+                }
+            };
+
+            if (typeof MathJax !== 'undefined') {
+                MathJax.typesetPromise().then(() => {
+                    adjustModalHeight(modals.trainer);
+                    console.log('MathJax typeset complete for Question 1');
+                }).catch(err => console.error('MathJax error:', err));
+            } else {
+                console.warn('MathJax not loaded for Question 1');
+                adjustModalHeight(modals.trainer);
+            }
+        } catch (err) {
+            console.error('Error in generateQuestion1:', err);
+        }
+    }
+
+    function generateQuestion2() {
+        try {
+            console.log('Generating Question 2');
+            const a = getRandomInt(-10, 10);
+            const b = getRandomInt(-10, 10);
+            const c = getRandomInt(-10, 10);
+            const d = getRandomInt(-10, 10);
+            const correctAnswer = `${b} і ${c}`;
+            const options = [
+                correctAnswer,
+                `${a} і ${d}`,
+                `${a} і ${b}`,
+                `${c} і ${d}`
+            ];
+            const shuffledOptions = shuffleArray(options);
+
+            const trainerContent = document.getElementById('trainerContent');
+            if (!trainerContent) {
+                console.error('trainerContent element not found');
+                return;
+            }
+            trainerContent.innerHTML = `
+                <div class="question-circle">
+                    <h3>Питання 2</h3>
+                </div>
+                <p id="questionText">Вкажіть елементи побічної діагоналі визначника \\(\\begin{vmatrix} ${a} & ${b} \\\\ ${c} & ${d} \\end{vmatrix}\\). ${typeof MathJax === 'undefined' ? '[Формула не завантажена]' : ''}</p>
+                <div class="options-container" id="optionsContainer"></div>
+                <button id="checkAnswerBtn">Перевірити</button>
+                <p class="result-text" id="resultText"></p>
+            `;
+
+            const optionsContainer = document.getElementById('optionsContainer');
+            if (!optionsContainer) {
+                console.error('optionsContainer not found');
+                return;
+            }
+            shuffledOptions.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option');
+                optionElement.textContent = option;
+                optionElement.setAttribute('data-option', option);
+                optionElement.addEventListener('click', () => {
+                    document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+                    optionElement.classList.add('selected');
+                    selectedOption = option;
+                    console.log('Click selected option:', selectedOption);
+                });
+                optionElement.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+                    optionElement.classList.add('selected');
+                    selectedOption = option;
+                    console.log('Touch selected option:', selectedOption);
+                }, { passive: false });
+                optionsContainer.appendChild(optionElement);
+            });
+
+            const checkButton = document.getElementById('checkAnswerBtn');
+            const resultText = document.getElementById('resultText');
+            if (!checkButton || !resultText) {
+                console.error('checkButton or resultText not found');
+                return;
+            }
+            resultText.textContent = '';
+            checkButton.onclick = () => {
+                if (!selectedOption) {
+                    resultText.textContent = 'Будь ласка, виберіть варіант!';
+                    resultText.classList.add('incorrect');
+                    console.log('No option selected');
+                    return;
+                }
+                const feedback = document.createElement('div');
+                feedback.classList.add('feedback');
+                if (selectedOption === correctAnswer) {
+                    feedback.classList.add('correct-feedback');
+                    feedback.textContent = '✓ Правильно! Молодець!';
+                    document.body.appendChild(feedback);
+                    setTimeout(() => {
+                        feedback.remove();
+                        currentQuestion = 3;
+                        generateQuestion3();
+                    }, 1000);
+                } else {
+                    feedback.classList.add('incorrect-feedback');
+                    feedback.textContent = '✗ Неправильно, спробуй ще раз!';
+                    document.body.appendChild(feedback);
+                    setTimeout(() => {
+                        feedback.remove();
+                        generateQuestion2();
+                    }, 1000);
+                }
+            };
+
+            if (typeof MathJax !== 'undefined') {
+                MathJax.typesetPromise().then(() => {
+                    adjustModalHeight(modals.trainer);
+                    console.log('MathJax typeset complete for Question 2');
+                }).catch(err => console.error('MathJax error:', err));
+            } else {
+                console.warn('MathJax not loaded for Question 2');
+                adjustModalHeight(modals.trainer);
+            }
+        } catch (err) {
+            console.error('Error in generateQuestion2:', err);
+        }
+    }
+
+    function generateQuestion3() {
+        try {
+            console.log('Generating Question 3');
+            const a = getRandomInt(-10, 10);
+            const b = getRandomInt(-10, 10);
+            const c = getRandomInt(-10, 10);
+            const d = getRandomInt(-10, 10);
+            const correctAnswer = a * d - b * c;
+            const options = [
+                correctAnswer,
+                b * c - a * d,
+                a * d,
+                b * c
+            ].map(String);
+            const uniqueOptions = [...new Set(options)];
+            while (uniqueOptions.length < 4) {
+                const randomOption = getRandomInt(-100, 100);
+                if (!uniqueOptions.includes(String(randomOption))) {
+                    uniqueOptions.push(String(randomOption));
+                }
+            }
+            const shuffledOptions = shuffleArray(uniqueOptions.slice(0, 4));
+
+            const trainerContent = document.getElementById('trainerContent');
+            if (!trainerContent) {
+                console.error('trainerContent element not found');
+                return;
+            }
+            trainerContent.innerHTML = `
+                <div class="question-circle">
+                    <h3>Питання 3</h3>
+                </div>
+                <p id="questionText">Обчисліть визначник \\(\\begin{vmatrix} ${a} & ${b} \\\\ ${c} & ${d} \\end{vmatrix}\\). ${typeof MathJax === 'undefined' ? '[Формула не завантажена]' : ''}</p>
+                <div class="options-container" id="optionsContainer"></div>
+                <button id="checkAnswerBtn">Перевірити</button>
+                <p class="result-text" id="resultText"></p>
+            `;
+
+            const optionsContainer = document.getElementById('optionsContainer');
+            if (!optionsContainer) {
+                console.error('optionsContainer not found');
+                return;
+            }
+            shuffledOptions.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option');
+                optionElement.textContent = option;
+                optionElement.setAttribute('data-option', option);
+                optionElement.addEventListener('click', () => {
+                    document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+                    optionElement.classList.add('selected');
+                    selectedOption = option;
+                    console.log('Click selected option:', selectedOption);
+                });
+                optionElement.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+                    optionElement.classList.add('selected');
+                    selectedOption = option;
+                    console.log('Touch selected option:', selectedOption);
+                }, { passive: false });
+                optionsContainer.appendChild(optionElement);
+            });
+
+            const checkButton = document.getElementById('checkAnswerBtn');
+            const resultText = document.getElementById('resultText');
+            if (!checkButton || !resultText) {
+                console.error('checkButton or resultText not found');
+                return;
+            }
+            resultText.textContent = '';
+            checkButton.onclick = () => {
+                if (!selectedOption) {
+                    resultText.textContent = 'Будь ласка, виберіть варіант!';
+                    resultText.classList.add('incorrect');
+                    console.log('No option selected');
+                    return;
+                }
+                const feedback = document.createElement('div');
+                feedback.classList.add('feedback');
+                if (selectedOption === String(correctAnswer)) {
+                    feedback.classList.add('correct-feedback');
+                    feedback.textContent = '✓ Правильно! Молодець!';
+                    document.body.appendChild(feedback);
+                    setTimeout(() => {
+                        feedback.remove();
+                        currentQuestion = 4;
+                        generateQuestion4();
+                    }, 1000);
+                } else {
+                    feedback.classList.add('incorrect-feedback');
+                    feedback.textContent = '✗ Неправильно, спробуй ще раз!';
+                    document.body.appendChild(feedback);
+                    setTimeout(() => {
+                        feedback.remove();
+                        generateQuestion3();
+                    }, 1000);
+                }
+            };
+
+            if (typeof MathJax !== 'undefined') {
+                MathJax.typesetPromise().then(() => {
+                    adjustModalHeight(modals.trainer);
+                    console.log('MathJax typeset complete for Question 3');
+                }).catch(err => console.error('MathJax error:', err));
+            } else {
+                console.warn('MathJax not loaded for Question 3');
+                adjustModalHeight(modals.trainer);
+            }
+        } catch (err) {
+            console.error('Error in generateQuestion3:', err);
+        }
+    }
+
+    function generateQuestion4() {
+        try {
+            console.log('Generating Question 4');
+            const a1 = getRandomInt(-10, 10);
+            const b1 = getRandomInt(-10, 10);
+            const c1 = getRandomInt(-10, 10);
+            const d1 = getRandomInt(-10, 10);
+            const a2 = getRandomInt(-10, 10);
+            const b2 = getRandomInt(-10, 10);
+            const c2 = getRandomInt(-10, 10);
+            const d2 = getRandomInt(-10, 10);
+            const sign = Math.random() < 0.5 ? '+' : '-';
+            const det1 = a1 * d1 - b1 * c1;
+            const det2 = a2 * d2 - b2 * c2;
+            const correctAnswer = sign === '+' ? det1 + det2 : det1 - det2;
+            const options = [
+                correctAnswer,
+                sign === '+' ? det1 - det2 : det1 + det2,
+                det1,
+                det2
+            ].map(Number);
+            const uniqueOptions = [...new Set(options)];
+            while (uniqueOptions.length < 4) {
+                const randomOption = getRandomInt(-100, 100);
+                if (!uniqueOptions.includes(Number(randomOption))) {
+                    uniqueOptions.push(randomOption);
+                }
+            }
+            const shuffledOptions = shuffleArray(uniqueOptions.slice(0, 4));
+            console.log('Question 4 data:', { a1, b1, c1, d1, a2, b2, c2, d2, sign, det1, det2, correctAnswer, options: shuffledOptions });
+
+            const trainerContent = document.getElementById('trainerContent');
+            if (!trainerContent) {
+                console.error('trainerContent element not found');
+                return;
+            }
+            trainerContent.innerHTML = `
+                <div class="question-circle">
+                    <h3>Питання 4</h3>
+                </div>
+                <p id="questionText">Обчисліть \\(\\begin{vmatrix} ${a1} & ${b1} \\\\ ${c1} & ${d1} \\end{vmatrix} ${sign} \\begin{vmatrix} ${a2} & ${b2} \\\\ ${c2} & ${d2} \\end{vmatrix}\\). ${typeof MathJax === 'undefined' ? '[Формула не завантажена]' : ''}</p>
+                <div class="options-container" id="optionsContainer"></div>
+                <button id="checkAnswerBtn">Перевірити</button>
+                <p class="result-text" id="resultText"></p>
+            `;
+
+            const optionsContainer = document.getElementById('optionsContainer');
+            if (!optionsContainer) {
+                console.error('optionsContainer not found');
+                return;
+            }
+            shuffledOptions.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option');
+                optionElement.textContent = option;
+                optionElement.setAttribute('data-option', option);
+                optionElement.addEventListener('click', () => {
+                    document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+                    optionElement.classList.add('selected');
+                    selectedOption = option;
+                    console.log('Click selected option:', selectedOption);
+                });
+                optionElement.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+                    optionElement.classList.add('selected');
+                    selectedOption = option;
+                    console.log('Touch selected option:', selectedOption);
+                }, { passive: false });
+                optionsContainer.appendChild(optionElement);
+            });
+
+            const checkButton = document.getElementById('checkAnswerBtn');
+            const resultText = document.getElementById('resultText');
+            if (!checkButton || !resultText) {
+                console.error('checkButton or resultText not found');
+                return;
+            }
+            resultText.textContent = '';
+            checkButton.onclick = () => {
+                if (!selectedOption) {
+                    resultText.textContent = 'Будь ласка, виберіть варіант!';
+                    resultText.classList.add('incorrect');
+                    console.log('No option selected');
+                    return;
+                }
+                const feedback = document.createElement('div');
+                feedback.classList.add('feedback');
+                if (Number(selectedOption) === correctAnswer) {
+                    feedback.classList.add('correct-feedback');
+                    feedback.textContent = '✓ Правильно! Молодець!';
+                    document.body.appendChild(feedback);
+                    setTimeout(() => {
+                        feedback.remove();
+                        currentQuestion = 5;
+                        generateQuestion5();
+                    }, 1000);
+                } else {
+                    feedback.classList.add('incorrect-feedback');
+                    feedback.textContent = '✗ Неправильно, спробуй ще раз!';
+                    document.body.appendChild(feedback);
+                    setTimeout(() => {
+                        feedback.remove();
+                        generateQuestion4();
+                    }, 1000);
+                }
+            };
+
+            if (typeof MathJax !== 'undefined') {
+                MathJax.typesetPromise().then(() => {
+                    adjustModalHeight(modals.trainer);
+                    console.log('MathJax typeset complete for Question 4');
+                }).catch(err => console.error('MathJax error:', err));
+            } else {
+                console.warn('MathJax not loaded for Question 4');
+                adjustModalHeight(modals.trainer);
+            }
+        } catch (err) {
+            console.error('Error in generateQuestion4:', err);
+        }
+    }
+
+    function generateValidDeterminantTask() {
+        try {
+            let a, c, d, x, N;
+            let attempts = 0;
+            const maxAttempts = 100;
+
+            while (attempts < maxAttempts) {
+                a = getRandomInt(-10, 10);
+                c = getRandomInt(-10, 10);
+                d = getRandomInt(-10, 10);
+
+                if (c === 0 || a === 0 || d === 0) {
+                    attempts++;
+                    continue;
+                }
+
+                x = getRandomInt(-10, 10);
+                N = a * d - x * c;
+
+                let xCheck = (a * d - N) / c;
+                if (Number.isInteger(xCheck) && xCheck === x) {
+                    return {
+                        question: `Знайдіть \\(x\\), якщо визначник \\(\\begin{vmatrix} ${a} & x \\\\ ${c} & ${d} \\end{vmatrix} = ${N}\\).`,
+                        correctAnswer: x
+                    };
+                }
+                attempts++;
+            }
+            console.warn('Failed to generate valid task after max attempts, using fallback');
+            return {
+                question: `Знайдіть x, якщо визначник \\(\\begin{vmatrix} -2 & x \\\\ 4 & 5 \\end{vmatrix} = 2\\).`,
+                correctAnswer: 3
+            };
+        } catch (err) {
+            console.error('Error in generateValidDeterminantTask:', err);
+            return {
+                question: `Знайдіть x, якщо визначник \\(\\begin{vmatrix} -2 & x \\\\ 4 & 5 \\end{vmatrix} = 2\\).`,
+                correctAnswer: 3
+            };
+        }
+    }
+
+    function generateQuestion5() {
+        try {
+            console.log('Generating Question 5');
+            const task = generateValidDeterminantTask();
+            const correctAnswer = task.correctAnswer;
+            const options = [correctAnswer];
+            while (options.length < 4) {
+                const randomOption = getRandomInt(-10, 10);
+                if (!options.includes(randomOption)) {
+                    options.push(randomOption);
+                }
+            }
+            const shuffledOptions = shuffleArray(options.map(String));
+            console.log('Question 5 data:', { question: task.question, correctAnswer, options: shuffledOptions });
+
+            const trainerContent = document.getElementById('trainerContent');
+            if (!trainerContent) {
+                console.error('trainerContent element not found');
+                return;
+            }
+            trainerContent.innerHTML = `
+                <div class="question-circle">
+                    <h3>Питання 5</h3>
+                </div>
+                <p id="questionText">${task.question} ${typeof MathJax === 'undefined' ? '[Формула не завантажена]' : ''}</p>
+                <div class="options-container" id="optionsContainer"></div>
+                <button id="checkAnswerBtn">Перевірити</button>
+                <p class="result-text" id="resultText"></p>
+            `;
+
+            const optionsContainer = document.getElementById('optionsContainer');
+            if (!optionsContainer) {
+                console.error('optionsContainer not found');
+                return;
+            }
+            shuffledOptions.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option');
+                optionElement.textContent = option;
+                optionElement.setAttribute('data-option', option);
+                optionElement.addEventListener('click', () => {
+                    document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+                    optionElement.classList.add('selected');
+                    selectedOption = option;
+                    console.log('Click selected option:', selectedOption);
+                });
+                optionElement.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+                    optionElement.classList.add('selected');
+                    selectedOption = option;
+                    console.log('Touch selected option:', selectedOption);
+                }, { passive: false });
+                optionsContainer.appendChild(optionElement);
+            });
+
+            const checkButton = document.getElementById('checkAnswerBtn');
+            const resultText = document.getElementById('resultText');
+            if (!checkButton || !resultText) {
+                console.error('checkButton or resultText not found');
+                return;
+            }
+            resultText.textContent = '';
+            checkButton.onclick = () => {
+                if (!selectedOption) {
+                    resultText.textContent = 'Будь ласка, виберіть варіант!';
+                    resultText.classList.add('incorrect');
+                    console.log('No option selected');
+                    return;
+                }
+                const feedback = document.createElement('div');
+                feedback.classList.add('feedback');
+                if (Number(selectedOption) === correctAnswer) {
+                    feedback.classList.add('correct-feedback');
+                    feedback.textContent = '✓ Правильно! Молодець!!';
+                    document.body.appendChild(feedback);
+                    setTimeout(() => {
+                        feedback.remove();
+                        currentQuestion = 6;
+                        generateQuestion6();
+                    }, 1000);
+                } else {
+                    feedback.classList.add('incorrect-feedback');
+                    feedback.textContent = '✗ Неправильно, спробуй ще раз!';
+                    document.body.appendChild(feedback);
+                    setTimeout(() => {
+                        feedback.remove();
+                        generateQuestion5();
+                    }, 1000);
+                }
+            };
+
+            if (typeof MathJax !== 'undefined') {
+                MathJax.typesetPromise().then(() => {
+                    adjustModalHeight(modals.trainer);
+                    console.log('MathJax typeset complete for Question 5');
+                }).catch(err => console.error('MathJax error:', err));
+            } else {
+                console.warn('MathJax not loaded for Question 5');
+                adjustModalHeight(modals.trainer);
+            }
+        } catch (err) {
+            console.error('Error in generateQuestion5:', err);
+        }
+    }
+
+    function generateQuestion6() {
+        try {
+            console.log('Generating Question 6');
+            let a1, b1, c1, d1, a2, b2, c2, d2, correctAnswer, question;
+            const position = getRandomInt(1, 4); // Randomly select position for x: 1 (a11), 2 (a12), 3 (a21), 4 (a22)
+            a2 = getRandomInt(-10, 10);
+            b2 = getRandomInt(-10, 10);
+            c2 = getRandomInt(-10, 10);
+            d2 = getRandomInt(-10, 10);
+            const det2 = a2 * d2 - b2 * c2; // Right determinant value
+
+            // Generate coefficients and solve for x
+            if (position === 1) { // x in a11
+                b1 = getRandomInt(-10, 10);
+                c1 = getRandomInt(-10, 10);
+                d1 = getRandomInt(-10, 10);
+                if (c1 === 0 || d1 === 0) { // Avoid division by zero
+                    c1 = c1 === 0 ? 1 : c1;
+                    d1 = d1 === 0 ? 1 : d1;
+                }
+                // det1 = x * d1 - b1 * c1 = det2
+                // x * d1 = det2 + b1 * c1
+                // x = (det2 + b1 * c1) / d1
+                const numerator = det2 + b1 * c1;
+                const denominator = d1;
+                if (numerator % denominator !== 0 || Math.abs(numerator / denominator) > 10) {
+                    // Regenerate if x is not an integer or too large
+                    return generateQuestion6();
+                }
+                correctAnswer = numerator / denominator;
+                a1 = 'x';
+            } else if (position === 2) { // x in a12
+                a1 = getRandomInt(-10, 10);
+                c1 = getRandomInt(-10, 10);
+                d1 = getRandomInt(-10, 10);
+                if (c1 === 0 || a1 === 0) {
+                    c1 = c1 === 0 ? 1 : c1;
+                    a1 = a1 === 0 ? 1 : a1;
+                }
+                // det1 = a1 * d1 - x * c1 = det2
+                // -x * c1 = det2 - a1 * d1
+                // x = (a1 * d1 - det2) / c1
+                const numerator = a1 * d1 - det2;
+                const denominator = c1;
+                if (numerator % denominator !== 0 || Math.abs(numerator / denominator) > 10) {
+                    return generateQuestion6();
+                }
+                correctAnswer = numerator / denominator;
+                b1 = 'x';
+            } else if (position === 3) { // x in a21
+                a1 = getRandomInt(-10, 10);
+                b1 = getRandomInt(-10, 10);
+                d1 = getRandomInt(-10, 10);
+                if (b1 === 0 || d1 === 0) {
+                    b1 = b1 === 0 ? 1 : b1;
+                    d1 = d1 === 0 ? 1 : d1;
+                }
+                // det1 = a1 * d1 - b1 * x = det2
+                // -b1 * x = det2 - a1 * d1
+                // x = (a1 * d1 - det2) / b1
+                const numerator = a1 * d1 - det2;
+                const denominator = b1;
+                if (numerator % denominator !== 0 || Math.abs(numerator / denominator) > 10) {
+                    return generateQuestion6();
+                }
+                correctAnswer = numerator / denominator;
+                c1 = 'x';
+            } else { // position === 4, x in a22
+                a1 = getRandomInt(-10, 10);
+                b1 = getRandomInt(-10, 10);
+                c1 = getRandomInt(-10, 10);
+                if (a1 === 0 || b1 === 0) {
+                    a1 = a1 === 0 ? 1 : a1;
+                    b1 = b1 === 0 ? 1 : b1;
+                }
+                // det1 = a1 * x - b1 * c1 = det2
+                // a1 * x = det2 + b1 * c1
+                // x = (det2 + b1 * c1) / a1
+                const numerator = det2 + b1 * c1;
+                const denominator = a1;
+                if (numerator % denominator !== 0 || Math.abs(numerator / denominator) > 10) {
+                    return generateQuestion6();
+                }
+                correctAnswer = numerator / denominator;
+                d1 = 'x';
+            }
+
+            // Ensure all coefficients are non-zero where necessary
+            if ((position === 1 && (b1 === 0 || c1 === 0)) ||
+                (position === 2 && (a1 === 0 || c1 === 0)) ||
+                (position === 3 && (a1 === 0 || b1 === 0)) ||
+                (position === 4 && (b1 === 0 || c1 === 0))) {
+                return generateQuestion6();
+            }
+
+            question = `При якому значенні \\(x\\) ці два визначники рівні? \\(\\begin{vmatrix} ${a1} & ${b1} \\\\ ${c1} & ${d1} \\end{vmatrix} = \\begin{vmatrix} ${a2} & ${b2} \\\\ ${c2} & ${d2} \\end{vmatrix}\\)`;
+
+            // Generate answer options
+            const options = [correctAnswer];
+            while (options.length < 4) {
+                const randomOption = getRandomInt(-10, 10);
+                if (!options.includes(randomOption) && randomOption !== 0) {
+                    options.push(randomOption);
+                }
+            }
+            const shuffledOptions = shuffleArray(options.map(String));
+            console.log('Question 6 data:', { a1, b1, c1, d1, a2, b2, c2, d2, position, det2, correctAnswer, options: shuffledOptions });
+
+            const trainerContent = document.getElementById('trainerContent');
+            if (!trainerContent) {
+                console.error('trainerContent element not found');
+                return;
+            }
+            trainerContent.innerHTML = `
+                <div class="question-circle">
+                    <h3>Питання 6</h3>
+                </div>
+                <p id="questionText">${question} ${typeof MathJax === 'undefined' ? '[Формула не завантажена]' : ''}</p>
+                <div class="options-container" id="optionsContainer"></div>
+                <button id="checkAnswerBtn">Перевірити</button>
+                <p class="result-text" id="resultText"></p>
+            `;
+
+            const optionsContainer = document.getElementById('optionsContainer');
+            if (!optionsContainer) {
+                console.error('optionsContainer not found');
+                return;
+            }
+            shuffledOptions.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option');
+                optionElement.textContent = option;
+                optionElement.setAttribute('data-option', option);
+                optionElement.addEventListener('click', () => {
+                    document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+                    optionElement.classList.add('selected');
+                    selectedOption = option;
+                    console.log('Click selected option:', selectedOption);
+                });
+                optionElement.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+                    optionElement.classList.add('selected');
+                    selectedOption = option;
+                    console.log('Touch selected option:', selectedOption);
+                }, { passive: false });
+                optionsContainer.appendChild(optionElement);
+            });
+
+            const checkButton = document.getElementById('checkAnswerBtn');
+            const resultText = document.getElementById('resultText');
+            if (!checkButton || !resultText) {
+                console.error('checkButton or resultText not found');
+                return;
+            }
+            resultText.textContent = '';
+            checkButton.onclick = () => {
+                if (!selectedOption) {
+                    resultText.textContent = 'Будь ласка, виберіть варіант!';
+                    resultText.classList.add('incorrect');
+                    console.log('No option selected');
+                    return;
+                }
+                const feedback = document.createElement('div');
+                feedback.classList.add('feedback');
+                if (Number(selectedOption) === correctAnswer) {
+                    feedback.classList.add('correct-feedback');
+                    feedback.textContent = '✓ Правильно! Молодець!';
+                    document.body.appendChild(feedback);
+                    setTimeout(() => {
+                        feedback.remove();
+                        showCompletion();
+                    }, 1000);
+                } else {
+                    feedback.classList.add('incorrect-feedback');
+                    feedback.textContent = '✗ Неправильно, спробуй ще раз!';
+                    document.body.appendChild(feedback);
+                    setTimeout(() => {
+                        feedback.remove();
+                        generateQuestion6();
+                    }, 1000);
+                }
+            };
+
+            if (typeof MathJax !== 'undefined') {
+                MathJax.typesetPromise().then(() => {
+                    adjustModalHeight(modals.trainer);
+                    console.log('MathJax typeset complete for Question 6');
+                }).catch(err => console.error('MathJax error:', err));
+            } else {
+                console.warn('MathJax not loaded for Question 6');
+                adjustModalHeight(modals.trainer);
+            }
+        } catch (err) {
+            console.error('Error in generateQuestion6:', err);
+        }
+    }
+
+    function showCompletion() {
+        try {
+            console.log('Showing completion screen');
+            const trainerContent = document.getElementById('trainerContent');
+            if (!trainerContent) {
+                console.error('trainerContent element not found');
+                return;
+            }
+            trainerContent.innerHTML = `
+                <div class="completion-message">
+                    <div class="completion-emoji"> </div>
+                    <h2>Тренування завершено!</h2>
+                    <p>Молодець!</p>
+                    <button id="restartTrainerBtn">Спробувати ще раз</button>
+                </div>
+            `;
+
+            const restartButton = document.getElementById('restartTrainerBtn');
+            if (!restartButton) {
+                console.error('restartTrainerBtn not found');
+                return;
+            }
+            restartButton.addEventListener('click', () => {
+                resetTrainer();
+            });
+            restartButton.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                resetTrainer();
+            }, { passive: false });
+
+            adjustModalHeight(modals.trainer);
+            console.log('Completion screen displayed');
+        } catch (err) {
+            console.error('Error in showCompletion:', err);
+        }
+    }
+
+    function resetTrainer() {
+        try {
+            console.log('Resetting trainer');
+            currentQuestion = 1;
+            selectedOption = null;
+            generateQuestion1();
+        } catch (err) {
+            console.error('Error in resetTrainer:', err);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof MathJax !== 'undefined') {
+            MathJax.typesetPromise().catch(err => console.error('Initial MathJax error:', err));
+        }
+        console.log('Initial DOM load complete');
+    });
+</script>
+</body>
+</html>
+
+
