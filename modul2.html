@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Змістовий модуль 2. Елементи лінійної алгебри</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom, #1E3A8A 0%, #3B82F6 50%, #93C5FD 100%);
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: #333;
+        }
+
+        header {
+            background-color: #1E3A8A;
+            color: #FBBF24;
+            text-align: center;
+            padding: 30px 20px;
+            font-size: 28px;
+            font-weight: bold;
+            border-bottom: 4px solid #93C5FD;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: rgba(243, 244, 246, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .intro {
+            font-size: 20px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: #1E3A8A;
+            text-align: justify;
+        }
+
+        ul.objectives {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 30px;
+            font-size: 18px;
+            font-style: italic;
+        }
+
+        ul.objectives li {
+            position: relative;
+            padding-left: 40px;
+            margin-bottom: 14px;
+            line-height: 1.5;
+            text-align: justify;
+        }
+
+        ul.objectives li::before {
+            content: "👉";
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 22px;
+            color: #B91C1C;
+        }
+
+        .topics a {
+            display: block;
+            background-color: #BFDBFE;
+            color: #1E3A8A;
+            text-decoration: none;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-align: justify;
+        }
+
+        .topics a:hover {
+            background-color: #2563EB;
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .nav-button {
+            display: flex;
+            align-items: center;
+            background-color: #1E3A8A;
+            color: #FBBF24;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-button:hover {
+            background-color: #4B5EAA;
+            color: #fff;
+            transform: scale(1.05);
+        }
+
+        .nav-button svg {
+            margin-right: 8px;
+            fill: currentColor;
+        }
+
+        /* MathJax */
+        .MathJax, mjx-container, mjx-math, mjx-mrow {
+            color: #FBBF24 !important;
+            font-size: 1.1rem !important;
+        }
+
+        mjx-msub {
+            font-size: 0.7em !important;
+        }
+
+        .flashcard .MathJax {
+            font-size: 1.1rem !important;
+        }
+
+        .flashcard mjx-msub {
+            font-size: 0.7em !important;
+        }
+
+        .answer-button .MathJax {
+            font-size: 1.1rem !important;
+        }
+
+        .answer-button mjx-msub {
+            font-size: 0.7em !important;
+        }
+
+        #questionText .MathJax {
+            font-size: 1.1rem !important;
+        }
+
+        #questionText mjx-msub {
+            font-size: 0.7em !important;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                font-size: 24px;
+                padding: 20px 10px;
+            }
+
+            .intro {
+                font-size: 18px;
+            }
+
+            ul.objectives li {
+                font-size: 16px;
+                padding-left: 35px;
+            }
+
+            .topics a {
+                font-size: 16px;
+                padding: 12px 15px;
+            }
+
+            .nav-button {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+
+            .MathJax, mjx-container, mjx-math, mjx-mrow {
+                font-size: 1rem !important;
+            }
+
+            mjx-msub {
+                font-size: 0.7em !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                font-size: 24px;
+                padding: 20px 10px;
+            }
+
+            .intro {
+                font-size: 18px;
+            }
+
+            ul.objectives li {
+                font-size: 16px;
+                padding-left: 35px;
+            }
+
+            .topics a {
+                font-size: 16px;
+                padding: 12px 15px;
+            }
+
+            .nav-button {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+
+            .MathJax, mjx-container, mjx-math, mjx-mrow {
+                font-size: 0.875rem !important;
+            }
+
+            mjx-msub {
+                font-size: 0.7em !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        Змістовий модуль 2. Елементи лінійної алгебри
+    </header>
+
+    <main>
+        <div class="intro">У цьому змістовому модулі ви:</div>
+        <ul class="objectives">
+            <li>дізнаєтеся, що таке визначники, навчитеся їх обчислювати та ознайомитеся з основними властивостями;</li>
+            <li>ознайомитеся з поняттям матриць, їхніми типами та основними операціями над ними;</li>
+            <li>розглянете системи лінійних алгебраїчних рівнянь і навчитеся методам їхнього розв’язання.</li>
+        </ul>
+
+        <div class="topics">
+            <a href="{{ url_for('tema4') }}">Тема 4. Визначники.</a>
+            <a href="{{ url_for('tema5') }}">Тема 5. Матриці.</a>
+            <a href="{{ url_for('tema6') }}">Тема 6. Системи лінійних алгебраїчних рівнянь.</a>
+        </div>
+
+        <div class="navigation-buttons">
+            <a class="nav-button" href="{{ url_for('zmist') }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                    <path d="M15 18l-6-6 6-6"/>
+                </svg>
+                До структури курсу
+            </a>
+
+            <a class="nav-button" href="{{ url_for('home') }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                </svg>
+                На головну
+            </a>
+        </div>
+    </main>
+</body>
+</html>
