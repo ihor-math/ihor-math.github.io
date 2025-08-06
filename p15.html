@@ -1,0 +1,1836 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>15. Властивості визначників</title>
+    <!-- Primary MathJax CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <!-- Fallback MathJax CDN -->
+    <script>
+        window.addEventListener('load', () => {
+            if (typeof MathJax === 'undefined') {
+                console.warn('Primary MathJax CDN failed, attempting fallback CDN');
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js';
+                script.async = true;
+                document.head.appendChild(script);
+            }
+        });
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --base-font-size: 16px;
+        }
+        *, *:before, *:after {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1A3C34, #2F4F4F);
+            font-family: 'Roboto', sans-serif;
+            color: #B0B7B1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: start;
+            min-height: 100dvh;
+            font-size: 1rem;
+        }
+        .title-box {
+            margin-top: 60px;
+            padding: 25px 40px;
+            background: linear-gradient(135deg, #2F4F4F, #4A7043);
+            border-radius: 25px;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+            max-width: 90%;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .title-box h1 {
+            margin: 0;
+            font-size: 1.75rem;
+            color: #B0B7B1;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            font-family: 'Lora', serif;
+        }
+        .section-container {
+            margin-top: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+        .section {
+            width: 250px;
+            height: 220px;
+            background: linear-gradient(135deg, #2F4F4F, #4A7043);
+            border-radius: 20px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            border: 1px solid rgba(163, 166, 139, 0.3);
+        }
+        .section:hover {
+            transform: translateY(-5px);
+            background: linear-gradient(135deg, #4A7043, #5A8A52);
+        }
+        .section img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 15px;
+            object-fit: cover;
+            border-radius: 8px;
+            filter: brightness(1.2);
+        }
+        .section h2 {
+            font-size: 1.25rem;
+            color: #B0B7B1;
+            margin: 0;
+            font-family: 'Lora', serif;
+        }
+        .navigation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 40px auto;
+            max-width: 1000px;
+            padding: 0 20px;
+        }
+        .nav-button {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #2F4F4F, #4A7043);
+            color: #B0B7B1;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 1.125rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+            border: 2px solid #B0B7B1;
+        }
+        .nav-button:hover {
+            background: linear-gradient(135deg, #4A7043, #5A8A52);
+            color: #B0B7B1;
+            transform: scale(1.05);
+        }
+        .nav-button svg {
+            margin-right: 8px;
+            fill: currentColor;
+        }
+        #theoryModal, #videoModal, #questionsModal, #trainerModal {
+            display: none;
+            position: fixed;
+            top: 5%;
+            left: 5%;
+            width: 90%;
+            height: 90%;
+            background: linear-gradient(135deg, #1A3C34, #2F4F4F);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            overflow: hidden;
+            flex-direction: column;
+        }
+        .modal-content {
+            padding: 20px;
+            overflow-y: auto;
+            flex-grow: 1;
+            background: linear-gradient(135deg, #4A7043, #2F4F4F);
+            border-radius: 10px;
+            margin: 10px;
+            -webkit-overflow-scrolling: touch;
+            color: #B0B7B1;
+        }
+        #trainerModal .modal-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: start;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: flex-end;
+            background: linear-gradient(90deg, #2F4F4F, #4A7043);
+            padding: 8px 10px;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+        .close-btn {
+            background: #B0B7B1;
+            color: #1A3C34;
+            border: none;
+            border-radius: 6px;
+            padding: 5px 15px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .close-btn:hover {
+            background: #7A7D66;
+        }
+        #modalOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+        #theoryModal .modal-content p {
+            text-align: justify;
+            color: #B0B7B1;
+            font-size: 1.125rem;
+            line-height: 1.6;
+        }
+        #theoryModal .modal-content details {
+            margin-bottom: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, #4A7043, #2F4F4F);
+        }
+        #theoryModal .modal-content details summary {
+            background: linear-gradient(135deg, #2F4F4F, #4A7043);
+            color: #B0B7B1;
+            padding: 15px 20px;
+            font-family: 'Lora', serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+        #theoryModal .modal-content details summary:hover {
+            background: linear-gradient(135deg, #4A7043, #5A8A52);
+            transform: translateY(-2px);
+        }
+        #theoryModal .modal-content details summary::after {
+            content: '▼';
+            font-size: 0.875rem;
+            color: #B0B7B1;
+            transition: transform 0.3s ease;
+        }
+        #theoryModal .modal-content details[open] summary::after {
+            transform: rotate(180deg);
+        }
+        #theoryModal .modal-content details p {
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #4A7043, #2F4F4F);
+            border-radius: 0 0 10px 10px;
+        }
+        #theoryModal .modal-content .math-equation {
+            text-align: center;
+            margin: 10px 0;
+            padding: 10px;
+            white-space: nowrap;
+            max-width: 100%;
+            box-sizing: border-box;
+            overflow-y: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #theoryModal .modal-content .example-title {
+            color: #FFA500;
+            font-weight: bold;
+            font-size: 1.25rem;
+            margin-bottom: 10px;
+        }
+        #theoryModal .modal-content .example-solution {
+            color: #FFA500;
+            font-weight: bold;
+            font-size: 1.125rem;
+            text-align: center;
+            margin: 15px 0;
+        }
+        .property-title, .corollary-title {
+            color: #FFA500;
+            display: inline;
+        }
+        .corollary-text {
+            font-style: italic;
+        }
+        .flashcard-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 20px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .flashcard {
+            perspective: 1000px;
+            width: 100%;
+            height: 200px;
+            cursor: pointer;
+            outline: none;
+        }
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+        }
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            border-radius: 15px;
+            box-sizing: border-box;
+        }
+        .flashcard-front {
+            background: #4b5320;
+            color: #ffffff;
+        }
+        .flashcard-back {
+            background: #556b2f;
+            color: #ffff00;
+            transform: rotateY(180deg);
+        }
+        .flashcard-front p, .flashcard-back p {
+            font-size: 1.375rem;
+            margin: 0;
+            font-family: 'Lora', serif;
+            line-height: 1.5;
+            text-align: center;
+        }
+        .flashcard-back p {
+            font-family: 'Roboto', sans-serif;
+            font-size: 1.25rem;
+            line-height: 1.6;
+        }
+        .flashcard .MathJax {
+            color: #FFFF00 !important;
+            font-size: 1rem !important;
+        }
+        .trainer-container {
+            width: 90%;
+            max-width: 800px;
+            padding: 3vw 4vw;
+            text-align: left;
+            background: linear-gradient(135deg, #2F4F4F, #4A7043);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            border: 1px solid rgba(163, 166, 139, 0.3);
+        }
+        .trainer-container h2 {
+            font-family: 'Lora', serif;
+            font-size: 1.5rem;
+            color: #FFA500;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .trainer-container p {
+            font-size: 1.125rem;
+            color: #B0B7B1;
+            line-height: 1.6;
+            margin: 10px 0;
+        }
+        .trainer-container .math-equation {
+            text-align: center;
+            margin: 10px 0;
+            padding: 10px;
+            white-space: nowrap;
+            max-width: 100%;
+            box-sizing: border-box;
+            overflow-y: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .trainer-container input[type="number"] {
+            width: 100px;
+            padding: 8px;
+            font-size: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(163, 166, 139, 0.3);
+            background: #2F4F4F;
+            color: #B0B7B1;
+            margin: 10px 0;
+        }
+        .trainer-container input[type="number"]:focus {
+            outline: none;
+            border-color: #4A7043;
+            background: #3A5A4B;
+        }
+        .trainer-container button {
+            background: #4A7043;
+            color: #B0B7B1;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-family: 'Roboto', sans-serif;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin: 10px 5px;
+        }
+        .trainer-container button:hover {
+            background: linear-gradient(135deg, #4A7043, #5A8A52);
+        }
+        .trainer-container button:disabled {
+            background: #575A4B;
+            cursor: not-allowed;
+        }
+        .result-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5rem;
+            font-family: 'Lora', serif;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px 40px;
+            border-radius: 12px;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: 1001;
+        }
+        .result-message.correct {
+            color: #155724;
+            background: rgba(232, 245, 233, 0.95);
+            opacity: 1;
+        }
+        .result-message.wrong {
+            color: #721c24;
+            background: rgba(255, 235, 238, 0.95);
+            opacity: 1;
+        }
+        .error-message {
+            color: #FF3333;
+            font-size: 1.125rem;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .plain-matrix {
+            font-family: 'Roboto', sans-serif;
+            font-size: 1.125rem;
+            color: #B0B7B1;
+            text-align: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            white-space: pre;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .MathJax, mjx-container, mjx-math, mjx-mrow {
+            color: #FFFF00 !important;
+            font-size: 1.3rem !important;
+        }
+        mjx-msub {
+            font-size: 1.1em !important;
+        }
+        mjx-container[jax="CHTML"][display="true"] {
+            display: block !important;
+            text-align: center !important;
+            overflow: visible !important;
+        }
+        #theoryModal .modal-content::-webkit-scrollbar,
+        #videoModal .modal-content::-webkit-scrollbar,
+        #questionsModal .modal-content::-webkit-scrollbar,
+        #trainerModal .modal-content::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        #theoryModal .modal-content::-webkit-scrollbar-track,
+        #videoModal .modal-content::-webkit-scrollbar-track,
+        #questionsModal .modal-content::-webkit-scrollbar-track,
+        #trainerModal .modal-content::-webkit-scrollbar-track {
+            background: linear-gradient(135deg, #4A7043, #2F4F4F);
+            border-radius: 10px;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+        #theoryModal .modal-content::-webkit-scrollbar-thumb,
+        #videoModal .modal-content::-webkit-scrollbar-thumb,
+        #questionsModal .modal-content::-webkit-scrollbar-thumb,
+        #trainerModal .modal-content::-webkit-scrollbar-thumb {
+            background: rgba(163, 166, 139, 0.5);
+            border-radius: 10px;
+            border: 2px solid #2F4F4F;
+            transition: background 0.3s ease;
+        }
+        #theoryModal .modal-content::-webkit-scrollbar-thumb:hover,
+        #videoModal .modal-content::-webkit-scrollbar-thumb:hover,
+        #questionsModal .modal-content::-webkit-scrollbar-thumb:hover,
+        #trainerModal .modal-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(163, 166, 139, 0.8);
+        }
+        #theoryModal .modal-content,
+        #videoModal .modal-content,
+        #questionsModal .modal-content,
+        #trainerModal .modal-content {
+            scrollbar-color: rgba(163, 166, 139, 0.5) linear-gradient(135deg, #4A7043, #2F4F4F);
+            scrollbar-width: thin;
+        }
+        #theoryModal .modal-content .math-equation::-webkit-scrollbar,
+        #trainerModal .modal-content .math-equation::-webkit-scrollbar {
+            height: 6px;
+            display: block;
+        }
+        #theoryModal .modal-content .math-equation::-webkit-scrollbar:vertical,
+        #trainerModal .modal-content .math-equation::-webkit-scrollbar:vertical {
+            display: none;
+        }
+        #theoryModal .modal-content .math-equation::-webkit-scrollbar-track,
+        #trainerModal .modal-content .math-equation::-webkit-scrollbar-track {
+            background: linear-gradient(135deg, #4A7043, #2F4F4F);
+            border-radius: 4px;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+        #theoryModal .modal-content .math-equation::-webkit-scrollbar-thumb,
+        #trainerModal .modal-content .math-equation::-webkit-scrollbar-thumb {
+            background: rgba(163, 166, 139, 0.5);
+            border-radius: 4px;
+            border: 2px solid #2F4F4F;
+        }
+        #theoryModal .modal-content .math-equation::-webkit-scrollbar-thumb:hover,
+        #trainerModal .modal-content .math-equation::-webkit-scrollbar-thumb:hover {
+            background: rgba(163, 166, 139, 0.8);
+        }
+        #theoryModal .modal-content .math-equation,
+        #trainerModal .modal-content .math-equation {
+            scrollbar-color: rgba(163, 166, 139, 0.5) linear-gradient(135deg, #4A7043, #2F4F4F);
+            scrollbar-width: thin;
+        }
+            /* Стилі для емодзі та кнопки завершення */
+.completion-emoji {
+    font-size: 60px;
+    text-align: center;
+    margin: 20px 0;
+    animation: bounce 1.5s ease-in-out infinite;
+}
+.completion-emoji {
+    width: clamp(80px, 15vw, 120px);
+    height: clamp(80px, 15vw, 120px);
+    margin: 0 auto 3vw;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    border: 2px dashed #fb7185;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.completion-emoji::after {
+    content: '🎉';
+    font-size: clamp(40px, 8vw, 60px);
+    color: #ffff00;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+/* Стилі для модального вікна тренажера */
+.completion-message {
+    display: none;
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #2F4F4F, #4A7043);
+    border-radius: 15px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    margin: 20px auto;
+    max-width: 600px;
+    color: #B0B7B1;
+}
+
+.completion-message h2 {
+    font-family: 'Lora', serif;
+    font-size: 1.75rem;
+    color: #FFA500; /* Помаранчевий колір для "Тренування завершено!" */
+    text-align: center;
+    margin: 10px 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.completion-message p {
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.5rem;
+    color: #FFFF00; /* Жовтий колір для "Молодець!" */
+    text-align: center;
+    margin: 10px 0;
+    font-weight: bold;
+}
+
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+#resetTrainerBtn {
+    display: block;
+    margin: 20px auto;
+    padding: 12px 24px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+#resetTrainerBtn:hover {
+    background: linear-gradient(135deg, #45a049, #4CAF50);
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+#resetTrainerBtn:active {
+    transform: scale(0.95);
+}
+        @media (max-width: 768px) {
+            .title-box {
+                margin-top: 40px;
+                padding: 15px 20px;
+            }
+            .title-box h1 {
+                font-size: 1.5rem;
+            }
+            .section-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            .section {
+                width: 80%;
+                height: 180px;
+            }
+            .section h2 {
+                font-size: 1.125rem;
+            }
+            .nav-button {
+                font-size: 1rem;
+                padding: 10px 20px;
+            }
+            #theoryModal .modal-content p {
+                font-size: 0.9375rem;
+                line-height: 1.4;
+            }
+            #theoryModal .modal-content details summary {
+                font-size: 1.125rem;
+            }
+            #theoryModal .modal-content .example-solution {
+                font-size: 0.875rem;
+            }
+            .flashcard-container {
+                gap: 15px;
+                margin-top: 15px;
+            }
+            .flashcard {
+                height: 200px;
+            }
+            .flashcard-front p, .flashcard-back p {
+                font-size: 1rem;
+            }
+            .flashcard-back p {
+                font-size: 0.875rem;
+            }
+            .flashcard .MathJax {
+                font-size: 0.9375rem !important;
+            }
+            #theoryModal, #videoModal, #questionsModal, #trainerModal {
+                top: 2%;
+                left: 2%;
+                width: 96%;
+                height: 96%;
+            }
+            .trainer-container {
+                width: 95%;
+                padding: 4vw;
+            }
+            .trainer-container input[type="number"] {
+                width: 80px;
+                font-size: 0.9rem;
+            }
+            
+            .result-message {
+                font-size: 1.25rem;
+                padding: 15px 30px;
+                min-width: 250px;
+            }
+            .MathJax, mjx-container, mjx-math, mjx-mrow {
+                font-size: 1.2rem !important;
+            }
+            mjx-msub {
+                font-size: 1.0em !important;
+            }
+            .completion-message h2 {
+        font-size: 1.5rem;
+    }
+    .completion-message p {
+        font-size: 1.25rem;
+    }
+    .completion-emoji {
+        font-size: 50px;
+    }
+        }
+        @media (max-width: 480px) {
+            .title-box {
+                margin-top: 20px;
+                padding: 10px 15px;
+            }
+            .title-box h1 {
+                font-size: 1.25rem;
+            }
+            .section {
+                width: 90%;
+                height: 150px;
+            }
+            .section img {
+                width: 50px;
+                height: 50px;
+            }
+            .section h2 {
+                font-size: 1.125rem;
+            }
+            #theoryModal .modal-content details p {
+                font-size: 1rem;
+                line-height: 1.5;
+            }
+        #theoryModal .modal-content .math-equation {
+    font-size: 1rem;
+    padding: 6px;
+    overflow-x: auto; /* Дозволяє горизонтальну прокрутку */
+    display: block;
+    width: 100%;
+}
+
+/* Для центрованих формул (у блоці) */
+#theoryModal .modal-content .math-equation.math-center {
+    text-align: center;
+}
+
+/* Для інлайн-формул (усередині тексту) */
+#theoryModal .modal-content .math-equation.math-inline {
+    text-align: left;
+}
+
+            #theoryModal .modal-content details summary {
+                font-size: 1rem;
+            }
+            .flashcard-container {
+                gap: 10px;
+                margin-top: 10px;
+                max-width: 400px;
+            }
+            .flashcard {
+                height: 150px;
+            }
+            .flashcard-front p, .flashcard-back p {
+                font-size: 0.875rem;
+            }
+            .flashcard-back p {
+                font-size: 0.875rem;
+            }
+            .flashcard .MathJax {
+                font-size: 0.875rem !important;
+            }
+            .result-message {
+                font-size: 1.125rem;
+                padding: 12px 20px;
+                min-width: 200px;
+            }
+            .trainer-container h2 {
+                font-size: 1.25rem;
+            }
+            .trainer-container p {
+                font-size: 0.9rem;
+            }
+            .trainer-container input[type="number"] {
+                width: 70px;
+                font-size: 0.8rem;
+            }
+            .trainer-container button {
+                font-size: 0.9rem;
+                padding: 8px 14px;
+            }
+            .MathJax, mjx-container, mjx-math, mjx-mrow {
+                font-size: 1.1rem !important;
+            }
+            mjx-msub {
+                font-size: 0.9em !important;
+            }
+            .completion-message h2 {
+        font-size: 1.25rem;
+    }
+    .completion-message p {
+        font-size: 1rem;
+    }
+    .completion-emoji {
+        font-size: 40px;
+    }
+    .nav-button {
+                font-size: 1.0rem;
+                padding: 6px 12px;
+                line-height: 1.2;
+            }
+            .nav-button svg {
+                width: 16px;
+                height: 16px;
+            }
+              }
+    </style>
+</head>
+<body>
+    <div class="title-box">
+        <h1>15. Властивості визначників</h1>
+    </div>
+    <div class="section-container">
+        <div class="section" id="openTheoryBtn" tabindex="0" role="button" aria-pressed="false">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Книга" />
+            <h2>Теоретичні відомості</h2>
+        </div>
+        <div class="section" id="openVideoBtn" tabindex="0" role="button" aria-pressed="false">
+            <img src="https://img.icons8.com/fluency/96/video.png" alt="Відео" />
+            <h2>Відеоматеріали</h2>
+        </div>
+        <div class="section" id="openQuestionsBtn" tabindex="0" role="button" aria-pressed="false">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Картки" />
+            <h2>Питання і відповіді</h2>
+        </div>
+        <div class="section" id="openTrainerBtn" tabindex="0" role="button" aria-pressed="false">
+            <img src="https://img.icons8.com/fluency/96/flash-on.png" alt="Тренажер" />
+            <h2>Інтерактивний тренажер</h2>
+        </div>
+    </div>
+    <div class="navigation-buttons">
+        <a class="nav-button" href="topic4.html">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            До теми 4
+        </a>
+        <a class="nav-button" href="index.html">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            На головну
+        </a>
+    </div>
+    <div id="modalOverlay"></div>
+    <div id="theoryModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-header">
+            <button class="close-btn" aria-label="Закрити документ" id="closeTheoryBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <details>
+                <summary>Властивості визначників</summary>
+                <p>У цьому пункті ми розглянемо основні властивості визначників. Хоча ми формулюватимемо їх на прикладі визначників третього порядку, ці властивості характерні для визначників будь-якого порядку.</p>
+                <p><strong><span class="property-title">Властивість 1.</span></strong> Величина визначника не змінюється, якщо рядки замінити на стовпці, а стовпці на рядки (тобто при транспонуванні):</p>
+                <p class="math-equation">\[ \left|\begin{matrix}a_{11}&a_{12}&a_{13}\\a_{21}&a_{22}&a_{23}\\a_{31}&a_{32}&a_{33}\end{matrix}\right| = \left|\begin{matrix}a_{11}&a_{21}&a_{31}\\a_{12}&a_{22}&a_{32}\\a_{13}&a_{23}&a_{33}\end{matrix}\right|. \]</p>
+                <p><strong><span class="property-title">Властивість 2.</span></strong> Якщо у визначнику поміняти місцями два рядки або два стовпці, то його значення змінить знак на протилежний:</p>
+                <p class="math-equation">\[ \left|\begin{matrix}a_{11}&a_{12}&a_{13}\\a_{21}&a_{22}&a_{23}\\a_{31}&a_{32}&a_{33}\end{matrix}\right| = -\left|\begin{matrix}a_{13}&a_{12}&a_{11}\\a_{23}&a_{22}&a_{21}\\a_{33}&a_{32}&a_{31}\end{matrix}\right|. \]</p>
+                <p><strong><span class="property-title">Властивість 3.</span></strong> Якщо всі елементи деякого рядка або стовпця дорівнюють нулю, то визначник дорівнює нулю:</p>
+                <p class="math-equation">\[ \left|\begin{matrix}1&2&3\\5&6&7\\0&0&0\end{matrix}\right| = 0. \]</p>
+                <p><strong><span class="property-title">Властивість 4.</span></strong> Якщо у визначнику два рядки або стовпці однакові, то визначник дорівнює нулю:</p>
+                <p class="math-equation">\[ \left|\begin{matrix}1&2&-3\\1&2&-3\\7&5&4\end{matrix}\right| = 0. \]</p>
+                <p><strong><span class="property-title">Властивість 5.</span></strong> Якщо всі елементи рядка або стовпця мають спільний множник, то його можна винести за знак визначника:</p>
+                <p class="math-equation">\[ \left|\begin{matrix}\lambda a_{11}&a_{12}&a_{13}\\\lambda a_{21}&a_{22}&a_{23}\\\lambda a_{31}&a_{32}&a_{33}\end{matrix}\right| = \lambda \left|\begin{matrix}a_{11}&a_{12}&a_{13}\\a_{21}&a_{22}&a_{23}\\a_{31}&a_{32}&a_{33}\end{matrix}\right|. \]</p>
+                <p><strong><span class="property-title">Властивість 6.</span></strong> Якщо елементи двох рядків або стовпців є пропорційними, то визначник дорівнює нулю:</p>
+                <p class="math-equation">\[ \left|\begin{matrix}8&4&7\\6&3&9\\4&2&11\end{matrix}\right| = 2\cdot \left|\begin{matrix}4&4&7\\3&3&9\\2&2&11\end{matrix}\right| = 0. \]</p>
+                <p><strong><span class="property-title">Властивість 7.</span></strong> Якщо всі елементи рядка (або стовпця) є сумою двох доданків, то визначник дорівнює сумі двох визначників:</p>
+                <p class="math-equation">\[ \left|\begin{matrix}a_{11}+b_{11}&a_{12}&a_{13}\\a_{21}+b_{21}&a_{22}&a_{23}\\a_{31}+b_{31}&a_{32}&a_{33}\end{matrix}\right| = \left|\begin{matrix}a_{11}&a_{12}&a_{13}\\a_{21}&a_{22}&a_{23}\\a_{31}&a_{32}&a_{33}\end{matrix}\right| + \left|\begin{matrix}b_{11}&a_{12}&a_{13}\\b_{21}&a_{22}&a_{23}\\b_{31}&a_{32}&a_{33}\end{matrix}\right|. \]</p>
+                <p><strong><span class="property-title">Властивість 8.</span></strong> Якщо до елементів рядка (або стовпця) додати елементи іншого рядка (або стовпця), помножені на деяке число, значення визначника не зміниться.</p>
+                <p><strong><span class="corollary-title">Наслідок.</span></strong> <span class="corollary-text">Якщо до елементів одного рядка (або стовпця) додати чи відняти елементи будь-якого іншого рядка (або стовпця), то значення визначника не зміниться.</span></p>
+                <p><strong><span class="property-title">Властивість 9.</span></strong> Якщо всі елементи вище або нижче головної діагоналі дорівнюють нулю, то визначник дорівнює добутку діагональних елементів:</p>
+                <p class="math-equation">\[ \left|\begin{matrix}a_{11}&a_{12}&a_{13}\\0&a_{22}&a_{23}\\0&0&a_{33}\end{matrix}\right| = a_{11}a_{22}a_{33}. \]</p>
+            </details>
+            <details>
+                <summary>Приклади</summary>
+                <p class="example-title">Приклад 4.5.</p>
+                <p>Обчислити визначник:</p>
+                <p class="math-equation">\[ \left|\begin{matrix}1&2&3\\1&4&7\\2&6&13\end{matrix}\right| = \left|\begin{matrix}1&2&3\\0&2&4\\2&6&13\end{matrix}\right| = \left|\begin{matrix}1&2&3\\0&2&4\\0&2&7\end{matrix}\right| = \left|\begin{matrix}1&2&3\\0&2&4\\0&0&3\end{matrix}\right| = 1\cdot2\cdot3 = 6. \]</p>
+                <p class="example-solution">Розв’язання</p>
+                <p>Використаємо властивість 8 для спрощення визначника. Віднімемо від другого рядка перший рядок:</p>
+                <p class="math-equation">\[ \left|\begin{matrix}1&2&3\\1&4&7\\2&6&13\end{matrix}\right| \rightarrow \left|\begin{matrix}1&2&3\\0&2&4\\2&6&13\end{matrix}\right|. \]</p>
+                <p>Далі віднімемо від третього рядка перший рядок, помножений на 2:</p>
+                <p class="math-equation">\[ \left|\begin{matrix}1&2&3\\0&2&4\\2&6&13\end{matrix}\right| \rightarrow \left|\begin{matrix}1&2&3\\0&2&4\\0&2&7\end{matrix}\right|. \]</p>
+                <p>Тепер віднімемо від третього рядка другий рядок:</p>
+                <p class="math-equation">\[ \left|\begin{matrix}1&2&3\\0&2&4\\0&2&7\end{matrix}\right| \rightarrow \left|\begin{matrix}1&2&3\\0&2&4\\0&0&3\end{matrix}\right|. \]</p>
+                <p>Оскільки визначник є верхньотрикутним, за властивістю 9 його значення дорівнює добутку діагональних елементів:</p>
+                <p class="math-equation">\[ 1 \cdot 2 \cdot 3 = 6. \]</p>
+            </details>
+        </div>
+    </div>
+    <div id="videoModal" role="dialog" aria-modal="true" aria-labelledby="videoTitle">
+        <div class="modal-header">
+            <button class="close-btn" aria-label="Закрити відео" id="closeVideoBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <h2 style="font-family: 'Lora', serif; font-size: 1.5rem; color: #B0B7B1; margin-bottom: 20px;">Відеоматеріали: Властивості визначників</h2>
+            <div class="video-container">
+                <iframe id="videoIframe" src="https://www.youtube.com/embed/n0L2bs6m09g" title="Властивості визначників" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+    <div id="questionsModal" role="dialog" aria-modal="true" aria-labelledby="questionsTitle">
+        <div class="modal-header">
+            <button class="close-btn" aria-label="Закрити питання" id="closeQuestionsBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="flashcard-container">
+                <div class="flashcard" tabindex="0" role="button" aria-expanded="false">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <p>1. Що відбувається з визначником, якщо рядки замінити на стовпці, а стовпці на рядки (тобто при транспонуванні)?</p>
+                        </div>
+                        <div class="flashcard-back">
+                            <p>Значення визначника не змінюється.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flashcard" tabindex="0" role="button" aria-expanded="false">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <p>2. Як змінюється визначник, якщо поміняти місцями два рядки (або два стовпці)?</p>
+                        </div>
+                        <div class="flashcard-back">
+                            <p>Визначник змінює знак на протилежний.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flashcard" tabindex="0" role="button" aria-expanded="false">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <p>3. Чому дорівнює визначник, якщо один рядок складається лише з нулів?</p>
+                        </div>
+                        <div class="flashcard-back">
+                            <p>Визначник дорівнює нулю.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flashcard" tabindex="0" role="button" aria-expanded="false">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <p>4. Яка ознака того, що визначник дорівнює нулю через однакові рядки (чи стовпці)?</p>
+                        </div>
+                        <div class="flashcard-back">
+                            <p>Якщо два рядки (або стовпці) однакові, визначник дорівнює нулю.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flashcard" tabindex="0" role="button" aria-expanded="false">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <p>5. Як можна винести спільний множник з визначника?</p>
+                        </div>
+                        <div class="flashcard-back">
+                            <p>Якщо у рядку (чи стовпці) є спільний множник \( \lambda \), його можна винести за знак визначника.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flashcard" tabindex="0" role="button" aria-expanded="false">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <p>6. Що станеться, якщо до елементів одного рядка (чи стовпця) додати кратні елементи іншого?</p>
+                        </div>
+                        <div class="flashcard-back">
+                            <p>Значення визначника не зміниться.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flashcard" tabindex="0" role="button" aria-expanded="false">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <p>7. Яке значення має трикутний визначник?</p>
+                        </div>
+                        <div class="flashcard-back">
+                            <p>Добуток елементів головної діагоналі.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="trainerModal" role="dialog" aria-modal="true" aria-labelledby="trainerTitle">
+        <div class="modal-header">
+            <button class="close-btn" aria-label="Закрити тренажер" id="closeTrainerBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="trainer-container" id="trainerContent" role="region" aria-live="polite">
+                <!-- Content will be dynamically updated -->
+            </div>
+            <div class="completion-message" id="completionMessage" style="display: none;" role="region" aria-live="polite">
+                 <div class="completion-emoji"></div>
+                <h2>Тренування завершено!</h2>
+                <p>Молодець!</p>
+                <button id="resetTrainerBtn" aria-label="Спробувати ще раз">Спробувати ще раз</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+window.MathJax = {
+    tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        packages: ['base', 'ams'],
+        tags: 'ams'
+    },
+    chtml: {
+        fontURL: 'https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2'
+    },
+    startup: {
+        ready: () => {
+            console.log('MathJax initialized successfully');
+            MathJax.startup.defaultReady();
+            window.mathJaxReady = true;
+            const trainerContent = document.getElementById('trainerContent');
+            if (trainerContent) {
+                MathJax.typesetPromise([trainerContent]).catch(err => {
+                    console.error('MathJax initial render error:', err);
+                    const errorMessage = document.getElementById('errorMessage');
+                    if (errorMessage) errorMessage.textContent = 'Помилка завантаження формул. Використовується текстовий формат.';
+                });
+            }
+        }
+    }
+};
+
+// DOM Elements
+const elements = {
+    openTheoryBtn: document.getElementById('openTheoryBtn'),
+    openVideoBtn: document.getElementById('openVideoBtn'),
+    openQuestionsBtn: document.getElementById('openQuestionsBtn'),
+    openTrainerBtn: document.getElementById('openTrainerBtn'),
+    theoryModal: document.getElementById('theoryModal'),
+    videoModal: document.getElementById('videoModal'),
+    questionsModal: document.getElementById('questionsModal'),
+    trainerModal: document.getElementById('trainerModal'),
+    modalOverlay: document.getElementById('modalOverlay'),
+    closeTheoryBtn: document.getElementById('closeTheoryBtn'),
+    closeVideoBtn: document.getElementById('closeVideoBtn'),
+    closeQuestionsBtn: document.getElementById('closeQuestionsBtn'),
+    closeTrainerBtn: document.getElementById('closeTrainerBtn'),
+    trainerContent: document.getElementById('trainerContent'),
+    completionMessage: document.getElementById('completionMessage')
+};
+
+// Check for missing DOM elements
+for (const [key, value] of Object.entries(elements)) {
+    if (!value) console.error(`Element ${key} is missing in the DOM`);
+}
+
+// Modal Functions
+function isModalVisible(modal) {
+    return modal && modal.style.display === 'flex';
+}
+
+function openModal(modal, btn) {
+    if (!modal || !btn) {
+        console.error('Modal or button is undefined', { modal, btn });
+        return;
+    }
+    modal.style.display = 'flex';
+    elements.modalOverlay.style.display = 'block';
+    btn.setAttribute('aria-pressed', 'true');
+    const modalContent = modal.querySelector('.modal-content');
+    if (modalContent) {
+        modalContent.scrollTop = 0;
+        modalContent.focus();
+    }
+    if (modal === elements.trainerModal) {
+        waitForMathJax(() => displayExercise(currentExercise));
+    } else {
+        setTimeout(() => {
+            if (typeof MathJax !== 'undefined' && window.mathJaxReady) {
+                MathJax.typesetPromise([modalContent]).catch(err => {
+                    console.error('MathJax modal render error:', err);
+                    elements.trainerContent.innerHTML += '<p id="errorMessage" class="error-message">Помилка відображення формул у модальному вікні.</p>';
+                });
+            } else {
+                console.warn('MathJax not available during modal open');
+                elements.trainerContent.innerHTML += '<p id="errorMessage" class="error-message">Формули не відображаються через проблему з MathJax.</p>';
+            }
+        }, 500);
+    }
+}
+
+function closeModal(modal, btn) {
+    if (!modal || !btn) {
+        console.error('Modal or button is undefined', { modal, btn });
+        return;
+    }
+    modal.style.display = 'none';
+    elements.modalOverlay.style.display = 'none';
+    btn.setAttribute('aria-pressed', 'false');
+    btn.focus();
+    const modalContent = modal.querySelector('.modal-content');
+    if (modalContent) {
+        modalContent.scrollTop = 0;
+    }
+    if (modal === elements.videoModal) {
+        const iframe = document.getElementById('videoIframe');
+        if (iframe) {
+            const src = iframe.src;
+            iframe.src = '';
+            iframe.src = src;
+        }
+    }
+    if (modal === elements.trainerModal) {
+        elements.trainerContent.style.display = 'block';
+        elements.completionMessage.style.display = 'none';
+        currentExercise = 1;
+        waitForMathJax(() => displayExercise(currentExercise));
+    }
+    const errorMessage = elements.trainerContent.querySelector('#errorMessage');
+    if (errorMessage) errorMessage.textContent = '';
+}
+
+// Event Listeners for Modals
+if (elements.openTheoryBtn) elements.openTheoryBtn.addEventListener('click', () => { console.log('Theory button clicked'); openModal(elements.theoryModal, elements.openTheoryBtn); });
+if (elements.openVideoBtn) elements.openVideoBtn.addEventListener('click', () => { console.log('Video button clicked'); openModal(elements.videoModal, elements.openVideoBtn); });
+if (elements.openQuestionsBtn) elements.openQuestionsBtn.addEventListener('click', () => { console.log('Questions button clicked'); openModal(elements.questionsModal, elements.openQuestionsBtn); });
+if (elements.openTrainerBtn) elements.openTrainerBtn.addEventListener('click', () => { console.log('Trainer button clicked'); openModal(elements.trainerModal, elements.openTrainerBtn); });
+if (elements.closeTheoryBtn) elements.closeTheoryBtn.addEventListener('click', () => closeModal(elements.theoryModal, elements.openTheoryBtn));
+if (elements.closeVideoBtn) elements.closeVideoBtn.addEventListener('click', () => closeModal(elements.videoModal, elements.openVideoBtn));
+if (elements.closeQuestionsBtn) elements.closeQuestionsBtn.addEventListener('click', () => closeModal(elements.questionsModal, elements.openQuestionsBtn));
+if (elements.closeTrainerBtn) elements.closeTrainerBtn.addEventListener('click', () => closeModal(elements.trainerModal, elements.openTrainerBtn));
+
+if (elements.modalOverlay) {
+    elements.modalOverlay.addEventListener('click', () => {
+        const modals = [elements.theoryModal, elements.videoModal, elements.questionsModal, elements.trainerModal];
+        const buttons = [elements.openTheoryBtn, elements.openVideoBtn, elements.openQuestionsBtn, elements.openTrainerBtn];
+        const openModalIndex = modals.findIndex(m => isModalVisible(m));
+        if (openModalIndex !== -1) {
+            closeModal(modals[openModalIndex], buttons[openModalIndex]);
+        }
+    });
+}
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const modals = [
+            { modal: elements.theoryModal, btn: elements.openTheoryBtn },
+            { modal: elements.videoModal, btn: elements.openVideoBtn },
+            { modal: elements.questionsModal, btn: elements.openQuestionsBtn },
+            { modal: elements.trainerModal, btn: elements.openTrainerBtn }
+        ];
+        const activeModal = modals.find(m => isModalVisible(m.modal));
+        if (activeModal) {
+            closeModal(activeModal.modal, activeModal.btn);
+        }
+    }
+});
+
+document.querySelectorAll('.flashcard').forEach(flashcard => {
+    const toggleFlashcard = () => {
+        const isFlipped = flashcard.classList.toggle('flipped');
+        flashcard.setAttribute('aria-expanded', isFlipped);
+        if (isFlipped && typeof MathJax !== 'undefined' && window.mathJaxReady) {
+            setTimeout(() => {
+                MathJax.typesetPromise([flashcard.querySelector('.flashcard-back')]).catch(err => {
+                    console.error('MathJax flashcard render error:', err);
+                    elements.trainerContent.innerHTML += '<p id="errorMessage" class="error-message">Помилка відображення формул у картці.</p>';
+                });
+            }, 300);
+        }
+    };
+    flashcard.addEventListener('click', toggleFlashcard);
+    flashcard.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleFlashcard();
+        }
+    });
+});
+
+// Trainer Logic
+let currentDeterminant = 0;
+let currentMatrix = null;
+let currentAnswer = { scalar: 0, a33: 0 };
+let currentExercise = 1;
+let isFirstAttempt = true;
+let gcfTarget = null;
+
+const exercises = [
+    {
+        number: 1,
+        matrix: [[-1, 2, 3], [4, 0, -5], [-3, 1, -2]],
+        determinant: 53,
+        transposed: [[-1, 4, -3], [2, 0, 1], [3, -5, -2]],
+        answer: 53,
+        explanation: 'тому що величина визначника не змінюється, якщо виконати транспонування (рядки замінили на стовпці, а стовпці на рядки).'
+    },
+    {
+        number: 2,
+        matrix: [[2, -1, 1], [4, 5, 3], [-3, 0, -2]],
+        determinant: -4,
+        transposed: [[2, -1, 1], [-3, 0, -2], [4, 5, 3]],
+        answer: 4,
+        explanation: 'тому що, якщо у визначнику поміняти місцями два рядки або два стовпці, то його значення змінить знак на протилежний.'
+    },
+    {
+        number: 3,
+        matrix: [[3, 2, -1], [4, 1, 3], [0, 0, 0]],
+        determinant: 0,
+        modified: [[3, 2, -1], [4, 1, 3], [3, 2, -1]],
+        answer: 0,
+        explanation: 'тому що, якщо всі елементи деякого рядка або стовпця дорівнюють нулю, або два рядки чи стовпці однакові, то визначник дорівнює нулю.'
+    },
+    {
+        number: 4,
+        matrix: [[10, -5, 15], [3, 4, 1], [1, -2, -2]],
+        determinant: null,
+        modified: [[2, -1, 3], [3, 4, 1], [1, -2, -2]],
+        answer: 5,
+        explanation: 'тому що всі елементи першого рядка мають спільний множник 5, який можна винести за знак визначника.'
+    },
+    {
+        number: 5,
+        matrix: [[2, 1, 3], [0, 2, 5], [0, -4, -3]],
+        determinant: -50,
+        modified: [[2, 1, 3], [0, 2, 5], [0, 0, 7]],
+        answer: { scalar: 2, a33: 7 },
+        explanation: 'тому що до елементів третього рядка додано елементи другого рядка, помножені на число, що не змінює значення визначника.'
+    },
+    {
+        number: 6,
+        matrix: [[-1, 5, 2], [0, 2, 4], [0, 0, -5]],
+        determinant: 10,
+        answer: 10,
+        explanation: 'тому що визначник трикутної матриці дорівнює добутку елементів головної діагоналі: \\(-1 \\cdot 2 \\cdot (-5) = 10\\).'
+    }
+];
+
+function generateRandomMatrix() {
+    const matrix = [];
+    for (let i = 0; i < 3; i++) {
+        const row = [];
+        for (let j = 0; j < 3; j++) {
+            row.push(Math.floor(Math.random() * 11) - 5);
+        }
+        matrix.push(row);
+    }
+    return matrix;
+}
+
+function computeDeterminant(matrix) {
+    const [[a, b, c], [d, e, f], [g, h, i]] = matrix;
+    return a * (e * i - f * h) - b * (d * i - f * g) + c * (d * h - e * g);
+}
+
+function transposeMatrix(matrix) {
+    return [
+        [matrix[0][0], matrix[1][0], matrix[2][0]],
+        [matrix[0][1], matrix[1][1], matrix[2][1]],
+        [matrix[0][2], matrix[1][2], matrix[2][2]]
+    ];
+}
+
+function swapRows(matrix, row1, row2) {
+    const newMatrix = matrix.map(row => [...row]);
+    [newMatrix[row1], newMatrix[row2]] = [newMatrix[row2], newMatrix[row1]];
+    return newMatrix;
+}
+
+function swapColumns(matrix, col1, col2) {
+    const newMatrix = matrix.map(row => [...row]);
+    for (let i = 0; i < 3; i++) {
+        [newMatrix[i][col1], newMatrix[i][col2]] = [newMatrix[i][col2], newMatrix[i][col1]];
+    }
+    return newMatrix;
+}
+
+function generateZeroDeterminantMatrix() {
+    const type = Math.floor(Math.random() * 3);
+    let matrix = generateRandomMatrix();
+    if (type === 0) {
+        matrix[2] = [0, 0, 0];
+    } else if (type === 1) {
+        matrix[2] = [...matrix[0]];
+    } else {
+        matrix = swapColumns(matrix, 2, 0);
+        for (let i = 0; i < 3; i++) {
+            matrix[i][2] = matrix[i][0];
+        }
+    }
+    return matrix;
+}
+
+function gcd(a, b) {
+    a = Math.abs(a);
+    b = Math.abs(b);
+    while (b) {
+        let temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+function computeRowGCF(row) {
+    let result = Math.abs(row[0]);
+    for (let i = 1; i < row.length; i++) {
+        result = gcd(result, row[i]);
+    }
+    return result;
+}
+
+function computeColumnGCF(matrix, colIndex) {
+    let result = Math.abs(matrix[0][colIndex]);
+    for (let i = 1; i < matrix.length; i++) {
+        result = gcd(result, matrix[i][colIndex]);
+    }
+    return result;
+}
+
+function generateGCFMatrix() {
+    const matrix = [];
+    const target = Math.floor(Math.random() * 6);
+    const gcf = Math.floor(Math.random() * 8) + 2;
+    gcfTarget = target < 3 ? `рядок ${target + 1}` : `стовпець ${target - 2}`;
+    const absGCF = Math.abs(gcf);
+
+    for (let i = 0; i < 3; i++) {
+        const row = [];
+        for (let j = 0; j < 3; j++) {
+            row.push(Math.floor(Math.random() * 19) - 9);
+        }
+        matrix.push(row);
+    }
+
+    if (target < 3) {
+        matrix[target] = matrix[target].map(x => x * gcf);
+        matrix[target] = matrix[target].map(x => {
+            if (x > 50 || x < -50) {
+                const sign = x >= 0 ? 1 : -1;
+                return sign * (Math.abs(x) % 50 + 1);
+            }
+            return x;
+        });
+    } else {
+        const colIndex = target - 3;
+        for (let i = 0; i < 3; i++) {
+            matrix[i][colIndex] *= gcf;
+            if (matrix[i][colIndex] > 50 || matrix[i][colIndex] < -50) {
+                const sign = matrix[i][colIndex] >= 0 ? 1 : -1;
+                matrix[i][colIndex] = sign * (Math.abs(matrix[i][colIndex]) % 50 + 1);
+            }
+        }
+    }
+
+    for (let i = 0; i < 3; i++) {
+        if (target < 3 && i !== target) {
+            while (computeRowGCF(matrix[i]) > 1) {
+                matrix[i] = matrix[i].map(() => Math.floor(Math.random() * 19) - 9);
+            }
+        }
+    }
+    for (let j = 0; j < 3; j++) {
+        if (target >= 3 && j !== (target - 3)) {
+            while (computeColumnGCF(matrix, j) > 1) {
+                for (let i = 0; i < 3; i++) {
+                    matrix[i][j] = Math.floor(Math.random() * 19) - 9;
+                }
+            }
+        }
+    }
+
+    let computedGCF;
+    if (target < 3) {
+        computedGCF = computeRowGCF(matrix[target]);
+    } else {
+        computedGCF = computeColumnGCF(matrix, target - 3);
+    }
+    if (computedGCF !== absGCF) {
+        return generateGCFMatrix();
+    }
+
+    const modifiedMatrix = matrix.map(row => [...row]);
+    if (target < 3) {
+        modifiedMatrix[target] = modifiedMatrix[target].map(x => x / gcf);
+    } else {
+        const colIndex = target - 3;
+        for (let i = 0; i < 3; i++) {
+            modifiedMatrix[i][colIndex] /= gcf;
+        }
+    }
+
+    return { matrix, modified: modifiedMatrix, gcf, target };
+}
+
+function generateExercise5Matrix() {
+    const matrix = [];
+    matrix.push([Math.floor(Math.random() * 19) - 9, Math.floor(Math.random() * 19) - 9, Math.floor(Math.random() * 19) - 9]);
+    const b = Math.floor(Math.random() * 19) - 9;
+    if (b === 0) return generateExercise5Matrix();
+    const h = Math.floor(Math.random() * 19) - 9;
+    if (h === 0) return generateExercise5Matrix();
+    const scalar = -h / b;
+    if (!Number.isInteger(scalar) || scalar === 0 || Math.abs(scalar) > 50) return generateExercise5Matrix();
+    matrix.push([0, b, Math.floor(Math.random() * 19) - 9]);
+    matrix.push([0, h, Math.floor(Math.random() * 19) - 9]);
+    const a33 = matrix[2][2] + scalar * matrix[1][2];
+    return { matrix, scalar, a33 };
+}
+
+function generateExercise6Matrix() {
+    const isUpperTriangular = Math.random() < 0.5;
+    const matrix = [];
+    const a11 = Math.floor(Math.random() * 18) - 9 || -1;
+    const a22 = Math.floor(Math.random() * 18) - 9 || -1;
+    const a33 = Math.floor(Math.random() * 18) - 9 || -1;
+    if (isUpperTriangular) {
+        matrix.push([a11, Math.floor(Math.random() * 19) - 9, Math.floor(Math.random() * 19) - 9]);
+        matrix.push([0, a22, Math.floor(Math.random() * 19) - 9]);
+        matrix.push([0, 0, a33]);
+    } else {
+        matrix.push([a11, 0, 0]);
+        matrix.push([Math.floor(Math.random() * 19) - 9, a22, 0]);
+        matrix.push([Math.floor(Math.random() * 19) - 9, Math.floor(Math.random() * 19) - 9, a33]);
+    }
+    const determinant = a11 * a22 * a33;
+    return { matrix, determinant };
+}
+
+function matrixToLatex(matrix, determinant = null) {
+    const matrixLatex = `\\left|\\begin{matrix}${matrix[0].join('&')}\\\\${matrix[1].join('&')}\\\\${matrix[2].join('&')}\\end{matrix}\\right|`;
+    if (determinant !== null) {
+        return `\\[ ${matrixLatex} = ${determinant} \\]`;
+    }
+    return `\\[ ${matrixLatex} \\]`;
+}
+
+function matrixToPlainText(matrix, determinant = null) {
+    const rows = [
+        `| ${matrix[0].join(' ')} |`,
+        `| ${matrix[1].join(' ')} |`,
+        `| ${matrix[2].join(' ')} |`
+    ];
+    if (determinant !== null) {
+        rows[1] += ` = ${determinant}`;
+    }
+    return rows.join('\n');
+}
+
+function waitForMathJax(callback, attempts = 10, interval = 500) {
+    if (typeof MathJax !== 'undefined' && window.mathJaxReady) {
+        console.log('MathJax is ready, executing callback');
+        callback();
+        return;
+    }
+    if (attempts <= 0) {
+        console.error('MathJax not available after maximum attempts');
+        elements.trainerContent.innerHTML += '<p id="errorMessage" class="error-message">Помилка: MathJax не завантажено. Використовується текстовий формат.</p>';
+        callback();
+        return;
+    }
+    console.log(`Waiting for MathJax, attempts left: ${attempts}`);
+    setTimeout(() => waitForMathJax(callback, attempts - 1, interval), interval);
+}
+
+function displayCompletionMessage() {
+    elements.trainerContent.style.display = 'none';
+    elements.completionMessage.style.display = 'block';
+    const resetBtn = document.getElementById('resetTrainerBtn');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            currentExercise = 1;
+            isFirstAttempt = true;
+            elements.trainerContent.style.display = 'block';
+            elements.completionMessage.style.display = 'none';
+            waitForMathJax(() => displayExercise(currentExercise));
+        }, { once: true });
+    }
+}
+
+function generatePracticeMatrix(exerciseNumber) {
+    let matrix, modifiedMatrix;
+    if (exerciseNumber === 1) {
+        matrix = generateRandomMatrix();
+        currentDeterminant = computeDeterminant(matrix);
+        while (currentDeterminant === 0) {
+            matrix = generateRandomMatrix();
+            currentDeterminant = computeDeterminant(matrix);
+        }
+        modifiedMatrix = transposeMatrix(matrix);
+        currentAnswer = currentDeterminant;
+    } else if (exerciseNumber === 2) {
+        matrix = generateRandomMatrix();
+        currentDeterminant = computeDeterminant(matrix);
+        while (currentDeterminant === 0) {
+            matrix = generateRandomMatrix();
+            currentDeterminant = computeDeterminant(matrix);
+        }
+        modifiedMatrix = swapRows(matrix, 0, 1);
+        currentAnswer = -currentDeterminant;
+    } else if (exerciseNumber === 3) {
+        if (isFirstAttempt) {
+            matrix = [[1, 2, 1], [4, -3, 4], [7, 5, 7]];
+            isFirstAttempt = false;
+        } else {
+            matrix = generateZeroDeterminantMatrix();
+        }
+        currentDeterminant = computeDeterminant(matrix);
+        modifiedMatrix = matrix;
+        currentAnswer = 0;
+    } else if (exerciseNumber === 4) {
+        const { matrix: newMatrix, modified: newModified, gcf, target } = generateGCFMatrix();
+        matrix = newMatrix;
+        modifiedMatrix = newModified;
+        currentDeterminant = computeDeterminant(matrix);
+        currentAnswer = gcf;
+        gcfTarget = target < 3 ? `рядок ${target + 1}` : `стовпець ${target - 2}`;
+    } else if (exerciseNumber === 5) {
+        const { matrix: newMatrix, scalar, a33 } = generateExercise5Matrix();
+        matrix = newMatrix;
+        currentDeterminant = computeDeterminant(matrix);
+        modifiedMatrix = matrix.map(row => [...row]);
+        modifiedMatrix[2] = [0, 0, a33];
+        currentAnswer = { scalar, a33 };
+    } else if (exerciseNumber === 6) {
+        const { matrix: newMatrix, determinant } = generateExercise6Matrix();
+        matrix = newMatrix;
+        currentDeterminant = determinant;
+        modifiedMatrix = matrix;
+        currentAnswer = determinant;
+    }
+    currentMatrix = matrix;
+    return { original: matrix, modified: modifiedMatrix };
+}
+
+function displayExercise(exerciseNumber) {
+    if (exerciseNumber > exercises.length) {
+        displayCompletionMessage();
+        return;
+    }
+
+    const exercise = exercises[exerciseNumber - 1];
+    if (exerciseNumber === 3) {
+        isFirstAttempt = true;
+    }
+    let htmlContent = `
+        <h2>Вправа №${exerciseNumber}</h2>
+    `;
+    if (exerciseNumber === 3) {
+        htmlContent += `
+            <p>Якщо всі елементи деякого рядка або стовпця дорівнюють нулю, то визначник дорівнює нулю.</p>
+            <p class="math-equation" id="originalMatrix">${matrixToLatex(exercise.matrix, exercise.determinant)}</p>
+            <p>Якщо два рядки або стовпці однакові, то визначник дорівнює нулю.</p>
+            <p class="math-equation" id="transposedMatrix">${matrixToLatex(exercise.modified, exercise.answer)}</p>
+        `;
+    } else if (exerciseNumber === 4) {
+        htmlContent += `
+            <p>Якщо всі елементи рядка або стовпця мають спільний множник, то його можна винести за знак визначника.</p>
+            <p>Наприклад, у даному визначнику усі елементи першого рядка мають спільний множник 5, який можна винести за знак визначника.</p>
+            <p class="math-equation" id="originalMatrix">\\[ \\left|\\begin{matrix}10&-5&15\\\\3&4&1\\\\1&-2&-2\\end{matrix}\\right| = 5 \\cdot \\left|\\begin{matrix}2&-1&3\\\\3&4&1\\\\1&-2&-2\\end{matrix}\\right| \\]</p>
+        `;
+   
+
+
+
+    } else if (exerciseNumber === 5) {
+    htmlContent += `
+        <p>Якщо до елементів якого-небудь рядка (або стовпця) відповідно додати елементи другого рядка (або другого стовпця), помножені на якесь число, то значення визначника не зміниться.</p>
+        <p><strong>Приклад 1.</strong> Утворіть у другому рядку першому стовпці нуль за допомогою цієї властивості.</p>
+        <p>Розглянемо визначник</p>
+        <p class="math-equation">\\[ \\begin{vmatrix} 1 & -2 & 3 \\\\ 4 & 2 & 5 \\\\ -3 & -4 & 0 \\end{vmatrix} \\]</p>
+        <p>Помножимо перший рядок на (-4) і додамо до другого</p>
+        <p class="math-equation">\\[ R_2 = -4 \\cdot R_1 + R_2 \\]</p>
+        <p class="math-equation">\\[ \\begin{vmatrix} 1 & -2 & 3 \\\\ 0 & 10 & -7 \\\\ -3 & -4 & 0 \\end{vmatrix} \\]</p>
+        <p><strong>Приклад 2.</strong> Утворіть у другому рядку, першому стовпці нуль за допомогою властивостей визначника.</p>
+        <p class="math-equation">\\[ \\begin{vmatrix} 3 & -3 & 4 \\\\ 4 & 2 & 5 \\\\ 5 & -3 & 6 \\end{vmatrix} \\]</p>
+        <p>Помножимо перший рядок на (-4) а другий – на 3, щоб елементи першого стовпця у першому та другому рядках стали протилежними.</p>
+        <p class="math-equation">\\[ -4 \\cdot R_1 = (-12, 12, 16), \\]</p>
+        <p class="math-equation">\\[ 3 \\cdot R_2 = (12, 6, 15). \\]</p>
+        <p>Додаємо ці рядки:</p>
+        <p class="math-equation">\\[ -4 \\cdot R_1 + 3 \\cdot R_2 = (0, 18, -1). \\]</p>
+        <p>Але ми не можемо замінити другий рядок у визначнику на цей результат напряму, бо змінили сам другий рядок, а не просто додали до нього інший.</p>
+        <p>Щоб залишити визначник незмінним, внесемо множник \\( \\frac{1}{3} \\) у визначник — це дозволяє врахувати, що другий рядок ми попередньо помножили на 3:</p>
+        <p class="math-equation">\\[ \\frac{1}{3} \\cdot \\begin{vmatrix} 3 & -3 & 4 \\\\ 12 & 6 & 15 \\\\ 5 & -3 & 6 \\end{vmatrix}, \\]</p>
+        <p class="math-equation">\\[ R_2 = -4 \\cdot R_1 + R_2 \\implies \\]</p>
+        <p class="math-equation">\\[ \\implies \\frac{1}{3} \\cdot \\begin{vmatrix} 3 & -3 & 4 \\\\ 0 & 18 & -1 \\\\ 5 & -3 & 6 \\end{vmatrix}. \\]</p>
+        <p>Таким чином, ми утворили нуль у другому рядку, першому стовпці, застосувавши поєднання властивостей додавання рядків та винесення множника за знак визначника.</p>
+           `;
+
+        
+    } else if (exerciseNumber === 6) {
+        htmlContent += `
+            <p>Визначник, у якого всі елементи вище (або нижче) головної діагоналі дорівнюють нулю, дорівнює добутку елементів головної діагоналі:</p>
+            <p class="math-equation" id="originalMatrix">${matrixToLatex(exercise.matrix, exercise.determinant)}</p>
+            <p style="text-align: justify;">
+                <strong>Відповідь:</strong> <span style="color: yellow;">${exercise.answer}</span>, ${exercise.explanation}
+            </p>
+        `;
+    } else {
+        htmlContent += `
+            <p>Чому дорівнює визначник</p>
+            <p class="math-equation" id="originalMatrix">${matrixToLatex(exercise.matrix, exercise.determinant)}</p>
+            <p>Чому дорівнює визначник</p>
+            <p class="math-equation" id="transposedMatrix">${matrixToLatex(exercise.transposed)}</p>
+            <p style="text-align: justify;">
+                <strong>Відповідь:</strong> <span style="color: yellow;">${exercise.answer}</span>, ${exercise.explanation}
+            </p>
+        `;
+    }
+    htmlContent += `
+        <h2><strong>Самостійно:</strong></h2>
+    `;
+    if (exerciseNumber === 4) {
+        htmlContent += `
+            <p>Винесіть спільний множник із цього визначника:</p>
+            <p class="math-equation" id="practiceOriginalMatrix"></p>
+            <p>Введіть ціле число: <input type="number" id="userAnswer" aria-label="Введення множника"></p>
+        `;
+    } else if (exerciseNumber === 5) {
+        htmlContent += `
+            <p>Утворіть у третьому рядку, другому стовпці нуль за допомогою властивостей визначника і перевірте правильність обчислення:</p>
+            <p class="math-equation" id="practiceOriginalMatrix"></p>
+            <p>Введіть число, на яке потрібно помножити другий рядок: <input type="number" id="scalarAnswer" aria-label="Введення множника для другого рядка"></p>
+            <p>Запишіть елемент, який має стояти на місці \\( a_{33} \\) після перетворення: <input type="number" id="a33Answer" aria-label="Введення елемента a_33"></p>
+        `;
+    } else {
+        htmlContent += `
+            <p>Визначник дорівнює:</p>
+            <p class="math-equation" id="practiceOriginalMatrix"></p>
+        `;
+        if (exerciseNumber !== 3 && exerciseNumber !== 6) {
+            htmlContent += `
+                <p>Тоді цей визначник дорівнює:</p>
+                <p class="math-equation" id="practiceTransposedMatrix"></p>
+            `;
+        }
+        htmlContent += `
+            <p>Введіть значення визначника: <input type="number" id="userAnswer" aria-label="Введення значення визначника"></p>
+        `;
+    }
+    htmlContent += `
+        <button id="checkAnswerBtn">Перевірити</button>
+        <div id="resultMessage" class="result-message"></div>
+        <p id="errorMessage" class="error-message"></p>
+    `;
+    elements.trainerContent.innerHTML = htmlContent;
+
+    const userAnswer = document.getElementById('userAnswer');
+    const scalarAnswer = document.getElementById('scalarAnswer');
+    const a33Answer = document.getElementById('a33Answer');
+    const checkAnswerBtn = document.getElementById('checkAnswerBtn');
+    const resultMessage = document.getElementById('resultMessage');
+    const practiceOriginalMatrix = document.getElementById('practiceOriginalMatrix');
+    const practiceTransposedMatrix = document.getElementById('practiceTransposedMatrix');
+
+    const { original, modified } = generatePracticeMatrix(exerciseNumber);
+    practiceOriginalMatrix.innerHTML = matrixToLatex(original, exerciseNumber !== 3 && exerciseNumber !== 4 && exerciseNumber !== 5 && exerciseNumber !== 6 ? currentDeterminant : exerciseNumber === 5 ? currentDeterminant : null);
+    if (exerciseNumber !== 3 && exerciseNumber !== 4 && exerciseNumber !== 5 && exerciseNumber !== 6 && practiceTransposedMatrix) {
+        practiceTransposedMatrix.innerHTML = matrixToLatex(modified);
+    }
+
+    if (userAnswer || (scalarAnswer && a33Answer)) {
+        const inputs = userAnswer ? [userAnswer] : [scalarAnswer, a33Answer];
+        inputs.forEach(input => {
+            if (input) {
+                input.addEventListener('input', () => {
+                    if (exerciseNumber === 5) {
+                        checkAnswerBtn.disabled = !scalarAnswer.value.trim() || !a33Answer.value.trim();
+                    } else {
+                        checkAnswerBtn.disabled = !userAnswer.value.trim();
+                    }
+                });
+            }
+        });
+    }
+
+    if (checkAnswerBtn) {
+        checkAnswerBtn.addEventListener('click', () => {
+            let isCorrect = false;
+            let message = '';
+            if (exerciseNumber === 5) {
+                const userScalar = parseInt(scalarAnswer.value.trim());
+                const userA33 = parseInt(a33Answer.value.trim());
+                const scalarCorrect = userScalar === currentAnswer.scalar;
+                const a33Correct = userA33 === currentAnswer.a33;
+                isCorrect = scalarCorrect && a33Correct;
+                if (isCorrect) {
+                    message = '✓ Правильно! Молодець!';
+                } else {
+                    message = '✗ Неправильно: ';
+                    if (!scalarCorrect) message += 'Число для множення другого рядка неправильне. ';
+                    if (!a33Correct) message += 'Елемент a33 після перетворення неправильний.';
+                }
+            } else if (exerciseNumber === 4) {
+                const userValue = parseInt(userAnswer.value.trim());
+                isCorrect = Math.abs(userValue) === Math.abs(currentAnswer);
+                if (isCorrect) {
+                    message = '✓ Правильно! Молодець!';
+                } else {
+                    message = `✗ Неправильно, перевірте спільний множник у ${gcfTarget}.`;
+                }
+            } else {
+                const userValue = parseInt(userAnswer.value.trim());
+                isCorrect = userValue === currentAnswer;
+                message = isCorrect ? '✓ Правильно! Молодець!' : exerciseNumber === 6 ? '✗ Неправильно, перевірте добуток елементів головної діагоналі.' : '✗ Неправильно, спробуй ще раз!';
+            }
+            resultMessage.textContent = message;
+            resultMessage.className = `result-message ${isCorrect ? 'correct' : 'wrong'}`;
+            checkAnswerBtn.disabled = true;
+            setTimeout(() => {
+                resultMessage.className = 'result-message';
+                resultMessage.textContent = '';
+                if (isCorrect) {
+                    currentExercise = Math.min(currentExercise + 1, exercises.length + 1);
+                    waitForMathJax(() => displayExercise(currentExercise));
+                } else {
+                    const { original: newMatrix, modified: newModified } = generatePracticeMatrix(exerciseNumber);
+                    practiceOriginalMatrix.innerHTML = matrixToLatex(newMatrix, exerciseNumber !== 3 && exerciseNumber !== 4 && exerciseNumber !== 5 && exerciseNumber !== 6 ? currentDeterminant : exerciseNumber === 5 ? currentDeterminant : null);
+                    if (exerciseNumber !== 3 && exerciseNumber !== 4 && exerciseNumber !== 5 && exerciseNumber !== 6 && practiceTransposedMatrix) {
+                        practiceTransposedMatrix.innerHTML = matrixToLatex(newModified);
+                    }
+                    if (userAnswer) userAnswer.value = '';
+                    if (scalarAnswer) scalarAnswer.value = '';
+                    if (a33Answer) a33Answer.value = '';
+                    checkAnswerBtn.disabled = true;
+                    waitForMathJax(() => {
+                        MathJax.typesetPromise([elements.trainerContent]).catch(err => {
+                            console.error('MathJax re-render error:', err);
+                            elements.trainerContent.innerHTML += '<p id="errorMessage" class="error-message">Помилка: MathJax не вдалося відобразити формули.</p>';
+                            practiceOriginalMatrix.innerHTML = `<pre class="plain-matrix">${matrixToPlainText(newMatrix, exerciseNumber !== 3 && exerciseNumber !== 4 && exerciseNumber !== 5 && exerciseNumber !== 6 ? currentDeterminant : exerciseNumber === 5 ? currentDeterminant : null)}</pre>`;
+                            if (exerciseNumber !== 3 && exerciseNumber !== 4 && exerciseNumber !== 5 && exerciseNumber !== 6 && practiceTransposedMatrix) {
+                                practiceTransposedMatrix.innerHTML = `<pre class="plain-matrix">${matrixToPlainText(newModified)}</pre>`;
+                            }
+                        });
+                    });
+                }
+            }, 1000);
+            
+            waitForMathJax(() => {
+                MathJax.typesetPromise([elements.trainerContent]).catch(err => {
+                    console.error('MathJax re-render error:', err);
+                    elements.trainerContent.innerHTML += '<p id="errorMessage" class="error-message">Помилка: MathJax не вдалося відобразити формули.</p>';
+                    practiceOriginalMatrix.innerHTML = `<pre class="plain-matrix">${matrixToPlainText(original, exerciseNumber !== 3 && exerciseNumber !== 4 && exerciseNumber !== 5 && exerciseNumber !== 6 ? currentDeterminant : exerciseNumber === 5 ? currentDeterminant : null)}</pre>`;
+                    if (exerciseNumber !== 3 && exerciseNumber !== 4 && exerciseNumber !== 5 && exerciseNumber !== 6 && practiceTransposedMatrix) {
+                        practiceTransposedMatrix.innerHTML = `<pre class="plain-matrix">${matrixToPlainText(modified)}</pre>`;
+                    }
+                });
+            });
+        });
+    }
+
+    waitForMathJax(() => {
+        MathJax.typesetPromise([elements.trainerContent]).then(() => {
+            console.log('MathJax re-rendered successfully for trainer content');
+            const mathElements = elements.trainerContent.querySelectorAll('.math-equation');
+            let renderFailed = false;
+            mathElements.forEach(element => {
+                if (!element.querySelector('mjx-container')) {
+                    renderFailed = true;
+                }
+            });
+            if (renderFailed) {
+                console.warn('MathJax failed to render some equations');
+                const errorMessageElement = document.getElementById('errorMessage');
+                if (errorMessageElement) {
+                    errorMessageElement.textContent = 'Помилка: MathJax не вдалося відобразити формули.';
+                }
+                let originalMatrixText = '';
+                if (exerciseNumber === 4) {
+                    originalMatrixText = `| 10 -5 15 |\n| 3 4 1 |\n| 1 -2 -2 | = 5 * | 2 -1 3 |\n| 3 4 1 |\n| 1 -2 -2 |`;
+                } else if (exerciseNumber === 5) {
+                    originalMatrixText = matrixToPlainText(exercise.matrix, exercise.determinant);
+                } else if (exerciseNumber === 6) {
+                    originalMatrixText = matrixToPlainText(exercise.matrix, exercise.determinant);
+                } else {
+                    originalMatrixText = matrixToPlainText(exercise.matrix, exercise.determinant);
+                }
+                document.getElementById('originalMatrix').innerHTML = `<pre class="plain-matrix">${originalMatrixText}</pre>`;
+                if (exerciseNumber !== 4 && exerciseNumber !== 5 && exerciseNumber !== 6) {
+                    document.getElementById('transposedMatrix').innerHTML = `<pre class="plain-matrix">${matrixToPlainText(exerciseNumber === 3 ? exercise.modified : exercise.transposed, exerciseNumber === 3 ? exercise.answer : null)}</pre>`;
+                }
+                practiceOriginalMatrix.innerHTML = `<pre class="plain-matrix">${matrixToPlainText(original, exerciseNumber !== 3 && exerciseNumber !== 4 && exerciseNumber !== 5 && exerciseNumber !== 6 ? currentDeterminant : exerciseNumber === 5 ? currentDeterminant : null)}</pre>`;
+                if (exerciseNumber !== 3 && exerciseNumber !== 4 && exerciseNumber !== 5 && exerciseNumber !== 6 && practiceTransposedMatrix) {
+                    practiceTransposedMatrix.innerHTML = `<pre class="plain-matrix">${matrixToPlainText(modified)}</pre>`;
+                }
+            }
+        }).catch(err => {
+            console.error('MathJax re-render error:', err);
+            const errorMessageElement = document.getElementById('errorMessage');
+            if (errorMessageElement) {
+                errorMessageElement.textContent = 'Помилка: MathJax не вдалося відобразити формули.';
+            }
+            let originalMatrixText = '';
+            if (exerciseNumber === 4) {
+                originalMatrixText = `| 10 -5 15 |\n| 3 4 1 |\n| 1 -2 -2 | = 5 * | 2 -1 3 |\n| 3 4 1 |\n| 1 -2 -2 |`;
+            } else if (exerciseNumber === 5) {
+                originalMatrixText = matrixToPlainText(exercise.matrix, exercise.determinant);
+            } else if (exerciseNumber === 6) {
+                originalMatrixText = matrixToPlainText(exercise.matrix, exercise.determinant);
+            } else {
+                originalMatrixText = matrixToPlainText(exercise.matrix, exercise.determinant);
+            }
+            document.getElementById('originalMatrix').innerHTML = `<pre class="plain-matrix">${originalMatrixText}</pre>`;
+            if (exerciseNumber !== 4 && exerciseNumber !== 5 && exerciseNumber !== 6) {
+                document.getElementById('transposedMatrix').innerHTML = `<pre class="plain-matrix">${matrixToPlainText(exerciseNumber === 3 ? exercise.modified : exercise.transposed, exerciseNumber === 3 ? exercise.answer : null)}</pre>`;
+            }
+            practiceOriginalMatrix.innerHTML = `<pre class="plain-matrix">${matrixToPlainText(original, exerciseNumber !== 3 && exerciseNumber !== 4 && exerciseNumber !== 5 && exerciseNumber !== 6 ? currentDeterminant : exerciseNumber === 5 ? currentDeterminant : null)}</pre>`;
+            if (exerciseNumber !== 3 && exerciseNumber !== 4 && exerciseNumber !== 5 && exerciseNumber !== 6 && practiceTransposedMatrix) {
+                practiceTransposedMatrix.innerHTML = `<pre class="plain-matrix">${matrixToPlainText(modified)}</pre>`;
+            }
+        });
+    });
+}
+
+window.addEventListener('load', () => {
+    waitForMathJax(() => {
+        if (elements.trainerContent && typeof MathJax !== 'undefined' && window.mathJaxReady) {
+            MathJax.typesetPromise([elements.trainerContent]).catch(err => {
+                console.error('MathJax initial render error:', err);
+                const errorMessageElement = document.getElementById('errorMessage');
+                if (errorMessageElement) {
+                    errorMessageElement.textContent = 'Помилка: MathJax не вдалося відобразити формули.';
+                }
+            });
+        }
+    });
+});
+</script>
+</body>
+</html>
