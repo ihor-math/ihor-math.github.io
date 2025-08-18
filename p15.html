@@ -627,6 +627,22 @@
 #resetTrainerBtn:active {
     transform: scale(0.95);
 }
+        .video-container {
+    display: flex;
+    justify-content: center; /* Центрування по горизонталі */
+    align-items: center; /* Центрування по вертикалі */
+    width: 100%; /* Повна ширина контейнера */
+    height: 60vh; /* Висота 60% від висоти вікна */
+    margin: 20px 0; /* Відступи зверху та знизу */
+}
+
+#videoIframe {
+    width: 80%; /* Відео займає 80% ширини контейнера */
+    max-width: 1000px; /* Максимальна ширина для великих екранів */
+    height: 100%; /* Повна висота контейнера */
+    border-radius: 10px; /* Закруглені кути для естетики */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Тінь для глибини */
+}
         @media (max-width: 768px) {
             .title-box {
                 margin-top: 40px;
@@ -711,6 +727,13 @@
     }
     .completion-emoji {
         font-size: 50px;
+    }
+            .video-container {
+        height: 50vh; /* Зменшуємо висоту для планшетів */
+    }
+    #videoIframe {
+        width: 90%; /* Більша ширина на менших екранах */
+        max-width: 600px; /* Обмежуємо максимальну ширину */
     }
         }
         @media (max-width: 480px) {
@@ -817,6 +840,13 @@
                 width: 16px;
                 height: 16px;
             }
+            .video-container {
+        height: 40vh; /* Ще менша висота для мобільних */
+    }
+    #videoIframe {
+        width: 95%; /* Максимальна ширина для маленьких екранів */
+        max-width: 400px; /* Обмежуємо ширину */
+    }
               }
     </style>
 </head>
@@ -1834,4 +1864,5 @@ window.addEventListener('load', () => {
 </script>
 </body>
 </html>
+
 
