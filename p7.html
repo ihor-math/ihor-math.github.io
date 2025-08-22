@@ -813,28 +813,10 @@
     background: rgba(255, 255, 255, 0.1);
     color: #e0e0ff;
     font-size: 16px;
-    width: 90px; /* Зменшено ширину поля для десктопів */
+    width: 100%; /* Поле займає всю ширину input-group */
 }
 
-.sign-btn {
-    display: none; /* Приховуємо кнопки на десктопах */
-    padding: 5px;
-    background: linear-gradient(135deg, #ff00ff, #ff4081);
-    color: #e0e0ff;
-    border: 1px solid rgba(0, 255, 255, 0.4);
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    line-height: 1;
-    width: 25px; /* Зменшено розмір кнопок для мобільних */
-    height: 25px;
-    text-align: center;
-}
 
-.sign-btn:hover {
-    background: linear-gradient(135deg, #ff4081, #ff00ff);
-    transform: scale(1.05);
-}
         #canvasContainer {
             width: 360px;
             height: 360px;
@@ -1149,29 +1131,25 @@
                 align-items: center;
             }
 
-            .calculator-container input {
-                width: clamp(50px, 18vw, 70px);
-                font-size: clamp(12px, 2.5vw, 14px);
-                text-align: center;
-            }
+           .calculator-container input {
+        width: 100%; /* Повна ширина для мобільних */
+        font-size: clamp(12px, 2.5vw, 14px);
+        text-align: center;
+    }
 
-            .calculator-container input::placeholder {
-                color: #a0a0ff;
-                opacity: 0.7;
-            }
+    .calculator-container input::placeholder {
+        color: #a0a0ff;
+        opacity: 0.7;
+    }
 
-            .calculator-container button {
-                padding: 6px 12px;
-                font-size: clamp(12px, 2.5vw, 14px);
-            }
+    .calculator-container button {
+        padding: 6px 12px;
+        font-size: clamp(12px, 2.5vw, 14px);
+    }
 
-            .sign-btn {
-                display: inline-block;
-            }
-
-            .input-group {
-                flex: 1;
-            }
+    .input-group {
+        flex: 1;
+    }
             details:nth-child(2) .scrollable-formula-r,
     details:nth-child(2) .scrollable-formula-phi {
         overflow-x: auto;
@@ -1284,7 +1262,7 @@
         </div>
     </div>
 
-    <div class="navigation-buttons" style="margin: 40px 0; display: flex; gap: 20px; justify-content: center;">
+   <div class="navigation-buttons" style="margin: 40px 0; display: flex; gap: 20px; justify-content: center;">
         <a class="nav-button" href='tema2.html'>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white">
                 <path d="M15 18l-6-6 6-6"/>
@@ -1298,6 +1276,7 @@
             На головну
         </a>
     </div>
+
 
     <div id="modalOverlay"></div>
 
@@ -1481,21 +1460,19 @@
                 <canvas id="vectorCanvas" width="360" height="360"></canvas>
             </div>
             <div class="calculator-container" id="calculatorContainer">
-                <div class="calculator-grid">
-                    <label for="inputA">a = </label>
-                    <div class="input-group">
-                        <input type="number" id="inputA" inputmode="numeric" placeholder="Введіть число" aria-label="Введіть значення a">
-                        <button class="sign-btn" data-input="inputA" aria-label="Змінити знак для a">−</button>
-                    </div>
-                    <label for="inputB">b = </label>
-                    <div class="input-group">
-                        <input type="number" id="inputB" inputmode="numeric" placeholder="Введіть число" aria-label="Введіть значення b">
-                        <button class="sign-btn" data-input="inputB" aria-label="Змінити знак для b">−</button>
-                    </div>
-                </div>
-                <button id="calculateBtn" aria-label="Порахувати значення">Порахувати</button>
-                <div id="calculatorResult"></div>
-            </div>
+   <div class="calculator-grid">
+    <label for="inputA">a = </label>
+    <div class="input-group">
+        <input type="text" id="inputA" inputmode="text" pattern="-?[0-9]*\.?[0-9]*" placeholder="Введіть число (наприклад, -3)" aria-label="Введіть значення a">
+    </div>
+    <label for="inputB">b = </label>
+    <div class="input-group">
+        <input type="text" id="inputB" inputmode="text" pattern="-?[0-9]*\.?[0-9]*" placeholder="Введіть число (наприклад, -3)" aria-label="Введіть значення b">
+    </div>
+</div>
+    <button id="calculateBtn" aria-label="Порахувати значення">Порахувати</button>
+    <div id="calculatorResult"></div>
+</div>
             <div id="trainerOptions" class="trainer-options"></div>
             <button id="submitAnswer" class="trainer-submit" aria-label="Перевірити відповідь">Перевірити</button>
             <div id="toastContainer"></div>
@@ -1844,22 +1821,19 @@ function getQuadrant(a, b) {
     return 'початок координат';
 }
 
-document.querySelectorAll('.sign-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const inputId = btn.dataset.input;
-        const input = document.getElementById(inputId);
-        const value = parseFloat(input.value) || 0;
-        const newValue = -Math.abs(value);
-        const selectionStart = input.selectionStart;
-        const selectionEnd = input.selectionEnd;
-        input.value = newValue;
-        input.setSelectionRange(selectionStart, selectionEnd);
-    });
-});
 
 calculateBtn.addEventListener('click', () => {
-    let a = parseFloat(inputA.value);
-    let b = parseFloat(inputB.value);
+    const aInput = inputA.value.trim();
+    const bInput = inputB.value.trim();
+
+    // Перевірка, чи введені значення є валідними числами
+    if (!/^-?\d*\.?\d*$/.test(aInput) || !/^-?\d*\.?\d*$/.test(bInput)) {
+        calculatorResult.innerHTML = 'Будь ласка, введіть коректні числові значення для a та b (наприклад, -3 або 4).';
+        return;
+    }
+
+    let a = parseFloat(aInput);
+    let b = parseFloat(bInput);
 
     if (isNaN(a) || isNaN(b)) {
         calculatorResult.innerHTML = 'Будь ласка, введіть числові значення для a та b.';
@@ -1948,7 +1922,6 @@ calculateBtn.addEventListener('click', () => {
     typesetMathJax();
     isVectorCorrect = true;
 });
-
 function showCompletionMessage() {
     document.querySelector('.question-indicators').style.display = 'none';
     document.getElementById('trainerQuestion').style.display = 'none';
@@ -2223,7 +2196,7 @@ function generateQuestion() {
      if (currentQuestion === 1) {
                 const r = getRandomModule();
                 const angle = getRandomAngle();
-                questionText = `Тригонометрична форма комплексного числа, яке має модуль \\( r = ${r} \\) і головне значення аргументу \\( \\phi = ${angle.deg}^\\circ \\), має вигляд:`;
+                questionText = `Тригонометрична форма комплексного числа, яке має модуль \\( r = ${r} \\) і головне значення аргументу \\( φ = ${angle.deg}^\\circ \\), має вигляд:`;
 
                 const isNegative = angle.deg.startsWith('-');
                 const positiveDeg = isNegative ? angle.deg.slice(1) : angle.deg;
