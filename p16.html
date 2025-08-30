@@ -43,7 +43,7 @@
         .title-box h1 {
             margin: 0;
             font-size: 1.75rem;
-            color: var(--text-color);
+            color: #fffff0;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
             font-family: 'Lora', serif;
         }
@@ -86,7 +86,7 @@
         }
         .section h2 {
             font-size: 1.25rem;
-            color: var(--text-color);
+            color: #fffff0;
             margin: 0;
             font-family: 'Lora', serif;
         }
@@ -103,7 +103,7 @@
             display: flex;
             align-items: center;
             background: var(--bg-gradient);
-            color: var(--text-color);
+            color: #fbec5d;
             text-decoration: none;
             padding: 12px 24px;
             border-radius: 12px;
@@ -116,7 +116,7 @@
         }
         .nav-button:hover {
             background: var(--bg-hover);
-            color: var(--text-color);
+            color: #7fff00;
             transform: scale(1.05);
         }
         .nav-button svg {
@@ -196,7 +196,7 @@
         }
         .tab-button {
             background: var(--bg-gradient);
-            color: var(--text-color);
+            color: #ccff00;
             border: 1px solid rgba(163, 166, 139, 0.3);
             border-radius: 8px;
             padding: 10px 20px;
@@ -249,7 +249,7 @@
         }
         #theoryModal .modal-content p {
             text-align: justify;
-            color: var(--text-color);
+            color: #ffffca;
             font-size: 1.125rem;
             line-height: 1.6;
             white-space: normal;
@@ -321,7 +321,7 @@
         .flashcard.flipped .flashcard-inner {
             transform: rotateY(180deg);
         }
-        .flashcard-front, .flashcard-back {
+        .flashcard-front {
             position: absolute;
             width: 100%;
             height: 100%;
@@ -332,8 +332,22 @@
             padding: 20px;
             border-radius: 15px;
             box-sizing: border-box;
-            background: var(--bg-gradient);
-            color: var(--text-color);
+            background: #116062;
+            color: #ffffff;
+        }
+          .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            border-radius: 15px;
+            box-sizing: border-box;
+            background: #3a3a3a;
+            color: #ffffff;
         }
         .flashcard-back {
             transform: rotateY(180deg);
@@ -378,7 +392,7 @@
 .question-circle h3 {
     font-family: 'Lora', serif;
     font-size: clamp(1.0rem, 2.8vw, 1.2rem);
-    color: var(--math-color);
+    color: #ffff00;
     margin: 0;
     padding: 0;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
@@ -388,7 +402,7 @@
         #questionText {
             font-family: 'Lora', serif;
             font-size: 1.125rem;
-            color: var(--text-color);
+            color: #fffff0;
             line-height: 1.6;
             margin: 10px 0;
         }
@@ -398,26 +412,32 @@
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         }
         .answer-options {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin: 20px 0;
-            justify-items: center;
-        }
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 20px 0;
+    justify-items: center;
+    position: relative;
+    z-index: 5; /* Контейнер нижче кнопок, але вище фону */
+}
         .answer-button {
-            background: #b7410e;
-            color: var(--text-color);
-            border: none;
-            border-radius: 8px;
-            padding: 12px 24px;
-            font-family: 'Roboto', sans-serif;
-            font-size: 1.25rem;
-            cursor: pointer;
-            transition: background 0.3s ease, transform 0.2s ease;
-            width: 100%;
-            max-width: 300px;
-            text-align: center;
-        }
+    background: #b7410e;
+    color: var(--text-color);
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    width: 100%;
+    max-width: 300px;
+    text-align: center;
+    position: relative; /* Додаємо для чіткого позиціонування */
+    touch-action: manipulation; /* Забезпечує коректну обробку сенсорних подій */
+    -webkit-tap-highlight-color: transparent; /* Видаляє підсвітку при торканні */
+    z-index: 10; /* Гарантуємо, що кнопки вище за інші елементи */
+}
         .answer-button:hover:not(:disabled) {
             background: #853919;
             transform: scale(1.02);
@@ -595,7 +615,7 @@
         .video-card h3 {
             font-size: clamp(16px, 2.5vw, 18px);
             font-weight: 600;
-            color: var(--text-color);
+            color: #ffff00;
         }
         .video-player-container {
             max-width: 720px;
@@ -640,12 +660,27 @@
             .video-card { width: 200px; }
         }
         @media (max-width: 480px) {
+    .answer-options {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    .answer-button {
+        font-size: 1rem; /* Зменшуємо розмір шрифту для мобільних */
+        padding: 10px 20px; /* Зменшуємо відступи */
+    }
+}
+
+/* Забезпечуємо, що MathJax-елементи не заважають */
+.answer-button mjx-container {
+    pointer-events: none; /* Вимикаємо обробку подій для MathJax-контейнерів */
+}
+        @media (max-width: 480px) {
             .title-box { margin-top: 20px; padding: 10px 15px; }
             .title-box h1 { font-size: 1.25rem; }
             .section { width: 90%; height: 150px; }
             .section img { width: 50px; height: 50px; }
             .section h2 { font-size: 1rem; }
-            .video-card { width: 180px; }
+            
              #theoryModal .modal-content h3 {
             font-family: 'Lora', serif;
             font-size: 1.5rem;
@@ -699,6 +734,21 @@
             font-size: 1.1rem !important;
             
         }
+        .video-card {
+            width: 200px;
+            height: 150px;
+           
+        }
+                 
+        .video-player-container {
+            max-width: 360px;
+           
+        }
+        .video-player-container iframe {
+            
+            height: 220px;
+            
+        }
               
         }
     </style>
@@ -732,7 +782,7 @@
             </svg>
             До теми 4
         </a>
-        <a class="nav-button" href='index.html'>
+       <a class="nav-button" href='index.html'>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                 <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
             </svg>
@@ -1615,14 +1665,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    optionsContainer.addEventListener('click', e => {
-        if (isProcessingAnswer || !e.target.classList.contains('answer-button')) return;
-        e.stopPropagation();
-        document.querySelectorAll('.answer-button').forEach(btn => btn.classList.remove('selected'));
-        e.target.classList.add('selected');
-        submitAnswerBtn.disabled = false;
-        submitAnswerBtn.classList.add('active');
-    });
+   optionsContainer.addEventListener('click', handleAnswerSelection);
+optionsContainer.addEventListener('touchstart', handleAnswerSelection, { passive: false });
+
+function handleAnswerSelection(e) {
+    if (isProcessingAnswer || !e.target.classList.contains('answer-button')) {
+        console.log('Event ignored:', { isProcessing: isProcessingAnswer, hasAnswerButton: e.target.classList.contains('answer-button'), target: e.target });
+        return;
+    }
+    e.preventDefault(); // Запобігаємо стандартним подіям (наприклад, прокрутці)
+    e.stopPropagation();
+    console.log('Selected button:', e.target, 'Value:', e.target.dataset.value); // Дебагінг
+    document.querySelectorAll('.answer-button').forEach(btn => btn.classList.remove('selected'));
+    e.target.classList.add('selected');
+    submitAnswerBtn.disabled = false;
+    submitAnswerBtn.classList.add('active');
+}
 
     submitAnswerBtn.addEventListener('click', e => {
         if (isProcessingAnswer || submitAnswerBtn.disabled) return;
@@ -1706,4 +1764,3 @@ document.addEventListener('DOMContentLoaded', () => {
     </script>
 </body>
 </html>
-
