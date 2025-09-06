@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Тема 6: Системи лінійних алгебраїчних рівнянь</title>
+  <style>
+    body {
+      background: linear-gradient(135deg, #1a103d, #5b21b6);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #f1f5f9;
+      overflow-x: hidden;
+    }
+
+    .header-box {
+      background: linear-gradient(90deg, #2e1065, #8b5cf6);
+      color: #ffffff;
+      padding: 30px 20px;
+      text-align: center;
+      font-size: 26px;
+      font-weight: 700;
+      border-bottom: 4px solid #a78bfa;
+      border-radius: 0 0 20px 20px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+      user-select: none;
+      position: relative;
+      z-index: 10;
+    }
+
+    .header-box::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 4px;
+      background: #a78bfa;
+      border-radius: 2px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 20px;
+      background: rgba(30, 16, 101, 0.7);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .plan-title {
+      font-size: 28px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 30px;
+      color: #d8b4fe;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+      user-select: none;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+    }
+
+    .card {
+      border-radius: 16px;
+      padding: 22px 20px;
+      color: #ffffff;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      user-select: none;
+      height: 150px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      touch-action: manipulation;
+      overflow: hidden;
+      background: linear-gradient(135deg, var(--card-start), var(--card-end));
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .card:hover::before,
+    .card:active::before {
+      opacity: 1;
+    }
+
+    .card a {
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 10;
+    }
+
+    .card-number {
+      font-size: 26px;
+      font-weight: bold;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: #f1f5f9;
+      transition: color 0.3s ease;
+    }
+
+    .icon-box {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s ease, transform 0.3s ease;
+      background: var(--icon-bg);
+    }
+
+    .card:nth-child(1) { --card-start: #4c1d95; --card-end: #a78bfa; --icon-bg: #ddd6fe; }
+    .card:nth-child(2) { --card-start: #831843; --card-end: #f472b6; --icon-bg: #fce7f3; }
+    .card:nth-child(3) { --card-start: #134e4a; --card-end: #2dd4bf; --icon-bg: #ccfbf1; }
+    .card:nth-child(4) { --card-start: #6d28d9; --card-end: #c4b5fd; --icon-bg: #ede9fe; }
+    .card:nth-child(5) { --card-start: #a16207; --card-end: #facc15; --icon-bg: #fef9c3; }
+
+    .icon-svg {
+      width: 22px;
+      height: 22px;
+      fill: #f1f5f9;
+      transition: fill 0.3s ease;
+    }
+
+    .card:hover .icon-box,
+    .card:active .icon-box {
+      background: #a78bfa;
+      transform: rotate(45deg);
+    }
+
+    .card:hover .icon-svg,
+    .card:active .icon-svg {
+      fill: #1a103d;
+      transform: rotate(-45deg);
+    }
+
+    .card:hover .card-number,
+    .card:active .card-number {
+      color: #a78bfa;
+    }
+
+    .card h3 {
+      font-size: 21px;
+      margin: 0;
+      font-weight: 600;
+      user-select: none;
+      color: #f1f5f9;
+      transition: color 0.3s ease;
+      text-decoration: none;
+      line-height: 1.2;
+    }
+
+    .card:hover h3,
+    .card:active h3 {
+      color: #ffff00;
+    }
+
+    .card-content {
+      margin-top: 20px;
+      font-size: 16px;
+      color: #ffffff;
+      text-align: left;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+    }
+
+    .navigation-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin: 40px auto;
+      max-width: 1000px;
+      padding: 0 20px;
+    }
+
+    .nav-button {
+      display: flex;
+      align-items: center;
+      background: linear-gradient(90deg, #2e1065, #4c1d95);
+      color: #d8b4fe;
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(167, 139, 250, 0.2);
+    }
+
+    .nav-button:hover {
+      background: linear-gradient(90deg, #4c1d95, #6d28d9);
+      color: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .nav-button svg {
+      margin-right: 8px;
+      fill: currentColor;
+      width: 20px;
+      height: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 20px auto;
+        width: 90%;
+      }
+      .cards {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      .card {
+        padding: 15px;
+        height: 120px;
+      }
+      .header-box {
+        font-size: 22px;
+        padding: 25px 15px;
+      }
+      .plan-title {
+        font-size: 22px;
+        margin-bottom: 20px;
+      }
+      .card h3 {
+        font-size: 18px;
+      }
+      .card-number {
+        font-size: 22px;
+      }
+      .nav-button {
+        font-size: 16px;
+        padding: 10px 20px;
+      }
+      .navigation-buttons {
+        margin: 20px auto;
+        gap: 15px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .container {
+        margin: 10px auto;
+        padding: 15px;
+      }
+      .header-box {
+        font-size: 20px;
+        padding: 20px 10px;
+      }
+      .plan-title {
+        font-size: 20px;
+        margin-bottom: 15px;
+      }
+      .card {
+        padding: 12px;
+        height: 100px;
+      }
+      .card h3 {
+        font-size: 16px;
+      }
+      .card-number {
+        font-size: 20px;
+      }
+      .icon-box {
+        width: 32px;
+        height: 32px;
+      }
+      .icon-svg {
+        width: 18px;
+        height: 18px;
+      }
+      .nav-button {
+        font-size: 14px;
+        padding: 8px 16px;
+      }
+      .navigation-buttons {
+        margin: 15px auto;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header-box">
+    Тема 6. Системи лінійних алгебраїчних рівнянь
+  </div>
+
+  <div class="container">
+    <div class="plan-title">План вивчення:</div>
+    <div class="cards">
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p22') }}" aria-label="Перейти до Системи лінійних алгебраїчних рівнянь. Основні поняття">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/>
+              </svg>
+            </div>
+            22
+          </div>
+          <h3>Системи лінійних алгебраїчних рівнянь. Основні поняття</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
+
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p23') }}" aria-label="Перейти до Розв’язування систем лінійних алгебраїчних рівнянь за допомогою методу Крамера">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/>
+              </svg>
+            </div>
+            23
+          </div>
+          <h3>Розв’язування систем лінійних алгебраїчних рівнянь за допомогою методу Крамера</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
+
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p24') }}" aria-label="Перейти до Розв’язування систем лінійних алгебраїчних рівнянь матричним методом">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/>
+              </svg>
+            </div>
+            24
+          </div>
+          <h3>Розв’язування систем лінійних алгебраїчних рівнянь матричним методом</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
+
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p25') }}" aria-label="Перейти до Метод Гауса, його застосування до розв’язування систем лінійних алгебраїчних рівнянь">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/>
+              </svg>
+            </div>
+            25
+          </div>
+          <h3>Метод Гауса, його застосування до розв’язування систем лінійних алгебраїчних рівнянь</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
+
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p26') }}" aria-label="Перейти до Критерій сумісності системи лінійних алгебраїчних рівнянь">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/>
+              </svg>
+            </div>
+            26
+          </div>
+          <h3>Критерій сумісності системи лінійних алгебраїчних рівнянь</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="navigation-buttons">
+    <a class="nav-button" href="{{ url_for('modul2') }}">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+      До змістового модуля 2
+    </a>
+
+    <a class="nav-button" href="{{ url_for('home') }}">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+      </svg>
+      На головну
+    </a>
+  </div>
+</body>
+</html>
