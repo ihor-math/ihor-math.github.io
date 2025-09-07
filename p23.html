@@ -555,7 +555,7 @@
     font-size: clamp(1rem, 2.2vw, 1.1rem);
     font-family: 'Roboto', sans-serif;
     width: 100%;
-    max-width: 200px;
+    max-width: 180px;
     text-align: center;
     box-sizing: border-box;
 }
@@ -567,63 +567,7 @@
 .answer-input::placeholder {
     color: rgba(255, 255, 255, 0.6);
 }
-    @media (max-width: 768px) {
-    .trainer-options.question-2 {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-        max-width: 100%;
-    }
-    .trainer-options.question-2 .trainer-option {
-        width: 100%;
-        max-width: 500px; /* Обмежуємо максимальну ширину для зручності */
-        min-height: 80px;
-        font-size: clamp(16px, 2.8vw, 18px);
-    }
-}
-    @media (max-width: 480px) {
-    .trainer-options.question-2 {
-        gap: 10px;
-    }
-    .trainer-options.question-2 .trainer-option {
-        font-size: clamp(14px, 2.5vw, 16px);
-        min-height: 70px;
-        padding: 10px;
-    }
-}
-@media (max-width: 768px) {
-    .trainer-input {
-        max-width: 250px;
-    }
-    .answer-input {
-        font-size: clamp(0.9rem, 2vw, 1rem);
-        max-width: 150px;
-    }
-}
-@media (max-width: 480px) {
-    .trainer-input {
-        max-width: 200px;
-    }
-    .answer-input {
-        font-size: clamp(0.8rem, 1.8vw, 0.9rem);
-        max-width: 120px;
-    }
-}
-@media (max-width: 768px) {
-    .question-circle {
-        width: clamp(80px, 15vw, 100px);
-        height: clamp(80px, 15vw, 100px);
-        font-size: clamp(1rem, 2.5vw, 1.25rem);
-    }
-}
-@media (max-width: 480px) {
-    .question-circle {
-        width: clamp(100px, 14vw, 120px);
-        height: clamp(100px, 14vw, 120px);
-        font-size: clamp(0.9rem, 2.2vw, 1rem);
-    }
-}
-        #questionText {
+            #questionText {
             font-family: 'Lora', serif;
             font-size: clamp(1.2rem, 3vw, 1.3rem);
             color: #fffff0;
@@ -742,26 +686,110 @@
     max-width: 80px;
     font-size: clamp(1rem, 2vw, 1.1rem);
 }
-
-@media (max-width: 768px) {
-    .system-equation {
-        font-size: clamp(1rem, 2.2vw, 1.1rem);
-    }
-    .system-equation .answer-input {
-        width: 60px;
-        font-size: clamp(0.9rem, 1.8vw, 1rem);
-    }
+            /* Для всіх пристроїв */
+#systemEquations.trainer-options.question-4,
+#systemEquations.trainer-options.question-5 {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 100%;
+    align-items: center;
 }
 
-@media (max-width: 480px) {
-    .system-equation {
-        font-size: clamp(0.9rem, 2vw, 1rem);
-    }
-    .system-equation .answer-input {
-        width: 50px;
-        font-size: clamp(0.8rem, 1.6vw, 0.9rem);
-    }
+.trainer-inputs {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
+
+.trainer-input {
+    width: 100%;
+    max-width: 600px;
+    min-height: 60px;
+    box-sizing: border-box;
+}
+
+.input-row {
+    display: flex;
+    flex-direction: column !important; /* Примусово колонка */
+    align-items: flex-start;
+    gap: 5px;
+    width: 100%;
+}
+
+.label-text {
+    font-family: 'Lora', serif;
+    font-size: clamp(1.1rem, 2.5vw, 1.2rem);
+    color: var(--math-color);
+    text-align: left;
+}
+
+.latex-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.latex-text {
+    font-family: 'Lora', serif;
+    font-size: clamp(1.1rem, 2.5vw, 1.2rem);
+    color: var(--math-color);
+    white-space: nowrap;
+}
+
+.latex-input .answer-input {
+    background: #34495E;
+    color: var(--text-color);
+    border: 2px solid rgba(167, 139, 250, 0.5);
+    border-radius: 8px;
+    padding: 8px; /* Збільшено з 6px для пропорційності */
+    font-size: clamp(1rem, 2.2vw, 1.1rem); /* Збільшено для кращої читабельності */
+    font-family: 'Roboto', sans-serif;
+    max-width: 170px; /* Збільшено з 120px */
+    text-align: center;
+    box-sizing: border-box;
+}
+
+
+.latex-input .answer-input:focus {
+    outline: none;
+    border-color: #facc15;
+    background: #4a5568;
+    animation: none; /* Видаляємо можливі анімації */
+}
+
+.latex-input .answer-input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Контроль MathJax */
+.latex-text mjx-container {
+    display: inline-block !important;
+    vertical-align: middle !important;
+    margin: 0 !important;
+}
+
+
+/* Видаляємо конфліктні стилі */
+.system-equation .answer-input {
+    display: none; /* Або видалити, якщо не використовується */
+}
+
+/* Перекриваємо старі стилі для .input-row */
+#systemEquations.trainer-options.question-4 .input-row,
+#systemEquations.trainer-options.question-5 .input-row {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+}
+
+/* Видаляємо можливі анімації блимання */
+.label-text, .latex-text, .latex-input .answer-input {
+    animation: none !important;
+    transition: none !important;
+}
+    
 
 /* Оновлені стилі для .completion-message */
 .completion-message {
@@ -951,107 +979,189 @@
             background: linear-gradient(135deg, #E74C3C, #ff6b6b);
             border-color: #facc15;
         }
-            @media (max-width: 768px) {
+           
+
+       /* Об'єднані медіа-запити для max-width: 768px */
+@media (max-width: 768px) {
+    .title-box {
+        margin-top: 40px;
+        padding: 15px 20px;
+    }
+
+    .title-box h1 {
+        font-size: 1.5rem;
+    }
+
+    .section-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .section {
+        width: 80%;
+        height: 180px;
+    }
+
+    .section h2 {
+        font-size: 1.125rem;
+    }
+
+    .nav-button {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+    }
+
+    .tab-button {
+        font-size: 1rem;
+        padding: 8px 16px;
+    }
+
+    .tab-content {
+        padding: 15px;
+    }
+
+    .modal {
+        top: 2%;
+        left: 2%;
+        width: 96%;
+        height: 96%;
+    }
+
+    .trainer-container {
+        width: 95%;
+        padding: 4vw;
+    }
+
+    .trainer-options.question-2 {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 15px;
+        max-width: 100%;
+        align-items: center;
+    }
+
+    .trainer-options.question-2 .trainer-option {
+        width: 100%;
+        max-width: 500px;
+        min-height: 80px;
+        font-size: clamp(16px, 2.8vw, 18px);
+        box-sizing: border-box;
+        text-align: center;
+    }
+
+    .trainer-input {
+        max-width: 250px;
+    }
+
+    .answer-input {
+        font-size: clamp(0.9rem, 2vw, 1rem);
+        max-width: 150px;
+    }
+
+    .question-circle {
+        width: clamp(80px, 15vw, 100px);
+        height: clamp(80px, 15vw, 100px);
+        font-size: clamp(1rem, 2.5vw, 1.25rem);
+    }
+
+    .video-card-container {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .video-card {
+        width: 260px;
+        height: 160px;
+        margin: 5px;
+    }
+
+    .video-card img {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 6px;
+    }
+
+    .video-player-container {
+        width: 80vw;
+        max-width: 600px;
+        aspect-ratio: 16 / 9;
+    }
+
+    .video-card h3 {
+        font-size: clamp(14px, 2.5vw, 16px);
+    }
+
+    .flashcard {
+        height: 180px;
+    }
+
+    .flashcard-front p,
+    .flashcard-back p {
+        font-size: 1.125rem;
+    }
+
+    .flashcard-front,
+    .flashcard-back {
+        padding: 15px;
+    }
+
     .flashcard.flashcard-2 {
         height: auto;
         min-height: 200px;
     }
+
     .flashcard.flashcard-2 .flashcard-inner {
-        height: 100%; /* Гарантуємо, що flashcard-inner займає всю висоту flashcard */
+        height: 100%;
         min-height: 200px;
     }
+
     .flashcard.flashcard-2 .flashcard-back {
         padding: 15px;
         overflow-y: auto;
         max-height: 200px;
-        height: 100%; /* Гарантуємо, що flashcard-back займає всю висоту flashcard-inner */
-        background: #8E44AD; /* Явно вказуємо фон */
+        height: 100%;
+        background: #8E44AD;
     }
+
     .flashcard.flashcard-2 .flashcard-back p {
         font-size: 0.9rem;
         line-height: 1.4;
         margin: 0;
         text-align: justify;
     }
-}
 
-@media (max-width: 480px) {
-    .flashcard.flashcard-2 {
-        height: auto;
-        min-height: 180px;
+    .answer-select {
+        font-size: 1rem;
+        width: 120px;
     }
-    .flashcard.flashcard-2 .flashcard-inner {
-        height: 100%;
-        min-height: 180px;
+
+    .answer-options label {
+        font-size: 1rem;
     }
-    .flashcard.flashcard-2 .flashcard-back {
-        padding: 10px;
-        overflow-y: auto;
-        max-height: 180px;
-        height: 100%;
-        background: #8E44AD;
+
+    #questionText {
+        font-size: clamp(1.25rem, 3vw, 1.5rem);
     }
-    .flashcard.flashcard-2 .flashcard-back p {
-        font-size: 0.8rem;
-        line-height: 1.3;
-        margin: 0;
+
+    #questionText .MathJax,
+    #questionText mjx-container,
+    #questionText mjx-math,
+    #questionText mjx-mrow {
+        font-size: clamp(1.1rem, 2.5vw, 1.3rem) !important;
     }
-}
-        @media (max-width: 768px) {
-            .title-box { margin-top: 40px; padding: 15px 20px; }
-            .title-box h1 { font-size: 1.5rem; }
-            .section-container { flex-direction: column; align-items: center; gap: 20px; }
-            .section { width: 80%; height: 180px; }
-            .section h2 { font-size: 1.125rem; }
-            .nav-button { font-size: 0.9rem; padding: 8px 16px; }
-            .tab-button { font-size: 1rem; padding: 8px 16px; }
-            .tab-content { padding: 15px; }
-            .modal { top: 2%; left: 2%; width: 96%; height: 96%; }
-            .trainer-container { width: 95%; padding: 4vw; }
-            .video-card-container {
-                flex-direction: column;
-                gap: 15px;
-                padding: 15px;
-            }
-            .video-card {
-                width: 260px;
-                height: 160px;
-                margin: 5px;
-            }
-            .video-card img {
-                width: 40px;
-                height: 40px;
-                margin-bottom: 6px;
-            }
-            .video-player-container {
-                width: 80vw;
-                max-width: 600px;
-                aspect-ratio: 16 / 9;
-            }
-            .video-card h3 {
-                font-size: clamp(14px, 2.5vw, 16px);
-            }
-            .flashcard-front p { font-size: 1.125rem; }
-            .flashcard-back p { font-size: 1rem; }
-            .flashcard { height: 180px; }
-            .flashcard-front, .flashcard-back { padding: 15px; }
-            .answer-select { font-size: 1rem; width: 120px; }
-            .answer-options label { font-size: 1rem; }
-            .question-circle {
-                width: clamp(80px, 15vw, 100px);
-                height: clamp(80px, 15vw, 100px);
-                font-size: clamp(1rem, 2.5vw, 1.25rem);
-            }
-            #questionText {
-                font-size: clamp(1.25rem, 3vw, 1.5rem);
-            }
-            #questionText .MathJax,
-            #questionText mjx-container,
-            #questionText mjx-math,
-            #questionText mjx-mrow {
-                font-size: clamp(1.1rem, 2.5vw, 1.3rem) !important;
-            }
-            mjx-container[jax="CHTML"][display="true"] {
+
+    .system-equation {
+        font-size: clamp(1rem, 2.2vw, 1.1rem);
+    }
+
+    .system-equation .answer-input {
+        width: 60px;
+        font-size: clamp(0.9rem, 1.8vw, 1rem);
+    }
+
+    mjx-container[jax="CHTML"][display="true"] {
         display: block !important;
         text-align: center !important;
         overflow-x: auto !important;
@@ -1059,93 +1169,109 @@
         white-space: nowrap;
         max-width: 100%;
         margin: 0 auto !important;
-        padding: 8px; /* Збільшено для кращої видимості */
-        -webkit-overflow-scrolling: touch; /* Плавна прокрутка на iOS */
-        scrollbar-width: thin; /* Для Firefox */
-        scrollbar-color: #f06292 rgba(167, 139, 250, 0.2); /* Колір смуги прокрутки */
+        padding: 8px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        scrollbar-color: #f06292 rgba(167, 139, 250, 0.2);
     }
 
     mjx-container[jax="CHTML"][display="true"]::-webkit-scrollbar {
-        height: 10px; /* Збільшено висоту смуги прокрутки для кращої видимості */
+        height: 10px;
     }
 
     mjx-container[jax="CHTML"][display="true"]::-webkit-scrollbar-track {
-        background: rgba(167, 139, 250, 0.2); /* Прозорий фон треку */
+        background: rgba(167, 139, 250, 0.2);
         border-radius: 10px;
         margin: 5px;
     }
 
     mjx-container[jax="CHTML"][display="true"]::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, #d81b60, #f06292); /* Градієнт для бігунка */
+        background: linear-gradient(135deg, #d81b60, #f06292);
         border-radius: 10px;
         border: 2px solid rgba(167, 139, 250, 0.3);
     }
 
     mjx-container[jax="CHTML"][display="true"]::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(135deg, #f06292, #d81b60); /* Зміна при наведенні */
+        background: linear-gradient(135deg, #f06292, #d81b60);
     }
-        }
-        @media (max-width: 480px) {
-            .title-box { margin-top: 20px; padding: 10px 15px; }
-            .title-box h1 { font-size: 1.25rem; }
-            .section { width: 90%; height: 150px; }
-            .section img { width: 50px; height: 50px; }
-            .section h2 { font-size: 1rem; }
-            .video-card-container {
-                gap: 10px;
-                padding: 10px;
-            }
-            .video-card {
-                width: 90%;
-                max-width: 260px;
-                height: 140px;
-                margin: 5px;
-            }
-            .video-card img {
-                width: 30px;
-                height: 30px;
-                margin-bottom: 5px;
-            }
-            .video-card h3 {
-                font-size: clamp(12px, 2.5vw, 14px);
-            }
-            .video-player-container {
-                width: 80vw;
-                max-width: 400px;
-                aspect-ratio: 16 / 9;
-            }
-            #theoryModal .modal-content h3 { font-size: 1.25rem; }
-            .example-title { font-size: 1.0rem; }
-            .example-solution { font-size: 1.0rem; }
-            .MathJax, mjx-container, mjx-math, mjx-mrow { font-size: 1.0rem !important; }
-            .question-circle { width: clamp(80px, 15vw, 100px); height: clamp(80px, 15vw, 100px); }
-            .question-circle h3 { font-size: clamp(0.9rem, 2.5vw, 1.0rem); }
-            #questionText { font-size: 1.0rem; }
-            #questionText .MathJax, #questionText mjx-container, #questionText mjx-math, #questionText mjx-mrow { font-size: 1.1rem !important; }
-            .answer-button { font-size: 1.0rem; }
-            .answer-select { font-size: 0.9rem; width: 100px; }
-            .answer-options label { font-size: 0.9rem; }
-            #systemText { font-size: 0.9rem; }
-            .question-circle {
-                width: clamp(70px, 14vw, 90px);
-                height: clamp(70px, 14vw, 90px);
-                font-size: clamp(0.9rem, 2.2vw, 1rem);
-            }
-            #questionText {
-                font-size: clamp(1rem, 2.5vw, 1.25rem);
-            }
-            #questionText .MathJax,
-            #questionText mjx-container,
-            #questionText mjx-math,
-            #questionText mjx-mrow {
-                font-size: clamp(0.9rem, 2.2vw, 1.1rem) !important;
-            }
-        .trainer-options.question-2 {
+}
+
+/* Об'єднані медіа-запити для max-width: 480px */
+@media (max-width: 480px) {
+    .title-box {
+        margin-top: 20px;
+        padding: 10px 15px;
+    }
+
+    .title-box h1 {
+        font-size: 1.25rem;
+    }
+
+    .section {
+        width: 90%;
+        height: 150px;
+    }
+
+    .section img {
+        width: 50px;
+        height: 50px;
+    }
+
+    .section h2 {
+        font-size: 1rem;
+    }
+
+    .video-card-container {
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .video-card {
+        width: 90%;
+        max-width: 260px;
+        height: 140px;
+        margin: 5px;
+    }
+
+    .video-card img {
+        width: 30px;
+        height: 30px;
+        margin-bottom: 5px;
+    }
+
+    .video-card h3 {
+        font-size: clamp(12px, 2.5vw, 14px);
+    }
+
+    .video-player-container {
+        width: 80vw;
+        max-width: 400px;
+        aspect-ratio: 16 / 9;
+    }
+
+    #theoryModal .modal-content h3 {
+        font-size: 1.25rem;
+    }
+
+    .example-title {
+        font-size: 1.0rem;
+    }
+
+    .example-solution {
+        font-size: 1.0rem;
+    }
+
+    .MathJax, mjx-container, mjx-math, mjx-mrow {
+        font-size: 1.0rem !important;
+    }
+
+    .trainer-options.question-2 {
         display: flex;
         flex-direction: column;
         gap: 10px;
         max-width: 100%;
     }
+
     .trainer-options.question-2 .trainer-option {
         width: 100%;
         max-width: 400px;
@@ -1153,7 +1279,100 @@
         font-size: clamp(14px, 2.5vw, 16px);
         padding: 10px;
     }
-        }
+
+    .trainer-input {
+        max-width: 200px;
+    }
+
+    .answer-input {
+        font-size: clamp(0.8rem, 1.8vw, 0.9rem);
+        max-width: 120px;
+    }
+
+    .question-circle {
+        width: clamp(70px, 14vw, 90px);
+        height: clamp(70px, 14vw, 90px);
+        font-size: clamp(0.9rem, 2.2vw, 1rem);
+    }
+
+    .question-circle h3 {
+        font-size: clamp(0.9rem, 2.5vw, 1.0rem);
+    }
+
+    #questionText {
+        font-size: clamp(1rem, 2.5vw, 1.25rem);
+    }
+
+    #questionText .MathJax,
+    #questionText mjx-container,
+    #questionText mjx-math,
+    #questionText mjx-mrow {
+        font-size: clamp(0.9rem, 2.2vw, 1.1rem) !important;
+    }
+
+    .answer-button {
+        font-size: 1.0rem;
+    }
+
+    .answer-select {
+        font-size: 0.9rem;
+        width: 100px;
+    }
+
+    .answer-options label {
+        font-size: 0.9rem;
+    }
+
+    #systemText {
+        font-size: 0.9rem;
+    }
+.flashcard {
+        height: 170px;
+    }
+
+    .flashcard-front p,
+    .flashcard-back p {
+        font-size: 1.1rem;
+    }
+
+    .flashcard-front,
+    .flashcard-back {
+        padding: 8px;
+    }
+
+    .flashcard.flashcard-2 {
+        height: auto;
+        min-height: 180px;
+    }
+
+    .flashcard.flashcard-2 .flashcard-inner {
+        height: 100%;
+        min-height: 180px;
+    }
+
+    .flashcard.flashcard-2 .flashcard-back {
+        padding: 10px;
+        overflow-y: auto;
+        max-height: 180px;
+        height: 100%;
+        background: #8E44AD;
+    }
+
+    .flashcard.flashcard-2 .flashcard-back p {
+        font-size: 0.8rem;
+        line-height: 1.3;
+        margin: 0;
+    }
+
+    .system-equation {
+        font-size: clamp(0.9rem, 2vw, 1rem);
+    }
+
+    .system-equation .answer-input {
+        width: 50px;
+        font-size: clamp(0.8rem, 1.6vw, 0.9rem);
+    }
+}
     </style>
 </head>
 <body>
@@ -1437,9 +1656,7 @@
         </div>
     </div>
 </div>
-    <div id="modalOverlay"></div>
-
-    <script>
+       <script>
 document.addEventListener('DOMContentLoaded', function () {
     const elements = {
         openTheoryBtn: document.getElementById('openTheoryBtn'),
@@ -1750,8 +1967,8 @@ function generateSystem3x3() {
         det = a1[0] * (a2[1] * a3[2] - a2[2] * a3[1]) -
               a1[1] * (a2[0] * a3[2] - a2[2] * a3[0]) +
               a1[2] * (a2[0] * a3[1] - a2[1] * a3[0]);
-    } while (det === 0 || !isCoprime || constants[0] === 0 || constants[1] === 0 || constants[2] === 0);
-
+    } while (det === 0 || !isCoprime || constants[0] === 0 || constants[1] === 0 || constants[2] === 0 || 
+             Math.abs(constants[0]) > 20 || Math.abs(constants[1]) > 20 || Math.abs(constants[2]) > 20);
     const [b1, b2, b3] = constants;
     // Δ_x: заміна першого стовпця на [b1, b2, b3]
     const delta_x = b1 * (coefficients[1][1] * coefficients[2][2] - coefficients[1][2] * coefficients[2][1]) -
@@ -1821,7 +2038,7 @@ function generateSystem2x2() {
         const equation2 = [coefficients[1][0], coefficients[1][1], constants[1]];
         isCoprime = gcdArray(equation1) === 1 && gcdArray(equation2) === 1;
         det = coefficients[0][0] * coefficients[1][1] - coefficients[0][1] * coefficients[1][0];
-    } while (det === 0 || !isCoprime || constants[0] === 0 || constants[1] === 0);
+    } while (det === 0 || !isCoprime || constants[0] === 0 || constants[1] === 0 || Math.abs(constants[0]) > 20 || Math.abs(constants[1]) > 20);
 
     const delta_x = constants[0] * coefficients[1][1] - constants[1] * coefficients[0][1];
     const delta_y = coefficients[0][0] * constants[1] - coefficients[1][0] * constants[0];
@@ -2009,7 +2226,7 @@ function generateQuestion4() {
     const systemLatex = `\\begin{cases} ${formatEquation(a1[0], a1[1], constants[0])} \\\\ ${formatEquation(a2[0], a2[1], constants[1])} \\end{cases}`;
 
     return {
-        question: 'Розв’яжіть систему рівнянь методом Крамера:',
+        question: 'Знайдіть один із коренів системи рівнянь методом Крамера:',
         systemLatex,
         correctAnswers: {
             delta: determinants.delta,
@@ -2207,142 +2424,181 @@ function displayQuestion() {
             elements.submitAnswer.disabled = elements.determinantInput.value.trim() === '';
         });
      } else if (currentQuestion === 4) {
-        const q4 = generateQuestion4();
-        if (!q4 || !q4.correctAnswers || !q4.systemLatex) {
-            console.error('Помилка: generateQuestion4 не повернув даних або неправильна структура', q4);
-            elements.questionText.textContent = 'Помилка генерації питання';
-            return;
-        }
-        elements.questionText.innerHTML = q4.question;
-        elements.systemText.innerHTML = '';
-        elements.systemText.style.display = 'none';
-        elements.systemEquations.style.display = 'block';
-        elements.optionsContainer.style.display = 'none';
-        elements.inputContainer.style.display = 'none';
-        elements.optionsContainer.classList.add('question-4');
-
-        const systemHtml = `
-            <div class="system-equation">
-                \\[${q4.systemLatex}\\]
-            </div>
-            <div class="trainer-inputs">
-                <div class="trainer-input">
-                    <label for="deltaInput">1) Головний визначник системи:</label>
-                    <input type="text" inputmode="text" id="deltaInput" class="answer-input" placeholder="Введіть Δ" aria-label="Введіть значення Δ">
-                </div>
-                <div class="trainer-input">
-                    <label for="${q4.auxDeterminant}Input">2) Допоміжний визначник:</label>
-                    <input type="text" inputmode="text" id="${q4.auxDeterminant}Input" class="answer-input" placeholder="Введіть ${q4.auxDeterminant === 'delta_x' ? 'Δ_x' : 'Δ_y'}" aria-label="Введіть значення ${q4.auxDeterminant === 'delta_x' ? 'Δ_x' : 'Δ_y'}">
-                </div>
-                <div class="trainer-input">
-                    <label for="${q4.solutionVar}Input">3) Один із розв’язків системи:</label>
-                    <input type="text" inputmode="text" id="${q4.solutionVar}Input" class="answer-input" placeholder="Введіть ${q4.solutionVar}" aria-label="Введіть значення ${q4.solutionVar}">
-                </div>
-            </div>
-        `;
-        elements.systemEquations.innerHTML = systemHtml;
-        correctAnswer = q4.correctAnswers;
-
-        const inputs = [
-            document.getElementById('deltaInput'),
-            document.getElementById(`${q4.auxDeterminant}Input`),
-            document.getElementById(`${q4.solutionVar}Input`)
-        ];
-        if (inputs.some(input => !input)) {
-            console.error('Одне або кілька полів вводу для питання 4 відсутні в DOM', inputs);
-            elements.systemEquations.innerHTML = '<p style="color: red;">Помилка: не вдалося знайти поля вводу</p>';
-            return;
-        }
-
-        inputs.forEach(input => {
-            input.value = '';
-            input.addEventListener('input', () => {
-                const allFilled = inputs.every(inp => inp && inp.value.trim() !== '');
-                elements.submitAnswer.disabled = !allFilled;
-            });
-        });
-
-        if (window.MathJax && MathJax.typesetPromise) {
-            MathJax.typesetPromise([elements.questionText, elements.systemEquations]).then(() => {
-                console.log('MathJax завершив рендеринг для питання 4');
-                document.getElementById('deltaInput')?.focus();
-            }).catch(err => {
-                console.error('Помилка MathJax:', err);
-                elements.systemEquations.innerHTML = '<p style="color: red;">Помилка відображення системи рівнянь</p>';
-            });
-        } else {
-            console.warn('MathJax не доступний');
-            elements.systemEquations.innerHTML = '<p style="color: red;">Помилка: MathJax не завантажено</p>';
-        }
-    } else if (currentQuestion === 5) {
-        const q5 = generateQuestion5();
-        if (!q5 || !q5.correctAnswers || !q5.systemLatex) {
-            console.error('Помилка: generateQuestion5 не повернув даних або неправильна структура', q5);
-            elements.questionText.textContent = 'Помилка генерації питання';
-            return;
-        }
-        elements.questionText.innerHTML = q5.question;
-        elements.systemText.innerHTML = '';
-        elements.systemText.style.display = 'none';
-        elements.systemEquations.style.display = 'block';
-        elements.optionsContainer.style.display = 'none';
-        elements.inputContainer.style.display = 'none';
-        elements.optionsContainer.classList.add('question-5');
-
-        const systemHtml = `
-            <div class="system-equation">
-                \\[${q5.systemLatex}\\]
-            </div>
-            <div class="trainer-inputs">
-                <div class="trainer-input">
-                    <label for="deltaInput">1) Головний визначник системи:</label>
-                    <input type="text" inputmode="text" id="deltaInput" class="answer-input" placeholder="Введіть Δ" aria-label="Введіть значення Δ">
-                </div>
-                <div class="trainer-input">
-                    <label for="${q5.auxDeterminant}Input">2) Допоміжний визначник:</label>
-                    <input type="text" inputmode="text" id="${q5.auxDeterminant}Input" class="answer-input" placeholder="Введіть ${q5.auxDeterminant === 'delta_x' ? 'Δ_x' : q5.auxDeterminant === 'delta_y' ? 'Δ_y' : 'Δ_z'}" aria-label="Введіть значення ${q5.auxDeterminant === 'delta_x' ? 'Δ_x' : q5.auxDeterminant === 'delta_y' ? 'Δ_y' : 'Δ_z'}">
-                </div>
-                <div class="trainer-input">
-                    <label for="${q5.solutionVar}Input">3) Один із розв’язків системи:</label>
-                    <input type="text" inputmode="text" id="${q5.solutionVar}Input" class="answer-input" placeholder="Введіть ${q5.solutionVar}" aria-label="Введіть значення ${q5.solutionVar}">
-                </div>
-            </div>
-        `;
-        elements.systemEquations.innerHTML = systemHtml;
-        correctAnswer = q5.correctAnswers;
-
-        const inputs = [
-            document.getElementById('deltaInput'),
-            document.getElementById(`${q5.auxDeterminant}Input`),
-            document.getElementById(`${q5.solutionVar}Input`)
-        ];
-        if (inputs.some(input => !input)) {
-            console.error('Одне або кілька полів вводу для питання 5 відсутні в DOM', inputs);
-            elements.systemEquations.innerHTML = '<p style="color: red;">Помилка: не вдалося знайти поля вводу</p>';
-            return;
-        }
-
-        inputs.forEach(input => {
-            input.value = '';
-            input.addEventListener('input', () => {
-                const allFilled = inputs.every(inp => inp && inp.value.trim() !== '');
-                elements.submitAnswer.disabled = !allFilled;
-            });
-        });
-
-        if (window.MathJax && MathJax.typesetPromise) {
-            MathJax.typesetPromise([elements.questionText, elements.systemEquations]).then(() => {
-                console.log('MathJax завершив рендеринг для питання 5');
-                document.getElementById('deltaInput')?.focus();
-            }).catch(err => {
-                console.error('Помилка MathJax:', err);
-                elements.systemEquations.innerHTML = '<p style="color: red;">Помилка відображення системи рівнянь</p>';
-            });
-        } else {
-            console.warn('MathJax не доступний');
-            elements.systemEquations.innerHTML = '<p style="color: red;">Помилка: MathJax не завантажено</p>';
-        }
+    const q4 = generateQuestion4();
+    if (!q4 || !q4.correctAnswers || !q4.systemLatex) {
+        console.error('Помилка: generateQuestion4 не повернув даних або неправильна структура', q4);
+        elements.questionText.textContent = 'Помилка генерації питання';
+        return;
     }
+
+    elements.questionText.innerHTML = q4.question;
+    elements.systemText.innerHTML = '';
+    elements.systemText.style.display = 'none';
+    elements.systemEquations.style.display = 'block';
+    elements.optionsContainer.style.display = 'none';
+    elements.inputContainer.style.display = 'none';
+    elements.systemEquations.classList.add('trainer-options', 'question-4');
+    elements.systemEquations.classList.remove('question-5');
+
+    const systemHtml = `
+        <div class="system-equation">
+            \\[${q4.systemLatex}\\]
+        </div>
+        <div class="trainer-inputs">
+            <div class="trainer-input">
+                <div class="input-row">
+                    <span class="label-text">1) Головний визначник системи:</span>
+                    <div class="latex-input">
+                        <span class="latex-text">\\(\\Delta =\\)</span>
+                        <input type="text" inputmode="text" id="deltaInput" class="answer-input" placeholder="Введіть Δ" aria-label="Введіть значення Δ">
+                    </div>
+                </div>
+            </div>
+            <div class="trainer-input">
+                <div class="input-row">
+                    <span class="label-text">2) Допоміжний визначник:</span>
+                    <div class="latex-input">
+                        <span class="latex-text">\\(\\Delta_{${q4.auxDeterminant === 'delta_x' ? 'x' : 'y'}} =\\)</span>
+                        <input type="text" inputmode="text" id="${q4.auxDeterminant}Input" class="answer-input" placeholder="Введіть ${q4.auxDeterminant === 'delta_x' ? 'Δ_x' : 'Δ_y'}" aria-label="Введіть значення ${q4.auxDeterminant === 'delta_x' ? 'Δ_x' : 'Δ_y'}">
+                    </div>
+                </div>
+            </div>
+            <div class="trainer-input">
+                <div class="input-row">
+                    <span class="label-text">3) Один із розв’язків системи:</span>
+                    <div class="latex-input">
+                        <span class="latex-text">\\(${q4.solutionVar} =\\)</span>
+                        <input type="text" inputmode="text" id="${q4.solutionVar}Input" class="answer-input" placeholder="Введіть ${q4.solutionVar}" aria-label="Введіть значення ${q4.solutionVar}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    elements.systemEquations.innerHTML = systemHtml;
+    correctAnswer = q4.correctAnswers;
+
+    const inputs = [
+        document.getElementById('deltaInput'),
+        document.getElementById(`${q4.auxDeterminant}Input`),
+        document.getElementById(`${q4.solutionVar}Input`)
+    ];
+
+    if (inputs.some(input => !input)) {
+        console.error('Одне або кілька полів вводу для питання 4 відсутні в DOM', inputs);
+        elements.systemEquations.innerHTML = '<p style="color: red;">Помилка: не вдалося знайти поля вводу</p>';
+        return;
+    }
+
+    inputs.forEach(input => {
+        input.value = '';
+        input.addEventListener('input', () => {
+            const allFilled = inputs.every(inp => inp && inp.value.trim() !== '');
+            elements.submitAnswer.disabled = !allFilled;
+        });
+    });
+
+    if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([elements.questionText, elements.systemEquations]).then(() => {
+            console.log('MathJax завершив рендеринг для питання 4');
+            document.getElementById('deltaInput')?.focus();
+        }).catch(err => {
+            console.error('Помилка MathJax:', err);
+            elements.systemEquations.innerHTML = '<p style="color: red;">Помилка відображення системи рівнянь</p>';
+        });
+    } else {
+        console.warn('MathJax не доступний');
+        elements.systemEquations.innerHTML = '<p style="color: red;">Помилка: MathJax не завантажено</p>';
+    }
+
+   } else if (currentQuestion === 5) {
+    const q5 = generateQuestion5();
+    if (!q5 || !q5.correctAnswers || !q5.systemLatex) {
+        console.error('Помилка: generateQuestion5 не повернув даних або неправильна структура', q5);
+        elements.questionText.textContent = 'Помилка генерації питання';
+        return;
+    }
+
+    elements.questionText.innerHTML = q5.question;
+    elements.systemText.innerHTML = '';
+    elements.systemText.style.display = 'none';
+    elements.systemEquations.style.display = 'block';
+    elements.optionsContainer.style.display = 'none';
+    elements.inputContainer.style.display = 'none';
+    elements.systemEquations.classList.add('trainer-options', 'question-5');
+    elements.systemEquations.classList.remove('question-4');
+
+    const systemHtml = `
+        <div class="system-equation">
+            \\[${q5.systemLatex}\\]
+        </div>
+        <div class="trainer-inputs">
+            <div class="trainer-input">
+                <div class="input-row">
+                    <span class="label-text">1) Головний визначник системи:</span>
+                    <div class="latex-input">
+                        <span class="latex-text">\\(\\Delta =\\)</span>
+                        <input type="text" inputmode="text" id="deltaInput" class="answer-input" placeholder="Введіть Δ" aria-label="Введіть значення Δ">
+                    </div>
+                </div>
+            </div>
+            <div class="trainer-input">
+                <div class="input-row">
+                    <span class="label-text">2) Допоміжний визначник:</span>
+                    <div class="latex-input">
+                        <span class="latex-text">\\(\\Delta_{${q5.auxDeterminant === 'delta_x' ? 'x' : q5.auxDeterminant === 'delta_y' ? 'y' : 'z'}} =\\)</span>
+                        <input type="text" inputmode="text" id="${q5.auxDeterminant}Input" class="answer-input" placeholder="Введіть ${q5.auxDeterminant === 'delta_x' ? 'Δ_x' : q5.auxDeterminant === 'delta_y' ? 'Δ_y' : 'Δ_z'}" aria-label="Введіть значення ${q5.auxDeterminant === 'delta_x' ? 'Δ_x' : q5.auxDeterminant === 'delta_y' ? 'Δ_y' : 'Δ_z'}">
+                    </div>
+                </div>
+            </div>
+            <div class="trainer-input">
+                <div class="input-row">
+                    <span class="label-text">3) Один із розв’язків системи:</span>
+                    <div class="latex-input">
+                        <span class="latex-text">\\(${q5.solutionVar} =\\)</span>
+                        <input type="text" inputmode="text" id="${q5.solutionVar}Input" class="answer-input" placeholder="Введіть ${q5.solutionVar}" aria-label="Введіть значення ${q5.solutionVar}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    elements.systemEquations.innerHTML = systemHtml;
+    correctAnswer = q5.correctAnswers;
+
+    const inputs = [
+        document.getElementById('deltaInput'),
+        document.getElementById(`${q5.auxDeterminant}Input`),
+        document.getElementById(`${q5.solutionVar}Input`)
+    ];
+
+    if (inputs.some(input => !input)) {
+        console.error('Одне або кілька полів вводу для питання 5 відсутні в DOM', inputs);
+        elements.systemEquations.innerHTML = '<p style="color: red;">Помилка: не вдалося знайти поля вводу</p>';
+        return;
+    }
+
+    inputs.forEach(input => {
+        input.value = '';
+        input.addEventListener('input', () => {
+            const allFilled = inputs.every(inp => inp && inp.value.trim() !== '');
+            elements.submitAnswer.disabled = !allFilled;
+        });
+    });
+
+    if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([elements.questionText, elements.systemEquations]).then(() => {
+            console.log('MathJax завершив рендеринг для питання 5');
+            document.getElementById('deltaInput')?.focus();
+        }).catch(err => {
+            console.error('Помилка MathJax:', err);
+            elements.systemEquations.innerHTML = '<p style="color: red;">Помилка відображення системи рівнянь</p>';
+        });
+    } else {
+        console.warn('MathJax не доступний');
+        elements.systemEquations.innerHTML = '<p style="color: red;">Помилка: MathJax не завантажено</p>';
+    }
+}
 
     if (currentQuestion < 4 && window.MathJax && MathJax.typesetPromise) {
         console.log('MathJax обробляє systemText, optionsContainer, questionText');
@@ -2558,5 +2814,4 @@ elements.resetTrainerBtn?.addEventListener('click', resetTrainer);
     </script>
 </body>
 </html>
-
 
