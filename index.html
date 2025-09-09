@@ -1,89 +1,160 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Інтерактивний навчальний простір з вищої математики</title>
-   <style>
-       body {
-           background-color: #FFFFF0;
-           text-align: center;
-           font-family: Arial, sans-serif;
-           margin: 0;
-           padding: 0;
-       }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Інтерактивний навчальний простір з вищої математики</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', Arial, sans-serif;
+            background: linear-gradient(135deg, #005566 0%, #003087 100%);
+            color: #ffffff;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
 
-       .cover {
-           margin-top: 100px;
-           padding: 0 20px;
-       }
+        .cover {
+            max-width: 900px;
+            padding: 20px;
+            margin: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 1s ease-in-out;
+        }
 
-       .cover img {
-           width: 300px;
-           max-width: 100%;
-           height: auto;
-           border-radius: 10px;
-       }
+        .cover img {
+            width: 100%;
+            max-width: 150px;
+            height: auto;
+            border-radius: 12px;
+            border: 3px solid #FFD700;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
 
-       h1 {
-           font-size: 36px;
-           font-weight: bold;
-           color: #191970;
-           margin-top: 20px;
-           text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-       }
+        .cover img:hover {
+            transform: scale(1.05);
+        }
 
-       .btn {
-           margin-top: 30px;
-           padding: 12px 28px;
-           font-size: 20px;
-           font-weight: bold;
-           background-color: #008080;
-           color: white;
-           border: none;
-           border-radius: 12px;
-           cursor: pointer;
-           text-decoration: none;
-           box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-           transition: all 0.3s ease;
-           display: inline-block;
-       }
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #FFD700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin: 10px 0;
+            line-height: 1.2;
+        }
 
-       .btn:hover {
-           background-color: #006666;
-           box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-           transform: translateY(-3px);
-       }
+        h2 {
+            font-size: 1.6rem;
+            font-weight: 500;
+            color: #ffffff;
+            margin: 10px 0;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
 
-       @media (max-width: 600px) {
-    h1 {
-        font-size: 24px;
-    }
+             p {
+            font-size: 1.4rem;
+            color: #e0e0e0;
+            margin: 10px 0;
+        }
 
-    .btn {
-        font-size: 16px;
-        padding: 10px 20px;
-    }
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #003087;
+            background: linear-gradient(45deg, #FFD700, #FFC107);
+            border: none;
+            border-radius: 25px;
+            text-decoration: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
 
-    .cover {
-        margin-top: 60px;
-    }
+        .btn:hover {
+            background: linear-gradient(45deg, #FFC107, #FFA000);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            transform: translateY(-3px);
+        }
 
-    .cover img {
-        width: 90%;
-        max-width: 300px;
-        height: auto;
-    }
-}
+        .btn::before {
+            content: '➤';
+            position: absolute;
+            left: 10px;
+            font-size: 1.2rem;
+            opacity: 0.7;
+            transition: left 0.3s ease;
+        }
 
-   </style>
+        .btn:hover::before {
+            left: 15px;
+        }
+
+        .divider {
+            width: 80%;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #FFD700, transparent);
+            margin: 15px auto;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2.4rem;
+            }
+
+            h2 {
+                font-size: 1.1rem;
+            }
+
+           
+            p {
+                font-size: 1rem;
+            }
+
+            .btn {
+                font-size: 1rem;
+                padding: 12px 25px;
+            }
+
+            .cover {
+                margin: 10px;
+                padding: 15px;
+            }
+
+            .cover img {
+                max-width: 130px;
+            }
+               
+        }
+    </style>
 </head>
 <body>
-   <div class="cover">
-       <img src="static/cover.jpg" alt="Обкладинка">
-
-       <h1>Інтерактивний навчальний простір з вищої математики</h1>
-      <a class="btn" href="zmist.html">  ➤ До навчального простору </a>
-   </div>
+    <div class="cover">
+        <h2>МІНІСТЕРСТВО ОБОРОНИ УКРАЇНИ</h2>
+        <div class="divider"></div>
+        <h2>ВІЙСЬКОВИЙ КОЛЕДЖ СЕРЖАНТСЬКОГО СКЛАДУ<br>ХАРКІВСЬКОГО НАЦІОНАЛЬНОГО УНІВЕРСИТЕТУ ПОВІТРЯНИХ СИЛ<br>іменіrate ІВАНА КОЖЕДУБА</h2>
+        <img src="static/cover1.png" alt="Обкладинка">
+        <h1>Інтерактивний навчальний простір з вищої математики</h1>
+                <p>👨💻 Розробник і автор: Ігор Морміль</p>
+        <a class="btn" href="zmist.html">До навчального простору</a>
+    </div>
 </body>
 </html>
