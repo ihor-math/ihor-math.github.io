@@ -2601,6 +2601,18 @@ function resetTrainer() {
     elements.trainerContainer.scrollTop = 0;
     displayQuestion();
 }
+function renderMath(elementsToRender) {
+    if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.startup.promise.then(() => {
+            MathJax.typesetPromise(elementsToRender)
+                .then(() => console.log('MathJax рендер завершено'))
+                .catch(err => console.error('Помилка MathJax:', err));
+        });
+    } else {
+        console.warn('MathJax ще не доступний');
+    }
+}
+        
 // Оновлена функція displayQuestion (лише частина для currentQuestion === 3 змінена)
 function displayQuestion() {
     console.log('displayQuestion викликано, currentQuestion:', currentQuestion);
@@ -2805,6 +2817,7 @@ function displayQuestion() {
         });
         elements.systemText.dataset.plainText = q5.inversePlainText;
     }
+ renderMath([elements.systemText, elements.optionsContainer]);
 
     if (window.MathJax && MathJax.typesetPromise) {
         console.log('MathJax обробляє systemText, optionsContainer, questionText');
@@ -2930,5 +2943,6 @@ elements.resetTrainerBtn?.addEventListener('click', resetTrainer);
     </script>
 </body>
 </html>
+
 
 
