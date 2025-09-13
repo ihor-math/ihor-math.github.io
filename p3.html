@@ -1072,12 +1072,18 @@ button:disabled {
                     <p><span class="formula-line">б) <em class="math-notation">\( (3.2 - 1.5i) - (0.8 - 1.4i) - (3.8 + i) + (-2.5 - 2.4i) = -3.9 - 3.5i \)</em>. \( \triangleleft \)</span></p>
                 </div>
             </details>
-            <details class="multiplication">
+             <details class="multiplication">
                 <summary>Множення</summary>
                 <div>
-                   <h3>Множення комплексних чисел</h3>
+<h3>Множення комплексного числа на дійсне число</h3>
+                    <p>Якщо дано комплексне число <em class="math-notation">\( z = a + bi \)</em> та дійсне число \( \lambda \in \mathbb{R} \), то їхній добуток обчислюється за формулою:</p>
+                    <p style="text-align: center;"><span class="formula-line"><em class="math-notation">\( \lambda \cdot z = \lambda (a + bi) = \lambda a + \lambda bi. \ (1.4) \)</em></span></p>
+                    <p><strong>Приклад 1.6:</strong> Обчислити <em class="math-notation">\( 10 \cdot (3 - 5i) \).</em></p>
+                    <p>\( \triangleright \) Застосуємо правило множення комплексного числа на дійсне число, множимо кожну частину комплексного числа на 10:</p>
+                    <p><span class="formula-line"><em class="math-notation">\( 10 \cdot (3 - 5i) = 10 \cdot 3 + 10 \cdot (-5i) = 30 - 50i \)</em>. \( \triangleleft \)</span></p>
+                    <h3>Множення комплексних чисел</h3>
                     <p>Добутком двох комплексних чисел <em class="math-notation">\( z_1 = a_1 + b_1 i \)</em> та <em class="math-notation">\( z_2 = a_2 + b_2 i \)</em> називається комплексне число, яке можна обчислити за формулою:</p>
-                    <p style="text-align: center;"><span class="formula-line"><em class="math-notation">\( z_1 \cdot z_2 = (a_1 a_2 - b_1 b_2) + (a_1 b_2 + a_2 b_1)i. \ (1.4) \)</em></span></p>
+                    <p style="text-align: center;"><span class="formula-line"><em class="math-notation">\( z_1 \cdot z_2 = (a_1 a_2 - b_1 b_2) + (a_1 b_2 + a_2 b_1)i. \ (1.5) \)</em></span></p>
                     <p>Запам’ятовувати цю формулу необов’язково, оскільки її можна легко отримати, застосувавши правила множення двочленів та врахувавши, що <em class="math-notation">\( i^2 = -1 \).</em></p>
                     <p>Розглянемо множення комплексних чисел <em class="math-notation">\( z_1 = a_1 + b_1 i \)</em> та <em class="math-notation">\( z_2 = a_2 + b_2 i \).</em> Використаємо стандартне множення двочленів:</p>
                     <p><span class="formula-line"><em class="math-notation">\( z_1 \cdot z_2 = (a_1 + b_1 i) \cdot (a_2 + b_2 i). \)</em></span></p>
@@ -1089,7 +1095,7 @@ button:disabled {
                     <p>Об'єднаємо дійсні та уявні частини:</p>
                     <p><span class="formula-line"><em class="math-notation">\( z_1 \cdot z_2 = (a_1 a_2 - b_1 b_2) + (a_1 b_2 + a_2 b_1)i. \)</em></span></p>
                     <p>Таким чином, множення комплексних чисел можна виконувати за стандартними правилами множення двочленів, враховуючи, що <em class="math-notation">\( i^2 = -1 \).</em></p>
-                    <p><strong>Приклад 1.6.</strong> Виконнення множення комплексних чисел:</p>
+                    <p><strong>Приклад 1.7.</strong> Виконнення множення комплексних чисел:</p>
                     <p><span class="formula-line">а) <em class="math-notation">\( (4 - 5i) \cdot (2 + 3i) \)</em></span></p>
                     <p><span class="formula-line">б) <em class="math-notation">\( (2 - 5i) \cdot (2 + 5i) \)</em></span></p>
                     <p>\( \triangleright \) Застосуємо правило множення комплексних чисел та виконаємо обчислення:</p>
@@ -1102,20 +1108,14 @@ button:disabled {
                     <p>Оскільки <em class="math-notation">\( i^2 = -1 \)</em>, отримаємо:</p>
                     <p><span class="formula-line"><em class="math-notation">\( z \cdot \overline{z} = a^2 - b^2 \cdot i^2 = a^2 + b^2 \).</em></span></p>
                     <p>Отже, добуток комплексно-спряжених чисел завжди є дійсним невід’ємним числом і дорівнює сумі квадратів дійсної та уявної частин:</p>
-                    <p style="text-align: center;"><span class="formula-line"><em class="math-notation">\( z \cdot \overline{z} = a^2 + b^2. \ (1.5) \)</em></span></p>
-                    <p><strong>Например:</strong> Розглянемо множення комплексно-спряжених чисел із прикладу 1.6 (б):</p>
+                    <p style="text-align: center;"><span class="formula-line"><em class="math-notation">\( z \cdot \overline{z} = a^2 + b^2. \ (1.6) \)</em></span></p>
+                    <p><strong>Например:</strong> Розглянемо множення комплексно-спряжених чисел із прикладу 1.7 (б):</p>
                     <p><span class="formula-line"><em class="math-notation">\( (2 - 5i) \cdot (2 + 5i) = 2^2 - (5i)^2 = 4 - 25i^2 = 4 + 25 = 29 \)</em>.</span></p>
                     <p><strong>Застосування:</strong> Будь-яку суму двох чисел можна подати у вигляді добутку комплексно-спряжених множників:</p>
                     <p><span class="formula-line"><em class="math-notation">\( 25 + 49 = (5 + 7i)(5 - 7i) \)</em></span></p>
                     <p><span class="formula-line"><em class="math-notation">\( a^2 + 9 = (a + 3i)(a - 3i) \)</em></span></p>
                     <p><span class="formula-line"><em class="math-notation">\( a + 5 = (\sqrt{a} + \sqrt{5}i)(\sqrt{a} - \sqrt{5}i) \)</em></span></p>
-                    <h3>Множення комплексного числа на дійсне число</h3>
-                    <p>Якщо дано комплексне число <em class="math-notation">\( z = a + bi \)</em> та дійсне число \( \lambda \in \mathbb{R} \), то їхній добуток обчислюється за формулою:</p>
-                    <p style="text-align: center;"><span class="formula-line"><em class="math-notation">\( \lambda \cdot z = \lambda (a + bi) = \lambda a + \lambda bi. \ (1.6) \)</em></span></p>
-                    <p><strong>Приклад 1.7:</strong> Обчислити <em class="math-notation">\( 10 \cdot (3 - 5i) \).</em></p>
-                    <p>\( \triangleright \) Застосуємо правило множення комплексного числа на дійсне число, множимо кожну частину комплексного числа на 10:</p>
-                    <p><span class="formula-line"><em class="math-notation">\( 10 \cdot (3 - 5i) = 10 \cdot 3 + 10 \cdot (-5i) = 30 - 50i \)</em>. \( \triangleleft \)</span></p>
-                    <h3>Піднесення до степеня комплексного числа</h3>
+                     <h3>Піднесення до степеня комплексного числа</h3>
                     <p>Для піднесення до степеня комплексного числа можна використовувати стандартні формули для піднесення двочленів до степеня:</p>
                     <p><span class="formula-line"><em class="math-notation">\( (a \pm b)^2 = a^2 \pm 2ab + b^2 \)</em></span></p>
                     <p><span class="formula-line"><em class="math-notation">\( (a \pm b)^3 = a^3 \pm 3a^2b + 3ab^2 \pm b^3 \)</em></span></p>
@@ -1911,3 +1911,4 @@ window.MathJax = {
 </script>
 </body>
 </html>
+
