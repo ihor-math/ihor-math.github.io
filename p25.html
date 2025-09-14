@@ -1,0 +1,3351 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>25. Метод Гауса, його застосування до розв’язування систем лінійних алгебраїчних рівнянь</title>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <script>
+window.MathJax = {
+    tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true
+    },
+    startup: {
+        ready: () => {
+            MathJax.startup.defaultReady();
+        }
+    }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+     <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #556B2F, #6B8E23);
+            --bg-hover: linear-gradient(135deg, #6B8E23, #808000);
+            --math-color: #FFFF00;
+            --text-color: #FFFFFF;
+        }
+        *, *:before, *:after {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--bg-gradient);
+            font-family: 'Roboto', sans-serif;
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: start;
+            min-height: 100dvh;
+            font-size: 1rem;
+        }
+        .title-box {
+            margin-top: 60px;
+            padding: 25px 40px;
+            background: var(--bg-gradient);
+            border-radius: 25px;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+            max-width: 90%;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .title-box h1 {
+            margin: 0;
+            font-size: 1.6rem;
+            color: #fff0f5;
+            font-family: 'Lora', serif;
+        }
+        .section-container {
+            margin-top: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+        .section {
+            width: 250px;
+            height: 220px;
+            background: var(--bg-gradient);
+            border-radius: 20px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--text-color);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .section:hover {
+            background: var(--bg-hover);
+        }
+        .section img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 15px;
+            object-fit: cover;
+            border-radius: 8px;
+            filter: brightness(1.2);
+        }
+        .section h2 {
+            font-size: 1.25rem;
+            color: var(--text-color);
+            margin: 0;
+            font-family: 'Lora', serif;
+        }
+        .navigation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 40px auto;
+            max-width: 1000px;
+            padding: 0 20px;
+        }
+        .nav-button {
+            display: flex;
+            align-items: center;
+            background: var(--bg-gradient);
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 1.125rem;
+            font-weight: bold;
+            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+            border: 2px solid #ffff00;
+            line-height: 1.2;
+        }
+        .nav-button:hover {
+            background: #4b5320;
+        }
+        .nav-button svg {
+            margin-right: 8px;
+            fill: currentColor;
+            width: 20px;
+            height: 20px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 5%;
+            left: 5%;
+            width: 95%;
+            height: 95%;
+            background: #6b8e23;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            overflow: hidden;
+            flex-direction: column;
+        }
+        .modal-content {
+            padding: 20px;
+            overflow-y: auto;
+            flex-grow: 1;
+            background: #4b5320;
+            border-radius: 10px;
+            margin: 10px;
+            width: 100%;
+            color: var(--text-color);
+        }
+        #trainerModal .modal-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: start;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: flex-end;
+            background: #4b5320;
+            padding: 8px 10px;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+        .close-btn {
+            background: var(--text-color);
+            color: #2C3E50;
+            border: none;
+            border-radius: 6px;
+            padding: 5px 15px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .close-btn:hover {
+            background: #eedc82;
+        }
+        #modalOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+        .tab-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .tab-button {
+            background: var(--bg-gradient);
+            color: #ffff00;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-family: 'Lora', serif;
+            font-size: 1.125rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: left;
+            position: relative;
+        }
+        .tab-button::after {
+            content: '▶';
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+            color: #ffcc00;
+        }
+        .tab-button.active::after {
+            content: '▼';
+        }
+        .tab-button.active {
+            background: var(--bg-hover);
+            color: #fff0f5;
+            font-weight: 700;
+        }
+        .tab-button:hover {
+            background: #b8860b;
+            color: #ffd1dc;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border-radius: 10px;
+            background: #4b5320;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        .tab-content.active {
+            display: block;
+        }
+        #theoryModal .modal-content p {
+            text-align: justify;
+            color: var(--text-color);
+            font-size: 1.125rem;
+            line-height: 1.6;
+            white-space: normal;
+        }
+        #theoryModal .modal-content h3 {
+            font-family: 'Lora', serif;
+            font-size: 1.5rem;
+            color: #ff8c00;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        #theoryModal .modal-content .example-title {
+            color: #ff8c00;
+            font-weight: bold;
+            font-size: 1.25rem;
+            margin-bottom: 10px;
+        }
+        #theoryModal .modal-content .example-solution {
+            color: #ff8c00;
+            font-weight: bold;
+            font-size: 1.125rem;
+            text-align: left;
+            margin: 15px 0;
+        }
+        #theoryModal .modal-content li {
+            color: #fffdd0;
+            padding-left: 20px;
+            margin-left: 10px;
+            max-width: calc(100% - 30px);
+            white-space: normal;
+            text-align: justify;
+            position: relative;
+            font-size: 1.125rem;
+        }
+        .MathJax, mjx-container, mjx-math, mjx-mrow {
+            color: var(--math-color) !important;
+            font-size: 1.3rem !important;
+        }
+        mjx-msub {
+            font-size: 1.1em !important;
+        }
+        mjx-container[jax="CHTML"][display="true"] {
+            display: block !important;
+            text-align: center !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            white-space: nowrap;
+            max-width: 100%;
+            margin: 0 auto !important;
+            padding: 5px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .flashcard-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 20px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .flashcard {
+            perspective: 1000px;
+            width: 100%;
+            height: 230px;
+            cursor: pointer;
+            outline: none;
+        }
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+        }
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            border-radius: 15px;
+            box-sizing: border-box;
+            background: #6b8e23;
+            color: var(--text-color);
+        }
+        .flashcard-back {
+            transform: rotateY(180deg);
+            background: #4f7942;
+            color: var(--math-color);
+            text-align: justify;
+        }
+        .flashcard-front p, .flashcard-back p {
+            font-size: 1.4rem;
+            margin: 0;
+            font-family: 'Lora', serif;
+            line-height: 1.5;
+            text-align: center;
+        }
+        .flashcard-back p {
+            font-family: 'Roboto', sans-serif;
+            font-size: 1.4rem;
+            line-height: 1.6;
+            text-align: left;
+            white-space: normal;
+        }
+        .flashcard-back li {
+            color: var(--math-color);
+            padding-left: 20px;
+            margin-left: 10px;
+            max-width: calc(100% - 30px);
+            white-space: normal;
+            text-align: justify;
+            position: relative;
+            font-size: 1.125rem;
+        }
+        .trainer-container {
+            width: 95%;
+            max-width: 95%;
+            padding: 25px;
+            text-align: center;
+            background: linear-gradient(135deg, #2e1065, #6b21a8);
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+            border: 2px solid rgba(236, 72, 153, 0.5);
+            position: relative;
+            min-height: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+        .solution {
+            color: #ff8c00;
+            font-weight: bold;
+            text-align: center;
+            display: block;
+        }
+        .trainer-question {
+            font-size: clamp(18px, 3vw, 20px);
+            color: #f0e7ff;
+            margin-bottom: 25px;
+        }
+        .trainer-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, auto);
+            gap: 15px;
+            max-width: 750px;
+            margin: 25px auto;
+            justify-items: center;
+            align-items: stretch;
+        }
+        .trainer-option {
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            color: #f0e7ff;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: clamp(18px, 3vw, 20px);
+            text-align: center;
+            border: 2px solid rgba(167, 139, 250, 0.5);
+            transition: background 0.3s ease, transform 0.2s ease;
+            width: 100%;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 80px;
+        }
+        .trainer-option mjx-container {
+            font-size: 0.9em !important;
+            text-align: center !important;
+        }
+        .trainer-option:hover {
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+            transform: scale(1.03);
+        }
+        .trainer-option.selected {
+            background: linear-gradient(135deg, #a78bfa, #c026d3);
+            border-color: #facc15;
+        }
+        .trainer-option mjx-container[display="true"] {
+            display: block !important;
+            text-align: center !important;
+            margin: 0 auto !important;
+        }
+        .trainer-submit {
+            background: linear-gradient(135deg, #22c55e, #86efac);
+            color: #1e1e5f;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 25px;
+            font-size: clamp(18px, 2.8vw, 20px);
+            cursor: pointer;
+            margin-top: 25px;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+        .trainer-submit:hover {
+            background: linear-gradient(135deg, #86efac, #4ade80);
+            transform: scale(1.05);
+        }
+        .trainer-feedback.correct {
+            color: #3498DB !important;
+            background: rgba(232, 245, 233, 0.95) !important;
+            opacity: 1 !important;
+            display: block !important;
+        }
+        .trainer-feedback.wrong {
+            color: #E74C3C !important;
+            background: rgba(255, 235, 238, 0.95) !important;
+            opacity: 1 !important;
+            display: block !important;
+        }
+        .trainer-container::-webkit-scrollbar {
+            width: 12px;
+        }
+        .trainer-container::-webkit-scrollbar-track {
+            background: rgba(167, 139, 250, 0.2);
+            border-radius: 10px;
+            margin: 5px;
+        }
+        .trainer-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #d81b60, #f06292);
+            border-radius: 10px;
+            border: 2px solid rgba(167, 139, 250, 0.3);
+        }
+        .trainer-container::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #f06292, #d81b60);
+        }
+        .trainer-container {
+            scrollbar-width: thin;
+            scrollbar-color: #f06292 rgba(167, 139, 250, 0.2);
+        }
+        .question-circle {
+            width: clamp(100px, 16vw, 130px);
+            height: clamp(100px, 16vw, 130px);
+            min-width: clamp(100px, 16vw, 130px);
+            min-height: clamp(100px, 16vw, 130px);
+            max-width: clamp(100px, 16vw, 130px);
+            max-height: clamp(100px, 16vw, 130px);
+            aspect-ratio: 1/1;
+            background: linear-gradient(135deg, #d81b60, #f06292);
+            border-radius: 50%;
+            color: var(--math-color);
+            font-family: 'Lora', serif;
+            font-weight: 700;
+            margin: 0 auto 25px;
+            border: 3px dashed #a78bfa;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+            padding: 0;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(1.0rem, 2.5vw, 1.1rem);
+            text-align: center;
+            white-space: nowrap;
+            line-height: 1.2;
+            overflow: hidden;
+        }
+        .question-circle span {
+            font-size: inherit;
+            font-family: inherit;
+            font-weight: inherit;
+            color: inherit;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+        }
+        .question-circle mjx-container,
+        .question-circle .MathJax {
+            display: none !important;
+        }
+        .trainer-input {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0;
+            width: 100%;
+            max-width: 300px;
+        }
+        .trainer-input label {
+            font-family: 'Lora', serif;
+            font-size: clamp(1.1rem, 2.5vw, 1.2rem);
+            color: var(--math-color);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .answer-input {
+            background: #34495E;
+            color: var(--text-color);
+            border: 2px solid rgba(167, 139, 250, 0.5);
+            border-radius: 8px;
+            padding: 10px;
+            font-size: clamp(1rem, 2.2vw, 1.1rem);
+            font-family: 'Roboto', sans-serif;
+            width: 100%;
+            max-width: 180px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        .answer-input:focus {
+            outline: none;
+            border-color: #facc15;
+            background: #4a5568;
+        }
+        .answer-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        #questionText {
+            font-family: 'Lora', serif;
+            font-size: clamp(1.2rem, 3vw, 1.3rem);
+            color: #fffff0;
+            font-weight: 700;
+            line-height: 1.4;
+            margin: 15px 0;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        #questionsModal mjx-container {
+            font-size: clamp(24px, 3.2vw, 26px) !important;
+            color: #ffff00 !important;
+            max-width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        #questionsModal .card-front mjx-container,
+        #questionsModal .card-back mjx-container {
+            display: inline !important;
+            margin: 0 0.3em !important;
+            padding: 0 !important;
+            vertical-align: -0.1em !important;
+        }
+        #questionsModal .card-back mjx-container[display="true"] {
+            display: block !important;
+            text-align: center !important;
+            margin: 4px auto;
+            padding: 4px;
+        }
+        .answer-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 20px 0;
+            justify-items: center;
+        }
+        .answer-button {
+            background: #34495E;
+            color: var(--text-color);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 1.25rem;
+            cursor: pointer;
+            width: 100%;
+            max-width: 300px;
+            text-align: center;
+        }
+        .answer-button:hover:not(:disabled) {
+            background: #9B59B6;
+        }
+        .answer-button.selected {
+            background: #3498DB;
+        }
+        .answer-button.correct {
+            background: #3498DB;
+        }
+        .answer-button.wrong {
+            background: #E74C3C;
+        }
+        .answer-button:disabled {
+            background: #7F8C8D;
+            cursor: not-allowed;
+        }
+        .answer-button .MathJax, .answer-button mjx-container, .answer-button mjx-math, .answer-button mjx-mrow {
+            color: var(--math-color) !important;
+            font-size: 1.3rem !important;
+        }
+        .result-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5rem;
+            font-family: 'Lora', serif;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px 40px;
+            border-radius: 12px;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transition: opacity 0.1s ease;
+            z-index: 1001;
+            display: none;
+        }
+        .result-message.correct {
+            color: #3498DB;
+            background: rgba(232, 245, 233, 0.95);
+            opacity: 1;
+        }
+        .result-message.wrong {
+            color: #E74C3C;
+            background: rgba(255, 235, 238, 0.95);
+            opacity: 1;
+        }
+        .system-equation {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+            font-size: clamp(1.1rem, 2.5vw, 1.2rem);
+            color: var(--math-color);
+        }
+        .system-equation mjx-container {
+            font-size: 1.2rem !important;
+        }
+        .system-equation .answer-input {
+            margin-left: 10px;
+            width: 80px;
+            max-width: 80px;
+            font-size: clamp(1rem, 2vw, 1.1rem);
+        }
+        #systemEquations.trainer-options.question-4,
+        #systemEquations.trainer-options.question-5 {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 100%;
+            align-items: center;
+        }
+        .trainer-inputs {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .trainer-input {
+            width: 100%;
+            max-width: 600px;
+            min-height: 60px;
+            box-sizing: border-box;
+        }
+        .input-row {
+            display: flex;
+            flex-direction: column !important;
+            align-items: flex-start;
+            gap: 5px;
+            width: 100%;
+        }
+        .label-text {
+            font-family: 'Lora', serif;
+            font-size: clamp(1.1rem, 2.5vw, 1.2rem);
+            color: var(--math-color);
+            text-align: left;
+        }
+        .latex-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .latex-text {
+            font-family: 'Lora', serif;
+            font-size: clamp(1.1rem, 2.5vw, 1.2rem);
+            color: var(--math-color);
+            white-space: nowrap;
+        }
+        .latex-input .answer-input {
+            background: #34495E;
+            color: var(--text-color);
+            border: 2px solid rgba(167, 139, 250, 0.5);
+            border-radius: 8px;
+            padding: 8px;
+            font-size: clamp(1rem, 2.2vw, 1.1rem);
+            font-family: 'Roboto', sans-serif;
+            max-width: 170px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        .latex-input .answer-input:focus {
+            outline: none;
+            border-color: #facc15;
+            background: #4a5568;
+            animation: none;
+        }
+        .latex-input .answer-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        .latex-text mjx-container {
+            display: inline-block !important;
+            vertical-align: middle !important;
+            margin: 0 !important;
+        }
+        .system-equation .answer-input {
+            display: none;
+        }
+        #systemEquations.trainer-options.question-4 .input-row,
+        #systemEquations.trainer-options.question-5 .input-row {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: flex-start !important;
+        }
+        .label-text, .latex-text, .latex-input .answer-input {
+            animation: none !important;
+            transition: none !important;
+        }
+        .completion-message {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #d0f0c0;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+            z-index: 1100;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+        .completion-message.active {
+            display: flex;
+        }
+        .completion-message h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #333;
+        }
+        .completion-message p {
+            margin: 10px 0;
+            font-size: 1rem;
+            color: #333;
+        }
+        .completion-message .completion-emoji {
+            width: clamp(100px, 18vw, 140px);
+            height: clamp(100px, 18vw, 140px);
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+            border: 3px dashed #b3372c;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .completion-message .completion-emoji::after {
+            content: '🎉';
+            font-size: clamp(50px, 10vw, 70px);
+            color: #c41e3a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+        .completion-message button {
+            padding: 10px 20px;
+            background: #6b8e23;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+        .completion-message button:hover {
+            background: #556b2f;
+        }
+        #resetTrainerBtn {
+            display: block;
+            margin: 20px auto;
+            padding: 12px 24px;
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--text-color);
+            background: #E74C3C;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        #resetTrainerBtn:hover {
+            background: #9B59B6;
+        }
+        .video-card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+        }
+        .video-card {
+            width: 350px;
+            height: 250px;
+            background: var(--bg-gradient);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+        .video-card:hover {
+            background: var(--bg-hover);
+        }
+        .video-card img {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 8px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+        .video-player-container {
+            width: 80vw;
+            max-width: 960px;
+            aspect-ratio: 16 / 9;
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .video-player-container iframe {
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            display: block;
+            border: none;
+        }
+        .video-card h3 {
+            font-size: clamp(16px, 2.5vw, 18px);
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        .glow-title {
+            font-family: 'Lora', serif;
+            font-size: 1.5rem;
+            color: var(--math-color);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .math-loading {
+            visibility: hidden;
+            opacity: 0;
+        }
+        .math-loaded {
+            visibility: visible;
+            opacity: 1;
+        }
+        .answer-select {
+            background: #34495E;
+            color: var(--text-color);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 8px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 1.2rem;
+            cursor: pointer;
+            width: 150px;
+            margin-left: 5px;
+        }
+        .answer-select:hover:not(:disabled) {
+            background: #9B59B6;
+        }
+        .answer-select:disabled {
+            background: #7F8C8D;
+            cursor: not-allowed;
+        }
+        .answer-options label {
+            font-family: 'Lora', serif;
+            font-size: 1.2rem;
+            color: var(--math-color);
+            margin-right: 5px;
+        }
+        #systemText {
+            margin: 20px 0;
+            font-size: 1.3rem;
+            color: var(--math-color);
+            text-align: center;
+        }
+        #systemText mjx-container[jax="CHTML"][display="true"] {
+            display: block !important;
+            text-align: center !important;
+            margin: 0 auto !important;
+        }
+        .trainer-option.disabled {
+            background: #7F8C8D;
+            cursor: not-allowed;
+        }
+        .trainer-option.correct {
+            background: linear-gradient(135deg, #22c55e, #86efac);
+            border-color: #facc15;
+        }
+        .trainer-option.wrong {
+            background: linear-gradient(135deg, #E74C3C, #ff6b6b);
+            border-color: #facc15;
+        }
+        @media (max-width: 768px) {
+            .title-box {
+                margin-top: 40px;
+                padding: 15px 20px;
+            }
+            .title-box h1 {
+                font-size: 1.5rem;
+            }
+            .section-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            .section {
+                width: 80%;
+                height: 180px;
+            }
+            .section h2 {
+                font-size: 1.125rem;
+            }
+            .nav-button {
+                font-size: 0.9rem;
+                padding: 8px 16px;
+            }
+            .tab-button {
+                font-size: 1rem;
+                padding: 8px 16px;
+            }
+            .tab-content {
+                padding: 15px;
+            }
+            .modal {
+                top: 2%;
+                left: 2%;
+                width: 96%;
+                height: 96%;
+            }
+            .trainer-container {
+                width: 95%;
+                padding: 4vw;
+            }
+            .trainer-options {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 15px;
+                max-width: 100%;
+                align-items: center;
+            }
+            .trainer-options .trainer-option {
+                width: 100%;
+                max-width: 500px;
+                min-height: 80px;
+                font-size: clamp(16px, 2.8vw, 18px);
+                box-sizing: border-box;
+                text-align: center;
+            }
+            .trainer-input {
+                max-width: 250px;
+            }
+            .answer-input {
+                font-size: clamp(0.9rem, 2vw, 1rem);
+                max-width: 150px;
+            }
+            .question-circle {
+                width: clamp(80px, 15vw, 100px);
+                height: clamp(80px, 15vw, 100px);
+                font-size: clamp(1rem, 2.5vw, 1.25rem);
+            }
+            .video-card-container {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            .video-card {
+                width: 260px;
+                height: 160px;
+                margin: 5px;
+            }
+            .video-card img {
+                width: 40px;
+                height: 40px;
+                margin-bottom: 6px;
+            }
+            .video-player-container {
+                width: 80vw;
+                max-width: 600px;
+                aspect-ratio: 16 / 9;
+            }
+            .video-card h3 {
+                font-size: clamp(14px, 2.5vw, 16px);
+            }
+            .flashcard {
+                height: 180px;
+            }
+            .flashcard-front p,
+            .flashcard-back p {
+                font-size: 1.125rem;
+            }
+            .flashcard-front,
+            .flashcard-back {
+                padding: 15px;
+            }
+            .answer-select {
+                font-size: 1rem;
+                width: 120px;
+            }
+            .answer-options label {
+                font-size: 1rem;
+            }
+            #questionText {
+                font-size: clamp(1.25rem, 3vw, 1.5rem);
+            }
+            #questionText .MathJax,
+            #questionText mjx-container,
+            #questionText mjx-math,
+            #questionText mjx-mrow {
+                font-size: clamp(1.1rem, 2.5vw, 1.3rem) !important;
+            }
+            .system-equation {
+                font-size: clamp(1rem, 2.2vw, 1.1rem);
+            }
+            .system-equation .answer-input {
+                width: 60px;
+                font-size: clamp(0.9rem, 1.8vw, 1rem);
+            }
+            mjx-container[jax="CHTML"][display="true"] {
+                display: block !important;
+                text-align: center !important;
+                overflow-x: auto !important;
+                overflow-y: hidden !important;
+                white-space: nowrap;
+                max-width: 100%;
+                margin: 0 auto !important;
+                padding: 8px;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: thin;
+                scrollbar-color: #f06292 rgba(167, 139, 250, 0.2);
+            }
+            mjx-container[jax="CHTML"][display="true"]::-webkit-scrollbar {
+                height: 10px;
+            }
+            mjx-container[jax="CHTML"][display="true"]::-webkit-scrollbar-track {
+                background: rgba(167, 139, 250, 0.2);
+                border-radius: 10px;
+                margin: 5px;
+            }
+            mjx-container[jax="CHTML"][display="true"]::-webkit-scrollbar-thumb {
+                background: linear-gradient(135deg, #d81b60, #f06292);
+                border-radius: 10px;
+                border: 2px solid rgba(167, 139, 250, 0.3);
+            }
+            mjx-container[jax="CHTML"][display="true"]::-webkit-scrollbar-thumb:hover {
+                background: linear-gradient(135deg, #f06292, #d81b60);
+            }
+            #trainerModal.modal {
+                top: 1%;
+                left: 1%;
+                width: 98%;
+                height: 98%;
+                border-radius: 10px;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            #trainerModal .modal-content {
+                padding: 15px;
+                margin: 5px;
+                width: calc(100% - 10px);
+                box-sizing: border-box;
+                min-height: calc(100% - 50px);
+            }
+            #trainerModal .trainer-container {
+                width: 100%;
+                max-width: 100%;
+                padding: 10px;
+                min-height: auto;
+                overflow-y: visible;
+            }
+            #trainerModal .trainer-options {
+                gap: 10px;
+                max-width: 100%;
+                align-items: center;
+            }
+            #trainerModal .trainer-option {
+                width: 100%;
+                max-width: 100%;
+                min-height: 70px;
+                padding: 8px;
+                font-size: clamp(12px, 2.3vw, 14px);
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            #trainerModal mjx-container[jax="CHTML"][display="true"] {
+                font-size: 0.85em !important;
+                padding: 4px;
+                max-width: 100%;
+                overflow-x: auto;
+                overflow-y: hidden;
+                white-space: nowrap;
+                margin: 0 auto !important;
+            }
+            #trainerModal .question-circle {
+                width: clamp(80px, 14vw, 90px);
+                height: clamp(80px, 14vw, 90px);
+                font-size: clamp(0.9rem, 2.2vw, 1rem);
+            }
+            #trainerModal .trainer-question {
+                font-size: clamp(16px, 2.8vw, 18px);
+            }
+            .completion-message {
+                width: 90%;
+                max-width: 400px;
+                padding: 15px;
+                border-radius: 8px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            }
+            .completion-message h2 {
+                font-size: clamp(1.2rem, 3vw, 1.4rem);
+            }
+            .completion-message p {
+                font-size: clamp(0.9rem, 2.5vw, 1rem);
+            }
+            .completion-message .completion-emoji {
+                font-size: clamp(2rem, 5vw, 2.2rem);
+            }
+            .completion-message button {
+                padding: 8px 16px;
+                font-size: clamp(0.85rem, 2.3vw, 0.95rem);
+            }
+        }
+        @media (max-width: 480px) {
+            .title-box {
+                margin-top: 20px;
+                padding: 10px 15px;
+            }
+            .title-box h1 {
+                font-size: 1.25rem;
+            }
+            .section {
+                width: 90%;
+                height: 150px;
+            }
+            .section img {
+                width: 50px;
+                height: 50px;
+            }
+            .section h2 {
+                font-size: 1rem;
+            }
+            .video-card-container {
+                gap: 10px;
+                padding: 10px;
+            }
+            .video-card {
+                width: 90%;
+                max-width: 260px;
+                height: 140px;
+                margin: 5px;
+            }
+            .video-card img {
+                width: 30px;
+                height: 30px;
+                margin-bottom: 5px;
+            }
+            .video-player-container {
+                width: 80vw;
+                max-width: 400px;
+                aspect-ratio: 16 / 9;
+            }
+            .video-card h3 {
+                font-size: clamp(12px, 2.5vw, 14px);
+            }
+            #theoryModal .modal-content h3 {
+                font-size: 1.25rem;
+            }
+            .example-title {
+                font-size: 1.0rem;
+            }
+            .example-solution {
+                font-size: 1.0rem;
+            }
+            .MathJax, mjx-container, mjx-math, mjx-mrow {
+                font-size: 1.0rem !important;
+            }
+            .trainer-options.question-2 {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                max-width: 100%;
+            }
+            .trainer-options.question-2 .trainer-option {
+                width: 100%;
+                max-width: 400px;
+                min-height: 70px;
+                font-size: clamp(14px, 2.5vw, 16px);
+                padding: 10px;
+            }
+            .trainer-input {
+                max-width: 200px;
+            }
+            .answer-input {
+                font-size: clamp(0.8rem, 1.8vw, 0.9rem);
+                max-width: 120px;
+            }
+            .question-circle {
+                width: clamp(70px, 14vw, 90px);
+                height: clamp(70px, 14vw, 90px);
+                font-size: clamp(0.9rem, 2.2vw, 1rem);
+            }
+            .question-circle h3 {
+                font-size: clamp(0.9rem, 2.5vw, 1.0rem);
+            }
+            #questionText {
+                font-size: clamp(1rem, 2.5vw, 1.25rem);
+            }
+            #questionText .MathJax,
+            #questionText mjx-container,
+            #questionText mjx-math,
+            #questionText mjx-mrow {
+                font-size: clamp(0.9rem, 2.2vw, 1.1rem) !important;
+            }
+            .answer-button {
+                font-size: 1.0rem;
+            }
+            .answer-select {
+                font-size: 0.9rem;
+                width: 100px;
+            }
+            .answer-options label {
+                font-size: 0.9rem;
+            }
+            #systemText {
+                font-size: 0.9rem;
+            }
+            .flashcard {
+                height: 200px;
+            }
+            .flashcard-front p,
+            .flashcard-back p {
+                font-size: 1.1rem;
+            }
+            .flashcard-front,
+            .flashcard-back {
+                padding: 8px;
+            }
+            .system-equation {
+                font-size: clamp(0.9rem, 2vw, 1rem);
+            }
+            .system-equation .answer-input {
+                width: 50px;
+                font-size: clamp(0.8rem, 1.6vw, 0.9rem);
+            }
+            #trainerModal.modal {
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                border-radius: 8px;
+                box-shadow: none;
+            }
+            #trainerModal .modal-content {
+                padding: 10px;
+                margin: 0;
+                width: 100%;
+                min-height: calc(100% - 40px);
+            }
+            #trainerModal .trainer-container {
+                padding: 8px;
+                width: 100%;
+                max-width: 100%;
+                border-radius: 8px;
+            }
+            #trainerModal .trainer-option {
+                min-height: 60px;
+                padding: 6px;
+                font-size: clamp(12px, 2.3vw, 14px);
+            }
+            #trainerModal mjx-container[jax="CHTML"][display="true"] {
+                font-size: 0.8em !important;
+                padding: 3px;
+            }
+            #trainerModal .question-circle {
+                width: clamp(70px, 13vw, 80px);
+                height: clamp(70px, 13vw, 80px);
+                font-size: clamp(0.8rem, 2vw, 0.9rem);
+            }
+            #trainerModal .trainer-question {
+                font-size: clamp(14px, 2.5vw, 16px);
+            }
+            .completion-message {
+                width: 95%;
+                max-width: 350px;
+                padding: 12px;
+                border-radius: 6px;
+            }
+            .completion-message h2 {
+                font-size: clamp(1.1rem, 2.8vw, 1.3rem);
+            }
+            .completion-message p {
+                font-size: clamp(0.85rem, 2.3vw, 0.95rem);
+            }
+            .completion-message .completion-emoji {
+                font-size: clamp(1.8rem, 4.5vw, 2rem);
+            }
+            .completion-message button {
+                padding: 7px 14px;
+                font-size: clamp(0.8rem, 2.2vw, 0.9rem);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="title-box">
+        <h1>25. Метод Гауса, його застосування до розв’язування систем лінійних алгебраїчних рівнянь</h1>
+    </div>
+    <div class="section-container">
+        <div class="section" id="openTheoryBtn">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Книга">
+            <h2>Теоретичні відомості</h2>
+        </div>
+        <div class="section" id="openVideoBtn">
+            <img src="https://img.icons8.com/fluency/96/video.png" alt="Відео">
+            <h2>Відеоматеріали</h2>
+        </div>
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Картки">
+            <h2>Питання і відповіді</h2>
+        </div>
+        <div class="section" id="openTrainerBtn">
+            <img src="https://img.icons8.com/fluency/96/flash-on.png" alt="Тренажер">
+            <h2>Тренажер</h2>
+        </div>
+    </div>
+    <div class="navigation-buttons">
+        <a class="nav-button" href="{{ url_for('tema6') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            До теми 6
+        </a>
+        <a class="nav-button" href="{{ url_for('home') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            На головну
+        </a>
+    </div>
+    <div id="modalOverlay"></div>
+    
+    <div id="theoryModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-header">
+            <button class="close-btn" aria-label="Закрити документ" id="closeTheoryBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="tab-container">
+                <button class="tab-button" data-tab="gauss-method" aria-expanded="false">Метод Гауса</button>
+                <div id="gauss-method" class="tab-content">
+                    <h3>Метод Гауса</h3>
+                    <p>Метод Гауса – це один із найпотужніших і універсальних інструментів лінійної алгебри, який використовується для розв’язування систем лінійних алгебраїчних рівнянь (СЛАР). Його суть полягає в поступовому спрощенні структури системи до східчастого вигляду – трикутного або трапецієвидного, що значно полегшує знаходження розв’язків. Цей метод знайшов широке застосування в математиці, фізиці, інженерії та інших галузях, де використовуються лінійні моделі. Щоб успішно застосовувати метод Гауса, потрібно вміти виконувати базові операції з рядками матриць: додавання, віднімання та множення.</p>
+                    <h3>Розширена матриця СЛАР</h3>
+                    <p>Для зручного розв’язання системи рівнянь її зазвичай записують у вигляді розширеної матриці. Розглянемо, наприклад, систему з трьома рівняннями та трьома змінними \(x\), \(y\), \(z\):</p>
+                    <p>\[
+                    \begin{cases}
+                    a_{11}x + a_{12}y + a_{13}z = b_1 \\
+                    a_{21}x + a_{22}y + a_{23}z = b_2 \\
+                    a_{31}x + a_{32}y + a_{33}z = b_3
+                    \end{cases} \tag{6.11}
+                    \]</p>
+                    <p>Коефіцієнти при змінних \(x\), \(y\), \(z\) утворюють головну матрицю системи, яку позначають як \(A\):</p>
+                    <p>\[
+                    A = \begin{pmatrix}
+                    a_{11} & a_{12} & a_{13} \\
+                    a_{21} & a_{22} & a_{23} \\
+                    a_{31} & a_{32} & a_{33}
+                    \end{pmatrix} \tag{6.12}
+                    \]</p>
+                    <p>Якщо до матриці \(A\) додати стовпець вільних членів \(\begin{pmatrix} b_1 \\ b_2 \\ b_3 \end{pmatrix}\), отримаємо розширену матрицю системи, яку позначають як \(\overline{A} = (A \mid b)\):</p>
+                    <p>\[
+                    \overline{A} = (A \mid b) = \left( \begin{array}{ccc|c}
+                    a_{11} & a_{12} & a_{13} & b_1 \\
+                    a_{21} & a_{22} & a_{23} & b_2 \\
+                    a_{31} & a_{32} & a_{33} & b_3
+                    \end{array} \right) \tag{6.13}
+                    \]</p>
+                    <p>Записавши систему у вигляді розширеної матриці, до неї застосовують елементарні перетворення рядків, щоб спростити подальші обчислення.</p>
+                    <h3>Елементарні перетворення матриць</h3>
+                    <p>Щоб привести розширену матрицю до східчастого вигляду, використовують такі елементарні перетворення рядків:</p>
+                                           <li><strong>Перестановка рядків.</strong> Рядки матриці можна міняти місцями для зручності обчислень. Наприклад:</li>
+                        <p>\[
+                        \left( \begin{array}{cc|c}
+                        2 & 1 & -7 \\
+                        1 & -1 & -5
+                        \end{array} \right) \sim \left( \begin{array}{cc|c}
+                        1 & -1 & -5 \\
+                        2 & 1 & -7
+                        \end{array} \right)
+                        \]</p>
+                        <li><strong>Видалення пропорційних рядків.</strong> Якщо в матриці є рядки, які пропорційні один одному, залишають лише один із них. Наприклад:</li>
+                        <p>\[
+                        \begin{pmatrix}
+                        1 & 2 & \begin{pmatrix} 3 & 4 \end{pmatrix} & 5 \\
+                        0 & 1 & \begin{pmatrix} -1 & 2 \end{pmatrix} & 3 \\
+                        \begin{pmatrix} 0 \\ 0 \end{pmatrix} & \begin{pmatrix} 1 \\ 2 \end{pmatrix} & \begin{pmatrix} \begin{pmatrix} -1 & 2 \end{pmatrix} \\ \begin{pmatrix} -2 & 4 \end{pmatrix} \end{pmatrix} & \begin{pmatrix} 3 \\ 6 \end{pmatrix}
+                        \end{pmatrix} \sim \begin{pmatrix}
+                        1 & 2 & \begin{pmatrix} 3 & 4 \end{pmatrix} & 5 \\
+                        0 & 1 & \begin{pmatrix} -1 & 2 \end{pmatrix} & 3
+                        \end{pmatrix}
+                        \]</p>
+                        <p>Тут останні три рядки пропорційні, тому їх скорочують до одного.</p>
+                        <li><strong>Видалення нульових рядків.</strong> Якщо в процесі перетворень з’являється рядок, усі елементи якого дорівнюють нулю, його видаляють із матриці. Це спрощує структуру системи.</li>
+                        <li><strong>Множення (або ділення) рядка на число.</strong> Кожен елемент рядка можна помножити або поділити на ненульове число. Наприклад:</li>
+                        <p>\[
+                        \left( \begin{array}{cc|c}
+                        -3 & 9 & 15 \\
+                        0.5 & 0 & 2.5
+                        \end{array} \right) \sim \left( \begin{array}{cc|c}
+                        1 & -3 & -5 \\
+                        1 & 0 & 5
+                        \end{array} \right)
+                        \]</p>
+                        <p>У цьому випадку перший рядок поділили на –3, а другий помножили на 2, щоб позбутися дробів і спростити матрицю.</p>
+                        <li><strong>Додавання до рядка іншого рядка, помноженого на число.</strong> До одного рядка можна додати інший рядок, попередньо помноживши його на ненульове число. Наприклад, розгляньмо матрицю:</li>
+                        <p>\[
+                        \left( \begin{array}{cc|c}
+                        2 & 1 & -7 \\
+                        1 & -1 & -5
+                        \end{array} \right)
+                        \]</p>
+                        <p>Спочатку переставимо рядки \(R_1 \leftrightarrow R_2\):</p>
+                        <p>\[
+                        \left( \begin{array}{cc|c}
+                        1 & -1 & -5 \\
+                        2 & 1 & -7
+                        \end{array} \right)
+                        \]</p>
+                        <p>Далі помножимо перший рядок на –2 і додамо до другого \(R_2 = R_2 - 2R_1\):</p>
+                        <p>\[
+                        \left( \begin{array}{cc|c}
+                        1 & -1 & -5 \\
+                        0 & 3 & 3
+                        \end{array} \right)
+                        \]</p>
+                    
+                    <p>Ці перетворення дозволяють поступово приводити матрицю до східчастої форми, що полегшує розв’язування системи.</p>
+                    <h3>Алгоритм методу Гауса</h3>
+                    <p>Метод Гауса складається з двох основних етапів, які послідовно виключають змінні та знаходять розв’язки:</p>
+                   
+                        <li><strong>Прямий хід.</strong> На цьому етапі розширену матрицю системи за допомогою елементарних перетворень рядків приводять до східчастого вигляду. Наприклад, розширена матриця (6.11) набуває форми:</li>
+                        <p>\[
+                        \begin{pmatrix}
+                        \alpha_1 & \alpha_2 & \alpha_3 & d_1 \\
+                        0 & \beta_2 & \beta_3 & d_2 \\
+                        0 & 0 & \gamma_3 & d_3
+                        \end{pmatrix}
+                        \]</p>
+                        <p>Тут \(\alpha_1\), \(\alpha_2\), \(\alpha_3\), \(\beta_2\), \(\beta_3\), \(\gamma_3\) – коефіцієнти, отримані після перетворень, а \(d_1\), \(d_2\), \(d_3\) – відповідні вільні члени. Метою є створення нулів під головною діагоналлю для спрощення системи.</p>
+                        <li><strong>Зворотній хід.</strong> Після досягнення східчастої форми розв’язки знаходять, рухаючись від останнього рівняння до першого. Значення змінних, отримані на кожному кроці, підставляють у попередні рівняння, доки не буде визначено всі невідомі.</li>
+                    
+                    <p>Система у східчастому вигляді:</p>
+                    <p>\[
+                    \begin{cases}
+                    \alpha_1 x + \alpha_2 y + \alpha_3 z = d_1 \\
+                    \beta_2 y + \beta_3 z = d_2 \\
+                    \gamma_3 z = d_3
+                    \end{cases}
+                    \]</p>
+                    <p>розв’язується так:</p>
+                    <ul>
+                        <li>спочатку з останнього рівняння знаходять \(z\);</li>
+                        <li>потім підставляють знайдене значення \(z\) у друге рівняння, щоб знайти \(y\);</li>
+                        <li>нарешті підставляють знайдені значення \(y\) і \(z\) у перше рівняння для визначення \(x\).</li>
+                    </ul>
+                    <p>Цей процес послідовної підстановки завершує розв’язання системи.</p>
+                    <h3>Універсальність методу</h3>
+                    <p>Метод Гауса є надзвичайно гнучким: він підходить до систем із єдиним розв’язком, безліччю розв’язків або навіть без розв’язків. На відміну від методу Крамера чи матричного методу, які вимагають ненульового визначника матриці (\(|A| \neq 0\)), метод Гауса працює навіть коли \(|A| = 0\).</p>
+                </div>
+                <button class="tab-button" data-tab="examples" aria-expanded="false">Приклади</button>
+<div id="examples" class="tab-content">
+    <p><strong><span class="example-title">Приклад 6.4.</span></strong> Розв’язати систему методом Гауса:</p>
+    <p>\[
+    \begin{cases}
+    3x + 2y - 5z = -1 \\
+    2x - y + 3z = 13 \\
+    x + 2y - z = 9
+    \end{cases}
+    \]</p>
+    <h3>Розв’язання</h3>
+    
+        <li><strong>Запис розширеної матриці.</strong> Запишемо розширену матрицю для заданої системи:</li>
+        <p>\[
+        \left( \begin{array}{ccc|c}
+        3 & 2 & -5 & -1 \\
+        2 & -1 & 3 & 13 \\
+        1 & 2 & -1 & 9
+        \end{array} \right)
+        \]</p>
+        <li><strong>Прямий хід методу Гауса.</strong> Мета – привести матрицю до східчастого вигляду за допомогою елементарних перетворень рядків. Зазвичай ми прагнемо, щоб на першій позиції була 1, тому для зручності поміняємо місцями перший і третій рядки:</li>
+        <p>\[
+        \left( \begin{array}{ccc|c}
+        3 & 2 & -5 & -1 \\
+        2 & -1 & 3 & 13 \\
+        1 & 2 & -1 & 9
+        \end{array} \right) \xrightarrow{R_1 \leftrightarrow R_3} \left( \begin{array}{ccc|c}
+        1 & 2 & -1 & 9 \\
+        2 & -1 & 3 & 13 \\
+        3 & 2 & -5 & -1
+        \end{array} \right)
+        \]</p>
+        <p>Отримання нулів у першому стовпці під головним елементом: До другого рядка додамо перший рядок, помножений на –2. До третього рядка додамо перший рядок, помножений на –2:</p>
+        <p>\[
+        \xrightarrow{\begin{array}{c} R_2 = R_2 - 2R_1 \\ R_3 = R_3 - 2R_1 \end{array}} \left( \begin{array}{ccc|c}
+        1 & 2 & -1 & 9 \\
+        0 & -5 & 5 & -5 \\
+        1 & -2 & -3 & -19
+        \end{array} \right)
+        \]</p>
+        <p>Спрощення другого і третього рядків: Поділимо другий рядок на -5, а третій – на -2, щоб спростити числа:</p>
+        <p>\[
+        \xrightarrow{\begin{array}{c} R_2 = -\frac{1}{5} R_2 \\ R_3 = -\frac{1}{2} R_3 \end{array}} \left( \begin{array}{ccc|c}
+        1 & 2 & -1 & 9 \\
+        0 & 1 & -1 & 1 \\
+        0 & 2 & 1 & 14
+        \end{array} \right)
+        \]</p>
+        <p>Отримання нуля у третьому рядку під головним елементом другого рядка: До третього рядка додамо другий рядок, помножений на -2:</p>
+        <p>\[
+        \xrightarrow{R_3 = R_3 - 2R_2} \left( \begin{array}{ccc|c}
+        1 & 2 & -1 & 9 \\
+        0 & 1 & -1 & 1 \\
+        0 & 0 & 3 & 12
+        \end{array} \right)
+        \]</p>
+        <p>Остаточне спрощення третього рядка: Поділимо третій рядок на 3:</p>
+        <p>\[
+        \xrightarrow{R_3 = \frac{1}{3} R_3} \left( \begin{array}{ccc|c}
+        1 & 2 & -1 & 9 \\
+        0 & 1 & -1 & 1 \\
+        0 & 0 & 1 & 4
+        \end{array} \right)
+        \]</p>
+        <p>На цьому етапі матриця приведена до східчастого вигляду. Насправді ці дії зазвичай виконуються усно, дозволяючи записати послідовні перетворення розширеної матриці одним рядком для зручності, наприклад:</p>
+<p class="math-container">\[
+\left( \begin{array}{ccc|c}
+3 & 2 & -5 & -1 \\
+2 & -1 & 3 & 13 \\
+1 & 2 & -1 & 9
+\end{array} \right) \sim
+\left( \begin{array}{ccc|c}
+1 & 2 & -1 & 9 \\
+2 & -1 & 3 & 13 \\
+3 & 2 & -5 & -1
+\end{array} \right) \sim
+\left( \begin{array}{ccc|c}
+1 & 2 & -1 & 9 \\
+0 & -5 & 5 & -5 \\
+0 & -4 & -2 & -28
+\end{array} \right)\sim
+\]</p>
+<p class="math-container">\[
+\sim \left( \begin{array}{ccc|c}
+1 & 2 & -1 & 9 \\
+0 & 1 & -1 & 1 \\
+0 & 0 & 3 & 12
+\end{array} \right) \sim
+\left( \begin{array}{ccc|c}
+1 & 2 & -1 & 9 \\
+0 & 1 & -1 & 1 \\
+0 & 0 & 1 & 4
+\end{array} \right).
+\]</p>
+        <li><strong>Зворотний хід методу Гауса.</strong> В результаті елементарних перетворень отримано еквівалентну систему рівнянь із отриманої матриці:</li>
+        <p>\[
+        \begin{cases}
+        x + 2y - z = 9 \\
+        y - z = 1 \\
+        z = 4
+        \end{cases}
+        \]</p>
+        <p>Розв’яжемо цю систему знизу вгору. З третього рівняння: \( z = 4. \)</p>
+        <p>Підставимо \( z = 4 \) у друге рівняння \( y - z = 1 \):</p>
+        <p>\[
+        y - 4 = 1 \implies y = 5
+        \]</p>
+        <p>Підставимо \( y = 5 \) і \( z = 4 \) у перше рівняння \( x + 2y - z = 9 \):</p>
+        <p>\[
+        x + 2 \cdot 5 - 4 = 9, \quad x + 10 - 4 = 9, \quad x + 6 = 9 \implies x = 3
+        \]</p>
+        <p>Отже, \( x = 3 \), \( y = 5 \), \( z = 4 \).</p>
+        <li><strong>Перевірка розв’язку.</strong> Підставимо отримані значення в початкову систему рівнянь:</li>
+        <p>\[
+        3 \cdot 3 + 2 \cdot 5 - 5 \cdot 4 = 9 + 10 - 20 = -1 \quad \text{– правильно.}
+        \]</p>
+        <p>\[
+        2 \cdot 3 - 5 + 3 \cdot 4 = 6 - 5 + 12 = 13 \quad \text{– правильно.}
+        \]</p>
+        <p>\[
+        3 + 2 \cdot 5 - 4 = 3 + 10 - 4 = 9 \quad \text{– правильно.}
+        \]</p>
+        <p>Розв’язок підтверджений.</p>
+    
+    <p class="example-solution">Відповідь: \( x = 3 \), \( y = 5 \), \( z = 4 \).</p>
+    <p><strong>Зауваження.</strong> Метод Гауса працює для всіх типів систем, незалежно від їхньої сумісності чи кількості розв’язків, і не залежить від значення визначника \( |A| \). Однак для великих систем або коли потрібна висока точність, можуть виникати обчислювальні труднощі, і доцільно використовувати числові методи чи програмне забезпечення.</p>
+<p><strong><span class="example-title">Приклад 6.5.</span></strong> Розв’язати СЛАР:</p>
+        <p>\[
+    \begin{cases}
+    2x_1 + 5x_2 + 4x_3 + x_4 = 20 \\
+    x_1 + 3x_2 + 2x_3 + x_4 = 11 \\
+    2x_1 + 10x_2 + 9x_3 + 7x_4 = 40 \\
+    3x_1 + 8x_2 + 9x_3 + 2x_4 = 37
+    \end{cases}
+    \]</p>
+<h3>Розв’язання</h3>
+        <p>Для зручності роботи з системою запишемо її розширену матрицю:</p>
+    <p>\[
+    \left( \begin{array}{cccc|c}
+    2 & 5 & 4 & 1 & 20 \\
+    1 & 3 & 2 & 1 & 11 \\
+    2 & 10 & 9 & 7 & 40 \\
+    3 & 8 & 9 & 2 & 37
+    \end{array} \right)
+    \]</p>
+    <p>Для зручності обчислень поміняємо місцями перший і другий рядки, щоб на першій позиції була одиниця:</p>
+    <p>\[
+    \left( \begin{array}{cccc|c}
+    2 & 5 & 4 & 1 & 20 \\
+    1 & 3 & 2 & 1 & 11 \\
+    2 & 10 & 9 & 7 & 40 \\
+    3 & 8 & 9 & 2 & 37
+    \end{array} \right) \xrightarrow{R_1 \leftrightarrow R_2} \left( \begin{array}{cccc|c}
+    1 & 3 & 2 & 1 & 11 \\
+    2 & 5 & 4 & 1 & 20 \\
+    2 & 10 & 9 & 7 & 40 \\
+    3 & 8 & 9 & 2 & 37
+    \end{array} \right)
+    \]</p>
+    <p>Отримання нулів у першому стовпці під головним елементом. До другого рядка додаємо перший рядок, помножений на -2. Аналогічно до третього рядка додаємо перший рядок, помножений на -2, а до четвертого рядка додаємо перший рядок, помножений на -3. Отримаємо:</p>
+    <p>\[
+    \xrightarrow{\begin{array}{c} R_2 = R_2 - 2R_1 \\ R_3 = R_3 - 2R_1 \\ R_4 = R_4 - 3R_1 \end{array}} \left( \begin{array}{cccc|c}
+    1 & 3 & 2 & 1 & 11 \\
+    0 & -1 & 0 & -1 & -2 \\
+    0 & 4 & 5 & 5 & 18 \\
+    0 & -1 & 3 & -1 & 4
+    \end{array} \right)
+    \]</p>
+    <p>Продовжуємо елементарні перетворення для отримання нулів у третьому та четвертому рядках. До третього рядка додаємо другий рядок, помножений на 4, а до четвертого рядка додаємо другий рядок, помножений на -1. Отримаємо:</p>
+    <p>\[
+    \xrightarrow{\begin{array}{c} R_3 = R_3 + 4R_2 \\ R_4 = R_4 - R_2 \end{array}} \left( \begin{array}{cccc|c}
+    1 & 3 & 2 & 1 & 11 \\
+    0 & -1 & 0 & -1 & -2 \\
+    0 & 0 & 5 & 1 & 10 \\
+    0 & 0 & 3 & 0 & 6
+    \end{array} \right)
+    \]</p>
+    <p>Поділимо четвертий рядок на 3:</p>
+    <p>\[
+    \xrightarrow{R_4 = \frac{1}{3} R_4} \left( \begin{array}{cccc|c}
+    1 & 3 & 2 & 1 & 11 \\
+    0 & -1 & 0 & -1 & -2 \\
+    0 & 0 & 5 & 1 & 10 \\
+    0 & 0 & 1 & 0 & 2
+    \end{array} \right)
+    \]</p>
+    <p>На цьому етапі матриця приведена до східчастого вигляду. Ці дії зазвичай виконують послідовно, але для зручності можна записати основні кроки одним рядком:</p>
+   <p>\[
+\left( \begin{array}{cccc|c}
+2 & 5 & 4 & 1 & 20 \\
+1 & 3 & 2 & 1 & 11 \\
+2 & 10 & 9 & 7 & 40 \\
+3 & 8 & 9 & 2 & 37
+\end{array} \right) \sim
+\left( \begin{array}{cccc|c}
+1 & 3 & 2 & 1 & 11 \\
+2 & 5 & 4 & 1 & 20 \\
+2 & 10 & 9 & 7 & 40 \\
+3 & 8 & 9 & 2 & 37
+\end{array} \right) \sim
+\left( \begin{array}{cccc|c}
+1 & 3 & 2 & 1 & 11 \\
+0 & -1 & 0 & -1 & -2 \\
+0 & 4 & 5 & 5 & 18 \\
+0 & -1 & 3 & -1 & 4
+\end{array} \right)\sim
+\]</p>
+<p>\[
+\sim \left( \begin{array}{cccc|c}
+1 & 3 & 2 & 1 & 11 \\
+0 & -1 & 0 & -1 & -2 \\
+0 & 0 & 5 & 1 & 10 \\
+0 & 0 & 3 & 0 & 6
+\end{array} \right) \sim
+\left( \begin{array}{cccc|c}
+1 & 3 & 2 & 1 & 11 \\
+0 & -1 & 0 & -1 & -2 \\
+0 & 0 & 5 & 1 & 10 \\
+0 & 0 & 1 & 0 & 2
+\end{array} \right).
+\]</p>
+    <p>В результаті елементарних перетворень отримано еквівалентну систему рівнянь із отриманої матриці:</p>
+    <p>\[
+    \begin{cases}
+    x_1 + 3x_2 + 2x_3 + x_4 = 11 \\
+    -x_2 - x_4 = -2 \\
+    5x_3 + x_4 = 10 \\
+    x_3 = 2
+    \end{cases}
+    \]</p>
+    <p>Розв’яжемо систему знизу вгору:</p>
+    <p>З четвертого рівняння: \( x_3 = 2 \).</p>
+    <p>Підставимо \( x_3 = 2 \) в третє рівняння \( 5x_3 + x_4 = 10 \):</p>
+    <p>\[
+    5 \cdot 2 + x_4 = 10 \implies x_4 = 10 - 10 = 0 \implies x_4 = 0
+    \]</p>
+    <p>Підставимо \( x_3 = 2 \), \( x_4 = 0 \) в друге рівняння \( -x_2 - x_4 = -2 \):</p>
+    <p>\[
+    -x_2 - 0 = -2 \implies -x_2 = -2 \implies x_2 = 2
+    \]</p>
+    <p>І нарешті перше рівняння: \( x_1 + 3x_2 + 2x_3 + x_4 = 11 \). Знаючи значення \( x_2 = 2 \), \( x_3 = 2 \), \( x_4 = 0 \), підставимо їх у рівняння:</p>
+    <p>\[
+    x_1 + 3 \cdot 2 + 2 \cdot 2 + 0 = 11, \quad x_1 + 6 + 4 = 11, \quad x_1 + 10 = 11 \implies x_1 = 1
+    \]</p>
+    <p>Ці значення можна перевірити, підставивши їх назад у початкову систему рівнянь. Переконуємося, що знайдені корені правильні.</p>
+    <p class="example-solution">Відповідь: \( x_1 = 1 \), \( x_2 = 2 \), \( x_3 = 2 \), \( x_4 = 0 \).</p>
+
+    <p><strong><span class="example-title">Приклад 6.6.</span></strong> Розв’язати систему рівнянь:</p>
+    <p>\[
+    \begin{cases}
+    x_1 + 3x_2 - 4x_3 + 2x_4 = 3 \\
+    2x_1 + 5x_2 - 2x_3 + x_4 = -1 \\
+    3x_1 + 7x_2 - x_3 + 2x_4 = 2 \\
+    x_1 + 2x_2 + x_3 + x_4 = 6
+    \end{cases}
+    \]</p>
+    <h3>Розв’язання</h3>
+    <p>Запишемо розширену матрицю системи:</p>
+    <p>\[
+    \left( \begin{array}{cccc|c}
+    1 & 3 & -4 & 2 & 3 \\
+    2 & 5 & -2 & 1 & -1 \\
+    3 & 7 & -1 & 2 & 2 \\
+    1 & 2 & 1 & 1 & 6
+    \end{array} \right)
+    \]</p>
+    <p>Отримання нулів у першому стовпці під головним елементом. До другого рядка додамо перший рядок, помножений на -2. До третього рядка додамо перший рядок, помножений на -3. Від четвертого рядка віднімемо перший рядок:</p>
+    <p>\[
+    \xrightarrow{\begin{array}{c} R_2 = R_2 - 2R_1 \\ R_3 = R_3 - 3R_1 \\ R_4 = R_4 - R_1 \end{array}} \left( \begin{array}{cccc|c}
+    1 & 3 & -4 & 2 & 3 \\
+    0 & -1 & 6 & -3 & -7 \\
+    0 & -2 & 11 & -4 & -7 \\
+    0 & -1 & 5 & -1 & 3
+    \end{array} \right)
+    \]</p>
+    <p>Продовжимо елементарні перетворення для отримання нулів у третьому та четвертому рядках на другій позиції. До третього рядка додамо другий рядок, помножений на -2. До четвертого рядка додамо другий рядок, помножений на -1:</p>
+    <p>\[
+    \xrightarrow{\begin{array}{c} R_3 = R_3 - 2R_2 \\ R_4 = R_4 - R_2 \end{array}} \left( \begin{array}{cccc|c}
+    1 & 3 & -4 & 2 & 3 \\
+    0 & -1 & 6 & -3 & -7 \\
+    0 & 0 & -1 & 2 & 7 \\
+    0 & 0 & -1 & 2 & 10
+    \end{array} \right)
+    \]</p>
+    <p>Продовжимо елементарні перетворення для отримання нуля у четвертому рядку на третій позиції. До четвертого рядка додамо третій рядок, помножений на -1:</p>
+    <p>\[
+    \xrightarrow{R_4 = R_4 - R_3} \left( \begin{array}{cccc|c}
+    1 & 3 & -4 & 2 & 3 \\
+    0 & -1 & 6 & -3 & -7 \\
+    0 & 0 & -1 & 2 & 7 \\
+    0 & 0 & 0 & 0 & 3
+    \end{array} \right)
+    \]</p>
+    <p>Тепер весь запис виглядає так, виконуючи елементарні перетворення усно:</p>
+    <p class="math-container">\[
+\left( \begin{array}{cccc|c}
+1 & 3 & -4 & 2 & 3 \\
+2 & 5 & -2 & 1 & -1 \\
+3 & 7 & -1 & 2 & 2 \\
+1 & 2 & 1 & 1 & 6
+\end{array} \right) \sim
+\left( \begin{array}{cccc|c}
+1 & 3 & -4 & 2 & 3 \\
+0 & -1 & 6 & -3 & -7 \\
+0 & -2 & 11 & -4 & -7 \\
+0 & -1 & 5 & -1 & 3
+\end{array} \right) \sim
+\left( \begin{array}{cccc|c}
+1 & 3 & -4 & 2 & 3 \\
+0 & -1 & 6 & -3 & -7 \\
+0 & 0 & -1 & 2 & 7 \\
+0 & 0 & -1 & 2 & 10
+\end{array} \right)\sim
+\]</p>
+<p class="math-container">\[
+\sim \left( \begin{array}{cccc|c}
+1 & 3 & -4 & 2 & 3 \\
+0 & -1 & 6 & -3 & -7 \\
+0 & 0 & -1 & 2 & 7 \\
+0 & 0 & 0 & 0 & 3
+\end{array} \right).
+\]</p>
+    <p>Останній рядок розширеної матриці виражає рівняння:</p>
+    <p>\[
+    0 \cdot x_1 + 0 \cdot x_2 + 0 \cdot x_3 + 0 \cdot x_4 = 3
+    \]</p>
+    <p>яке є суперечливим, оскільки \( 0 \neq 3 \). Отже, система рівнянь є несумісною (розв’язків немає).</p>
+<p><strong><span class="example-solution">Відповідь:</span></strong> Система несумісна, розв’язків немає.</p>
+    
+   <p><strong>Примітка.</strong> <em>Якщо під час приведення розширеної матриці до східчастого вигляду з’являється нульовий рядок, то:</em></p>
+<ul>
+    <li><em>якщо у відповідному рядку стовпець вільних членів містить ненульове число, система є несумісною (розв’язків немає);</em></li>
+    <li><em>якщо вільний член дорівнює нулю, такий рядок не дає додаткових умов, що може свідчити про наявність вільних змінних і, відповідно, про безліч розв’язків.</em></li>
+</ul>
+<p><em>Аналогічно, якщо в східчастій матриці з’являється нульовий стовпець, це свідчить про те, що відповідна змінна є вільною, що також призводить до безлічі розв’язків.</em></p>
+    <p><strong><span class="example-title">Приклад 6.7.</span></strong> Розв’язати систему рівнянь:</p>
+        <p>\[
+    \begin{cases}
+    5x_1 + x_2 + 2x_3 + x_4 = 20 \\
+    4x_1 - x_2 - x_3 + 2x_4 = 15 \\
+    3x_1 - 3x_2 - 4x_3 + 3x_4 = 10 \\
+    x_1 + 2x_2 + 3x_3 - x_4 = 5
+    \end{cases}
+    \]</p>
+    <h3>Розв’язання</h3>
+    <p>Запишемо розширену матрицю системи:</p>
+    <p>\[
+    \left( \begin{array}{cccc|c}
+    5 & 1 & 2 & 1 & 20 \\
+    4 & -1 & -1 & 2 & 15 \\
+    3 & -3 & -4 & 3 & 10 \\
+    1 & 2 & 3 & -1 & 5
+    \end{array} \right)
+    \]</p>
+    <p>Для зручності спочатку поміняємо місцями перший і четвертий рядки:</p>
+    <p>\[
+    \left( \begin{array}{cccc|c}
+    5 & 1 & 2 & 1 & 20 \\
+    4 & -1 & -1 & 2 & 15 \\
+    3 & -3 & -4 & 3 & 10 \\
+    1 & 2 & 3 & -1 & 5
+    \end{array} \right) \xrightarrow{R_1 \leftrightarrow R_4} \left( \begin{array}{cccc|c}
+    1 & 2 & 3 & -1 & 5 \\
+    4 & -1 & -1 & 2 & 15 \\
+    3 & -3 & -4 & 3 & 10 \\
+    5 & 1 & 2 & 1 & 20
+    \end{array} \right)
+    \]</p>
+    <p>Отримання нулів у першому стовпці під головним елементом. До другого рядка додамо перший рядок, помножений на -4, а до третього рядка додамо перший рядок, помножений на -3, і до четвертого рядка додамо перший рядок, помножений на -5. Після цих перетворень отримуємо:</p>
+    <p>\[
+    \xrightarrow{\begin{array}{c} R_2 = R_2 - 4R_1 \\ R_3 = R_3 - 3R_1 \\ R_4 = R_4 - 5R_1 \end{array}} \left( \begin{array}{cccc|c}
+    1 & 2 & 3 & -1 & 5 \\
+    0 & -9 & -13 & 6 & -5 \\
+    0 & -9 & -13 & 6 & -5 \\
+    0 & -9 & -13 & 6 & -5
+    \end{array} \right)
+    \]</p>
+    <p>Оскільки другий, третій та четвертий рядки рівні, залишаємо лише один із них. Таким чином, система еквівалентна системі двох рівнянь:</p>
+    <p>\[
+    \left( \begin{array}{cccc|c}
+    1 & 2 & 3 & -1 & 5 \\
+    0 & -9 & -13 & 6 & -5
+    \end{array} \right)
+    \]</p>
+    <p>Це відповідає системі двох рівнянь із чотирма змінними:</p>
+    <p>\[
+    \begin{cases}
+    x_1 + 2x_2 + 3x_3 - x_4 = 5 \\
+    -9x_2 - 13x_3 + 6x_4 = -5
+    \end{cases}
+    \]</p>
+    <p>Розв’яжемо систему. Для цього визначимо базисні змінні – \( x_1 \) та \( x_2 \), які стоять першими в кожному рівнянні (на «сходинках» східчастої системи), і залишимо їх у лівій частині. Решту змінних, \( x_3 \) та \( x_4 \), назвемо вільними, оскільки вони можуть набувати довільних значень, і перенесемо їх у праву частину. Отримаємо:</p>
+    <p>\[
+    \begin{cases}
+    x_1 + 2x_2 = 5 - 3x_3 + x_4 \\
+    -9x_2 = -5 + 13x_3 - 6x_4
+    \end{cases}
+    \]</p>
+    <p>Із другого рівняння знаходимо змінну \( x_2 \):</p>
+    <p>\[
+    x_2 = \frac{5 - 13x_3 + 6x_4}{9}
+    \]</p>
+    <p>Підставляючи значення \( x_2 \) у перше рівняння і знаходимо змінну \( x_1 \):</p>
+    <p class="math-container">\[
+x_1 + \frac{2 \cdot (5 - 13x_3 + 6x_4)}{9} = 5 - 3x_3 + x_4
+\]</p>
+    <p>\[
+    x_1 + \frac{10 - 26x_3 + 12x_4}{9} = 5 - 3x_3 + x_4
+    \]</p>
+    <p>Помножимо обидві частини рівняння на 9:</p>
+    <p>\[
+    9x_1 + 10 - 26x_3 + 12x_4 = 45 - 27x_3 + 9x_4
+    \]</p>
+    <p>І знаходимо змінну \( x_1 \):</p>
+    <p>\[
+    9x_1 = -10 + 26x_3 - 12x_4 + 45 - 27x_3 + 9x_4
+    \]</p>
+    <p>\[
+    9x_1 = 35 - x_3 - 3x_4
+    \]</p>
+    <p>\[
+    x_1 = \frac{35 - x_3 - 3x_4}{9}
+    \]</p>
+    <p>Отже, загальний розв’язок системи має вигляд:</p>
+    <p>\[
+    \begin{cases}
+    x_3, x_4 \text{ – вільні змінні або } x_3, x_4 \in \mathbb{R} \\
+    x_1 = \frac{35 - x_3 - 3x_4}{9} \\
+    x_2 = \frac{5 - 13x_3 + 6x_4}{9}
+    \end{cases}
+    \]</p>
+    <p>Іншими словами, загальний розв’язок можна записати так:</p>
+    <p>\[
+    \left( \frac{35 - x_3 - 3x_4}{9}, \frac{5 - 13x_3 + 6x_4}{9}, x_3, x_4 \right), \quad \text{де } x_3, x_4 \in \mathbb{R}
+    \]</p>
+    <p><strong>Примітка.</strong> Змінним \( x_3 \) та \( x_4 \) можна підставляти будь-які конкретні значення, після чого значення \( x_1 \) та \( x_2 \) однозначно визначаються за формулами. Отримані розв’язки називаються частинними, і їх безліч. Наприклад:</p>
+    <p>\[
+    x_3 = 0, x_4 = 0 \implies \left( \frac{35}{9}, \frac{5}{9}, 0, 0 \right)
+    \]</p>
+    <p>\[
+    x_3 = 1, x_4 = 0 \implies \left( \frac{34}{9}, -\frac{8}{9}, 1, 0 \right)
+    \]</p>
+    <p>\[
+    x_3 = 2, x_4 = 2 \implies \left( 3, -1, 2, 2 \right)
+    \]</p>
+    <p>Змінні \( x_3 \) та \( x_4 \) називаються вільними, а формули</p>
+    <p>\[
+    \begin{cases}
+    x_1 = \frac{35 - x_3 - 3x_4}{9} \\
+    x_2 = \frac{5 - 13x_3 + 6x_4}{9}
+    \end{cases}
+    \]</p>
+    <p>називаються загальним розв’язком системи.</p>
+<p><strong><span class="example-solution">Відповідь:</span></strong> Загальний розв’язок системи:
+    \( \left( \frac{35 - x_3 - 3x_4}{9}, \frac{5 - 13x_3 + 6x_4}{9}, x_3, x_4 \right), \) де \( x_3, x_4 \in \mathbb{R} \).</p>
+</div>
+            </div>
+        </div>
+    </div>
+   <div id="videoModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <h2 class="glow-title">Оберіть відео</h2>
+            <div class="video-card-container">
+                <div class="video-card" data-video="1">
+                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
+                    <h3>Метод Гауса розв'язування СЛАР</h3>
+                </div>
+                <div class="video-card" data-video="2">
+                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
+                    <h3>Gauss algorithm to solve systems of linear equations</h3>
+                </div>
+                            </div>
+        </div>
+    </div>
+    <div id="videoPlayerModal1" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoPlayerBtn1">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-player-container">
+                <iframe id="youtubePlayer1" width="100%" data-src="https://www.youtube.com/embed/rOf8dTnRhjs" src="https://www.youtube.com/embed/UVHweVUrgUM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+    <div id="videoPlayerModal2" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoPlayerBtn2">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-player-container">
+                <iframe id="youtubePlayer2" width="100%" data-src="https://www.youtube.com/embed/rOf8dTnRhjs" src="https://www.youtube.com/embed/zm55sT12X2w" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+    <div id="questionsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="questionsTitle">
+    <div class="modal-header">
+        <button class="close-btn" aria-label="Закрити питання" id="closeQuestionsBtn">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="flashcard-container">
+            <div class="flashcard" tabindex="0" role="button" aria-expanded="false">
+                <div class="flashcard-inner">
+                    <div class="flashcard-front">
+                        <p>1. Що таке метод Гауса?</p>
+                    </div>
+                    <div class="flashcard-back">
+                        <p>Це метод розв’язування систем лінійних рівнянь, при якому розширену матрицю системи послідовно зводять до східчастого вигляду.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="flashcard" tabindex="0" role="button" aria-expanded="false">
+                <div class="flashcard-inner">
+                    <div class="flashcard-front">
+                        <p>2. Що таке розширена матриця системи?</p>
+                    </div>
+                    <div class="flashcard-back">
+                        <p>Це матриця коефіцієнтів з доданим стовпцем вільних членів.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="flashcard" tabindex="0" role="button" aria-expanded="false">
+                <div class="flashcard-inner">
+                    <div class="flashcard-front">
+                        <p>3. Які елементарні перетворення використовуються в методі Гауса?</p>
+                    </div>
+                    <div class="flashcard-back">
+                        <p>Перестановка рядків, множення рядка на ненульове число, додавання до рядка іншого рядка, помноженого на число, видалення пропорційних або нульових рядків.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="flashcard" tabindex="0" role="button" aria-expanded="false">
+                <div class="flashcard-inner">
+                    <div class="flashcard-front">
+                        <p>4. Що таке прямий хід методу Гауса?</p>
+                    </div>
+                    <div class="flashcard-back">
+                        <p>Це етап, на якому створюють нулі під головною діагоналлю й зводять систему до східчастого вигляду.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="flashcard" tabindex="0" role="button" aria-expanded="false">
+                <div class="flashcard-inner">
+                    <div class="flashcard-front">
+                        <p>5. Що таке зворотній хід методу Гауса?</p>
+                    </div>
+                    <div class="flashcard-back">
+                        <p>Це етап, коли невідомі послідовно знаходять, підставляючи їх у попередні рівняння.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="flashcard" tabindex="0" role="button" aria-expanded="false">
+                <div class="flashcard-inner">
+                    <div class="flashcard-front">
+                        <p>6. У чому перевага методу Гауса над методом Крамера?</p>
+                    </div>
+                    <div class="flashcard-back">
+                        <p>Метод Гауса можна застосовувати навіть тоді, коли визначник матриці дорівнює нулю.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="flashcard" tabindex="0" role="button" aria-expanded="false">
+                <div class="flashcard-inner">
+                    <div class="flashcard-front">
+                        <p>7. Скільки розв’язків може мати система при застосуванні методу Гауса?</p>
+                    </div>
+                    <div class="flashcard-back">
+                        <p>Один, жодного або нескінченно багато.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="trainerModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="trainerTitle">
+        <div class="modal-header">
+            <button class="close-btn" aria-label="Закрити тренажер" id="closeTrainerBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="trainer-container" id="trainerContent">
+                <div class="question-circle" id="questionCircle"><span>Питання 1</span></div>
+                <div class="trainer-question" id="questionText">Тут буде питання тренажера.</div>
+                <div id="systemText"></div>
+                <div class="trainer-options" id="optionsContainer"></div>
+                <div class="system-equations" id="systemEquations" style="display: none;"></div>
+                <div class="trainer-input" id="inputContainer" style="display: none;">
+                    <label for="determinantInput" class="trainer-question">Введіть значення:</label>
+                    <input type="text" inputmode="numeric" pattern="-?[0-9]*" id="determinantInput" class="answer-input" placeholder="Введіть число" aria-label="Введіть значення">
+                </div>
+                <button class="trainer-submit" id="submitAnswer" aria-label="Перевірити обрану відповідь">Перевірити</button>
+                <div class="trainer-feedback result-message" id="feedback"></div>
+                <div class="completion-message" id="completionMessage" style="display: none;">
+                    <div class="completion-emoji"></div>
+<h2>Тренування завершено!</h2>
+<p style="font-weight:bold; color:#b7410e;">Молодець!</p>
+<button id="resetTrainerBtn" aria-label="Спробувати ще раз">Спробувати ще раз</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+  <script>
+
+document.addEventListener('DOMContentLoaded', function () {
+    const elements = {
+        openTheoryBtn: document.getElementById('openTheoryBtn'),
+        openVideoBtn: document.getElementById('openVideoBtn'),
+        openQuestionsBtn: document.getElementById('openQuestionsBtn'),
+        openTrainerBtn: document.getElementById('openTrainerBtn'),
+        theoryModal: document.getElementById('theoryModal'),
+        videoModal: document.getElementById('videoModal'),
+        questionsModal: document.getElementById('questionsModal'),
+        trainerModal: document.getElementById('trainerModal'),
+        closeTheoryBtn: document.getElementById('closeTheoryBtn'),
+        closeVideoBtn: document.getElementById('closeVideoBtn'),
+        closeQuestionsBtn: document.getElementById('closeQuestionsBtn'),
+        closeTrainerBtn: document.getElementById('closeTrainerBtn'),
+        closeVideoPlayerBtn1: document.getElementById('closeVideoPlayerBtn1'),
+        closeVideoPlayerBtn2: document.getElementById('closeVideoPlayerBtn2'),
+        videoPlayerModal1: document.getElementById('videoPlayerModal1'),
+        videoPlayerModal2: document.getElementById('videoPlayerModal2'),
+        modalOverlay: document.getElementById('modalOverlay'),
+        questionCircle: document.getElementById('questionCircle'),
+        questionText: document.getElementById('questionText'),
+        systemText: document.getElementById('systemText'),
+        optionsContainer: document.getElementById('optionsContainer'),
+        inputContainer: document.getElementById('inputContainer'),
+        determinantInput: document.getElementById('determinantInput'),
+        systemEquations: document.getElementById('systemEquations'),
+        submitAnswer: document.getElementById('submitAnswer'),
+        feedback: document.getElementById('feedback'),
+        completionMessage: document.getElementById('completionMessage'),
+        resetTrainerBtn: document.getElementById('resetTrainerBtn'),
+        youtubePlayer1: document.getElementById('youtubePlayer1'),
+        youtubePlayer2: document.getElementById('youtubePlayer2'),
+        trainerContainer: document.getElementById('trainerContent'),
+        correctAnswers: document.getElementById('correctAnswers'),
+        totalQuestions: document.getElementById('totalQuestions')
+    };
+
+    // Перевірка наявності елементів
+    Object.entries(elements).forEach(([key, value]) => {
+        if (!value) console.error(`Element ${key} not found in DOM`);
+    });
+
+    // Логіка для вкладок теорії
+    const tabButtons = elements.theoryModal?.querySelectorAll('.tab-button');
+    const tabContents = elements.theoryModal?.querySelectorAll('.tab-content');
+
+    function closeAllTabs() {
+        tabButtons?.forEach(btn => {
+            btn.classList.remove('active');
+            btn.setAttribute('aria-expanded', 'false');
+        });
+        tabContents?.forEach(content => {
+            content.classList.remove('active');
+        });
+    }
+
+    function toggleTab(tabId, button) {
+        const targetContent = elements.theoryModal?.querySelector(`#${tabId}`);
+        if (!targetContent) {
+            console.error(`Tab content #${tabId} not found`);
+            return;
+        }
+
+        const isActive = button.classList.contains('active');
+        closeAllTabs();
+
+        if (!isActive) {
+            button.classList.add('active');
+            button.setAttribute('aria-expanded', 'true');
+            targetContent.classList.add('active');
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise([targetContent]).then(() => {
+                    elements.theoryModal.querySelector('.modal-content').scrollTop = 0;
+                }).catch(err => console.error('MathJax error in toggleTab:', err));
+            }
+        }
+    }
+
+    tabButtons?.forEach(button => {
+        button.addEventListener('click', () => {
+            const tabId = button.getAttribute('data-tab');
+            toggleTab(tabId, button);
+        });
+    });
+
+    closeAllTabs();
+
+    // Логіка для YouTube-відео
+    let players = {};
+    const playerIds = {
+        'youtubePlayer1': 'Gz6v38UyS4c',
+        'youtubePlayer2': '9R7W1WV6ye8'
+    };
+
+    const playerSrcs = {
+        'youtubePlayer1': elements.youtubePlayer1?.getAttribute('data-src') || '',
+        'youtubePlayer2': elements.youtubePlayer2?.getAttribute('data-src') || ''
+    };
+
+    function loadYouTubeAPI() {
+        if (!window.YT) {
+            const tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            const firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        }
+    }
+
+    window.onYouTubeIframeAPIReady = function() {
+        Object.keys(playerIds).forEach(playerId => {
+            const element = elements[playerId];
+            if (element) {
+                players[playerId] = new YT.Player(playerId, {
+                    videoId: playerIds[playerId],
+                    playerVars: { 'autoplay': 0, 'controls': 1, 'rel': 0, 'showinfo': 0 },
+                    events: {
+                        'onReady': event => {
+                            event.target.cueVideoById({ videoId: playerIds[playerId], startSeconds: 0 });
+                        }
+                    }
+                });
+            }
+        });
+    };
+
+    loadYouTubeAPI();
+
+    function stopAllVideos() {
+        Object.keys(players).forEach(playerId => {
+            const player = players[playerId];
+            const element = elements[playerId];
+            if (player && typeof player.stopVideo === 'function') {
+                player.stopVideo();
+            }
+            if (element) {
+                element.src = '';
+                const parent = element.parentNode;
+                const newIframe = document.createElement('iframe');
+                newIframe.id = playerId;
+                newIframe.setAttribute('data-src', playerSrcs[playerId]);
+                newIframe.setAttribute('frameborder', '0');
+                newIframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+                newIframe.setAttribute('allowfullscreen', '');
+                parent.replaceChild(newIframe, element);
+                elements[playerId] = newIframe;
+                players[playerId] = new YT.Player(playerId, {
+                    videoId: playerIds[playerId],
+                    playerVars: { 'autoplay': 0, 'controls': 1, 'rel': 0, 'showinfo': 0 },
+                    events: {
+                        'onReady': event => event.target.cueVideoById({ videoId: playerIds[playerId], startSeconds: 0 })
+                    }
+                });
+            }
+        });
+    }
+
+    function openVideoPlayerModal(videoModal, playerId) {
+        stopAllVideos();
+        toggleModal(elements.videoModal, false);
+        toggleModal(videoModal, true);
+        const element = elements[playerId];
+        if (element && !element.src) {
+            element.src = playerSrcs[playerId];
+        }
+        if (players[playerId] && typeof players[playerId].loadVideoById === 'function') {
+            players[playerId].loadVideoById({ videoId: playerIds[playerId], startSeconds: 0 });
+        }
+    }
+
+    function toggleModal(modal, show) {
+        if (!modal) {
+            console.error('Modal is undefined');
+            return;
+        }
+        console.log(`Toggling modal ${modal.id} to ${show ? 'show' : 'hide'}`);
+        const allModals = [
+            elements.theoryModal,
+            elements.videoModal,
+            elements.questionsModal,
+            elements.trainerModal,
+            elements.videoPlayerModal1,
+            elements.videoPlayerModal2
+        ].filter(Boolean);
+        allModals.forEach(m => {
+            if (m && m !== modal) m.style.display = 'none';
+        });
+        modal.style.display = show ? 'flex' : 'none';
+        elements.modalOverlay.style.display = show ? 'block' : 'none';
+        document.body.style.overflow = show ? 'hidden' : 'auto';
+        if (show) {
+            const closeBtn = modal.querySelector('.close-btn');
+            if (closeBtn) closeBtn.focus();
+            if (modal === elements.trainerModal) {
+                resetTrainer();
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    window.MathJax.typesetPromise([elements.trainerModal]).catch(err => console.error('MathJax error in trainerModal:', err));
+                }
+            }
+        }
+    }
+
+    // Додавання слухачів подій із перевіркою
+    if (elements.openTheoryBtn) elements.openTheoryBtn.addEventListener('click', () => toggleModal(elements.theoryModal, true));
+    else console.error('openTheoryBtn not found');
+    if (elements.openVideoBtn) elements.openVideoBtn.addEventListener('click', () => toggleModal(elements.videoModal, true));
+    else console.error('openVideoBtn not found');
+    if (elements.openQuestionsBtn) elements.openQuestionsBtn.addEventListener('click', () => toggleModal(elements.questionsModal, true));
+    else console.error('openQuestionsBtn not found');
+    if (elements.openTrainerBtn) elements.openTrainerBtn.addEventListener('click', () => toggleModal(elements.trainerModal, true));
+    else console.error('openTrainerBtn not found');
+    if (elements.closeTheoryBtn) elements.closeTheoryBtn.addEventListener('click', () => toggleModal(elements.theoryModal, false));
+    else console.error('closeTheoryBtn not found');
+    if (elements.closeVideoBtn) elements.closeVideoBtn.addEventListener('click', () => toggleModal(elements.videoModal, false));
+    else console.error('closeVideoBtn not found');
+    if (elements.closeQuestionsBtn) elements.closeQuestionsBtn.addEventListener('click', () => toggleModal(elements.questionsModal, false));
+    else console.error('closeQuestionsBtn not found');
+    if (elements.closeTrainerBtn) elements.closeTrainerBtn.addEventListener('click', () => toggleModal(elements.trainerModal, false));
+    else console.error('closeTrainerBtn not found');
+    if (elements.closeVideoPlayerBtn1) elements.closeVideoPlayerBtn1.addEventListener('click', () => {
+        stopAllVideos();
+        toggleModal(elements.videoPlayerModal1, false);
+        toggleModal(elements.videoModal, true);
+    });
+    else console.error('closeVideoPlayerBtn1 not found');
+    if (elements.closeVideoPlayerBtn2) elements.closeVideoPlayerBtn2.addEventListener('click', () => {
+        stopAllVideos();
+        toggleModal(elements.videoPlayerModal2, false);
+        toggleModal(elements.videoModal, true);
+    });
+    else console.error('closeVideoPlayerBtn2 not found');
+    if (elements.modalOverlay) {
+        elements.modalOverlay.addEventListener('click', () => {
+            stopAllVideos();
+            toggleModal(elements.theoryModal, false);
+            toggleModal(elements.videoModal, false);
+            toggleModal(elements.questionsModal, false);
+            toggleModal(elements.trainerModal, false);
+            toggleModal(elements.videoPlayerModal1, false);
+            toggleModal(elements.videoPlayerModal2, false);
+        });
+    } else console.error('modalOverlay not found');
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            stopAllVideos();
+            toggleModal(elements.theoryModal, false);
+            toggleModal(elements.videoModal, false);
+            toggleModal(elements.questionsModal, false);
+            toggleModal(elements.trainerModal, false);
+            toggleModal(elements.videoPlayerModal1, false);
+            toggleModal(elements.videoPlayerModal2, false);
+        }
+    });
+
+    document.querySelectorAll('.flashcard').forEach(card => {
+        card.addEventListener('click', () => {
+            card.classList.toggle('flipped');
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise([card]).catch(err => console.error('MathJax error in flashcard:', err));
+            }
+        });
+        card.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                card.classList.toggle('flipped');
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    window.MathJax.typesetPromise([card]).catch(err => console.error('MathJax error in flashcard:', err));
+                }
+            }
+        });
+    });
+
+    document.querySelectorAll('.video-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const videoNumber = card.getAttribute('data-video');
+            const videoModal = elements[`videoPlayerModal${videoNumber}`];
+            const playerId = `youtubePlayer${videoNumber}`;
+            if (videoModal && playerId) openVideoPlayerModal(videoModal, playerId);
+            else console.error(`Video modal or player not found for video ${videoNumber}`);
+        });
+    });
+
+    // Логіка для тренажера
+    let currentQuestion = 1;
+    let selectedOption = null;
+    let correctAnswer = null;
+    let correctAnswersCount = 0;
+    let totalQuestionsAnswered = 0;
+    let currentSystem = null;
+    let intermediateSystem = null;
+
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+// Оновлена функція для спрощення рівняння
+function gcd(a, b) {
+    a = Math.abs(a);
+    b = Math.abs(b);
+    while (b) {
+        [a, b] = [b, a % b];
+    }
+    return a;
+}
+
+function simplifyEquation(...coefs) {
+    // Збираємо ненульові значення
+    const nonZero = coefs.filter(v => v !== 0);
+    if (nonZero.length === 0) return coefs;
+
+    // НСД абсолютних значень
+    let divisor = nonZero.reduce((a, b) => gcd(a, b));
+
+    // Ділимо всі коефіцієнти на НСД
+    let result = coefs.map(v => v / divisor);
+
+   const allNegative = result.every(v => v !== 0 ? v < 0 : true);
+if (allNegative) {
+    result = result.map(v => -v);
+}
+
+
+    return result;
+}
+
+                                                             
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+   function formatEquation(a, b, c, d = null) {
+    let parts = [];
+    if (a !== 0) {
+        parts.push(a === 1 ? 'x' : a === -1 ? '-x' : `${a}x`);
+    }
+    if (b !== 0) {
+        let yPart = b === 1 ? 'y' : b === -1 ? '-y' : `${b}y`;
+        if (parts.length > 0) {
+            yPart = b > 0 ? ` + ${yPart}` : ` - ${Math.abs(b) === 1 ? 'y' : Math.abs(b) + 'y'}`;
+        }
+        parts.push(yPart);
+    }
+    if (d !== null && c !== 0) {
+        let zPart = c === 1 ? 'z' : c === -1 ? '-z' : `${c}z`;
+        if (parts.length > 0) {
+            zPart = c > 0 ? ` + ${zPart}` : ` - ${Math.abs(c) === 1 ? 'z' : Math.abs(c) + 'z'}`;
+        }
+        parts.push(zPart);
+    }
+    if (parts.length === 0) {
+        return `0 = ${d !== null ? d : c}`;
+    }
+    return `${parts.join('')} = ${d !== null ? d : c}`;
+}
+
+// Нова функція для форматування розв'язку (для питання 4)
+function formatSolution(x, y, z) {
+    const latex = `\\left( ${x}; ${y}; ${z} \\right)`;
+    const plainText = `(${x}; ${y}; ${z})`;
+    return { latex, plainText };
+}
+
+    function systemToLatex(system, withInputs = false) {
+        const size = system.coefficients.length;
+        let latex = '\\begin{cases} ';
+        let plainText = '';
+        for (let i = 0; i < size; i++) {
+            let equation = '';
+            let plainEquation = '';
+            let isFirstTerm = true;
+            for (let j = 0; j < size; j++) {
+                let coef = system.coefficients[i][j];
+                let varName = ['x', 'y', 'z'][j];
+                if (coef !== 0) {
+                    let sign = isFirstTerm ? (coef < 0 ? '-' : '') : (coef > 0 ? '+' : '-');
+                    if (Math.abs(coef) === 1) {
+                        equation += `${sign}${varName}`;
+                        plainEquation += `${sign}${varName}`;
+                    } else {
+                        equation += `${sign}${Math.abs(coef)}${varName}`;
+                        plainEquation += `${sign}${Math.abs(coef)}${varName}`;
+                    }
+                    isFirstTerm = false;
+                }
+            }
+            if (withInputs) {
+                equation += ` = \\text{ } \\input{input_b${i}}`;
+                plainEquation += ` = `;
+            } else {
+                equation += ` = ${system.constants[i]}`;
+                plainEquation += ` = ${system.constants[i]}`;
+            }
+            latex += equation.replace(/^\+/, '');
+            plainText += plainEquation.replace(/^\+/, '') + '\n';
+            if (i < size - 1) latex += ' \\\\ ';
+        }
+        latex += ' \\end{cases}';
+        elements.systemText.dataset.plainText = plainText;
+        return latex;
+    }
+
+   // Функція для генерації LaTeX матриці
+function matrixToLatex(matrix, isAugmented = false, constants = []) {
+    // Визначаємо кількість стовпців
+    const nCols = matrix[0].length;
+    // Формуємо колонки: "c" для звичайних, "|c" перед останнім стовпцем, якщо матриця розширена
+    let colSpec = 'c'.repeat(nCols);
+    if (isAugmented) colSpec += '|c';
+
+    let latex = `\\left( \\begin{array}{${colSpec}} `;
+    let plainText = '[';
+
+    for (let i = 0; i < matrix.length; i++) {
+        const row = matrix[i];
+        latex += row.join(' & ');
+        plainText += row.join(', ');
+
+        if (isAugmented) {
+            latex += ' & ' + constants[i];
+            plainText += ` | ${constants[i]}`;
+        }
+
+        if (i < matrix.length - 1) {
+            latex += ' \\\\ ';
+            plainText += '; ';
+        }
+    }
+
+    latex += ' \\end{array} \\right)';
+    plainText += ']';
+
+    return { latex, plainText };
+}
+
+
+   function generateSystem3x3() {
+    // Вибираємо цілі корені x, y, z у межах від -3 до 3
+    const x = getRandomInt(-3, 3);
+    const y = getRandomInt(-3, 3);
+    const z = getRandomInt(-3, 3);
+
+    // Масиви коефіцієнтів і вільних членів
+    let coefficients = Array(3).fill().map(() => Array(3).fill(0));
+    let constants = Array(3).fill(0);
+
+    // Перше рівняння: 1*x + a*y + b*z = c
+    coefficients[0][0] = 1; // завжди 1 при x
+    coefficients[0][1] = getRandomInt(-5, 5); // a
+    coefficients[0][2] = getRandomInt(-5, 5); // b
+    constants[0] = coefficients[0][0] * x + coefficients[0][1] * y + coefficients[0][2] * z;
+
+    // Друге рівняння: d*x + e*y + f*z = g
+    coefficients[1][0] = getRandomInt(-5, 5); // d
+    coefficients[1][1] = getRandomInt(1, 5);  // e (ненульовий, щоб уникнути ділення на 0)
+    coefficients[1][2] = getRandomInt(-5, 5); // f
+    constants[1] = coefficients[1][0] * x + coefficients[1][1] * y + coefficients[1][2] * z;
+
+    // Третє рівняння: h*x + i*y + j*z = k
+    coefficients[2][0] = getRandomInt(-5, 5); // h
+    // робимо i кратним e => ділення row3[1] / row2[1] завжди ціле
+    const multiplier = getRandomInt(-3, 3);
+    coefficients[2][1] = coefficients[1][1] * multiplier; 
+    coefficients[2][2] = getRandomInt(-5, 5); // j
+    constants[2] = coefficients[2][0] * x + coefficients[2][1] * y + coefficients[2][2] * z;
+
+    // Перевірка, щоб система була розв'язною (дет ≠ 0)
+    const det =
+        coefficients[0][0] * (coefficients[1][1] * coefficients[2][2] - coefficients[1][2] * coefficients[2][1]) -
+        coefficients[0][1] * (coefficients[1][0] * coefficients[2][2] - coefficients[1][2] * coefficients[2][0]) +
+        coefficients[0][2] * (coefficients[1][0] * coefficients[2][1] - coefficients[1][1] * coefficients[2][0]);
+
+    if (det === 0 || coefficients.some(row => row.every(coef => coef === 0))) {
+        return generateSystem3x3(); // рекурсія, якщо вироджена система
+    }
+
+    return { coefficients, constants, solution: [x, y, z] };
+}
+
+
+    function generateQuestion1() {
+    currentSystem = generateSystem3x3();
+    const [a1, a2, a3] = currentSystem.coefficients;
+    const constants = currentSystem.constants;
+
+    const systemLatex = systemToLatex(currentSystem);
+    const systemPlainText = currentSystem.coefficients
+        .map((row, i) => formatEquation(row[0], row[1], row[2], constants[i]))
+        .join('\n');
+
+    const correctMatrix = matrixToLatex([a1, a2, a3], true, constants);
+    const mainMatrix = matrixToLatex([a1, a2, a3], false);
+    const wrongSignMatrix = matrixToLatex([[a1[0], a1[1], -a1[2]], a2, a3], true, constants);
+    const zeroConstantsMatrix = matrixToLatex([a1, a2, a3], true, [0, 0, 0]);
+
+    const options = [
+        { text: correctMatrix.latex, plainText: correctMatrix.plainText, isCorrect: true, comment: '✓ Правильно! Молодець!' },
+        { text: mainMatrix.latex, plainText: mainMatrix.plainText, isCorrect: false, comment: '✗ Неправильно, спробуй ще раз!' },
+        { text: wrongSignMatrix.latex, plainText: wrongSignMatrix.plainText, isCorrect: false, comment: '✗ Неправильно, спробуй ще раз!' },
+        { text: zeroConstantsMatrix.latex, plainText: zeroConstantsMatrix.plainText, isCorrect: false, comment: '✗ Неправильно, спробуй ще раз!' }
+    ];
+
+    return {
+        question: 'Дано систему рівнянь. Яка з наведених матриць є розширеною матрицею цієї системи?',
+        systemLatex: systemLatex,
+        systemPlainText: systemPlainText,
+        options: shuffleArray(options),
+        correctAnswer: correctMatrix.plainText
+    };
+}
+  
+     
+
+function gaussEliminationForQuestion2(system) {
+    const [a1, a2, a3] = system.coefficients;
+    const [b1, b2, b3] = system.constants;
+
+    // Перше рівняння нормалізуємо: x + ... = ...
+    const newSystem = {
+        coefficients: [[1, a1[1], a1[2]], [0, 0, 0], [0, 0, 0]],
+        constants: [b1, 0, 0]
+    };
+
+    // Виключення x з другого рівняння: R2 = R2 - a2[0] * R1
+    let y2 = a2[1] - a2[0] * a1[1];
+    let z2 = a2[2] - a2[0] * a1[2];
+    let c2 = b2 - a2[0] * b1;
+    [y2, z2, c2] = simplifyEquation(y2, z2, c2);
+    newSystem.coefficients[1] = [0, y2, z2];
+    newSystem.constants[1] = c2;
+
+    // Виключення x з третього рівняння: R3 = R3 - a3[0] * R1
+    let y3 = a3[1] - a3[0] * a1[1];
+    let z3 = a3[2] - a3[0] * a1[2];
+    let c3 = b3 - a3[0] * b1;
+    [y3, z3, c3] = simplifyEquation(y3, z3, c3);
+    newSystem.coefficients[2] = [0, y3, z3];
+    newSystem.constants[2] = c3;
+
+    return newSystem;
+}
+     function generateSystem3x3() {
+    // Вибираємо цілі корені x, y, z у межах від -3 до 3
+    const x = getRandomInt(-3, 3);
+    const y = getRandomInt(-3, 3);
+    const z = getRandomInt(-3, 3);
+
+    // Формуємо коефіцієнти системи
+    let coefficients = Array(3).fill().map(() => Array(3).fill(0));
+    let constants = Array(3).fill(0);
+
+    // Перше рівняння: 1*x + a*y + b*z = c
+    coefficients[0][0] = 1; // Коефіцієнт при x завжди 1
+    coefficients[0][1] = getRandomInt(-5, 5); // a
+    coefficients[0][2] = getRandomInt(-5, 5); // b
+    constants[0] = coefficients[0][0] * x + coefficients[0][1] * y + coefficients[0][2] * z; // c
+
+    // Друге рівняння: d*x + e*y + f*z = g
+    coefficients[1][0] = getRandomInt(-5, 5); // d
+    coefficients[1][1] = getRandomInt(-5, 5); // e
+    coefficients[1][2] = getRandomInt(-5, 5); // f
+    constants[1] = coefficients[1][0] * x + coefficients[1][1] * y + coefficients[1][2] * z; // g
+
+    // Третє рівняння: h*x + i*y + j*z = k
+    coefficients[2][0] = getRandomInt(-5, 5); // h
+    coefficients[2][1] = getRandomInt(-5, 5); // i
+    coefficients[2][2] = getRandomInt(-5, 5); // j
+    constants[2] = coefficients[2][0] * x + coefficients[2][1] * y + coefficients[2][2] * z; // k
+
+    // Перевірка, щоб система була розв'язною (детермінант != 0)
+    const det = (coefficients[0][0] * (coefficients[1][1] * coefficients[2][2] - coefficients[1][2] * coefficients[2][1]) -
+                 coefficients[0][1] * (coefficients[1][0] * coefficients[2][2] - coefficients[1][2] * coefficients[2][0]) +
+                 coefficients[0][2] * (coefficients[1][0] * coefficients[2][1] - coefficients[1][1] * coefficients[2][0]));
+
+    // Якщо детермінант = 0 або рядок складається з нулів, генеруємо нову систему
+    if (det === 0 || coefficients.some(row => row.every(coef => coef === 0))) {
+        return generateSystem3x3(); // Рекурсивно генеруємо нову систему
+    }
+
+    return { coefficients, constants, solution: [x, y, z] };
+}
+
+function gaussEliminationForQuestion3(system) {
+    const [a1, a2, a3] = system.coefficients;
+    const [b1, b2, b3] = system.constants;
+
+    // Виключаємо x з другого рівняння: R2 = R2 - a2[0] * R1
+    let factor2 = a2[0];
+    let y2 = a2[1] - factor2 * a1[1];
+    let z2 = a2[2] - factor2 * a1[2];
+    let c2 = b2 - factor2 * b1;
+    [y2, z2, c2] = simplifyEquation(y2, z2, c2);
+
+    // Виключаємо x з третього рівняння: R3 = R3 - a3[0] * R1
+    let factor3 = a3[0];
+    let y3 = a3[1] - factor3 * a1[1];
+    let z3 = a3[2] - factor3 * a1[2];
+    let c3 = b3 - factor3 * b1;
+    [y3, z3, c3] = simplifyEquation(y3, z3, c3);
+
+    // Якщо y2 = 0, то неможливо виключати y
+    if (y2 === 0) {
+        console.warn('y2 = 0, генеруємо нову систему');
+        let newSystem = generateSystem3x3();
+        return gaussEliminationForQuestion3(newSystem); 
+    }
+
+    // Виключаємо y з третього рівняння: 
+    // R3 = y2*R3 - y3*R2  (щоб уникнути ділення)
+    let new_y = y2 * y3 - y3 * y2; // = 0
+    let new_z = y2 * z3 - y3 * z2;
+    let new_c = y2 * c3 - y3 * c2;
+
+    [new_z, new_c] = simplifyEquation(new_z, new_c);
+
+    // Перевірка на нуль
+    if (new_z === 0) {
+        console.warn('new_z = 0 після спрощення, генеруємо нову систему');
+        let newSystem = generateSystem3x3();
+        return gaussEliminationForQuestion3(newSystem);
+    }
+
+    return {
+        coefficients: [
+            [1, a1[1], a1[2]],  // R1
+            [0, y2, z2],        // R2
+            [0, 0, new_z]       // R3
+        ],
+        constants: [b1, c2, new_c]
+    };
+}
+
+   
+    
+ function generateQuestion2() {
+    // Генеруємо систему з цілими коренями
+    currentSystem = generateSystem3x3(); // Функція з попередньої відповіді, яка генерує систему з коренями від -3 до 3
+    intermediateSystem = gaussEliminationForQuestion2(currentSystem);
+
+    // Перевірка, чи коректна система після виключення x
+    if (intermediateSystem.coefficients[1][1] === 0 && intermediateSystem.coefficients[1][2] === 0) {
+        console.warn('Некоректна система після виключення x, генеруємо нову');
+        return generateQuestion2();
+    }
+
+    // Правильна рівносильна система після виключення x
+    const correctSystem = intermediateSystem; // Використовуємо intermediateSystem
+    const correctSystemLatex = systemToLatex(correctSystem);
+    const correctSystemPlainText = correctSystem.coefficients
+        .map((row, i) => formatEquation(row[0], row[1], row[2], correctSystem.constants[i]))
+        .join('\n');
+
+    // Формуємо LaTeX і plain text для вихідної системи
+    const systemLatex = systemToLatex(currentSystem);
+    const systemPlainText = currentSystem.coefficients
+        .map((row, i) => formatEquation(row[0], row[1], row[2], currentSystem.constants[i]))
+        .join('\n');
+
+    // Неправильні системи
+    // Помилка в третьому рядку (протилежний знак вільного члена)
+    const wrongSystem1 = {
+        coefficients: correctSystem.coefficients.map(row => [...row]),
+        constants: [...correctSystem.constants]
+    };
+    wrongSystem1.constants[2] = -wrongSystem1.constants[2];
+    const wrongSystem1Latex = systemToLatex(wrongSystem1);
+    const wrongSystem1PlainText = wrongSystem1.coefficients
+        .map((row, i) => formatEquation(row[0], row[1], row[2], wrongSystem1.constants[i]))
+        .join('\n');
+
+    // Помилка в третьому рядку (інший вільний член)
+    const wrongSystem2 = {
+        coefficients: correctSystem.coefficients.map(row => [...row]),
+        constants: [...correctSystem.constants]
+    };
+    wrongSystem2.constants[2] = getRandomInt(-10, 10);
+    while (wrongSystem2.constants[2] === correctSystem.constants[2] || wrongSystem2.constants[2] === -wrongSystem1.constants[2]) {
+        wrongSystem2.constants[2] = getRandomInt(-10, 10);
+    }
+    const wrongSystem2Latex = systemToLatex(wrongSystem2);
+    const wrongSystem2PlainText = wrongSystem2.coefficients
+        .map((row, i) => formatEquation(row[0], row[1], row[2], wrongSystem2.constants[i]))
+        .join('\n');
+
+    // Помилка в другому рядку (інший вільний член)
+    const wrongSystem3 = {
+        coefficients: correctSystem.coefficients.map(row => [...row]),
+        constants: [...correctSystem.constants]
+    };
+    wrongSystem3.constants[1] = getRandomInt(-10, 10);
+    while (wrongSystem3.constants[1] === correctSystem.constants[1]) {
+        wrongSystem3.constants[1] = getRandomInt(-10, 10);
+    }
+    const wrongSystem3Latex = systemToLatex(wrongSystem3);
+    const wrongSystem3PlainText = wrongSystem3.coefficients
+        .map((row, i) => formatEquation(row[0], row[1], row[2], wrongSystem3.constants[i]))
+        .join('\n');
+
+    const options = [
+        { text: correctSystemLatex, plainText: correctSystemPlainText, isCorrect: true, comment: '✓ Правильно! Молодець!' },
+        { text: wrongSystem1Latex, plainText: wrongSystem1PlainText, isCorrect: false, comment: '✗ Неправильно, спробуй ще раз!' },
+        { text: wrongSystem2Latex, plainText: wrongSystem2PlainText, isCorrect: false, comment: '✗ Неправильно, спробуй ще раз!' },
+        { text: wrongSystem3Latex, plainText: wrongSystem3PlainText, isCorrect: false, comment: '✗ Неправильно, спробуй ще раз!' }
+    ];
+
+    return {
+        question: 'У заданій системі рівнянь методом Гауса виключіть змінну \\(x\\) з другого та третього рівнянь. Вкажіть рівносильну систему.',
+        systemLatex: systemLatex,
+        systemPlainText: systemPlainText,
+        options: shuffleArray(options),
+        correctAnswer: correctSystemPlainText
+    };
+}
+
+    function generateQuestion3() {
+    if (!intermediateSystem) {
+        console.error('intermediateSystem не визначено');
+        currentSystem = generateSystem3x3();
+        intermediateSystem = gaussEliminationForQuestion2(currentSystem);
+    }
+
+    // Перевірка, чи коректна intermediateSystem
+    if (intermediateSystem.coefficients[1][1] === 0 && intermediateSystem.coefficients[1][2] === 0) {
+        console.warn('Некоректна intermediateSystem, генеруємо нову');
+        currentSystem = generateSystem3x3();
+        intermediateSystem = gaussEliminationForQuestion2(currentSystem);
+    }
+
+    // Виконуємо виключення y
+    const correctSystem = gaussEliminationForQuestion3(intermediateSystem);
+
+    // Перевірка, чи коректна система після виключення y
+    if (correctSystem.coefficients[2][2] === 0) {
+        console.warn('Некоректна система після виключення y, генеруємо нову');
+        currentSystem = generateSystem3x3();
+        intermediateSystem = gaussEliminationForQuestion2(currentSystem);
+        return generateQuestion3();
+    }
+
+    const correctSystemLatex = systemToLatex(correctSystem);
+    const correctSystemPlainText = correctSystem.coefficients
+        .map((row, i) => formatEquation(row[0], row[1], row[2], correctSystem.constants[i]))
+        .join('\n');
+
+    // Формуємо LaTeX і plain text для вихідної системи (intermediateSystem)
+    const systemLatex = systemToLatex(intermediateSystem);
+    const systemPlainText = intermediateSystem.coefficients
+        .map((row, i) => formatEquation(row[0], row[1], row[2], intermediateSystem.constants[i]))
+        .join('\n');
+
+    // Неправильні системи
+    // Помилка в третьому рядку (протилежний знак вільного члена)
+    const wrongSystem1 = {
+        coefficients: correctSystem.coefficients.map(row => [...row]),
+        constants: [...correctSystem.constants]
+    };
+    wrongSystem1.constants[2] = -wrongSystem1.constants[2];
+    const wrongSystem1Latex = systemToLatex(wrongSystem1);
+    const wrongSystem1PlainText = wrongSystem1.coefficients
+        .map((row, i) => formatEquation(row[0], row[1], row[2], wrongSystem1.constants[i]))
+        .join('\n');
+
+    // Помилка в третьому рядку (інший вільний член)
+    const wrongSystem2 = {
+        coefficients: correctSystem.coefficients.map(row => [...row]),
+        constants: [...correctSystem.constants]
+    };
+    wrongSystem2.constants[2] = getRandomInt(-10, 10);
+    while (wrongSystem2.constants[2] === correctSystem.constants[2] || wrongSystem2.constants[2] === -wrongSystem1.constants[2]) {
+        wrongSystem2.constants[2] = getRandomInt(-10, 10);
+    }
+    const wrongSystem2Latex = systemToLatex(wrongSystem2);
+    const wrongSystem2PlainText = wrongSystem2.coefficients
+        .map((row, i) => formatEquation(row[0], row[1], row[2], wrongSystem2.constants[i]))
+        .join('\n');
+
+    // Помилка в другому рядку (інший вільний член)
+    const wrongSystem3 = {
+        coefficients: correctSystem.coefficients.map(row => [...row]),
+        constants: [...correctSystem.constants]
+    };
+    wrongSystem3.constants[1] = getRandomInt(-10, 10);
+    while (wrongSystem3.constants[1] === correctSystem.constants[1]) {
+        wrongSystem3.constants[1] = getRandomInt(-10, 10);
+    }
+    const wrongSystem3Latex = systemToLatex(wrongSystem3);
+    const wrongSystem3PlainText = wrongSystem3.coefficients
+        .map((row, i) => formatEquation(row[0], row[1], row[2], wrongSystem3.constants[i]))
+        .join('\n');
+
+    const options = [
+        { text: correctSystemLatex, plainText: correctSystemPlainText, isCorrect: true, comment: '✓ Правильно! Молодець!' },
+        { text: wrongSystem1Latex, plainText: wrongSystem1PlainText, isCorrect: false, comment: '✗ Неправильно, спробуй ще раз!' },
+        { text: wrongSystem2Latex, plainText: wrongSystem2PlainText, isCorrect: false, comment: '✗ Неправильно, спробуй ще раз!' },
+        { text: wrongSystem3Latex, plainText: wrongSystem3PlainText, isCorrect: false, comment: '✗ Неправильно, спробуй ще раз!' }
+    ];
+
+    return {
+        question: 'Задана система рівнянь розв’язана методом Гауса. Виберіть систему, еквівалентну даній, після послідовного виключення невідомих.',
+        systemLatex: systemLatex,
+        systemPlainText: systemPlainText,
+        options: shuffleArray(options),
+        correctAnswer: correctSystemPlainText
+    };
+}
+
+  function generateQuestion4() {
+    let x, y, z;
+    // Генеруємо корені x, y, z від -3 до 3, без двох нулів (0 або 1 нуль)
+    do {
+        x = getRandomInt(-3, 3);
+        y = getRandomInt(-3, 3);
+        z = getRandomInt(-3, 3);
+    } while ([x, y, z].filter(val => val === 0).length >= 2);
+
+    // Генеруємо коефіцієнти для верхньотрикутної матриці
+    const a = getRandomInt(-5, 5); // при y
+    const b = getRandomInt(-5, 5); // при z
+    const c = 1 * x + a * y + b * z;
+
+    const d = getRandomInt(1, 5);  // ненульовий при y
+    const e = getRandomInt(-5, 5); // при z
+    const f = d * y + e * z;
+
+    const g = getRandomInt(1, 5);  // ненульовий при z
+    const h = g * z;
+
+    // Матриця коефіцієнтів (3x3)
+    const coefficients = [
+        [1, a, b],
+        [0, d, e],
+        [0, 0, g]
+    ];
+    const constants = [c, f, h];
+
+    // Формуємо розширену матрицю для відображення
+    const augmentedMatrix = [
+        [1, a, b],
+        [0, d, e],
+        [0, 0, g]
+    ];
+
+    const matrixLatex = matrixToLatex(augmentedMatrix, true, constants);
+    const matrixPlainText = matrixLatex.plainText;
+
+    // Правильний розв'язок
+    const correctSol = formatSolution(x, y, z);
+
+    // Неправильні варіанти
+    const wrongY = formatSolution(x, -y, z);
+    const wrongX = formatSolution(-x, y, z);
+    const wrongZ = formatSolution(x, y, -z);
+
+    const options = [
+        { text: correctSol.latex, plainText: correctSol.plainText, isCorrect: true, comment: '✓ Правильно! Молодець!' },
+        { text: wrongY.latex, plainText: wrongY.plainText, isCorrect: false, comment: '✗ Неправильно, спробуй ще раз!' },
+        { text: wrongX.latex, plainText: wrongX.plainText, isCorrect: false, comment: '✗ Неправильно, спробуй ще раз!' },
+        { text: wrongZ.latex, plainText: wrongZ.plainText, isCorrect: false, comment: '✗ Неправильно, спробуй ще раз!' }
+    ];
+
+    return {
+        question: 'Знайдіть розв’язок системи за розширеною матрицею:',
+        systemLatex: matrixLatex.latex,
+        systemPlainText: matrixPlainText,
+        options: shuffleArray(options),
+        correctAnswer: correctSol.plainText
+    };
+}
+
+function generateQuestion5() {
+    let x, y, z;
+    // Генеруємо корені x, y, z від -3 до 3, але не більше одного нуля
+    do {
+        x = getRandomInt(-3, 3);
+        y = getRandomInt(-3, 3);
+        z = getRandomInt(-3, 3);
+    } while ([x, y, z].filter(val => val === 0).length >= 2);
+
+    // Генеруємо коефіцієнти для правильної верхньотрикутної матриці
+    const a = getRandomInt(-5, 5);
+    const b = getRandomInt(-5, 5);
+    const c = x + a * y + b * z;
+
+    const d = getRandomInt(1, 5);
+    const e = getRandomInt(-5, 5);
+    const f = d * y + e * z;
+
+    const g = getRandomInt(1, 5);
+    const h = g * z;
+
+    // Правильна матриця
+    const correctMatrix = [
+        [1, a, b],
+        [0, d, e],
+        [0, 0, g]
+    ];
+    const correctConstants = [c, f, h];
+    const correctMatrixLatex = matrixToLatex(correctMatrix, true, correctConstants);
+    const correctMatrixPlainText = correctMatrixLatex.plainText;
+
+    // Неправильна матриця 1: зміна знаку у коефіцієнті b
+    const wrongMatrix1 = [
+        [1, a, -b],
+        [0, d, e],
+        [0, 0, g]
+    ];
+    const wrongConstants1 = [c, f, h];
+    const wrongMatrix1Latex = matrixToLatex(wrongMatrix1, true, wrongConstants1);
+
+    // Неправильна матриця 2: правильний g, але протилежний вільний член у другому рядку
+    const wrongMatrix2 = [
+        [1, a, b],
+        [0, d, e],
+        [0, 0, g]
+    ];
+    const wrongConstants2 = [c, -f, h];
+    const wrongMatrix2Latex = matrixToLatex(wrongMatrix2, true, wrongConstants2);
+
+    // Неправильна матриця 3: правильний g, але помилка у першому вільному члені
+    const wrongMatrix3 = [
+        [1, a, b],
+        [0, d, e],
+        [0, 0, g]
+    ];
+    let wrongC = getRandomInt(-10, 10);
+    while (wrongC === c) wrongC = getRandomInt(-10, 10);
+    const wrongConstants3 = [wrongC, f, h];
+    const wrongMatrix3Latex = matrixToLatex(wrongMatrix3, true, wrongConstants3);
+
+    // Варіанти відповідей
+    const options = [
+        { text: correctMatrixLatex.latex, plainText: correctMatrixPlainText, isCorrect: true, comment: '✓ Правильно! Молодець!' },
+        { text: wrongMatrix1Latex.latex, plainText: wrongMatrix1Latex.plainText, isCorrect: false, comment: '✗ Неправильно, спробуй ще раз!' },
+        { text: wrongMatrix2Latex.latex, plainText: wrongMatrix2Latex.plainText, isCorrect: false, comment: '✗ Неправильно, спробуй ще раз!' },
+        { text: wrongMatrix3Latex.latex, plainText: wrongMatrix3Latex.plainText, isCorrect: false, comment: '✗ Неправильно, спробуй ще раз!' }
+    ];
+
+    // Формуємо LaTeX для розв’язку у питанні
+    const solutionLatex = formatSolution(x, y, z).latex;
+
+    return {
+    question: `Виберіть розширену матрицю, яка відповідає системі, розв’язком якої є:`,
+    systemLatex: `(x; y; z) = (${x}; ${y}; ${z})`,  // формула як ти хочеш
+    systemPlainText: `(x; y; z) = (${x}; ${y}; ${z})`, // для plain text
+    options: shuffleArray(options),
+    correctAnswer: correctMatrixPlainText
+};
+
+}
+
+
+    
+// Оновлена функція resetTrainer для вибору між питаннями
+function resetTrainer() {
+    console.log('resetTrainer викликано');
+    currentQuestion = 1;
+    currentSystem = null;
+    intermediateSystem = null;
+    selectedOption = null;
+    correctAnswer = null;
+    correctAnswersCount = 0;
+    totalQuestionsAnswered = 0;
+    if (elements.correctAnswers) elements.correctAnswers.textContent = correctAnswersCount;
+    if (elements.totalQuestions) elements.totalQuestions.textContent = totalQuestionsAnswered;
+    elements.questionCircle.style.display = 'block';
+    elements.questionText.style.display = 'block';
+    elements.systemText.style.display = 'block';
+    elements.optionsContainer.style.display = 'grid';
+    elements.inputContainer.style.display = 'none';
+    elements.systemEquations.style.display = 'none';
+    elements.submitAnswer.style.display = 'block';
+    elements.submitAnswer.disabled = true;
+    elements.completionMessage.style.display = 'none';
+    elements.feedback.style.opacity = '0';
+    elements.feedback.style.display = 'none';
+    elements.trainerContainer.scrollTop = 0;
+    displayQuestion();
+}
+    
+   // Оновлена функція displayQuestion для вибору між питаннями 1-4
+function displayQuestion() {
+    console.log('displayQuestion викликано, currentQuestion:', currentQuestion);
+
+    if (!elements.questionCircle || !elements.questionText || !elements.systemText ||
+        !elements.optionsContainer || !elements.inputContainer || !elements.systemEquations ||
+        !elements.determinantInput || !elements.submitAnswer || !elements.feedback ||
+        !elements.completionMessage || !elements.trainerContainer || !elements.resetTrainerBtn) {
+        console.error('Один або кілька елементів тренажера відсутні в DOM');
+        elements.questionText.textContent = 'Помилка: елементи інтерфейсу не знайдено';
+        return;
+    }
+
+    selectedOption = null;
+    correctAnswer = null;
+    elements.optionsContainer.innerHTML = '';
+    elements.inputContainer.style.display = 'none';
+    elements.systemEquations.innerHTML = '';
+    elements.systemEquations.style.display = 'none';
+    elements.systemText.innerHTML = '';
+    elements.determinantInput.value = '';
+    elements.submitAnswer.disabled = true;
+    elements.feedback.style.opacity = '0';
+    elements.feedback.style.display = 'none';
+    elements.completionMessage.style.display = 'none';
+    elements.optionsContainer.classList.remove('question-1', 'question-2', 'question-3', 'question-4', 'question-5');
+    elements.questionCircle.innerHTML = `<span>Питання ${currentQuestion}</span>`;
+    elements.questionCircle.style.width = 'clamp(100px, 16vw, 130px)';
+    elements.questionCircle.style.height = 'clamp(100px, 16vw, 130px)';
+
+    let questionType;
+    if (currentQuestion === 1) questionType = generateQuestion1;
+    else if (currentQuestion === 2) questionType = generateQuestion2;
+    else if (currentQuestion === 3) questionType = generateQuestion3;
+    else if (currentQuestion === 4) questionType = generateQuestion4;
+    else if (currentQuestion === 5) questionType = generateQuestion5;
+    else {
+        console.error('Невідомий тип питання:', currentQuestion);
+        return;
+    }
+
+    const questionData = questionType();
+
+    if (!questionData || !questionData.options || !questionData.correctAnswer) {
+        console.error('Помилка: generateQuestion не повернув даних або неправильна структура', questionData);
+        elements.questionText.textContent = 'Помилка генерації питання';
+        return;
+    }
+
+    elements.questionText.innerHTML = questionData.question;
+    elements.systemText.innerHTML = `\\[${questionData.systemLatex}\\]`;
+    elements.optionsContainer.style.display = 'grid';
+    elements.inputContainer.style.display = 'none';
+    elements.systemEquations.style.display = 'none';
+    elements.optionsContainer.classList.add(`question-${currentQuestion}`);
+    correctAnswer = questionData.correctAnswer;
+    const options = questionData.options;
+
+    options.forEach((opt, index) => {
+        const option = document.createElement('div');
+        option.className = 'trainer-option';
+        option.innerHTML = `\\[${opt.text}\\]`;
+        option.setAttribute('data-index', index);
+        option.setAttribute('data-plaintext', opt.plainText);
+        option.addEventListener('click', () => {
+            document.querySelectorAll('.trainer-option').forEach(opt => opt.classList.remove('selected'));
+            option.classList.add('selected');
+            selectedOption = opt;
+            elements.submitAnswer.disabled = false;
+        });
+        elements.optionsContainer.appendChild(option);
+    });
+    elements.systemText.dataset.plainText = questionData.systemPlainText;
+
+    if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
+        console.log('MathJax startup promise detected, waiting for ready state');
+        MathJax.startup.promise.then(() => {
+            console.log('MathJax обробляє systemText, optionsContainer, questionText');
+            setTimeout(() => {
+                MathJax.typesetPromise([elements.systemText, elements.optionsContainer, elements.questionText])
+                    .then(() => {
+                        console.log('MathJax успішно обробив елементи');
+                        const firstOption = elements.optionsContainer.querySelector('.trainer-option');
+                        if (firstOption) firstOption.focus();
+                    })
+                    .catch(err => {
+                        console.error('Помилка MathJax у displayQuestion:', err);
+                        elements.systemText.textContent = elements.systemText.dataset.plainText || 'Помилка відображення системи';
+                        elements.optionsContainer.innerHTML = options.map(opt => `<div class="trainer-option">${opt.plainText}</div>`).join('');
+                    });
+            }, 200);
+        }).catch(err => {
+            console.error('MathJax startup promise failed:', err);
+            elements.systemText.textContent = elements.systemText.dataset.plainText || 'Помилка: MathJax не завантажено';
+            elements.optionsContainer.innerHTML = options.map(opt => `<div class="trainer-option">${opt.plainText}</div>`).join('');
+        });
+    } else {
+        console.warn('MathJax не доступний або startup promise відсутній');
+        elements.systemText.textContent = elements.systemText.dataset.plainText || 'Помилка: MathJax не завантажено';
+        elements.optionsContainer.innerHTML = options.map(opt => `<div class="trainer-option">${opt.plainText}</div>`).join('');
+    }
+
+    elements.submitAnswer.style.display = 'block';
+}
+
+elements.submitAnswer?.addEventListener('click', () => {
+    console.log('submitAnswer клікнуто, currentQuestion:', currentQuestion, 'selectedOption:', selectedOption, 'correctAnswer:', correctAnswer);
+
+    if (!elements.feedback) {
+        console.error('Елемент feedback відсутній у DOM');
+        return;
+    }
+
+    if (!selectedOption) {
+        console.log('Повернення: варіант не вибрано');
+        elements.feedback.textContent = '✗ Будь ласка, виберіть один із варіантів відповіді!';
+        elements.feedback.className = 'trainer-feedback result-message wrong';
+        elements.feedback.style.display = 'block';
+        elements.feedback.style.opacity = '1';
+        setTimeout(() => {
+            elements.feedback.style.opacity = '0';
+            setTimeout(() => {
+                elements.feedback.style.display = 'none';
+                elements.feedback.className = 'trainer-feedback result-message';
+            }, 300);
+        }, 2000);
+        return;
+    }
+
+    let isCorrect = selectedOption.isCorrect;
+    let feedbackText = selectedOption.comment;
+    elements.feedback.textContent = feedbackText;
+    elements.feedback.className = `trainer-feedback result-message ${isCorrect ? 'correct' : 'wrong'}`;
+    elements.feedback.style.display = 'block';
+    elements.feedback.style.opacity = '1';
+
+    document.querySelectorAll('.trainer-option').forEach(opt => {
+        opt.classList.add('disabled');
+        const optionPlainText = opt.getAttribute('data-plaintext')?.trim();
+        if (optionPlainText === selectedOption.plainText?.trim()) {
+            opt.classList.add(isCorrect ? 'correct' : 'wrong');
+        }
+    });
+
+    totalQuestionsAnswered++;
+    if (isCorrect) correctAnswersCount++;
+    if (elements.correctAnswers) elements.correctAnswers.textContent = correctAnswersCount;
+    if (elements.totalQuestions) elements.totalQuestions.textContent = totalQuestionsAnswered;
+
+    const feedbackDuration = isCorrect ? 1000 : 2000;
+    setTimeout(() => {
+        elements.feedback.style.opacity = '0';
+        setTimeout(() => {
+            elements.feedback.style.display = 'none';
+            elements.feedback.className = 'trainer-feedback result-message';
+            document.querySelectorAll('.trainer-option').forEach(opt => {
+                opt.classList.remove('disabled', 'correct', 'wrong', 'selected');
+            });
+            elements.submitAnswer.disabled = true;
+
+            if (isCorrect) {
+                if (currentQuestion === 1) {
+                    currentQuestion = 2;
+                    currentSystem = null;
+                    intermediateSystem = null;
+                    displayQuestion();
+                } else if (currentQuestion === 2) {
+                    currentQuestion = 3;
+                    displayQuestion();
+                } else if (currentQuestion === 3) {
+                    currentQuestion = 4;
+                    displayQuestion();
+                } else if (currentQuestion === 4) {
+                    currentQuestion = 5;
+                    displayQuestion();
+                } else {
+                    // Завершення після питання 5
+                    elements.questionCircle.style.display = 'none';
+                    elements.questionText.style.display = 'none';
+                    elements.systemText.style.display = 'none';
+                    elements.optionsContainer.style.display = 'none';
+                    elements.inputContainer.style.display = 'none';
+                    elements.systemEquations.style.display = 'none';
+                    elements.submitAnswer.style.display = 'none';
+                    elements.completionMessage.style.display = 'block';
+                    elements.trainerContainer.scrollTop = 0;
+                    elements.resetTrainerBtn.focus();
+                }
+            } else {
+                currentSystem = null;
+                intermediateSystem = null;
+                displayQuestion();
+            }
+
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise([elements.feedback, elements.completionMessage]).catch(err => console.error('Помилка MathJax у feedback або completionMessage:', err));
+            }
+        }, 300);
+    }, feedbackDuration);
+});
+    
+elements.resetTrainerBtn?.addEventListener('click', () => {
+    console.log('resetTrainerBtn клікнуто');
+    resetTrainer();
+});
+
+if (elements.trainerModal) {
+    resetTrainer();
+} else {
+    console.error('trainerModal not found, cannot initialize trainer');
+}
+}); 
+    </script>
+</body>
+</html>
