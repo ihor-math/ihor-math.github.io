@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>27. Основні поняття вектора</title>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    console.log("MathJax is loaded and ready!");
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" onerror="console.error('Failed to load MathJax')"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Roboto:wght@400;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Стилі взяті з вашого зразка без змін */
+        *, *:before, *:after {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            background: linear-gradient(135deg, #1a2634, #0f3c3a);
+            font-family: 'Roboto', sans-serif;
+            color: #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: start;
+            min-height: 100vh;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        body.loaded {
+            visibility: visible;
+            opacity: 1;
+        }
+        .title-box {
+            margin-top: 60px;
+            padding: 20px 40px;
+           background: linear-gradient(140deg, #003153, #8B0000);
+
+
+            border-radius: 15px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+            max-width: 90%;
+            text-align: center;
+        }
+        .title-box h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            font-family: 'Merriweather', serif;
+        }
+        .section-container {
+            margin-top: 80px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .section {
+            width: 260px;
+            height: 200px;
+            background: linear-gradient(45deg, #1e2a38, #3b4a5a);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            color: #e2e8f0;
+            text-decoration: none;
+        }
+        .section:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+            background: linear-gradient(45deg, #1e2a38, #4ade80);
+        }
+        .section img {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 15px;
+            object-fit: cover;
+            border-radius: 8px;
+            filter: drop-shadow(0 0 5px rgba(163, 166, 139, 0.3));
+        }
+        .section h2 {
+            font-size: 20px;
+            margin: 0;
+            font-family: 'Merriweather', serif;
+            color: #e2e8f0;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 5%;
+            left: 5%;
+            width: 90%;
+            height: 90%;
+            background: linear-gradient(135deg, #2dd4bf, #1e3a8a);
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            z-index: 1001;
+            overflow: hidden;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        #modalOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+        .modal-content {
+            padding: 20px;
+            flex-grow: 1;
+            background: #1e2a38;
+            border-radius: 10px;
+            margin: 10px;
+            color: #e8e8e8;
+            width: calc(100% - 20px);
+            overflow-y: auto;
+            display: block;
+            max-height: calc(100% - 60px);
+        }
+        .modal-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .modal-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .modal-content::-webkit-scrollbar-thumb {
+            background: rgba(163, 166, 139, 0.5);
+            border-radius: 3px;
+        }
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(163, 166, 139, 0.8);
+        }
+        .modal-header {
+            background: linear-gradient(0deg, #2dd4bf, #1e3a8a);
+            padding: 8px 12px;
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1002;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+        .close-btn {
+            background: #fb7185;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            font-family: 'Roboto', sans-serif;
+            z-index: 1003;
+        }
+        .close-btn:hover {
+            background: #10b981;
+        }
+        details {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 6px;
+            background: #1e2a38;
+            cursor: pointer;
+        }
+        summary {
+            font-weight: bold;
+            padding: 8px;
+            background: #b81414;
+            border-radius: 6px;
+            color: #ffffff;
+            font-family: 'Merriweather', serif;
+        }
+        summary:hover {
+            background: #10b981;
+        }
+        details p {
+            padding: 0 15px 10px;
+            color: #e2e8f0;
+            margin: 8px 0;
+        }
+        .math-notation {
+            font-style: italic;
+            color: #fef08a;
+           
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        .highlight-term {
+            background: #e0f7fa;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #0ea5e9;
+        }
+        .formula-line {
+            display: inline-block;
+            white-space: nowrap;
+        }
+        .question-block {
+            margin: 15px 0;
+            padding: 10px;
+           
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            cursor: pointer;
+        }
+        .question-block summary {
+            font-size: 16px;
+           
+            color: #ffffff;
+        }
+       
+        .question-block details p {
+            color: #e2e8f0;
+           
+            padding: 10px;
+            border-radius: 6px;
+        }
+        #questionsModal mjx-container {
+            color: #fef08a !important;
+            
+            font-style: italic;
+            font-size: 20px !important;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        .navigation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px auto;
+            max-width: 1000px;
+        }
+        .nav-button {
+            display: flex;
+            align-items: center;
+            background: #4682B4;
+            color: #fef08a;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .nav-button:hover {
+            background: #1e3a8a;
+            color: #ffffff;
+            transform: scale(1.03);
+        }
+        .nav-button svg {
+            margin-right: 8px;
+            fill: currentColor;
+        }
+        .question-card {
+            perspective: 1000px;
+            margin: 20px auto;
+            max-width: 964px;
+            width: 100%;
+            min-height: 150px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            cursor: pointer;
+        }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            min-height: 150px;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            cursor: inherit;
+        }
+        .question-card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            min-height: 150px;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            text-align: center;
+            cursor: inherit;
+        }
+        .card-front {
+            background: #005159;
+            color: #e2e8f0;
+        }
+        .card-back {
+            background: #6b21a8;
+            color: #e2e8f0;
+            transform: rotateY(180deg);
+            text-align: justify;
+            padding: 20px;
+            overflow: auto;
+            white-space: normal;
+        }
+        .card-front span {
+            display: block;
+            text-align: center;
+            color: #e2e8f0;
+            font-weight: 700;
+            font-family: 'Lora', serif;
+            font-size: clamp(16px, 2.8vw, 18px);
+            line-height: 1.4;
+            width: 100%;
+        }
+        .card-back span {
+            display: block;
+            max-width: 100%;
+            word-wrap: break-word;
+            color: #e2e8f0;
+        }
+        .video-card {
+            width: 350px;
+            height: 250px;
+            background: #4f7942;
+            border-radius: 15px;
+            border: 1px solid rgba(163, 166, 139, 0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 10px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            color: #e8e8e8;
+        }
+        .video-card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+        }
+        .video-card img {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 8px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+        .video-card h3 {
+            font-size: clamp(16px, 2.5vw, 18px);
+            font-weight: 600;
+            margin: 0;
+        }
+        .video-player-container {
+            width: 80vw;
+            max-width: 960px;
+            aspect-ratio: 16 / 9;
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .video-player-container iframe {
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            display: block;
+            border: none;
+        }
+        .theory-content h2 {
+            color: #ffc45f;
+            text-align: center;
+        }
+       .theory-content h3 {
+    color: #e6711b;           /* новий колір */
+    text-align: center;        /* по центру */
+    font-family: 'Inter', sans-serif; /* красивий шрифт */
+    font-weight: 700;          /* жирний */
+    font-size: 20px;           /* можна підкоригувати за потреби */
+}
+
+        .theory-content p, .theory-content li {
+            color: #e2e8f0;
+            font-size: clamp(18px, 3vw, 20px);
+        }
+        .example {
+            color: #fb7185;
+            font-weight: bold;
+        }
+        .solution {
+            color: #fb7185;
+            font-weight: bold;
+            text-align: center;
+            display: block;
+        }
+        .note {
+            color: #fb7185;
+            font-weight: bold;
+        }
+        .note-text {
+            font-style: italic;
+            color: #e2e8f0;
+            text-align: justify;
+            width: 100%;
+        }
+        .theory-content p:not(.math-notation-centered),
+        .theory-content li {
+            text-align: justify;
+        }
+        .vector-type {
+            font-style: italic;
+            color: #ffff00;
+        }
+        .main-types {
+            font-weight: bold;
+            color: #e2e8f0;
+        }
+        ol {
+            color: #e2e8f0;
+        }
+        ol li::marker {
+            color: #ffff00;
+        }
+        mjx-container {
+            color: #ffff00 !important;
+           
+            font-style: italic !important;
+        }
+        .theory-content mjx-container {
+            color: #ffff00 !important;
+            background: #1e2a38 !important;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        .modal-content::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        .modal-content::-webkit-scrollbar-track {
+            background: #1e2a38;
+            border-radius: 10px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
+        }
+        .modal-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #2dd4bf, #fb7185);
+            border-radius: 10px;
+            border: 2px solid #1e2a38;
+        }
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #10b981, #ec4899);
+        }
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e2a38;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #2dd4bf, #fb7185);
+            border-radius: 10px;
+            border: 2px solid #1e2a38;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #10b981, #ec4899);
+        }
+        .modal-content {
+            scrollbar-color: #2dd4bf #1e2a38;
+            scrollbar-width: thin;
+        }
+        .glow-title {
+            text-align: center;
+            color: #e2e8f0;
+            font-family: 'Merriweather', serif;
+            font-size: clamp(20px, 3vw, 24px);
+            margin: 20px 0;
+            text-shadow: 0 0 5px rgba(163, 166, 139, 0.5);
+        }
+        .figure {
+            display: block;
+            margin: 20px auto;
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+           
+      .card-back span {
+    display: inline; /* Змінено з display: block на inline, щоб текст і формули йшли в рядок */
+    max-width: 100%;
+    word-wrap: break-word;
+    color: #e2e8f0;
+}
+        @media (max-width: 768px) {
+            .title-box {
+                margin-top: 40px;
+                padding: 15px 20px;
+            }
+            .title-box h1 {
+                font-size: 24px;
+            }
+            .section-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            .section {
+                width: 80%;
+                height: 180px;
+            }
+            .modal {
+                top: 2%;
+                left: 2%;
+                width: 96%;
+                height: 96%;
+            }
+            .modal-header {
+                padding: 5px 8px;
+            }
+            .modal-content {
+                max-height: calc(100% - 50px);
+            }
+            .question-card {
+                min-height: 180px;
+            }
+            .video-card-container {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            .video-card {
+                width: 260px;
+                height: 160px;
+                margin: 5px;
+            }
+            .video-card img {
+                width: 40px;
+                height: 40px;
+                margin-bottom: 6px;
+            }
+            .video-player-container {
+                width: 80vw;
+                max-width: 600px;
+                aspect-ratio: 16 / 9;
+            }
+            .video-card h3 {
+                font-size: clamp(14px, 2.5vw, 16px);
+            }
+            .navigation-buttons {
+                margin: 20px auto;
+                gap: 15px;
+            }
+            .nav-button {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+            .figure {
+                max-width: 90%;
+            }
+                    
+        }
+        @media (max-width: 480px) {
+            .title-box {
+                margin-top: 20px;
+                padding: 10px 15px;
+            }
+            .title-box h1 {
+                font-size: 20px;
+            }
+            .section {
+                width: 90%;
+                height: 150px;
+            }
+            .section img {
+                width: 50px;
+                height: 50px;
+            }
+            .section h2 {
+                font-size: 18px;
+            }
+            .modal-header {
+                padding: 4px 6px;
+            }
+            .modal-content {
+                max-height: calc(100% - 40px);
+            }
+            .question-card {
+                min-height: 200px;
+            }
+            .video-card-container {
+                gap: 10px;
+                padding: 10px;
+            }
+            .video-card {
+                width: 90%;
+                max-width: 260px;
+                height: 140px;
+                margin: 5px;
+            }
+            .video-card img {
+                width: 30px;
+                height: 30px;
+                margin-bottom: 5px;
+            }
+            .video-card h3 {
+                font-size: clamp(12px, 2.5vw, 14px);
+            }
+            .video-player-container {
+                width: 80vw;
+                max-width: 400px;
+                aspect-ratio: 16 / 9;
+            }
+            .card-inner {
+                min-height: 200px;
+            }
+            .figure {
+                max-width: 85%;
+            }
+             .figure.figure-7-1 {
+    width: 230px;
+    height: 210px;
+}
+
+.figure.figure-7-2 {
+    width: 340px;
+    height: 230px;
+}
+
+.figure.figure-7-3 {
+    width: 230px;
+    height: 210px;
+}
+
+.figure.figure-7-4 {
+    width: 340px;
+    height: 230px;
+}
+
+.figure.figure-7-5 {
+    width: 230px;
+    height: 210px;
+}
+       
+        }
+    </style>
+</head>
+<body>
+    <div class="title-box">
+        <h1>27. Основні поняття вектора</h1>
+    </div>
+
+    <div class="section-container">
+        <div class="section" id="openTheoryBtn">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Книга">
+            <h2>Теоретичні відомості</h2>
+        </div>
+        <div class="section" id="openVideoBtn">
+            <img src="https://img.icons8.com/fluency/96/video.png" alt="Відео">
+            <h2>Відеоматеріали</h2>
+        </div>
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Картки">
+            <h2>Питання і відповіді</h2>
+        </div>
+    </div>
+
+    <div class="navigation-buttons">
+        <a class="nav-button" href="{{ url_for('tema7') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            До теми 7
+        </a>
+        <a class="nav-button" href="{{ url_for('home') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            На головну
+        </a>
+    </div>
+
+   <div id="theoryModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="theoryTitle">
+    <div class="modal-header">
+        <button class="close-btn" id="closeTheoryBtn" aria-label="Закрити">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="theory-content">
+            <h2>Вектори</h2>
+            <p>У механіці, фізиці та технічних науках розглядають різні типи величин. Деякі з них, як-от довжина, площа, об’єм, густина чи температура,
+            повністю характеризуються одним числом за умови вибору одиниці вимірювання. Їх називають
+            <em>скалярними величинами</em>. Натомість такі величини, як сила, швидкість, прискорення, потребують не лише числового значення, а й вказування
+            напряму в просторі – це <em>векторні величини</em>. Геометричним зображенням векторної величини в заданому масштабі є
+            <strong><em style="color:#ffff9e;">вектор.</em></strong></p>
+            <p><span class="vector-type">Вектор</span> – це математичний об’єкт, який характеризується величиною й напрямком.</p>
+            <p>Геометрично вектор зображають як спрямований відрізок, що має певну довжину і напрям у просторі. Його кінці впорядковані: початок <span class="math-notation">\( A \)</span>,
+            кінець відрізка – точка <span class="math-notation">\( B \)</span>. Такий вектор позначають
+            як <span class="math-notation">\( \overrightarrow{AB} \)</span> (рис. 7.1).
+            Напрямок вектора відіграє ключову роль: якщо поміняти місцями початок і кінець, отримаємо
+            інший вектор <span class="math-notation">\( \overrightarrow{BA} \)</span>, протилежний
+            до <span class="math-notation">\( \overrightarrow{AB} \)</span>. <strong><em style="color:#ffff9e;">Наприклад,</em></strong>
+рух від входу до виходу й у зворотному напрямку – це різні дії.</p>
+            <img src="/static/figure7.1.jpg" alt="Вектор у двовимірному просторі" class="figure figure-7-1">
+            
+            <p>Вектори також позначають малими латинськими літерами зі стрілкою, <strong><em style="color:#ffff9e;">наприклад,</em></strong>
+ <span class="math-notation">\( \vec{a} \)</span>, де <span class="math-notation">\( \overrightarrow{AB} = \vec{a} \)</span>. Особливим є <span class="vector-type">нульовий вектор</span>. Це такий вектор, у якого початок і кінець збігаються в одній точці. Він не має визначеної величини, але напрямок може бути довільним (невизначеним). Такий вектор позначають <span class="math-notation">\( \vec{0} \)</span>.</p>
+            <p>У цьому посібнику розглядаються вектори як у площині, так і в просторі, зберігаючи однакову суть викладу.</p>
+            <h3>Позначення векторів</h3>
+           <p> Найпоширеніший спосіб – запис із стрілкою: <span class="math-notation">\( \overrightarrow{AB} \)</span>. Іноді використовують риску над літерами <span class="math-notation">\( \overline{AB} \)</span> або жирний шрифт <span class="math-notation">\( \mathbf{AB} \)</span>, але ми дотримуватимемося позначення зі стрілкою як найзрозумілшого.</p>
+            <h3>Способи запису векторів</h3>
+            <ol>
+                <li>Двома великими латинськими літерами: <span class="math-notation">\( \overrightarrow{AB} \)</span>, <span class="math-notation">\( \overrightarrow{CD} \)</span>, <span class="math-notation">\( \overrightarrow{EF} \)</span>, тощо. При цьому перша літера завжди означає початок вектора, а друга – його кінець.</li>
+                <li>Однією малою латинською літерою: <span class="math-notation">\( \vec{a} \)</span>, <span class="math-notation">\( \vec{b} \)</span>, <span class="math-notation">\( \vec{c} \)</span>, тощо. Для стислості наш вектор <span class="math-notation">\( \overrightarrow{AB} \)</span> можна перепозначити як <span class="math-notation">\( \vec{a} \)</span>.</li>
+            </ol>
+            <h3>Основні поняття</h3>
+            <ol>
+                <li><span class="vector-type">Довжина або модуль вектора.</span> Відстань між точками <span class="math-notation">\( A \)</span> і <span class="math-notation">\( B \)</span> називається довжиною або модулем вектора і позначається <span class="math-notation">\( |\overrightarrow{AB}| \)</span> або <span class="math-notation">\( |\vec{a}| \)</span>. Для нульового вектора <span class="math-notation">\( |\vec{0}| = 0 \)</span>. Як обчислювати довжину вектора, розглянемо трохи пізніше.</li>
+                <li><span class="vector-type">Одиничний вектор (орт).</span> Вектор, довжина якого дорівнює одиниці, називається одиничним або ортом. Якщо <span class="math-notation">\( |\vec{a^0}| = 1 \)</span>, то вектор <span class="math-notation">\( \vec{a^0} \)</span> є ортом.</li>
+                <img src="/static/figure7.2.jpg" alt="Одиничний вектор" class="figure figure-7-2">
+                                <li><span class="vector-type">Колінеарність векторів.</span> Два ненульові вектори <span class="math-notation">\( \vec{a} \)</span> і <span class="math-notation">\( \vec{b} \)</span> називаються колінеарними, якщо вони лежать на одній прямій або на паралельних прямих. Це записується як <span class="math-notation">\( \vec{a} \parallel \vec{b} \)</span> (рис. 7.3). Нульовий вектор вважається колінеарним будь-якому вектору.</li>
+                <img src="/static/figure7.3.jpg" alt="Колінеарні вектори" class="figure figure-7-3">
+               
+                <li><span class="vector-type">Компланарні вектори.</span> Вектори називаються компланарними, якщо вони лежать в одній площині або в паралельних площинах (рис. 7.4). Будь-які два вектори завжди компланарні, оскільки через них можна провести єдину площину.</li>
+                <img src="/static/figure7.4.jpg" alt="Компланарні вектори" class="figure figure-7-4">
+               
+                <li><span class="vector-type">Рівні вектори.</span> Два вектори <span class="math-notation">\( \vec{a} \)</span> і <span class="math-notation">\( \vec{b} \)</span> називаються рівними (<span class="math-notation">\( \vec{a} = \vec{b} \)</span>), якщо виконуються такі умови:</li>
+                <ol>
+                    <li>вони колінеарні (<span class="math-notation">\( \vec{a} \parallel \vec{b} \)</span>);</li>
+                    <li>їхні модулі рівні (<span class="math-notation">\( |\vec{a}| = |\vec{b}| \)</span>);</li>
+                    <li>вони співнапрямлені (<span class="math-notation">\( \vec{a} \uparrow\uparrow \vec{b} \)</span>) (рис. 7.5).</li>
+                </ol>
+                <p>Наприклад, у паралелограмі <span class="math-notation">\( ABCD \)</span> (рис. 7.5) рівні вектори: <span class="math-notation">\( \overrightarrow{AB} = \overrightarrow{DC} \)</span>, <span class="math-notation">\( \overrightarrow{BC} = \overrightarrow{AD} \)</span>.</p>
+                <img src="/static/figure7.5.jpg" alt="Рівні вектори в паралелограмі" class="figure figure-7-5">
+                
+                <li><span class="vector-type">Протилежні вектори.</span> Два вектори <span class="math-notation">\( \vec{a} \)</span> і <span class="math-notation">\( \vec{b} \)</span> називаються протилежними, якщо:</li>
+                <ol>
+                    <li>їхні модулі рівні (<span class="math-notation">\( |\vec{a}| = |\vec{b}| \)</span>);</li>
+                    <li>вони спрямовані у протилежні боки (<span class="math-notation">\( \vec{a} \uparrow\downarrow \vec{b} \)</span>).</li>
+                </ol>
+                <p>Вектор, протилежний до <span class="math-notation">\( \vec{a} \)</span>, позначають як <span class="math-notation">\( -\vec{a} \)</span>. Наприклад, вектор <span class="math-notation">\( \overrightarrow{AB} \)</span> є протилежним до вектора <span class="math-notation">\( \overrightarrow{BA} \)</span>, що записують так:</p>
+                <p class="math-notation-centered">\[ \overrightarrow{AB} = -\overrightarrow{BA} \tag{7.1} \]</p>
+                <li><span class="vector-type">Вільні вектори.</span> Вектор називається вільним, якщо його можна переносити паралельно самому собі без зміни властивостей. У математиці зазвичай розглядають саме вільні вектори.</li>
+                <p><span class="note">Примітка.</span> <span class="note-text">У фізиці точка прикладання вектора може мати значення, оскільки, наприклад, сила, прикладена в різних точках тіла, може спричиняти різні ефекти.</span></p>
+            </ol>
+        </div>
+    </div>
+</div>
+    <div id="videoModal" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeVideoBtn" aria-label="Закрити">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <h2 class="glow-title">Оберіть відео</h2>
+        <div class="video-card-container">
+            <div class="video-card" data-video="1">
+                <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
+                <h3>Знайомство з векторами та скалярами</h3>
+            </div>
+            <div class="video-card" data-video="2">
+                <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
+                <h3>Векторне представлення величин</h3>
+            </div>
+            <div class="video-card" data-video="3">
+                <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
+                <h3>Тлумачення виразів з векторами</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="videoPlayerModal1" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeVideoPlayerBtn1" aria-label="Закрити">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="video-player-container">
+            <iframe id="youtubePlayer1" width="100%" src="https://www.youtube.com/embed/kYKM3r03LAE" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+<div id="videoPlayerModal2" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeVideoPlayerBtn2" aria-label="Закрити">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="video-player-container">
+            <iframe id="youtubePlayer2" width="100%" src="https://www.youtube.com/embed/5xbH4wQ1BCc" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+<div id="videoPlayerModal3" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeVideoPlayerBtn3" aria-label="Закрити">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="video-player-container">
+            <iframe id="youtubePlayer3" width="100%" src="https://www.youtube.com/embed/0baGoCsO6mw" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+  <div id="questionsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="questionsTitle">
+    <div class="modal-header">
+        <button class="close-btn" id="closeQuestionsBtn" aria-label="Закрити">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>1. Що таке скалярна величина?</span>
+                </div>
+                <div class="card-back">
+                    <span>Скалярна величина – це величина, яка повністю характеризується одним числом за умови вибору одиниці вимірювання, наприклад, довжина, площа, об’єм, густина, температура.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>2. Що таке векторна величина?</span>
+                </div>
+                <div class="card-back">
+                    <span>Векторна величина – це величина, яка потребує не лише числового значення, а й вказування напряму в просторі, наприклад, сила, швидкість, прискорення.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>3. Що таке вектор у геометричному розумінні?</span>
+                </div>
+                <div class="card-back">
+                    <span>Вектор – це спрямований відрізок із певною довжиною і напрямком у просторі, з початком у точці <span class="math-notation">\( A \)</span> і кінцем у точці <span class="math-notation">\( B \)</span>, позначений як <span class="math-notation">\( \overrightarrow{AB} \)</span>.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>4. Як позначають нульовий вектор?</span>
+                </div>
+                <div class="card-back">
+                    <span>Нульовий вектор, у якого початок і кінець збігаються, позначають як <span class="math-notation">\( \vec{0} \)</span>, його довжина дорівнює 0, а напрямок довільний.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>5. Які способи запису векторів існують?</span>
+                </div>
+                <div class="card-back">
+                    <span>Вектори записують двома великими літерами, наприклад, <span class="math-notation">\( \overrightarrow{AB} \)</span>, <span class="math-notation">\( \overrightarrow{CD} \)</span>, <span class="math-notation">\( \overrightarrow{EF} \)</span>, де перша літера – початок, а друга – кінець, або однією малою літерою, наприклад, <span class="math-notation">\( \vec{a} \)</span>, <span class="math-notation">\( \vec{b} \)</span>, <span class="math-notation">\( \vec{c} \)</span>, для стислості, де <span class="math-notation">\( \overrightarrow{AB} = \vec{a} \)</span>.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>6. Що таке модуль (довжина) вектора?</span>
+                </div>
+                <div class="card-back">
+                    <span>Модуль вектора – це відстань між його початком і кінцем, позначена як <span class="math-notation">\( |\overrightarrow{AB}| \)</span> або <span class="math-notation">\( |\vec{a}| \)</span>, для нульового вектора <span class="math-notation">\( |\vec{0}| = 0 \)</span>.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>7. Що таке одиничний вектор (орт)?</span>
+                </div>
+                <div class="card-back">
+                    <span>Одиничний вектор (орт) – це вектор, довжина якого дорівнює одиниці, позначений як <span class="math-notation">\( \vec{a^0} \)</span>, де <span class="math-notation">\( |\vec{a^0}| = 1 \)</span>.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>8. Що означає колінеарність векторів?</span>
+                </div>
+                <div class="card-back">
+                    <span>Два ненульові вектори <span class="math-notation">\( \vec{a} \)</span> і <span class="math-notation">\( \vec{b} \)</span> є колінеарними, якщо лежать на одній або паралельних прямих, нульовий вектор колінеарний будь-якому вектору.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>9. Що означає компланарність векторів?</span>
+                </div>
+                <div class="card-back">
+                    <span>Вектори є компланарними, якщо лежать в одній площині або в паралельних площинах, причому будь-які два вектори завжди компланарні.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>10. Коли два вектори називають рівними?</span>
+                </div>
+                <div class="card-back">
+                    <span>Два вектори <span class="math-notation">\( \vec{a} \)</span> і <span class="math-notation">\( \vec{b} \)</span> називають рівними, якщо вони колінеарні (<span class="math-notation">\( \vec{a} \parallel \vec{b} \)</span>), мають однакові модулі (<span class="math-notation">\( |\vec{a}| = |\vec{b}| \)</span>) і співнапрямлені (<span class="math-notation">\( \vec{a} \uparrow\uparrow \vec{b} \)</span>).</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>11. Коли два вектори називають протилежними?</span>
+                </div>
+                <div class="card-back">
+                    <span>Два вектори <span class="math-notation">\( \vec{a} \)</span> і <span class="math-notation">\( \vec{b} \)</span> називають протилежними, якщо вони мають однакові модулі (<span class="math-notation">\( |\vec{a}| = |\vec{b}| \)</span>) і спрямовані у протилежні боки (<span class="math-notation">\( \vec{a} \uparrow\downarrow \vec{b} \)</span>), при цьому вектор, протилежний до <span class="math-notation">\( \vec{a} \)</span>, позначають <span class="math-notation">\( -\vec{a} \)</span>.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>12. Що таке вільний вектор?</span>
+                </div>
+                <div class="card-back">
+                    <span>Вільний вектор – це вектор, який можна переносити паралельно самому собі без зміни властивостей, але в фізиці точка прикладання, наприклад, для сили, може впливати на ефект.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div id="modalOverlay"></div>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    console.log("DOM повністю завантажено");
+    document.body.classList.add('loaded');
+
+    const elements = {
+        openTheoryBtn: document.getElementById('openTheoryBtn'),
+        openVideoBtn: document.getElementById('openVideoBtn'),
+        openQuestionsBtn: document.getElementById('openQuestionsBtn'),
+        theoryModal: document.getElementById('theoryModal'),
+        videoModal: document.getElementById('videoModal'),
+        questionsModal: document.getElementById('questionsModal'),
+        closeTheoryBtn: document.getElementById('closeTheoryBtn'),
+        closeVideoBtn: document.getElementById('closeVideoBtn'),
+        closeQuestionsBtn: document.getElementById('closeQuestionsBtn'),
+        closeVideoPlayerBtn1: document.getElementById('closeVideoPlayerBtn1'),
+        closeVideoPlayerBtn2: document.getElementById('closeVideoPlayerBtn2'),
+        closeVideoPlayerBtn3: document.getElementById('closeVideoPlayerBtn3'),
+        videoPlayerModal1: document.getElementById('videoPlayerModal1'),
+        videoPlayerModal2: document.getElementById('videoPlayerModal2'),
+        videoPlayerModal3: document.getElementById('videoPlayerModal3'),
+        modalOverlay: document.getElementById('modalOverlay'),
+        youtubePlayer1: document.getElementById('youtubePlayer1'),
+        youtubePlayer2: document.getElementById('youtubePlayer2'),
+        youtubePlayer3: document.getElementById('youtubePlayer3')
+    };
+
+    let players = {};
+    const playerIds = {
+        'youtubePlayer1': '8QihetGj3pg',
+        'youtubePlayer2': '0u0M4vppG4k',
+        'youtubePlayer3': '7z3VqZ5M0eQ'
+    };
+
+    const playerSrcs = {
+        'youtubePlayer1': elements.youtubePlayer1 ? elements.youtubePlayer1.src : '',
+        'youtubePlayer2': elements.youtubePlayer2 ? elements.youtubePlayer2.src : '',
+        'youtubePlayer3': elements.youtubePlayer3 ? elements.youtubePlayer3.src : ''
+    };
+
+    function loadYouTubeAPI() {
+        if (!window.YT) {
+            const tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            const firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        }
+    }
+
+    window.onYouTubeIframeAPIReady = function() {
+        Object.keys(playerIds).forEach(playerId => {
+            const element = elements[playerId];
+            if (element) {
+                players[playerId] = new YT.Player(playerId, {
+                    videoId: playerIds[playerId],
+                    playerVars: {
+                        'autoplay': 0,
+                        'controls': 1,
+                        'rel': 0,
+                        'showinfo': 0
+                    },
+                    events: {
+                        'onReady': function(event) {
+                            console.log(`YouTube плеєр ${playerId} готовий`);
+                        },
+                        'onError': function(error) {
+                            console.error(`Помилка YouTube плеєра ${playerId}:`, error);
+                        }
+                    }
+                });
+            }
+        });
+    };
+
+    loadYouTubeAPI();
+
+    function stopAllVideos() {
+        Object.keys(players).forEach(playerId => {
+            const player = players[playerId];
+            const element = elements[playerId];
+            if (player && typeof player.stopVideo === 'function') {
+                try {
+                    player.stopVideo();
+                    console.log(`Зупинено відео через API: ${playerId}`);
+                } catch (e) {
+                    console.error(`Помилка при зупинці відео ${playerId}:`, e);
+                }
+            }
+            if (element) {
+                element.src = '';
+                console.log(`Очищено src для ${playerId}`);
+                const parent = element.parentNode;
+                const newIframe = document.createElement('iframe');
+                newIframe.id = playerId;
+                newIframe.className = element.className;
+                newIframe.setAttribute('data-src', playerSrcs[playerId]);
+                newIframe.setAttribute('frameborder', '0');
+                newIframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+                newIframe.setAttribute('allowfullscreen', '');
+                parent.replaceChild(newIframe, element);
+                elements[playerId] = newIframe;
+                console.log(`Замінено iframe для ${playerId}`);
+                players[playerId] = new YT.Player(playerId, {
+                    videoId: playerIds[playerId],
+                    playerVars: {
+                        'autoplay': 0,
+                        'controls': 1,
+                        'rel': 0,
+                        'showinfo': 0
+                    },
+                    events: {
+                        'onReady': function(event) {
+                            console.log(`YouTube плеєр ${playerId} переініціалізовано`);
+                        },
+                        'onError': function(error) {
+                            console.error(`Помилка YouTube плеєра ${playerId}:`, error);
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    function toggleModal(modal, show) {
+        const allModals = [
+            elements.theoryModal,
+            elements.videoModal,
+            elements.questionsModal,
+            elements.videoPlayerModal1,
+            elements.videoPlayerModal2,
+            elements.videoPlayerModal3
+        ].filter(Boolean);
+        allModals.forEach(m => {
+            if (m && m !== modal) m.style.display = 'none';
+        });
+        modal.style.display = show ? 'flex' : 'none';
+        elements.modalOverlay.style.display = show ? 'block' : 'none';
+        document.body.style.overflow = show ? 'hidden' : 'auto';
+        if (show) {
+            const closeBtn = modal.querySelector('.close-btn');
+            if (closeBtn) closeBtn.focus();
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise([modal]).then(() => {
+                    console.log(`MathJax типізація завершена для ${modal.id}`);
+                    const modalContent = modal.querySelector('.modal-content');
+                    if (modalContent) {
+                        modalContent.scrollTop = 0;
+                        console.log(`Прокручено до верху modal-content для ${modal.id}`);
+                    }
+                }).catch(err => console.error('Помилка MathJax:', err));
+            }
+        }
+    }
+
+    function openVideoPlayerModal(videoModal, playerId) {
+        stopAllVideos();
+        toggleModal(elements.videoModal, false);
+        toggleModal(videoModal, true);
+        const element = elements[playerId];
+        if (element && !element.src) {
+            element.src = playerSrcs[playerId];
+            console.log(`Відновлено src для ${playerId}: ${playerSrcs[playerId]}`);
+        }
+        if (players[playerId] && typeof players[playerId].loadVideoById === 'function') {
+            try {
+                players[playerId].loadVideoById(playerIds[playerId]);
+                console.log(`Завантаження відео: ${playerId} з videoId ${playerIds[playerId]}`);
+            } catch (e) {
+                console.error(`Помилка при завантаженні відео ${playerId}:`, e);
+            }
+        }
+    }
+
+    elements.openTheoryBtn?.addEventListener('click', () => toggleModal(elements.theoryModal, true));
+    elements.openVideoBtn?.addEventListener('click', () => toggleModal(elements.videoModal, true));
+    elements.openQuestionsBtn?.addEventListener('click', () => toggleModal(elements.questionsModal, true));
+
+    elements.closeTheoryBtn?.addEventListener('click', () => toggleModal(elements.theoryModal, false));
+    elements.closeVideoBtn?.addEventListener('click', () => toggleModal(elements.videoModal, false));
+    elements.closeQuestionsBtn?.addEventListener('click', () => toggleModal(elements.questionsModal, false));
+
+    elements.closeVideoPlayerBtn1?.addEventListener('click', () => {
+        stopAllVideos();
+        setTimeout(() => {
+            toggleModal(elements.videoPlayerModal1, false);
+            toggleModal(elements.videoModal, true);
+        }, 50);
+    });
+    elements.closeVideoPlayerBtn2?.addEventListener('click', () => {
+        stopAllVideos();
+        setTimeout(() => {
+            toggleModal(elements.videoPlayerModal2, false);
+            toggleModal(elements.videoModal, true);
+        }, 50);
+    });
+    elements.closeVideoPlayerBtn3?.addEventListener('click', () => {
+        stopAllVideos();
+        setTimeout(() => {
+            toggleModal(elements.videoPlayerModal3, false);
+            toggleModal(elements.videoModal, true);
+        }, 50);
+    });
+
+    elements.modalOverlay?.addEventListener('click', () => {
+        stopAllVideos();
+        toggleModal(elements.theoryModal, false);
+        toggleModal(elements.videoModal, false);
+        toggleModal(elements.questionsModal, false);
+        toggleModal(elements.videoPlayerModal1, false);
+        toggleModal(elements.videoPlayerModal2, false);
+        toggleModal(elements.videoPlayerModal3, false);
+    });
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            stopAllVideos();
+            toggleModal(elements.theoryModal, false);
+            toggleModal(elements.videoModal, false);
+            toggleModal(elements.questionsModal, false);
+            toggleModal(elements.videoPlayerModal1, false);
+            toggleModal(elements.videoPlayerModal2, false);
+            toggleModal(elements.videoPlayerModal3, false);
+        }
+    });
+
+    document.querySelectorAll('.video-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const videoId = card.dataset.video;
+            console.log('Натиснуто відеокарточку, відкриваємо відеоплеєр:', videoId);
+            const videoModal = elements[`videoPlayerModal${videoId}`];
+            const playerId = `youtubePlayer${videoId}`;
+            if (videoModal) {
+                openVideoPlayerModal(videoModal, playerId);
+            } else {
+                console.error('Модальне вікно для videoId не знайдено:', videoId);
+            }
+        });
+    });
+
+    Object.keys(playerSrcs).forEach(playerId => {
+        const element = elements[playerId];
+        if (element && playerSrcs[playerId]) {
+            element.setAttribute('data-src', playerSrcs[playerId]);
+        }
+    });
+});
+    </script>
+</body>
+</html>

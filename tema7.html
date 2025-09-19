@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Тема 7: Геометричні вектори. Дії з векторами</title>
+  <style>
+    body {
+      background: linear-gradient(135deg, #1B263B, #00B4D8);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #F1FAEE;
+      overflow-x: hidden;
+    }
+
+    .header-box {
+      background: linear-gradient(90deg, #1B263B, #457B9D);
+      color: #F1FAEE;
+      padding: 30px 20px;
+      text-align: center;
+      font-size: 26px;
+      font-weight: 700;
+      border-bottom: 4px solid #00B4D8;
+      border-radius: 0 0 20px 20px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+      user-select: none;
+      position: relative;
+      z-index: 10;
+    }
+
+    .header-box::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 4px;
+      background: #00B4D8;
+      border-radius: 2px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 20px;
+      background: rgba(27, 38, 59, 0.85);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .plan-title {
+      font-size: 28px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 30px;
+      color: #00B4D8;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+      user-select: none;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+    }
+
+    .card {
+      border-radius: 16px;
+      padding: 25px 20px;
+      color: #F1FAEE;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      user-select: none;
+      height: 150px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      touch-action: manipulation;
+      overflow: hidden;
+      background: linear-gradient(135deg, var(--card-start), var(--card-end));
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.15), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .card:hover::before,
+    .card:active::before {
+      opacity: 1;
+    }
+
+    .card a {
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 10;
+    }
+
+    .card-number {
+      font-size: 26px;
+      font-weight: bold;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: #ffe5b4;
+      transition: color 0.3s ease;
+    }
+
+    .icon-box {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s ease, transform 0.3s ease;
+      background: var(--icon-bg);
+    }
+
+   .card:nth-child(1) { 
+  --card-start: #111827;  /* майже чорний синьо-сірий */
+  --card-end: #0077A7;    /* темно-блакитний */
+  --icon-bg: #7bb0b7;     /* приглушений */
+}
+.card:nth-child(2) { 
+  --card-start: #1b6b62;  /* темно-бірюзовий */
+  --card-end: #247b6e;    /* темно-зелено-бірюзовий */
+  --icon-bg: #94d3bb;     /* трохи приглушений */
+}
+    .card:nth-child(3) { --card-start: #E63946; --card-end: #F4A261; --icon-bg: #F4C4B1; }
+    .card:nth-child(4) { --card-start: #3A0CA3; --card-end: #7209B7; --icon-bg: #B8B8FF; }
+    .card:nth-child(5) { --card-start: #F48C06; --card-end: #FAA307; --icon-bg: #FFD7BA; }
+    .card:nth-child(6) { --card-start: #006D77; --card-end: #83C5BE; --icon-bg: #A3E4DB; }
+    .card:nth-child(7) { --card-start: #9D4EDD; --card-end: #C77DFF; --icon-bg: #E0AAFF; }
+    .card:nth-child(8) { --card-start: #264653; --card-end: #2A9D8F; --icon-bg: #95D5B2; }
+    .card:nth-child(9) { --card-start: #606C38; --card-end: #A3BFFA; --icon-bg: #D9E2F3; }
+    .card:nth-child(10) { --card-start: #E63946; --card-end: #F1C0E8; --icon-bg: #F4B3D7; }
+
+    .icon-svg {
+      width: 22px;
+      height: 22px;
+      fill: #c95e16;
+      transition: fill 0.3s ease;
+    }
+
+    .card:hover .icon-box,
+    .card:active .icon-box {
+      background: #00B4D8;
+      transform: rotate(45deg);
+    }
+
+    .card:hover .icon-svg,
+    .card:active .icon-svg {
+      fill: #1B263B;
+      transform: rotate(-45deg);
+    }
+
+    .card:hover .card-number,
+    .card:active .card-number {
+      color: #00B4D8;
+    }
+
+    .card h3 {
+      font-size: 20px;
+      margin: 0;
+      font-weight: 600;
+      user-select: none;
+      color: #F1FAEE;
+      transition: color 0.3s ease;
+      text-decoration: none;
+      line-height: 1.2;
+    }
+
+    .card:hover h3,
+    .card:active h3 {
+      color: #ffff99;
+    }
+
+    .card-content {
+      margin-top: 20px;
+      font-size: 16px;
+      color: #F1FAEE;
+      text-align: left;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+    }
+
+    .navigation-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin: 40px auto;
+      max-width: 1000px;
+      padding: 0 20px;
+    }
+
+    .nav-button {
+      display: flex;
+      align-items: center;
+      background: linear-gradient(90deg, #1B263B, #457B9D);
+      color: #ffff00;
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(0, 180, 216, 0.3);
+    }
+
+    .nav-button:hover {
+      background: linear-gradient(90deg, #457B9D, #00B4D8);
+      color: #F1FAEE;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .nav-button svg {
+      margin-right: 8px;
+      fill: currentColor;
+      width: 20px;
+      height: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 20px auto;
+        width: 90%;
+      }
+      .cards {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      .card {
+        padding: 15px;
+        height: 120px;
+      }
+      .header-box {
+        font-size: 22px;
+        padding: 25px 15px;
+      }
+      .plan-title {
+        font-size: 22px;
+        margin-bottom: 20px;
+      }
+      .card h3 {
+        font-size: 18px;
+      }
+      .card-number {
+        font-size: 22px;
+      }
+      .nav-button {
+        font-size: 16px;
+        padding: 10px 20px;
+      }
+      .navigation-buttons {
+        margin: 20px auto;
+        gap: 15px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .container {
+        margin: 10px auto;
+        padding: 15px;
+      }
+      .header-box {
+        font-size: 20px;
+        padding: 20px 10px;
+      }
+      .plan-title {
+        font-size: 20px;
+        margin-bottom: 15px;
+      }
+      .card {
+        padding: 12px;
+        height: 100px;
+      }
+      .card h3 {
+        font-size: 16px;
+      }
+      .card-number {
+        font-size: 20px;
+      }
+      .icon-box {
+        width: 32px;
+        height: 32px;
+      }
+      .icon-svg {
+        width: 18px;
+        height: 18px;
+      }
+      .nav-button {
+        font-size: 14px;
+        padding: 8px 16px;
+      }
+      .navigation-buttons {
+        margin: 15px auto;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header-box">
+    Тема 7. Геометричні вектори. Дії з векторами
+  </div>
+
+  <div class="container">
+    <div class="plan-title">План вивчення:</div>
+    <div class="cards">
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p27') }}" aria-label="Перейти до Основні поняття вектора">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/>
+              </svg>
+            </div>
+            27
+          </div>
+          <h3>Основні поняття вектора</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
+
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p28') }}" aria-label="Перейти до Лінійні операції над векторами">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/>
+              </svg>
+            </div>
+            28
+          </div>
+          <h3>Лінійні операції над векторами</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
+
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p29') }}" aria-label="Перейти до Кут між двома векторами">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/>
+              </svg>
+            </div>
+            29
+          </div>
+          <h3>Кут між двома векторами</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
+
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p30') }}" aria-label="Перейти до Проекція вектора на вісь та її властивості">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/>
+              </svg>
+            </div>
+            30
+          </div>
+          <h3>Проекція вектора на вісь та її властивості</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
+
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p31') }}" aria-label="Перейти до Лінійна залежність та незалежність векторів, базис. Розкладання вектора за базисними векторами">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/>
+              </svg>
+            </div>
+            31
+          </div>
+          <h3>Лінійна залежність та незалежність векторів, базис</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
+
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p32') }}" aria-label="Перейти до Декартова система координат. Координати вектора">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/>
+              </svg>
+            </div>
+            32
+          </div>
+          <h3>Декартова система координат. Координати вектора</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
+
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p33') }}" aria-label="Перейти до Дії над векторами, заданими своїми координатами">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/>
+              </svg>
+            </div>
+            33
+          </div>
+          <h3>Дії над векторами, заданими своїми координатами</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
+
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p34') }}" aria-label="Перейти до Умова колінеарності двох векторів">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/>
+              </svg>
+            </div>
+            34
+          </div>
+          <h3>Умова колінеарності двох векторів</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
+
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p35') }}" aria-label="Перейти до Поділ відрізка у заданому співвідношенні">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/>
+              </svg>
+            </div>
+            35
+          </div>
+          <h3>Поділ відрізка у заданому співвідношенні</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
+
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p36') }}" aria-label="Перейти до Напрямні косинуси вектора">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/>
+              </svg>
+            </div>
+            36
+          </div>
+          <h3>Напрямні косинуси вектора</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="navigation-buttons">
+    <a class="nav-button" href="{{ url_for('modul3') }}">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+      До змістового модуля 3
+    </a>
+
+    <a class="nav-button" href="{{ url_for('home') }}">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+      </svg>
+      На головну
+    </a>
+  </div>
+</body>
+</html>
