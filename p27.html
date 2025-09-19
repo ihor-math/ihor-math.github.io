@@ -338,7 +338,7 @@
             color: #e2e8f0;
             font-weight: 700;
             font-family: 'Lora', serif;
-            font-size: clamp(16px, 2.8vw, 18px);
+            font-size: clamp(18px, 3vw, 20px);
             line-height: 1.4;
             width: 100%;
         }
@@ -346,6 +346,7 @@
             display: block;
             max-width: 100%;
             word-wrap: break-word;
+            font-size: clamp(18px, 3vw, 20px);
             color: #e2e8f0;
         }
         .video-card {
@@ -593,6 +594,14 @@
             .figure {
                 max-width: 90%;
             }
+             .card-front span {
+           
+            font-size: clamp(16px, 2.8vw, 18px);
+            
+        }
+        .card-back span {
+           font-size: clamp(16px, 2.8vw, 18px);
+        }
                     
         }
         @media (max-width: 480px) {
@@ -652,30 +661,14 @@
             .figure {
                 max-width: 85%;
             }
-             .figure.figure-7-1 {
-    width: 230px;
-    height: 210px;
-}
-
-.figure.figure-7-2 {
-    width: 340px;
-    height: 230px;
-}
-
-.figure.figure-7-3 {
-    width: 230px;
-    height: 210px;
-}
-
-.figure.figure-7-4 {
-    width: 340px;
-    height: 230px;
-}
-
-.figure.figure-7-5 {
-    width: 230px;
-    height: 210px;
-}
+              .card-front span {
+           
+            font-size: clamp(13px, 2.6vw, 14px);
+            
+        }
+        .card-back span {
+            font-size: clamp(13px, 2.6vw, 14px);
+        }
        
         }
     </style>
@@ -700,7 +693,7 @@
         </div>
     </div>
 
-    <div class="navigation-buttons">
+   <div class="navigation-buttons">
         <a class="nav-button" href='tema7.html'>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                 <path d="M15 18l-6-6 6-6"/>
@@ -714,6 +707,7 @@
             На головну
         </a>
     </div>
+
 
    <div id="theoryModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="theoryTitle">
     <div class="modal-header">
@@ -1215,4 +1209,3 @@ document.addEventListener('DOMContentLoaded', function () {
     </script>
 </body>
 </html>
-
