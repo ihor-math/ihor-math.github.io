@@ -1053,7 +1053,7 @@
         line-height: 1.4;
     }
     #questionsModal mjx-container {
-        font-size: clamp(15px, 3vw, 17px) !important;
+        font-size: clamp(16px, 3vw, 18px) !important;
     }
             .trainer-container {
                 width: 95%;
@@ -1134,12 +1134,13 @@
                 gap: 8px;
             }
      #vectorCanvas {
-        width: 300px;
-        height: 225px;
+        width: 260px;
+        height: 195px;
     }
     #trainerModal .options-container mjx-container {
         font-size: clamp(13px, 3vw, 15px) !important;
     }
+           
         }
         @media (max-width: 480px) {
             .close-btn {
@@ -1163,7 +1164,7 @@
                 font-size: clamp(17px, 3.2vw, 19px);
             }
             #questionsModal mjx-container {
-                font-size: 18px !important;
+                font-size: 20px !important;
             }
             #submitAnswer {
                 font-size: clamp(14px, 3.5vw, 16px);
@@ -1284,14 +1285,30 @@
             .input-container {
                 gap: 6px;
             }
-            #vectorCanvas {
-        width: 300px;
-        height: 225px;
-    }
+           
     #trainerModal .options-container mjx-container {
         font-size: clamp(12px, 3vw, 14px) !important;
     }
-        }
+             .cube-formula, .vector-formula  {
+      font-size: clamp(16px, 3vw, 18px);
+}
+            }
+           
+            /* Для мобільних екранів до 600px */
+@media (max-width: 600px) {
+
+    /* Формули у питанні */
+    #trainerModal .math-notation-centered,
+    #questionsModal mjx-container {
+        font-size: clamp(18px, 4vw, 22px) !important;
+    }
+
+    /* Формули у відповідях */
+    #trainerModal .options-container mjx-container {
+        font-size: clamp(18px, 4vw, 20px) !important;
+    }
+}
+
     </style>
 
 </head>
@@ -3078,5 +3095,6 @@ elements.submitAnswer.addEventListener('click', () => {
     </script>
 </body>
 </html>
+
 
 
