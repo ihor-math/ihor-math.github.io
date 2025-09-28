@@ -1,0 +1,3082 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>29. Кут між двома векторами</title>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    console.log("MathJax is loaded and ready!");
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" onerror="console.error('Failed to load MathJax')"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Roboto:wght@400;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        *, *:before, *:after {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            font-family: 'Roboto', sans-serif;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: start;
+            min-height: 100vh;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        body.loaded {
+            visibility: visible;
+            opacity: 1;
+        }
+        .title-box {
+            margin-top: 60px;
+            padding: 20px 40px;
+            background: linear-gradient(135deg, #5f27cd, #341f97);
+            border-radius: 15px;
+            box-shadow: 0 6px 16px rgba(95, 39, 205, 0.3);
+            max-width: 90%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .title-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        .title-box h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            font-family: 'Merriweather', serif;
+            position: relative;
+            z-index: 1;
+        }
+        .section-container {
+            margin-top: 80px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .section {
+            width: 260px;
+            height: 200px;
+            background: linear-gradient(45deg, #2c3e50, #34495e);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            color: #ffffff;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(95, 39, 205, 0.2);
+        }
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(95, 39, 205, 0.1), transparent);
+            transition: left 0.5s;
+        }
+        .section:hover::before {
+            left: 100%;
+        }
+        .section:hover {
+            transform: scale(1.05) translateY(-5px);
+            box-shadow: 0 8px 20px rgba(95, 39, 205, 0.25);
+            background: linear-gradient(45deg, #3498db, #5f27cd);
+            border-color: rgba(95, 39, 205, 0.4);
+        }
+        .section img {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 15px;
+            object-fit: cover;
+            border-radius: 8px;
+            filter: drop-shadow(0 0 5px rgba(52, 152, 219, 0.3));
+            transition: filter 0.3s ease;
+        }
+        .section:hover img {
+            filter: drop-shadow(0 0 10px rgba(95, 39, 205, 0.5));
+        }
+        .section h2 {
+            font-size: 20px;
+            margin: 0;
+            font-family: 'Merriweather', serif;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 5%;
+            left: 5%;
+            width: 90%;
+            height: 90%;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(95, 39, 205, 0.2);
+            z-index: 1001;
+            overflow: hidden;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            border: 1px solid rgba(95, 39, 205, 0.1);
+        }
+        #modalOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(44, 62, 80, 0.8);
+            z-index: 999;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            padding: 20px;
+            flex-grow: 1;
+            background: #2c3e50;
+            border-radius: 10px;
+            margin: 10px;
+            color: #ffffff;
+            width: calc(100% - 20px);
+            overflow-y: auto;
+            display: block;
+            max-height: calc(100% - 60px);
+        }
+        .modal-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .modal-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .modal-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #3498db, #5f27cd);
+            border-radius: 3px;
+        }
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #2980b9, #8e44ad);
+        }
+        .modal-header {
+            background: linear-gradient(0deg, #2c3e50, #34495e);
+            padding: 8px 12px;
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1002;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            border-bottom: 1px solid rgba(95, 39, 205, 0.2);
+        }
+        #trainerModal .modal-header {
+            background: linear-gradient(0deg, #3498db, #5f27cd);
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+        .close-btn {
+            background: linear-gradient(135deg, #3498db, #5f27cd);
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Roboto', sans-serif;
+            z-index: 1003;
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+        }
+        .close-btn:hover {
+            background: linear-gradient(135deg, #2980b9, #8e44ad);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(95, 39, 205, 0.4);
+        }
+        #trainerModal .close-btn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        #trainerModal .close-btn:hover {
+            background: linear-gradient(135deg, #c0392b, #a93226);
+        }
+        details {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 6px;
+            background: #34495e;
+            cursor: pointer;
+            border: 1px solid rgba(95, 39, 205, 0.2);
+        }
+        summary {
+            font-weight: bold;
+            padding: 8px;
+            background: linear-gradient(135deg, #3498db, #5f27cd);
+            border-radius: 6px;
+            color: #ffffff;
+            font-family: 'Merriweather', serif;
+            transition: all 0.3s ease;
+        }
+        summary:hover {
+            background: linear-gradient(135deg, #2980b9, #8e44ad);
+            transform: scale(1.02);
+        }
+        details p {
+            padding: 0 15px 10px;
+            color: #ecf0f1;
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+        /* Простий стиль для математичних позначень без заливки */
+       .math-notation {
+    font-style: italic;
+    color: #f1c40f;
+    display: inline !important; /* Забезпечує вбудоване відображення */
+}
+            #questionsModal .math-notation-centered {
+    display: none !important; /* Прибираємо, щоб уникнути конфліктів */
+}
+
+        /* Стиль для виділених термінів без заливки */
+        .highlight-term {
+            color: #3498db;
+            font-weight: bold;
+        }
+        .formula-line {
+            display: inline-block;
+            white-space: nowrap;
+        }
+        .question-block {
+            margin: 15px 0;
+            padding: 10px;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            cursor: pointer;
+            border: 1px solid rgba(95, 39, 205, 0.2);
+        }
+        .question-block summary {
+            font-size: 16px;
+            background: linear-gradient(135deg, #3498db, #5f27cd);
+            color: #ffffff;
+        }
+        .question-block details summary {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+        .question-block details p {
+            color: #ecf0f1;
+            background: #2c3e50;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 3px solid #27ae60;
+        }
+#questionsModal mjx-container {
+    display: inline !important;
+    vertical-align: middle !important;
+    font-size: clamp(16px, 2.8vw, 18px) !important;
+    color: #f1c40f !important;
+    background: none !important;
+    font-style: italic !important;
+    margin: 0 2px !important;
+    padding: 0 !important;
+}
+        .trainer-container {
+            width: 90%;
+            max-width: 800px;
+            padding: 3vw 4vw;
+            text-align: center;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(95, 39, 205, 0.2);
+            transition: all 0.3s ease;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100%;
+            border: 1px solid rgba(95, 39, 205, 0.2);
+        }
+        .question-circle {
+            width: clamp(80px, 15vw, 120px);
+            height: clamp(80px, 15vw, 120px);
+            margin: 0 auto 3vw;
+            background: linear-gradient(135deg, #3498db, #5f27cd);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(95, 39, 205, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .question-circle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        .question-circle:hover::before {
+            left: 100%;
+        }
+        .question-circle h3 {
+            color: #ffffff;
+            font-family: 'Lora', serif;
+            font-size: clamp(16px, 2.5vw, 20px);
+            margin: 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 1;
+        }
+           .cube-formula, .vector-formula  {
+    color: #ffff00; /* Жовтий колір */
+    display: inline-block; /* Для коректного відображення LaTeX */
+}
+            /* Затемнений фон і модальний ефект */
+#completionBlock.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Затемнений фон */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Вміст модального вікна */
+#completionBlock .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    width: 90%;
+}
+            
+        .completion-emoji {
+            width: clamp(80px, 15vw, 120px);
+            height: clamp(80px, 15vw, 120px);
+            margin: 0 auto 3vw;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(95, 39, 205, 0.3);
+            border: 2px dashed #f1c40f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+        .completion-emoji::after {
+            content: '🎉';
+            font-size: clamp(40px, 8vw, 60px);
+            color: #f1c40f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
+        }
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2vw;
+            justify-content: center;
+            margin-bottom: 3vw;
+            width: 100%;
+        }
+        .option {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5vw 3vw;
+            border: 1.5px solid #3498db;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #34495e, #2c3e50);
+            cursor: pointer;
+            font-size: clamp(15px, 3.5vw, 18px);
+            min-height: 45px;
+            min-width: 90px;
+            max-width: 45%;
+            text-align: center;
+            font-family: 'Lora', serif;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+            box-sizing: border-box;
+            touch-action: manipulation;
+            pointer-events: auto !important;
+            user-select: none;
+            transition: all 0.3s ease;
+            color: #ecf0f1;
+        }
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(52, 152, 219, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        .option:hover::before {
+            left: 100%;
+        }
+        .option:hover {
+            background: linear-gradient(135deg, #3498db, #5f27cd);
+            transform: scale(1.03);
+            border-color: #f1c40f;
+            box-shadow: 0 4px 12px rgba(95, 39, 205, 0.3);
+        }
+        .option.selected {
+            background: linear-gradient(135deg, #27ae60, #2ecc71) !important;
+            color: #ffffff !important;
+            border: 2px solid #f1c40f !important;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
+        }
+        .option:focus {
+            outline: 2px solid #f1c40f;
+            outline-offset: 2px;
+        }
+        .option {
+            min-height: 50px !important;
+            padding: 12px 20px !important;
+        }
+        mjx-container, mjx-container * {
+            pointer-events: none !important;
+            user-select: none !important;
+        }
+        mjx-frac {
+            font-size: 1.2em !important;
+            padding: 2px !important;
+        }
+        mjx-num, mjx-den {
+            padding: 2px !important;
+        }
+        button {
+            background: linear-gradient(135deg, #3498db, #5f27cd);
+            color: #ffffff;
+            border: none;
+            border-radius: 25px;
+            padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 24px);
+            font-size: clamp(16px, 3vw, 18px);
+            font-family: 'Lora', serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(95, 39, 205, 0.3);
+        }
+        button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #2980b9, #8e44ad);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(95, 39, 205, 0.4);
+        }
+        button:disabled {
+            background: #7f8c8d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .result {
+            margin-top: 3vw;
+            font-size: clamp(16px, 2.5vw, 18px);
+            font-family: 'Lora', serif;
+            color: #ffffff;
+        }
+        .completion-message {
+            font-family: 'Lora', serif;
+            font-weight: 700;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            border: 2.5px solid #27ae60;
+            border-radius: 15px;
+            padding: clamp(12px, 3vw, 18px);
+            box-shadow: 0 6px 12px rgba(46, 204, 113, 0.3);
+            margin: 2vw auto;
+            max-width: 90%;
+            position: relative;
+            overflow: hidden;
+        }
+        .completion-message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 1s;
+            animation: completionShine 2s infinite;
+        }
+        @keyframes completionShine {
+            0% { left: -100%; }
+            50% { left: 100%; }
+            100% { left: 100%; }
+        }
+        .completion-message h2 {
+            font-size: clamp(22px, 4.5vw, 30px);
+            margin: 0 0 1vw;
+            color: #f1c40f;
+            text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
+        }
+        .completion-message p {
+            font-size: clamp(18px, 3.5vw, 22px);
+            margin: 0;
+            color: #ffffff;
+        }
+        /* Спрощений стиль для центрованих формул - без заливки та рамок */
+        .math-notation-centered {
+            display: block;
+            text-align: center;
+            width: 100%;
+            font-size: clamp(18px, 3vw, 20px);
+            margin: 10px 0;
+            line-height: 1.6;
+            font-family: 'Roboto', sans-serif;
+        }
+        /* Стиль для MathJax контейнерів у math-notation-centered */
+        mjx-container.math-notation-centered {
+            display: inline-block !important;
+            text-align: center !important;
+            vertical-align: middle !important;
+            white-space: nowrap !important;
+            line-height: 1.4 !important;
+            font-size: clamp(18px, 3vw, 20px) !important;
+            color: #f1c40f !important;
+            background: none !important; /* Прибрано синю заливку */
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        mjx-container.math-notation-centered * {
+            color: #f1c40f !important;
+            font-style: italic !important;
+        }
+        /* Для тренажера - без рамок */
+       #trainerModal .math-notation-centered {
+    font-size: clamp(16px, 3vw, 18px);
+    color: #ffffff;
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.5;
+    text-align: center;
+    margin: 5px 0;
+    display: block; /* Для питання, яке стоїть окремо */
+}
+
+       #trainerModal .options-container mjx-container {
+    display: inline !important;
+    vertical-align: middle !important;
+    font-size: clamp(14px, 3vw, 16px) !important;
+    color: #f1c40f !important;
+    background: none !important;
+    font-style: italic !important;
+    margin: 0 2px !important;
+    padding: 0 !important;
+}
+        .feedback {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(24px, 5.8vw, 30px);
+            font-family: 'Lora', serif;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+            z-index: 1001;
+            opacity: 0;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            text-align: center;
+            border: 2px solid transparent;
+        }
+        .feedback.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1.05);
+        }
+        .correct-feedback {
+            color: #ffffff;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            border: 2px solid #27ae60;
+            box-shadow: 0 0 20px rgba(46, 204, 113, 0.5);
+        }
+        .incorrect-feedback {
+            color: #ffffff;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            border: 2px solid #e74c3c;
+            box-shadow: 0 0 20px rgba(231, 76, 60, 0.5);
+        }
+        .navigation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px auto;
+            max-width: 1000px;
+        }
+        .nav-button {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: #ffff00;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+        }
+        .nav-button:hover {
+            background: linear-gradient(135deg, #3498db, #5f27cd);
+            color: #ffffff;
+            transform: scale(1.03);
+            box-shadow: 0 4px 12px rgba(95, 39, 205, 0.3);
+        }
+        .nav-button svg {
+            margin-right: 8px;
+            fill: currentColor;
+            transition: fill 0.3s ease;
+        }
+        .question-card {
+            perspective: 1000px;
+            margin: 20px auto;
+            max-width: 964px;
+            width: 100%;
+            min-height: 150px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            cursor: pointer;
+        }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            min-height: 150px;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            cursor: inherit;
+        }
+        .question-card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+    position: absolute;
+    width: 100%;
+    min-height: 150px;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    cursor: inherit;
+    border: 1px solid rgba(95, 39, 205, 0.2);
+}
+
+.card-front {
+    background: #0c486e; /* Сучасний синій градієнт */
+    color: #ffffff;
+}
+        .card-back {
+    background: linear-gradient(135deg, #111827, #1f2937); /* Темний градієнт */
+    color: #ecf0f1;
+    transform: rotateY(180deg);
+    text-align: justify;
+    padding: 20px;
+    overflow: auto;
+    white-space: normal;
+}
+
+       /* Оновлення стилів для span у флеш-картках */
+.card-front span, .card-back span {
+    font-family: 'Lora', serif;
+    font-size: clamp(16px, 2.8vw, 18px);
+    line-height: 1.6;
+    display: inline; /* Змінено на inline для вбудованого відображення */
+    color: inherit; /* Успадковує колір від батьківського елемента */
+    text-align: center; /* Для фронту */
+}
+
+.card-back span {
+    text-align: justify; /* Для зворотної сторони */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+        .hidden {
+            display: none !important;
+        }
+        
+        .theory-content h2 {
+            color: #f1c40f;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
+            margin-bottom: 20px;
+            font-family: 'Merriweather', serif;
+        }
+        .theory-content h3 {
+            color: #3498db;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+            margin-top: 25px;
+        }
+        .theory-content p, .theory-content li {
+            color: #ecf0f1;
+            font-size: clamp(18px, 3vw, 20px);
+            line-height: 1.7;
+        }
+        .example {
+            color: #e67e22;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #e67e22;
+            margin: 15px 0;
+        }
+        .solution {
+            color: #27ae60;
+            font-weight: bold;
+            text-align: center;
+            display: block;
+            padding: 10px;
+            border-radius: 6px;
+            border: 2px solid #27ae60;
+            margin: 15px 0;
+        }
+        .note {
+            color: #9b59b6;
+            font-weight: bold;
+        }
+        .note-text {
+            font-style: italic;
+            color: #bdc3c7;
+            text-align: justify;
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #9b59b6;
+            margin: 10px 0;
+        }
+        .theory-content p:not(.math-notation-centered),
+        .theory-content li {
+            text-align: justify;
+        }
+        /* Стиль для векторних позначень без заливки */
+        .vector-type {
+            font-style: italic;
+            color: #f1c40f;
+        }
+        .main-types {
+            font-weight: bold;
+            color: #3498db;
+        }
+        ol {
+            color: #ecf0f1;
+        }
+        ol li::marker {
+            color: #f1c40f;
+        }
+        /* Базовий стиль для MathJax без заливки */
+        mjx-container {
+            color: #f1c40f !important;
+            background: none !important;
+            font-style: italic !important;
+        }
+        /* Для формул в теорії - без заливки */
+        .theory-content mjx-container {
+            color: #f1c40f !important;
+            background: none !important;
+        }
+        .modal-content::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        .modal-content::-webkit-scrollbar-track {
+            background: #2c3e50;
+            border-radius: 10px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
+        }
+        .modal-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #3498db, #5f27cd);
+            border-radius: 10px;
+            border: 2px solid #2c3e50;
+        }
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #2980b9, #8e44ad);
+        }
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #2c3e50;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #3498db, #5f27cd);
+            border-radius: 10px;
+            border: 2px solid #2c3e50;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #2980b9, #8e44ad);
+        }
+        .modal-content {
+            scrollbar-color: #3498db #2c3e50;
+            scrollbar-width: thin;
+        }
+        .glow-title {
+            text-align: center;
+            color: #ffffff;
+            font-family: 'Merriweather', serif;
+            font-size: clamp(20px, 3vw, 24px);
+            margin: 10px 0;
+            text-shadow: 0 0 10px rgba(95, 39, 205, 0.5);
+            background: linear-gradient(135deg, #3498db, #5f27cd);
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: block;
+        }
+        .input-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            width: 100%;
+            max-width: 300px;
+            background: rgba(44, 62, 80, 0.5);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(95, 39, 205, 0.3);
+        }
+        #answerInput {
+            padding: 8px;
+            font-size: clamp(14px, 3vw, 16px);
+            width: 100px;
+            border: 2px solid #3498db;
+            border-radius: 6px;
+            background: #34495e;
+            color: #ecf0f1;
+            text-align: center;
+            font-family: 'Roboto', sans-serif;
+        }
+        #answerInput:focus {
+            outline: none;
+            border-color: #f1c40f;
+            box-shadow: 0 0 8px rgba(241, 196, 15, 0.3);
+        }
+        .option.text-option {
+            font-size: clamp(14px, 3vw, 16px);
+            padding: 10px 20px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .figure-reference {
+            color: #e67e22;
+            font-style: italic;
+            font-weight: bold;
+        }
+        .angle-notation {
+            color: #9b59b6;
+            font-weight: bold;
+        }
+        .vector-relation {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        /* Стилі для canvas у тренажері */
+#vectorCanvas {
+    display: block;
+    margin: 20px auto;
+    border: 1px solid rgba(95, 39, 205, 0.2);
+    background: #2c3e50;
+    border-radius: 8px;
+    width: 400px;
+    height: 300px;
+}
+#optionsContainer {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+#submitAnswer {
+    margin-top: 20px;
+    padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 24px);
+    background: linear-gradient(135deg, #3498db, #5f27cd);
+    color: #ffffff;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: clamp(16px, 3vw, 18px);
+    font-family: 'Lora', serif;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(95, 39, 205, 0.3);
+}
+
+#submitAnswer:disabled {
+    background: #7f8c8d;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+#submitAnswer:hover:not(:disabled) {
+    background: linear-gradient(135deg, #2980b9, #8e44ad);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(95, 39, 205, 0.4);
+}
+            
+        @media (max-width: 768px) {
+            .close-btn {
+                font-size: 16px;
+                padding: 6px 12px;
+                border-radius: 8px;
+            }
+            .theory-content p, .theory-content li {
+                font-size: clamp(18px, 3vw, 20px);
+            }
+            .theory-content mjx-container {
+                font-size: clamp(16px, 3vw, 18px) !important;
+            }
+            .theory-content h2, .theory-content h3 {
+                font-size: clamp(20px, 3vw, 24px);
+            }
+            .question-block summary {
+                font-size: clamp(18px, 3vw, 20px);
+            }
+            .question-block details p {
+                font-size: clamp(18px, 3vw, 20px);
+            }
+            #questionsModal mjx-container {
+                font-size: 20px !important;
+            }
+            #submitAnswer {
+                font-size: clamp(16px, 3.5vw, 18px);
+                padding: clamp(12px, 3vw, 14px) clamp(24px, 5vw, 28px);
+            }
+            #answerInput {
+                width: 80px;
+                padding: 8px;
+                font-size: clamp(16px, 3vw, 18px);
+            }
+            .title-box {
+                margin-top: 40px;
+                padding: 15px 20px;
+            }
+            .title-box h1 {
+                font-size: 24px;
+            }
+            .section-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            .section {
+                width: 80%;
+                height: 180px;
+            }
+            .modal {
+                top: 2%;
+                left: 2%;
+                width: 96%;
+                height: 96%;
+            }
+            .modal-header {
+                padding: 5px 8px;
+            }
+            .modal-content {
+                max-height: calc(100% - 50px);
+            }
+            .question-card {
+                min-height: 180px;
+            }
+           .card-front, .card-back {
+        font-size: clamp(15px, 3vw, 17px);
+        padding: 12px;
+        line-height: 1.4;
+    }
+    .card-front span, .card-back span {
+        font-size: clamp(15px, 3vw, 17px);
+        line-height: 1.4;
+    }
+    #questionsModal mjx-container {
+        font-size: clamp(15px, 3vw, 17px) !important;
+    }
+            .trainer-container {
+                width: 95%;
+                padding: 4vw;
+            }
+            .question-circle, .completion-emoji {
+                width: 25vw;
+                height: 25vw;
+                min-width: 80px;
+                min-height: 80px;
+            }
+            .question-circle h3 {
+                font-size: clamp(14px, 3vw, 16px);
+            }
+            .completion-emoji::after {
+                font-size: clamp(30px, 7vw, 40px);
+            }
+            .options-container {
+                gap: 1.5vw;
+                flex-direction: column;
+                align-items: center;
+            }
+            .option {
+                font-size: clamp(14px, 4vw, 16px);
+                padding: 10px !important;
+                min-height: 60px !important;
+                min-width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                overflow: hidden;
+            }
+            .option mjx-container {
+                font-size: clamp(14px, 4vw, 16px) !important;
+                width: 100% !important;
+                text-align: center;
+                overflow: hidden;
+            }
+            button {
+                padding: 3vw 5vw;
+                font-size: clamp(12px, 3vw, 14px);
+            }
+            .feedback {
+                font-size: clamp(24px, 5.8vw, 32px);
+                padding: clamp(12px, 3.5vw, 18px) clamp(18px, 5vw, 25px);
+                max-width: 95vw;
+                word-wrap: break-word;
+            }
+            .completion-message {
+                padding: clamp(10px, 3vw, 15px);
+            }
+            .completion-message h2 {
+                font-size: clamp(20px, 4vw, 26px);
+            }
+            .completion-message p {
+                font-size: clamp(16px, 3vw, 20px);
+            }
+            .navigation-buttons {
+                margin: 20px auto;
+                gap: 15px;
+            }
+            .nav-button {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+            .math-notation-centered {
+                font-size: clamp(16px, 2.5vw, 18px);
+            }
+            mjx-container.math-notation-centered {
+                font-size: clamp(16px, 2.5vw, 18px) !important;
+            }
+            .input-container {
+                flex-direction: row;
+                align-items: center;
+                gap: 8px;
+            }
+     #vectorCanvas {
+        width: 300px;
+        height: 225px;
+    }
+    #trainerModal .options-container mjx-container {
+        font-size: clamp(13px, 3vw, 15px) !important;
+    }
+        }
+        @media (max-width: 480px) {
+            .close-btn {
+                font-size: 14px;
+                padding: 5px 10px;
+                border-radius: 6px;
+            }
+            .theory-content p, .theory-content li {
+                font-size: clamp(17px, 3.2vw, 19px);
+            }
+            .theory-content mjx-container {
+                font-size: clamp(17px, 3.2vw, 19px) !important;
+            }
+            .theory-content h2, .theory-content h3 {
+                font-size: clamp(20px, 3vw, 24px);
+            }
+            .question-block summary {
+                font-size: clamp(17px, 3.2vw, 19px);
+            }
+            .question-block details p {
+                font-size: clamp(17px, 3.2vw, 19px);
+            }
+            #questionsModal mjx-container {
+                font-size: 18px !important;
+            }
+            #submitAnswer {
+                font-size: clamp(14px, 3.5vw, 16px);
+                padding: clamp(10px, 3vw, 12px) clamp(20px, 5vw, 24px);
+            }
+            #answerInput {
+                width: 70px;
+                padding: 6px;
+                font-size: clamp(14px, 3vw, 16px);
+            }
+            .title-box {
+                margin-top: 20px;
+                padding: 10px 15px;
+            }
+            .title-box h1 {
+                font-size: 20px;
+            }
+            .section {
+                width: 90%;
+                height: 150px;
+            }
+            .section img {
+                width: 50px;
+                height: 50px;
+            }
+            .section h2 {
+                font-size: 18px;
+            }
+            .modal-header {
+                padding: 4px 6px;
+            }
+            .modal-content {
+                max-height: calc(100% - 40px);
+            }
+            .question-card {
+                min-height: 200px;
+            }
+            .card-front, .card-back {
+        font-size: clamp(14px, 3vw, 16px);
+        padding: 10px;
+        line-height: 1.3;
+    }
+    .card-front span, .card-back span {
+        font-size: clamp(14px, 3vw, 16px);
+        line-height: 1.3;
+    }
+    #questionsModal mjx-container {
+        font-size: clamp(14px, 3vw, 16px) !important;
+    }
+           
+            .card-inner {
+                min-height: 200px;
+            }
+            .trainer-container {
+                padding: 5vw;
+            }
+            .question-circle, .completion-emoji {
+                width: 25vw;
+                height: 25vw;
+                min-width: 60px;
+                min-height: 60px;
+            }
+            .completion-emoji::after {
+                font-size: clamp(25px, 6vw, 35px);
+            }
+            .option {
+                font-size: 16px !important;
+                padding: 10px !important;
+                min-height: 60px !important;
+                min-width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                overflow: hidden;
+            }
+            .option mjx-container {
+                font-size: clamp(13px, 4vw, 15px) !important;
+                width: 100% !important;
+                text-align: center;
+                overflow: hidden;
+            }
+            .feedback {
+                font-size: clamp(22px, 5.2vw, 28px);
+                padding: clamp(10px, 3vw, 15px) clamp(15px, 4.5vw, 20px);
+                max-width: 95vw;
+            }
+            .completion-message {
+                padding: clamp(10px, 3vw, 15px);
+            }
+            .completion-message h2 {
+                font-size: clamp(18px, 3.5vw, 22px);
+            }
+            .completion-message p {
+                font-size: clamp(14px, 3vw, 18px);
+            }
+            .navigation-buttons {
+                margin: 15px auto;
+                gap: 10px;
+            }
+            .nav-button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+            .math-notation-centered {
+                font-size: clamp(14px, 2.5vw, 16px);
+                line-height: 1.2;
+            }
+            mjx-container.math-notation-centered {
+                font-size: clamp(14px, 2.5vw, 16px) !important;
+                line-height: 1.2 !important;
+            }
+            mjx-container {
+                font-size: 13px !important;
+            }
+            .input-container {
+                gap: 6px;
+            }
+            #vectorCanvas {
+        width: 300px;
+        height: 225px;
+    }
+    #trainerModal .options-container mjx-container {
+        font-size: clamp(12px, 3vw, 14px) !important;
+    }
+        }
+    </style>
+
+</head>
+<body>
+    <div class="title-box">
+        <h1>29. Кут між двома векторами</h1>
+    </div>
+
+    <div class="section-container">
+        <div class="section" id="openTheoryBtn">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Книга">
+            <h2>Теоретичні відомості</h2>
+        </div>
+        
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Картки">
+            <h2>Питання і відповіді</h2>
+        </div>
+        <div class="section" id="openTrainerBtn">
+            <img src="https://img.icons8.com/fluency/96/flash-on.png" alt="Тренажер">
+            <h2>Тренажер</h2>
+        </div>
+    </div>
+
+    <div class="navigation-buttons">
+        <a class="nav-button" href="{{ url_for('tema7') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            До теми 7
+        </a>
+        <a class="nav-button" href="{{ url_for('home') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            На головну
+        </a>
+    </div>
+
+   <div id="theoryModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="theoryTitle">
+    <div class="modal-header">
+        <button class="close-btn" id="closeTheoryBtn" aria-label="Закрити">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="theory-content">
+            <h2>Кут між двома векторами</h2>
+            
+            <p>Кутом між двома ненульовими векторами називають величину кута між ними, коли вони відкладені зі спільної точки початку. Цей кут лежить у межах від \( 0^\circ \) до \( 180^\circ \) (або від 0 до π радіан) і характеризує взаємну орієнтацію векторів у просторі.</p>
+            
+            <p>Кут між векторами \( \vec{a} \) і \( \vec{b} \) позначається як <span class="angle-notation">\( \angle(\vec{a};\vec{b}) \)</span>, хоча іноді використовують запис <span class="angle-notation">\( (\vec{a};\vec{b})^{\hat{}} \)</span>. Для зручності введемо позначення: \( \varphi = \angle(\vec{a};\vec{b}) \).</p>
+            
+            <h3>Класифікація кутів між векторами</h3>
+            <p>Якщо кут \( \varphi \) між векторами \( \vec{a} \) і \( \vec{b} \) задовольняє умову \( 0^\circ < \varphi < 90^\circ \) (\( 0 < \varphi < \pi/2 \)), то він є <span class="highlight-term">гострим</span>. Якщо \( 90^\circ < \varphi < 180^\circ \) (\( \pi/2 < \varphi < \pi \)), то кут є <span class="highlight-term">тупим</span> (рис. 7.24).</p>
+  <img src="/static/figure7.24.jpg" alt="Гострий і тупий кути" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+               
+            <p>Якщо кут \( \varphi \) між векторами \( \vec{a} \) і \( \vec{b} \) дорівнює \( 90^\circ \) (\( \varphi = \pi/2 \)), то ці вектори називають <span class="highlight-term">перпендикулярними</span> (або <span class="highlight-term">ортогональними</span>) і позначають <span class="vector-relation">\( \vec{a} \perp \vec{b} \)</span>.</p>
+                           <h3>Спеціальні випадки</h3>
+            <p>Якщо вектори \( \vec{a} \) і \( \vec{b} \) <span class="vector-relation">паралельні та співнапрямлені</span> (\( \vec{a} \uparrow\uparrow \vec{b} \)), то кут між ними становить \( 0^\circ \) (\( \varphi = 0 \)). Якщо вони <span class="vector-relation">паралельні, але спрямовані у протилежні боки</span> (\( \vec{a} \uparrow\downarrow \vec{b} \)), то кут дорівнює \( 180^\circ \) (\( \varphi = \pi \)).</p>
+                        <div class="note">Примітка:</div>
+            <p class="note-text">Якщо хоча б один із векторів є нульовим, то кут між ними вважається рівним нулю (рис. 7.25).</p>
+             <img src="/static/figure7.25.jpg" alt="Прямий, розорнутий і нуль" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+
+             <h2>Кут між вектором і віссю</h2>
+            <p>Розглянемо пряму \( l \), на якій задано одиницю вимірювання довжини. Візьмемо дві точки \( A \) і \( B \) на цій прямій такі, що відстань між ними \( |AB| = 1 \). Тоді вектори \( \overrightarrow{AB} \) і \( \overrightarrow{BA} \) називаються <span class="highlight-term">одиничними векторами прямої</span> \( l \), оскільки їхня довжина дорівнює 1 (рис. 7.26).</p>
+             <img src="/static/figure7.26.jpg" alt="Два одиничних вектори" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+
+            <p>Ці одиничні вектори визначають два протилежні напрями на прямій: один із них називається <span class="highlight-term">додатним</span>, а інший – <span class="highlight-term">від'ємним</span>.</p>
+            
+            <p>Якщо на прямій \( l \) вибрано точку \( O \) як початок відліку, задано додатний напрям і одиницю вимірювання довжини, то така пряма називається <span class="highlight-term">віссю</span>. Вектор \( \vec{e} \), який має довжину \( |\vec{e}| = 1 \) і визначає додатний напрям осі, називається її <span class="highlight-term">одиничним вектором</span> (рис. 7.27).</p>
+             <img src="/static/figure7.27.jpg" alt="Одиничний вектор" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+
+            <p><span class="highlight-term">Кутом між вектором і віссю</span> називають величину кута між цим вектором і одиничним вектором осі \( \vec{e} \), коли вони відкладені зі спільної точки початку (рис. 7.28). Цей кут характеризує орієнтацію вектора відносно осі та лежить у межах від \( 0^\circ \) до \( 180^\circ \) (або від 0 до \( \pi \) радіан).</p>
+            <img src="/static/figure7.28.jpg" alt="Кут між вектором і віссю" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+
+            
+            <h3>Геометричне значення</h3>
+            <ul>
+                <li><span class="highlight-term">\( \varphi = 0^\circ \)</span> — вектори співнапрямлені</li>
+                <li><span class="highlight-term">\( 0^\circ < \varphi < 90^\circ \)</span> — гострий кут</li>
+                <li><span class="highlight-term">\( \varphi = 90^\circ \)</span> — вектори перпендикулярні (\( \vec{a} \perp \vec{b} \))</li>
+                <li><span class="highlight-term">\( 90^\circ < \varphi < 180^\circ \)</span> — тупий кут</li>
+                <li><span class="highlight-term">\( \varphi = 180^\circ \)</span> — вектори протилежнонапрямлені</li>
+            </ul>
+            
+          
+            <h3>Основні позначення та символіка</h3>
+            <table style="width: 100%; border-collapse: collapse; margin: 15px 0; background: rgba(52, 152, 219, 0.1); border-radius: 8px; overflow: hidden;">
+                <tr style="background: linear-gradient(135deg, #3498db, #5f27cd);">
+                    <th style="padding: 10px; text-align: left; color: white;">Позначення</th>
+                    <th style="padding: 10px; text-align: left; color: white;">Значення</th>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border-bottom: 1px solid rgba(95, 39, 205, 0.2);"><span class="angle-notation">\( \angle(\vec{a};\vec{b}) \)</span></td>
+                    <td style="padding: 10px; border-bottom: 1px solid rgba(95, 39, 205, 0.2);">Кут між векторами</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border-bottom: 1px solid rgba(95, 39, 205, 0.2);"><span class="vector-relation">\( \vec{a} \perp \vec{b} \)</span></td>
+                    <td style="padding: 10px; border-bottom: 1px solid rgba(95, 39, 205, 0.2);">Вектори перпендикулярні</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border-bottom: 1px solid rgba(95, 39, 205, 0.2);"><span class="vector-relation">\( \vec{a} \uparrow\uparrow \vec{b} \)</span></td>
+                    <td style="padding: 10px; border-bottom: 1px solid rgba(95, 39, 205, 0.2);">Співнапрямлені вектори</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px;"><span class="vector-relation">\( \vec{a} \uparrow\downarrow \vec{b} \)</span></td>
+                    <td style="padding: 10px;">Протилежнонапрямлені вектори</td>
+                </tr>
+            </table>
+            
+            <p>Ці поняття є основою для подальшого вивчення векторної алгебри та аналітичної геометрії.</p>
+        </div>
+    </div>
+</div>
+   
+
+ <div id="questionsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="questionsTitle">
+    <div class="modal-header">
+        <button class="close-btn" id="closeQuestionsBtn" aria-label="Закрити">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>1. Як визначають кут між двома ненульовими векторами?</span>
+                </div>
+                <div class="card-back">
+                    <span>Це величина кута між ними, коли вони відкладені зі спільної точки початку; кут лежить у межах від <span class="math-notation">\( 0^\circ \)</span> до <span class="math-notation">\( 180^\circ \)</span> (або від <span class="math-notation">\( 0 \)</span> до <span class="math-notation">\( \pi \)</span> радіан).</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>2. Яке позначення використовують для кута між векторами \( \vec{a} \)і \( \vec{b} \)?</span>
+                </div>
+                <div class="card-back">
+                    <span><span class="math-notation">\( \varphi = \angle(\vec{a}; \vec{b}) \)</span>; іноді <span class="math-notation">\( (\vec{a}; \vec{b})^{\hat{}} \)</span>.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>3. Яким є кут, якщо <span class="math-notation">\( 0^\circ < \varphi < 90^\circ \)</span> (<span class="math-notation">\( 0 < \varphi < \pi/2 \)</span>)?</span>
+                </div>
+                <div class="card-back">
+                    <span>Це гострий кут.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>4. Яким є кут, якщо <span class="math-notation">\( 90^\circ < \varphi < 180^\circ \)</span> (<span class="math-notation">\( \pi/2 < \varphi < \pi \)</span>)?</span>
+                </div>
+                <div class="card-back">
+                    <span>Це тупий кут.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>5. Які вектори називаються перпендикулярними (ортогональними)?</span>
+                </div>
+                <div class="card-back">
+                    <span>Якщо кут між ними дорівнює <span class="math-notation">\( 90^\circ \)</span> (<span class="math-notation">\( \varphi = \pi/2 \)</span>), позначається як <span class="vector-relation">\( \vec{a} \perp \vec{b} \)</span>.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>6. Який кут між співнапрямленими паралельними векторами?</span>
+                </div>
+                <div class="card-back">
+                    <span><span class="math-notation">\( 0^\circ \)</span> (<span class="math-notation">\( \varphi = 0 \)</span>), позначається як <span class="vector-relation">\( \vec{a} \uparrow\uparrow \vec{b} \)</span>.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>7. Який кут між паралельними, але протилежно напрямленими векторами?</span>
+                </div>
+                <div class="card-back">
+                    <span><span class="math-notation">\( 180^\circ \)</span> (<span class="math-notation">\( \varphi = \pi \)</span>), позначається як <span class="vector-relation">\( \vec{a} \uparrow\downarrow \vec{b} \)</span>.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>8. Який кут вважається між векторами, якщо хоча б один із них нульовий?</span>
+                </div>
+                <div class="card-back">
+                    <span>Кут дорівнює <span class="math-notation">\( 0 \)</span>.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>9.Що таке одиничний вектор прямої?</span>
+                </div>
+                <div class="card-back">
+                    <span>Це вектор довжини <span class="math-notation">\( 1 \)</span>, який визначає один із двох протилежних напрямів на прямій.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>10. Як визначається вісь?</span>
+                </div>
+                <div class="card-back">
+                    <span>Це пряма з обраним початком відліку, додатним напрямом і одиницею довжини.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>11. Що таке одиничний вектор осі?</span>
+                </div>
+                <div class="card-back">
+                    <span>Це вектор <span class="math-notation">\( \vec{e} \)</span>, для якого <span class="math-notation">\( |\vec{e}| = 1 \)</span>, і який задає додатний напрям осі.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>12. Як визначають кут між вектором і віссю?</span>
+                </div>
+                <div class="card-back">
+                    <span>Це кут між даним вектором і одиничним вектором осі <span class="math-notation">\( \vec{e} \)</span>, коли вони мають спільний початок; лежить у межах від <span class="math-notation">\( 0^\circ \)</span> до <span class="math-notation">\( 180^\circ \)</span> (або від <span class="math-notation">\( 0 \)</span> до <span class="math-notation">\( \pi \)</span> радіан).</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+   <div id="trainerModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="trainerTitle">
+    <div class="modal-header">
+        <button class="close-btn" id="closeTrainerBtn" aria-label="Закрити">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="trainer-container" id="trainerContent">
+            <div class="question-circle">
+                <h3 id="questionNumber"></h3>
+            </div>
+            <canvas id="vectorCanvas" width="300" height="200"></canvas>
+            <p id="questionText" class="math-notation-centered">Визначте кут між векторами:</p>
+            <div class="options-container" id="optionsContainer"></div>
+            <button id="submitAnswer" disabled>Підтвердити</button>
+            <div id="feedback" class="feedback"></div>
+            <div id="completionBlock" class="completion-message hidden">
+                <div class="completion-emoji"></div>
+                <h2>Тренування завершено!</h2>
+                <p>Молодець!</p>
+                <button id="resetTrainerBtn">Спробувати ще раз</button>
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="modalOverlay"></div>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.body.classList.add('loaded');
+
+    const elements = {
+        openTheoryBtn: document.getElementById('openTheoryBtn'),
+        openQuestionsBtn: document.getElementById('openQuestionsBtn'),
+        openTrainerBtn: document.getElementById('openTrainerBtn'),
+        theoryModal: document.getElementById('theoryModal'),
+        questionsModal: document.getElementById('questionsModal'),
+        trainerModal: document.getElementById('trainerModal'),
+        closeTheoryBtn: document.getElementById('closeTheoryBtn'),
+        closeQuestionsBtn: document.getElementById('closeQuestionsBtn'),
+        closeTrainerBtn: document.getElementById('closeTrainerBtn'),
+        modalOverlay: document.getElementById('modalOverlay'),
+        questionNumber: document.getElementById('questionNumber'),
+        questionText: document.getElementById('questionText'),
+        optionsContainer: document.getElementById('optionsContainer'),
+        feedback: document.getElementById('feedback'),
+        completionBlock: document.getElementById('completionBlock'),
+        resetTrainerBtn: document.getElementById('resetTrainerBtn'),
+        vectorCanvas: document.getElementById('vectorCanvas'),
+        submitAnswer: document.getElementById('submitAnswer')
+    };
+
+    const ctx = elements.vectorCanvas?.getContext('2d');
+    if (!ctx) console.error('Контекст canvas не ініціалізовано');
+
+    let questions = [];
+    let currentQuestionIndex = 0;
+    let selectedOption = null;
+    let usedCombinations = new Set();
+    let useDegrees = Math.random() > 0.5;
+
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+ function calculateAngleBetweenVectors(vec1, vec2, useDegrees = true) {
+    if (!vec1 || !vec2 || vec1.length !== 3 || vec2.length !== 3) {
+        console.error('Некоректні вектори:', { vec1, vec2 });
+        return useDegrees ? '0^\\circ' : '0';
+    }
+
+    const dot = vec1[0] * vec2[0] + vec1[1] * vec2[1] + vec1[2] * vec2[2];
+    const mag1 = Math.sqrt(vec1[0] ** 2 + vec1[1] ** 2 + vec1[2] ** 2);
+    const mag2 = Math.sqrt(vec2[0] ** 2 + vec2[1] ** 2 + vec2[2] ** 2);
+    if (mag1 === 0 || mag2 === 0) {
+        console.error('Нульова довжина вектора:', { mag1, mag2 });
+        return useDegrees ? '0^\\circ' : '0';
+    }
+
+    const cosTheta = Math.min(1, Math.max(-1, dot / (mag1 * mag2)));
+    const angleRad = Math.acos(cosTheta);
+    const angleDeg = angleRad * (180 / Math.PI);
+
+    // Пороги для точнішого визначення кутів
+    if (Math.abs(cosTheta - 1) < 0.01) {
+        console.log('Вектори однаково направлені:', { vec1, vec2, cosTheta, angleDeg });
+        return useDegrees ? '0^\\circ' : '0';
+    } else if (Math.abs(cosTheta + 1) < 0.01) {
+        console.log('Вектори протилежно направлені:', { vec1, vec2, cosTheta, angleDeg });
+        return useDegrees ? '180^\\circ' : '\\pi';
+    } else if (Math.abs(cosTheta) < 0.01) {
+        console.log('Вектори перпендикулярні:', { vec1, vec2, cosTheta, angleDeg });
+        return useDegrees ? '90^\\circ' : '\\pi/2';
+    } else if (Math.abs(cosTheta - 0.5) < 0.01) {
+        console.log('Кут 60°:', { vec1, vec2, cosTheta, angleDeg });
+        return useDegrees ? '60^\\circ' : '\\pi/3';
+    } else if (Math.abs(cosTheta + 0.5) < 0.01) {
+        console.log('Кут 120°:', { vec1, vec2, cosTheta, angleDeg });
+        return useDegrees ? '120^\\circ' : '2\\pi/3';
+    } else if (Math.abs(Math.abs(cosTheta) - 0.707) < 0.01) {
+        console.log('Кут 45° або 135°:', { vec1, vec2, cosTheta, angleDeg });
+        return useDegrees ? '45^\\circ' : '\\pi/4';
+    }
+
+    // Якщо кут не відповідає точним порогам, повертаємо найближчий
+    const possibleAnglesDeg = [0, 45, 60, 90, 120, 180];
+    const possibleAnglesRad = [0, Math.PI / 4, Math.PI / 3, Math.PI / 2, 2 * Math.PI / 3, Math.PI];
+    let closestAngle = useDegrees ? possibleAnglesDeg[0] : possibleAnglesRad[0];
+    let minDiff = useDegrees ? Math.abs(angleDeg - possibleAnglesDeg[0]) : Math.abs(angleRad - possibleAnglesRad[0]);
+
+    for (let i = 1; i < possibleAnglesDeg.length; i++) {
+        const diff = useDegrees ? Math.abs(angleDeg - possibleAnglesDeg[i]) : Math.abs(angleRad - possibleAnglesRad[i]);
+        if (diff < minDiff) {
+            minDiff = diff;
+            closestAngle = useDegrees ? possibleAnglesDeg[i] : possibleAnglesRad[i];
+        }
+    }
+
+    console.log('Обчислений кут:', { vec1, vec2, cosTheta, angleDeg, closestAngle });
+    return useDegrees ? `${closestAngle}^\\circ` : closestAngle === 0 ? '0' : 
+           closestAngle === Math.PI ? '\\pi' : 
+           closestAngle === Math.PI / 2 ? '\\pi/2' : 
+           closestAngle === Math.PI / 3 ? '\\pi/3' : 
+           closestAngle === 2 * Math.PI / 3 ? '2\\pi/3' : '\\pi/4';
+}
+
+
+    
+function generatePerpendicularVectors() {
+    const height = 1.5;
+    const shortY = 0.8;
+    const longY = 0.88;
+    const shortZ = 0.9;
+
+    const vertices = [
+        [0, 0, 0],               // A₁ (0)
+        [1, 0, 0],               // D₁ (1)
+        [1, longY, 0],           // D (2)
+        [0, longY, 0],           // A (3)
+        [0, 0, height * shortZ], // B₁ (4)
+        [1, 0, height * shortZ], // C₁ (5)
+        [1, longY, height * shortZ], // C (6)
+        [0, longY, height * shortZ]  // B (7)
+    ];
+
+    const sideEdges = [
+        { start: 3, end: 0, desc: '\\vec{AA_1}', vec: [0, -longY, 0] },
+        { start: 7, end: 4, desc: '\\vec{BB_1}', vec: [0, -longY, 0] },
+        { start: 6, end: 5, desc: '\\vec{CC_1}', vec: [0, -longY, 0] },
+        { start: 2, end: 1, desc: '\\vec{DD_1}', vec: [0, -longY, 0] },
+        { start: 0, end: 3, desc: '\\vec{A_1A}', vec: [0, longY, 0] },
+        { start: 4, end: 7, desc: '\\vec{B_1B}', vec: [0, longY, 0] },
+        { start: 5, end: 6, desc: '\\vec{C_1C}', vec: [0, longY, 0] },
+        { start: 1, end: 2, desc: '\\vec{D_1D}', vec: [0, longY, 0] }
+    ];
+
+    const baseEdges = [
+        { start: 3, end: 7, desc: '\\vec{AB}', vec: [0, 0, height * shortZ] },
+        { start: 7, end: 6, desc: '\\vec{BC}', vec: [1, 0, 0] },
+        { start: 6, end: 2, desc: '\\vec{CD}', vec: [0, 0, -height * shortZ] },
+        { start: 2, end: 3, desc: '\\vec{DA}', vec: [-1, 0, 0] },
+        { start: 0, end: 4, desc: '\\vec{A_1B_1}', vec: [0, 0, height * shortZ] },
+        { start: 4, end: 5, desc: '\\vec{B_1C_1}', vec: [1, 0, 0] },
+        { start: 5, end: 1, desc: '\\vec{C_1D_1}', vec: [0, 0, -height * shortZ] },
+        { start: 1, end: 0, desc: '\\vec{D_1A_1}', vec: [-1, 0, 0] }
+    ];
+
+    const additionalPerpendiculars = [
+        { start: 2, end: 5, desc: '\\vec{DC_1}', vec: [0, 0, -height * shortZ], start2: 5, end2: 4, desc2: '\\vec{C_1B_1}', vec2: [-1, 0, 0] },
+        { start: 2, end: 5, desc: '\\vec{DC_1}', vec: [0, 0, -height * shortZ], start2: 2, end2: 3, desc2: '\\vec{DA}', vec2: [-1, 0, 0] },
+        { start: 3, end: 4, desc: '\\vec{AB_1}', vec: [0, -longY, height * shortZ], start2: 3, end2: 2, desc2: '\\vec{AD}', vec2: [1, 0, 0] },
+        { start: 3, end: 4, desc: '\\vec{AB_1}', vec: [0, -longY, height * shortZ], start2: 4, end2: 5, desc2: '\\vec{B_1C_1}', vec2: [1, 0, 0] },
+        { start: 3, end: 4, desc: '\\vec{AB_1}', vec: [0, -longY, height * shortZ], start2: 7, end2: 6, desc2: '\\vec{BC}', vec2: [1, 0, 0] },
+        { start: 5, end: 2, desc: '\\vec{C_1D}', vec: [0, longY, -height * shortZ], start2: 3, end2: 7, desc2: '\\vec{AB}', vec2: [0, 0, height * shortZ] }
+    ];
+
+    const allPairs = [
+        ...sideEdges.map(side => baseEdges.map(base => ({
+            vec1: side.vec,
+            start1: side.start,
+            end1: side.end,
+            vec2: base.vec,
+            start2: base.start,
+            end2: base.end,
+            desc: `\\vec{${side.desc}} \\, \\text{і} \\, \\vec{${base.desc}}`,
+            sharedOrigin: false,
+            offset: [0, 0]
+        }))).flat(),
+        ...additionalPerpendiculars.map(p => ({
+            vec1: p.vec,
+            start1: p.start,
+            end1: p.end,
+            vec2: p.vec2,
+            start2: p.start2,
+            end2: p.end2,
+            desc: `\\vec{${p.desc}} \\, \\text{і} \\, \\vec{${p.desc2}}`,
+            sharedOrigin: false,
+            offset: [0, 0]
+        }))
+    ];
+
+    const validPairs = allPairs.filter(pair => {
+        const angle = calculateAngleBetweenVectors(pair.vec1, pair.vec2, useDegrees);
+        return angle === (useDegrees ? '90^\\circ' : '\\frac{\\pi}{2}');
+    });
+
+    const filteredPairs = validPairs.filter(pair => 
+        !(pair.start1 === 3 && pair.end1 === 4 && pair.start2 === 4 && pair.end2 === 1) && // AB₁ і B₁D₁
+        !(pair.start1 === 4 && pair.end1 === 1 && pair.start2 === 3 && pair.end2 === 4) && // B₁D₁ і AB₁
+        !(pair.start1 === 0 && pair.end1 === 4 && pair.start2 === 4 && pair.end2 === 1) && // A₁B₁ і B₁D₁
+        !(pair.start1 === 4 && pair.end1 === 1 && pair.start2 === 0 && pair.end2 === 4)   // B₁D₁ і A₁B₁
+    );
+
+    const pair = filteredPairs[getRandomInt(0, filteredPairs.length - 1)];
+    const correctAnswer = calculateAngleBetweenVectors(pair.vec1, pair.vec2, useDegrees);
+    console.log('Згенерована пара (90°):', { desc: pair.desc, correctAnswer });
+    return {
+        type: 'options',
+        question: `Дано куб <span class="cube-formula">\\(A \\, BCD \\, A_1 B_1 C_1 D_1\\)</span>.
+        Визначити кут між векторами <span class="vector-formula">\\(${pair.desc}\\)</span>.`,
+        vectors: [pair.vec1, pair.vec2],
+        startIndices: [[pair.start1, pair.end1], [pair.start2, pair.end2]],
+        sharedOrigin: pair.sharedOrigin,
+        offset: pair.offset,
+        correct: correctAnswer,
+        options: useDegrees ? ['90^\\circ', '0^\\circ', '180^\\circ', '45^\\circ'] : ['\\pi/2', '0', '\\pi', '\\pi/4'],
+        angleType: 'perpendicular'
+    };
+}
+    
+ function generateParallelSameVectors(attempt = 0, maxAttempts = 5) {
+    if (attempt >= maxAttempts) {
+        console.error('Досягнуто максимальної кількості спроб генерації питання для parallelSame');
+        return null;
+    }
+
+    const height = 1.111;
+    const shortY = 0.8;
+    const longY = 1;
+    const shortZ = 0.9;
+
+    const vertices = [
+        [0, 0, 0],               // A₁ (0)
+        [1, 0, 0],               // D₁ (1)
+        [1, longY, 0],           // D (2)
+        [0, longY, 0],           // A (3)
+        [0, 0, height * shortZ], // B₁ (4)
+        [1, 0, height * shortZ], // C₁ (5)
+        [1, longY, height * shortZ], // C (6)
+        [0, longY, height * shortZ]  // B (7)
+    ];
+
+    const types = [
+        { vec1: [0, 0, height * shortZ], start1: 0, end1: 4, vec2: [0, 0, height * shortZ], start2: 3, end2: 7, desc: '\\vec{A_1B_1} \\text{ і } \\vec{AB}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [1, 0, 0], start1: 0, end1: 1, vec2: [1, 0, 0], start2: 7, end2: 6, desc: '\\vec{A_1D_1} \\text{ і } \\vec{BC}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, -longY, 0], start1: 6, end1: 5, vec2: [0, -longY, 0], start2: 2, end2: 1, desc: '\\vec{CC_1} \\text{ і } \\vec{DD_1}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, 0, height * shortZ], start1: 3, end1: 7, vec2: [0, 0, height * shortZ], start2: 2, end2: 6, desc: '\\vec{AB} \\text{ і } \\vec{DC}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, 0, -height * shortZ], start1: 6, end1: 2, vec2: [0, 0, -height * shortZ], start2: 5, end2: 1, desc: '\\vec{CD} \\text{ і } \\vec{C_1D_1}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [1, longY, 0], start1: 0, end1: 2, vec2: [1, longY, 0], start2: 4, end2: 6, desc: '\\vec{A_1D} \\text{ і } \\vec{B_1C}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [1, 0, height * shortZ], start1: 0, end1: 5, vec2: [1, 0, height * shortZ], start2: 3, end2: 6, desc: '\\vec{A_1C_1} \\text{ і } \\vec{AC}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [-1, 0, height * shortZ], start1: 1, end1: 4, vec2: [-1, 0, height * shortZ], start2: 2, end2: 7, desc: '\\vec{D_1B_1} \\text{ і } \\vec{DB}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [1, 0, -height * shortZ], start1: 7, end1: 2, vec2: [1, 0, -height * shortZ], start2: 4, end2: 1, desc: '\\vec{BD} \\text{ і } \\vec{B_1D_1}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [-1, 0, height * shortZ], start1: 1, end1: 4, vec2: [-1, 0, height * shortZ], start2: 2, end2: 7, desc: '\\vec{D_1B_1} \\text{ і } \\vec{DB}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, longY, 0], start1: 4, end1: 7, vec2: [0, longY, 0], start2: 0, end2: 3, desc: '\\vec{B_1B} \\text{ і } \\vec{A_1A}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, -longY, 0], start1: 7, end1: 4, vec2: [0, -longY, 0], start2: 3, end2: 0, desc: '\\vec{BB_1} \\text{ і } \\vec{AA_1}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, longY, -height * shortZ], start1: 5, end1: 2, vec2: [0, longY, -height * shortZ], start2: 4, end2: 3, desc: '\\vec{C_1D} \\text{ і } \\vec{B_1A}', sharedOrigin: false, offset: [0, 0] }
+    ];
+
+    const type = types[getRandomInt(0, types.length - 1)];
+    const correctAnswer = calculateAngleBetweenVectors(type.vec1, type.vec2, useDegrees);
+
+    // Перевірка правильності кута
+    if (correctAnswer !== (useDegrees ? '0^\\circ' : '0')) {
+        console.error('Неправильний кут для parallelSame:', { attempt: attempt + 1, correctAnswer, vec1: type.vec1, vec2: type.vec2, desc: type.desc });
+        return generateParallelSameVectors(attempt + 1, maxAttempts);
+    }
+
+    const questionData = {
+        type: 'options',
+        question: `Дано куб <span class="cube-formula">\\(A \\, BCD \\, A_1 B_1 C_1 D_1\\)</span>. Визначити кут між векторами <span class="vector-formula">\\(${type.desc}\\)</span>.`,
+        vectors: [type.vec1, type.vec2],
+        startIndices: [[type.start1, type.end1], [type.start2, type.end2]],
+        sharedOrigin: type.sharedOrigin,
+        offset: type.offset,
+        correct: correctAnswer,
+        options: useDegrees ? ['0^\\circ', '90^\\circ', '180^\\circ', '45^\\circ'] : ['0', '\\pi/2', '\\pi', '\\pi/4'],
+        angleType: 'parallelSame'
+    };
+
+    // Перевірка коректності даних
+    if (!questionData.vectors || !questionData.vectors[0] || !questionData.vectors[1] ||
+        !questionData.startIndices || !questionData.startIndices[0] || !questionData.startIndices[1] ||
+        !questionData.correct || !questionData.options || questionData.options.length === 0) {
+        console.error('Некоректне питання згенеровано:', { attempt: attempt + 1, questionData });
+        return generateParallelSameVectors(attempt + 1, maxAttempts);
+    }
+
+    console.log('Згенерована пара (0°):', { desc: type.desc, correctAnswer, questionData });
+
+    // Перевірка унікальності
+    if (usedCombinations && usedCombinations.has(type.desc)) {
+        console.log('Пара вже використана, генеруємо нову:', type.desc);
+        return generateParallelSameVectors(attempt + 1, maxAttempts);
+    }
+    if (usedCombinations) {
+        usedCombinations.add(type.desc);
+    }
+
+    return questionData;
+}
+
+function generateParallelOppositeVectors(attempt = 0, maxAttempts = 5) {
+    if (attempt >= maxAttempts) {
+        console.error('Досягнуто максимальної кількості спроб генерації питання для parallelOpposite');
+        return null;
+    }
+
+    const height = 1.111;
+    const shortY = 0.8;
+    const longY = 1;
+    const shortZ = 0.9;
+
+    const vertices = [
+        [0, 0, 0],               // A₁ (0)
+        [1, 0, 0],               // D₁ (1)
+        [1, longY, 0],           // D (2)
+        [0, longY, 0],           // A (3)
+        [0, 0, height * shortZ], // B₁ (4)
+        [1, 0, height * shortZ], // C₁ (5)
+        [1, longY, height * shortZ], // C (6)
+        [0, longY, height * shortZ]  // B (7)
+    ];
+
+    const types = [
+        { vec1: [0, 0, height * shortZ], start1: 0, end1: 4, vec2: [0, 0, -height * shortZ], start2: 6, end2: 2, desc: '\\vec{A_1B_1} \\text{ і } \\vec{CD}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, 0, height * shortZ], start1: 0, end1: 4, vec2: [0, 0, -height * shortZ], start2: 7, end2: 3, desc: '\\vec{A_1B_1} \\text{ і } \\vec{BA}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [1, 0, 0], start1: 0, end1: 1, vec2: [-1, 0, 0], start2: 6, end2: 7, desc: '\\vec{A_1D_1} \\text{ і } \\vec{CB}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, -longY, 0], start1: 6, end1: 5, vec2: [0, longY, 0], start2: 1, end2: 2, desc: '\\vec{CC_1} \\text{ і } \\vec{D_1D}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, 0, height * shortZ], start1: 3, end1: 7, vec2: [0, 0, -height * shortZ], start2: 6, end2: 2, desc: '\\vec{AB} \\text{ і } \\vec{CD}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, 0, -height * shortZ], start1: 2, end1: 5, vec2: [0, 0, height * shortZ], start2: 0, end2: 4, desc: '\\vec{DC} \\text{ і } \\vec{A_1B_1}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, 0, -height * shortZ], start1: 6, end1: 2, vec2: [0, 0, height * shortZ], start2: 1, end2: 5, desc: '\\vec{CD} \\text{ і } \\vec{D_1C_1}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [1, longY, 0], start1: 0, end1: 2, vec2: [-1, -longY, 0], start2: 6, end2: 4, desc: '\\vec{A_1D} \\text{ і } \\vec{CB_1}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [1, 0, height * shortZ], start1: 0, end1: 5, vec2: [-1, 0, -height * shortZ], start2: 3, end2: 6, desc: '\\vec{A_1C_1} \\text{ і } \\vec{CA}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [1, 0, -height * shortZ], start1: 7, end1: 2, vec2: [1, 0, height * shortZ], start2: 1, end2: 5, desc: '\\vec{DB} \\text{ і } \\vec{D_1C_1}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [-1, 0, height * shortZ], start1: 1, end1: 4, vec2: [1, 0, -height * shortZ], start2: 7, end2: 2, desc: '\\vec{D_1B_1} \\text{ і } \\vec{BD}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, longY, 0], start1: 4, end1: 7, vec2: [0, -longY, 0], start2: 3, end2: 0, desc: '\\vec{B_1B} \\text{ і } \\vec{AA_1}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, longY, 0], start1: 4, end1: 7, vec2: [0, -longY, 0], start2: 2, end2: 1, desc: '\\vec{B_1B} \\text{ і } \\vec{DD_1}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, -longY, 0], start1: 3, end1: 0, vec2: [0, longY, 0], start2: 5, end2: 6, desc: '\\vec{AA_1} \\text{ і } \\vec{C_1C}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, 0, height * shortZ], start1: 1, end1: 5, vec2: [0, 0, -height * shortZ], start2: 6, end2: 2, desc: '\\vec{D_1C_1} \\text{ і } \\vec{CD}', sharedOrigin: false, offset: [0, 0] }
+    ];
+
+    const type = types[getRandomInt(0, types.length - 1)];
+    const correctAnswer = calculateAngleBetweenVectors(type.vec1, type.vec2, useDegrees);
+
+    // Перевірка правильності кута
+    if (correctAnswer !== (useDegrees ? '180^\\circ' : '\\pi')) {
+        console.error('Неправильний кут для parallelOpposite:', { attempt: attempt + 1, correctAnswer, vec1: type.vec1, vec2: type.vec2, desc: type.desc });
+        return generateParallelOppositeVectors(attempt + 1, maxAttempts);
+    }
+
+    const questionData = {
+        type: 'options',
+        question: `Дано куб <span class="cube-formula">\\(A \\, BCD \\, A_1 B_1 C_1 D_1\\)</span>. Визначити кут між векторами <span class="vector-formula">\\(${type.desc}\\)</span>.`,
+        vectors: [type.vec1, type.vec2],
+        startIndices: [[type.start1, type.end1], [type.start2, type.end2]],
+        sharedOrigin: type.sharedOrigin,
+        offset: type.offset,
+        correct: correctAnswer,
+        options: useDegrees ? ['180^\\circ', '0^\\circ', '90^\\circ', '45^\\circ'] : ['\\pi', '0', '\\pi/2', '\\pi/4'],
+        angleType: 'parallelOpposite'
+    };
+
+    // Перевірка коректності даних
+    if (!questionData.vectors || !questionData.vectors[0] || !questionData.vectors[1] ||
+        !questionData.startIndices || !questionData.startIndices[0] || !questionData.startIndices[1] ||
+        !questionData.correct || !questionData.options || questionData.options.length === 0) {
+        console.error('Некоректне питання згенеровано:', { attempt: attempt + 1, questionData });
+        return generateParallelOppositeVectors(attempt + 1, maxAttempts);
+    }
+
+    console.log('Згенерована пара (180°):', { desc: type.desc, correctAnswer, questionData });
+
+    // Перевірка унікальності
+    if (usedCombinations && usedCombinations.has(type.desc)) {
+        console.log('Пара вже використана, генеруємо нову:', type.desc);
+        return generateParallelOppositeVectors(attempt + 1, maxAttempts);
+    }
+    if (usedCombinations) {
+        usedCombinations.add(type.desc);
+    }
+
+    return questionData;
+}
+
+    
+   function generateFaceDiagonalVectors() {
+    const vertices = [
+        [0, 0, 0], // A₁ (0)
+        [1, 0, 0], // D₁ (1)
+        [1, 1, 0], // D (2)
+        [0, 1, 0], // A (3)
+        [0, 0, 1], // B₁ (4)
+        [1, 0, 1], // C₁ (5)
+        [1, 1, 1], // C (6)
+        [0, 1, 1]  // B (7)
+    ];
+
+    const faceDiagonals = [
+        { start1: 0, end1: 2, start2: 1, end2: 3, desc: '\\\\vec{A_1D} \\\\text{ і } \\\\vec{D_1A}' }, // грань A₁D₁DA
+        { start1: 4, end1: 6, start2: 5, end2: 7, desc: '\\\\vec{B_1C} \\\\text{ і } \\\\vec{C_1B}' }, // грань B₁C₁CB
+        { start1: 0, end1: 5, start2: 4, end2: 1, desc: '\\\\vec{A_1C_1} \\\\text{ і } \\\\vec{B_1D_1}' }, // грань A₁B₁C₁D₁
+        { start1: 3, end1: 6, start2: 7, end2: 2, desc: '\\\\vec{AC} \\\\text{ і } \\\\vec{BD}' }, // грань ABCD
+        { start1: 0, end1: 7, start2: 3, end2: 4, desc: '\\\\vec{A_1B} \\\\text{ і } \\\\vec{AB_1}' }, // грань A₁AB₁B
+        { start1: 1, end1: 6, start2: 5, end2: 2, desc: '\\\\vec{D_1C} \\\\text{ і } \\\\vec{C_1D}' }  // грань D₁DC₁C
+    ];
+
+    // Вибір випадкової пари
+    const pair = faceDiagonals[getRandomInt(0, faceDiagonals.length - 1)];
+
+    // Формуємо вектори з координат
+    const vec1 = [
+        vertices[pair.end1][0] - vertices[pair.start1][0],
+        vertices[pair.end1][1] - vertices[pair.start1][1],
+        vertices[pair.end1][2] - vertices[pair.start1][2]
+    ];
+    const vec2 = [
+        vertices[pair.end2][0] - vertices[pair.start2][0],
+        vertices[pair.end2][1] - vertices[pair.start2][1],
+        vertices[pair.end2][2] - vertices[pair.start2][2]
+    ];
+
+    // Обчислюємо правильну відповідь
+    const correctAnswer = calculateAngleBetweenVectors(vec1, vec2, useDegrees);
+    console.log('Згенерована пара (діагоналі грані):', { desc: pair.desc, correctAnswer });
+
+    return {
+        type: 'options',
+        question: `Дано куб <span class="cube-formula">\\\\(A B C D A_1 B_1 C_1 D_1\\\\)</span>. 
+                   Визначити кут між векторами <span class="vector-formula">\\\\(${pair.desc}\\\\)</span>.`,
+        vectors: [vec1, vec2],
+        startIndices: [[pair.start1, pair.end1], [pair.start2, pair.end2]],
+        sharedOrigin: false,
+        offset: [0, 0],
+        correct: correctAnswer,
+        options: useDegrees ? ['90^\\\\circ', '0^\\\\circ', '180^\\\\circ', '45^\\\\circ'] : ['\\\\pi/2', '0', '\\\\pi', '\\\\pi/4'],
+        angleType: 'faceDiagonal'
+    };
+}
+
+  function generateThreePerpendicularsVectors() {
+    const vertices = [
+        [0, 0, 0], // A₁ (0)
+        [1, 0, 0], // D₁ (1)
+        [1, 1, 0], // D (2)
+        [0, 1, 0], // A (3)
+        [0, 0, 1], // B₁ (4)
+        [1, 0, 1], // C₁ (5)
+        [1, 1, 1], // C (6)
+        [0, 1, 1]  // B (7)
+    ];
+
+    const perpendicularTriads = [
+        { start1: 1, end1: 0, start2: 0, end2: 4, desc: '\\vec{D_1A_1} \\text{ і } \\vec{A_1B_1}' },
+        { start1: 5, end1: 2, start2: 3, end2: 2, desc: '\\vec{C_1D} \\text{ і } \\vec{AD}' },
+        { start1: 4, end1: 6, start2: 6, end2: 2, desc: '\\vec{B_1C} \\text{ і } \\vec{CD}' },
+        { start1: 5, end1: 7, start2: 3, end2: 7, desc: '\\vec{C_1B} \\text{ і } \\vec{AB}' },
+        { start1: 3, end1: 4, start2: 4, end2: 5, desc: '\\vec{AB_1} \\text{ і } \\vec{B_1C_1}' },
+        { start1: 4, end1: 3, start2: 3, end2: 2, desc: '\\vec{B_1A} \\text{ і } \\vec{AD}' },
+        { start1: 0, end1: 7, start2: 7, end2: 6, desc: '\\vec{A_1B} \\text{ і } \\vec{BC}' }
+    ];
+
+    const pair = perpendicularTriads[getRandomInt(0, perpendicularTriads.length - 1)];
+
+    // Формуємо вектори з координат
+    const vec1 = [
+        vertices[pair.end1][0] - vertices[pair.start1][0],
+        vertices[pair.end1][1] - vertices[pair.start1][1],
+        vertices[pair.end1][2] - vertices[pair.start1][2]
+    ];
+    const vec2 = [
+        vertices[pair.end2][0] - vertices[pair.start2][0],
+        vertices[pair.end2][1] - vertices[pair.start2][1],
+        vertices[pair.end2][2] - vertices[pair.start2][2]
+    ];
+
+    const correctAnswer = calculateAngleBetweenVectors(vec1, vec2, useDegrees);
+    console.log('Згенерована пара (три перпендикуляри):', { desc: pair.desc, correctAnswer });
+
+    return {
+        type: 'options',
+        question: `Дано куб <span class="cube-formula">\\(ABCD A_1B_1C_1D_1\\)</span>. Визначити кут між векторами <span class="vector-formula">\\(${pair.desc}\\)</span>.`,
+        vectors: [vec1, vec2],
+        startIndices: [[pair.start1, pair.end1], [pair.start2, pair.end2]],
+        sharedOrigin: false,
+        offset: [0, 0],
+        correct: correctAnswer,
+        options: useDegrees ? ['90^\\circ', '0^\\circ', '180^\\circ', '45^\\circ'] : ['\\pi/2', '0', '\\pi', '\\pi/4'],
+        angleType: 'threePerpendiculars'
+    };
+}
+    function verifyThreePerpendicularsFormatting() {
+    const perpendicularTriads = [
+        { start1: 1, end1: 0, start2: 0, end2: 4, desc: '\\vec{D_1A_1} \\text{ і } \\vec{A_1B_1}' },
+        { start1: 5, end1: 2, start2: 3, end2: 2, desc: '\\vec{C_1D} \\text{ і } \\vec{AD}' },
+        { start1: 4, end1: 6, start2: 6, end2: 2, desc: '\\vec{B_1C} \\text{ і } \\vec{CD}' },
+        { start1: 5, end1: 7, start2: 3, end2: 7, desc: '\\vec{C_1B} \\text{ і } \\vec{AB}' },
+        { start1: 3, end1: 4, start2: 4, end2: 5, desc: '\\vec{AB_1} \\text{ і } \\vec{B_1C_1}' },
+        { start1: 4, end1: 3, start2: 3, end2: 2, desc: '\\vec{B_1A} \\text{ і } \\vec{AD}' },
+        { start1: 0, end1: 7, start2: 7, end2: 6, desc: '\\vec{A_1B} \\text{ і } \\vec{BC}' }
+    ];
+
+    console.log('Перевірка форматування для threePerpendiculars:');
+    perpendicularTriads.forEach((pair, index) => {
+        console.log(`Пара ${index + 1}: ${pair.desc}`);
+    });
+}
+  
+    
+function generate45DegreeVectors(attempt = 0, maxAttempts = 5) {
+    if (attempt >= maxAttempts) {
+        console.error('Досягнуто максимальної кількості спроб генерації питання для 45°');
+        return null;
+    }
+
+    const height = 1.111;
+    const shortY = 0.8;
+    const longY = 1;
+    const shortZ = 0.9;
+
+    const vertices = [
+        [0, 0, 0],               // A₁ (0)
+        [1, 0, 0],               // D₁ (1)
+        [1, longY, 0],           // D (2)
+        [0, longY, 0],           // A (3)
+        [0, 0, height * shortZ], // B₁ (4)
+        [1, 0, height * shortZ], // C₁ (5)
+        [1, longY, height * shortZ], // C (6)
+        [0, longY, height * shortZ]  // B (7)
+    ];
+
+    const types = [
+        { vec1: [1, longY, 0], start1: 0, end1: 2, vec2: [1, 0, 0], start2: 0, end2: 1, desc: '\\(\\vec{A_1D} \\, \\text{і} \\, \\vec{A_1D_1}\\)', sharedOrigin: true, offset: [0, 0] },
+        { vec1: [1, longY, 0], start1: 0, end1: 2, vec2: [1, 0, 0], start2: 7, end2: 6, desc: '\\(\\vec{A_1D} \\, \\text{і} \\, \\vec{BC}\\)', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, longY, 0], start1: 0, end1: 3, vec2: [1, longY, 0], start2: 0, end2: 2, desc: '\\(\\vec{A_1A} \\, \\text{і} \\, \\vec{A_1D}\\)', sharedOrigin: true, offset: [0, 0] },
+        { vec1: [1, -longY, 0], start1: 3, end1: 1, vec2: [1, 0, 0], start2: 3, end2: 2, desc: '\\(\\vec{AD_1} \\, \\text{і} \\, \\vec{AD}\\)', sharedOrigin: true, offset: [0, 0] },
+        { vec1: [1, 0, height * shortZ], start1: 0, end1: 5, vec2: [1, 0, 0], start2: 0, end2: 1, desc: '\\(\\vec{A_1C_1} \\, \\text{і} \\, \\vec{A_1D_1}\\)', sharedOrigin: true, offset: [0, 0] },
+        { vec1: [1, 0, height * shortZ], start1: 0, end1: 5, vec2: [1, 0, 0], start2: 4, end2: 5, desc: '\\(\\vec{A_1C_1} \\, \\text{і} \\, \\vec{B_1C_1}\\)', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, -longY, height * shortZ], start1: 3, end1: 4, vec2: [0, 0, height * shortZ], start2: 3, end2: 7, desc: '\\(\\vec{AB_1} \\, \\text{і} \\, \\vec{AB}\\)', sharedOrigin: true, offset: [0, 0] },
+        { vec1: [1, 0, height * shortZ], start1: 3, end1: 6, vec2: [1, 0, 0], start2: 7, end2: 6, desc: '\\(\\vec{AC} \\, \\text{і} \\, \\vec{BC}\\)', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [1, longY, 0], start1: 4, end1: 6, vec2: [-1, 0, 0], start2: 2, end2: 3, desc: '\\(\\vec{B_1C} \\, \\text{і} \\, \\vec{DA}\\)', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [1, -longY, 0], start1: 3, end1: 1, vec2: [0, -longY, 0], start2: 2, end2: 1, desc: '\\(\\vec{AD_1} \\, \\text{і} \\, \\vec{DD_1}\\)', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, -longY, height * shortZ], start1: 2, end1: 5, vec2: [0, 0, -height * shortZ], start2: 7, end2: 3, desc: '\\(\\vec{DC_1} \\, \\text{і} \\, \\vec{BA}\\)', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [1, 0, -height * shortZ], start1: 4, end1: 1, vec2: [0, 0, -height * shortZ], start2: 5, end2: 1, desc: '\\(\\vec{B_1D_1} \\, \\text{і} \\, \\vec{C_1D_1}\\)', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, 0, height * shortZ], start1: 0, end1: 4, vec2: [1, 0, -height * shortZ], start2: 4, end2: 1, desc: '\\(\\vec{A_1B_1} \\, \\text{і} \\, \\vec{B_1D_1}\\)', sharedOrigin: true, offset: [0, 0] },
+        { vec1: [0, -longY, height * shortZ], start1: 3, end1: 4, vec2: [0, 0, -height * shortZ], start2: 6, end2: 2, desc: '\\(\\vec{AB_1} \\, \\text{і} \\, \\vec{CD}\\)', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, 0, -height * shortZ], start1: 7, end1: 3, vec2: [1, 0, 0], start2: 3, end2: 2, desc: '\\(\\vec{BA} \\, \\text{і} \\, \\vec{AD}\\)', sharedOrigin: true, offset: [0, 0] },
+        { vec1: [0, longY, -height * shortZ], start1: 4, end1: 3, vec2: [1, longY, 0], start2: 0, end2: 2, desc: '\\(\\vec{B_1A} \\, \\text{і} \\, \\vec{A_1D}\\)', sharedOrigin: false, offset: [0, 0] }
+    ];
+
+    const type = types[getRandomInt(0, types.length - 1)];
+    const correctAnswer = calculateAngleBetweenVectors(type.vec1, type.vec2, useDegrees);
+
+    // Перевірка правильності кута
+    if (correctAnswer !== (useDegrees ? '45^\\circ' : '\\pi/4')) {
+        console.error('Неправильний кут для 45°:', { attempt: attempt + 1, correctAnswer, vec1: type.vec1, vec2: type.vec2, desc: type.desc });
+        return generate45DegreeVectors(attempt + 1, maxAttempts); // Рекурсивно генеруємо нове питання
+    }
+
+    const questionData = {
+        type: 'options',
+        question: `Дано куб <span class="cube-formula">\\(A \\, BCD \\, A_1 B_1 C_1 D_1\\)</span>. 
+        Визначити кут між векторами <span class="vector-formula">${type.desc}</span>.`,
+        vectors: [type.vec1, type.vec2],
+        startIndices: [[type.start1, type.end1], [type.start2, type.end2]],
+        sharedOrigin: type.sharedOrigin,
+        offset: type.offset,
+        correct: correctAnswer,
+        options: useDegrees ? ['45^\\circ', '90^\\circ', '0^\\circ', '60^\\circ'] : ['\\pi/4', '\\pi/2', '0', '\\pi/3'],
+        angleType: '45degrees'
+    };
+
+    // Перевірка коректності даних
+    if (!questionData.vectors || !questionData.vectors[0] || !questionData.vectors[1] ||
+        !questionData.startIndices || !questionData.startIndices[0] || !questionData.startIndices[1] ||
+        !questionData.correct || !questionData.options || questionData.options.length === 0) {
+        console.error('Некоректне питання згенеровано:', { attempt: attempt + 1, questionData });
+        return generate45DegreeVectors(attempt + 1, maxAttempts); // Рекурсивно генеруємо нове питання
+    }
+
+    console.log('Згенерована пара (45°):', { desc: type.desc, correctAnswer, questionData });
+
+    // Перевірка унікальності (якщо використовується usedCombinations)
+    if (usedCombinations && usedCombinations.has(type.desc)) {
+        console.log('Пара вже використана, генеруємо нову:', type.desc);
+        return generate45DegreeVectors(attempt + 1, maxAttempts);
+    }
+    if (usedCombinations) {
+        usedCombinations.add(type.desc);
+    }
+
+    return questionData;
+}
+
+  function generate60DegreeVectors() {
+    const height = 1.111;
+    const shortY = 0.8;
+    const longY = 1;
+    const shortZ = 0.9;
+
+    const vertices = [
+        [0, 0, 0],               // A₁ (0)
+        [1, 0, 0],               // D₁ (1)
+        [1, longY, 0],           // D (2)
+        [0, longY, 0],           // A (3)
+        [0, 0, height * shortZ], // B₁ (4)
+        [1, 0, height * shortZ], // C₁ (5)
+        [1, longY, height * shortZ], // C (6)
+        [0, longY, height * shortZ]  // B (7)
+    ];
+
+    const types = [
+        { vec1: [1, -longY, 0], start1: 3, end1: 1, vec2: [0, -longY, -height * shortZ], start2: 6, end2: 1, desc: '\\vec{AD_1} \\, \\text{і} \\, \\vec{CD_1}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, -longY, height * shortZ], start1: 2, end1: 5, vec2: [-1, 0, -height * shortZ], start2: 5, end2: 0, desc: '\\vec{DC_1} \\, \\text{і} \\, \\vec{C_1A_1}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, -longY, height * shortZ], start1: 3, end1: 4, vec2: [1, 0, -height * shortZ], start2: 4, end2: 1, desc: '\\vec{AB_1} \\, \\text{і} \\, \\vec{B_1D_1}', sharedOrigin: true, offset: [0, 0] },
+        { vec1: [0, -longY, height * shortZ], start1: 3, end1: 4, vec2: [1, -longY, 0], start2: 3, end2: 1, desc: '\\vec{AB_1} \\, \\text{і} \\, \\vec{AD_1}', sharedOrigin: true, offset: [0, 0] },
+        { vec1: [0, -longY, height * shortZ], start1: 3, end1: 4, vec2: [1, 0, height * shortZ], start2: 3, end2: 6, desc: '\\vec{AB_1} \\, \\text{і} \\, \\vec{AC}', sharedOrigin: true, offset: [0, 0] },
+        { vec1: [1, 0, 0], start1: 4, end1: 5, vec2: [0, longY, -height * shortZ], start2: 5, end2: 2, desc: '\\vec{BC_1} \\, \\text{і} \\, \\vec{C_1D}', sharedOrigin: true, offset: [0, 0] },
+        { vec1: [1, 0, -height * shortZ], start1: 7, end1: 2, vec2: [0, longY, -height * shortZ], start2: 5, end2: 2, desc: '\\vec{BD} \\, \\text{і} \\, \\vec{C_1D}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [1, 0, 0], start1: 4, end1: 5, vec2: [1, 0, -height * shortZ], start2: 7, end2: 2, desc: '\\vec{BC_1} \\, \\text{і} \\, \\vec{BD}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [1, longY, 0], start1: 4, end1: 6, vec2: [0, longY, -height * shortZ], start2: 4, end2: 3, desc: '\\vec{B_1C} \\, \\text{і} \\, \\vec{B_1A}', sharedOrigin: true, offset: [0, 0] },
+        { vec1: [1, longY, 0], start1: 4, end1: 6, vec2: [0, longY, -height * shortZ], start2: 5, end2: 2, desc: '\\vec{B_1C} \\, \\text{і} \\, \\vec{C_1D}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, longY, -height * shortZ], start1: 4, end1: 3, vec2: [1, longY, 0], start2: 0, end2: 2, desc: '\\vec{BA_1} \\, \\text{і} \\, \\vec{A_1D}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [1, 0, height * shortZ], start1: 0, end1: 5, vec2: [0, -longY, height * shortZ], start2: 3, end2: 4, desc: '\\vec{A_1C_1} \\, \\text{і} \\, \\vec{AB_1}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [1, 0, -height * shortZ], start1: 7, end1: 2, vec2: [1, longY, 0], start2: 4, end2: 6, desc: '\\vec{BD} \\, \\text{і} \\, \\vec{B_1C}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [1, 0, height * shortZ], start1: 3, end1: 6, vec2: [0, -longY, height * shortZ], start2: 2, end2: 5, desc: '\\vec{AC} \\, \\text{і} \\, \\vec{DC_1}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, -longY, height * shortZ], start1: 3, end1: 4, vec2: [1, 0, height * shortZ], start2: 0, end2: 5, desc: '\\vec{AB_1} \\, \\text{і} \\, \\vec{A_1C_1}', sharedOrigin: false, offset: [0, 0] }
+    ];
+
+    const type = types[getRandomInt(0, types.length - 1)];
+    const correctAnswer = calculateAngleBetweenVectors(type.vec1, type.vec2, useDegrees);
+
+    // Перевірка правильності кута
+    if (correctAnswer !== (useDegrees ? '60^\\circ' : '\\pi/3')) {
+        console.error('Неправильний кут для 60°:', { correctAnswer, vec1: type.vec1, vec2: type.vec2, desc: type.desc });
+        return generate60DegreeVectors(); // Рекурсивно генеруємо нове питання
+    }
+
+    const questionData = {
+        type: 'options',
+        question: `Дано куб <span class="cube-formula">\\(A \\, BCD \\, A_1 B_1 C_1 D_1\\)</span>. 
+        Визначити кут між векторами <span class="vector-formula">\\(${type.desc}\\)</span>.`,
+        vectors: [type.vec1, type.vec2],
+        startIndices: [[type.start1, type.end1], [type.start2, type.end2]],
+        sharedOrigin: type.sharedOrigin,
+        offset: type.offset,
+        correct: correctAnswer,
+        options: useDegrees ? ['60^\\circ', '90^\\circ', '45^\\circ', '0^\\circ'] : ['\\pi/3', '\\pi/2', '\\pi/4', '0'],
+        angleType: '60degrees'
+    };
+
+    console.log('Згенерована пара (60°):', { desc: type.desc, correctAnswer, questionData });
+    
+    // Перевірка коректності даних
+    if (!questionData.vectors || !questionData.vectors[0] || !questionData.vectors[1] ||
+        !questionData.startIndices || !questionData.startIndices[0] || !questionData.startIndices[1] ||
+        !questionData.correct || !questionData.options || questionData.options.length === 0) {
+        console.error('Некоректне питання згенеровано:', questionData);
+        return generate60DegreeVectors(); // Рекурсивно генеруємо нове питання
+    }
+
+    return questionData;
+}
+
+function verifyVectorFormatting() {
+    const typesSame = [
+        { vec1: [0, 0, 1.111 * 0.9], start1: 0, end1: 4, vec2: [0, 0, 1.111 * 0.9], start2: 3, end2: 7, desc: '\\vec{A_1B_1} \\text{ і } \\vec{AB}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [1, 0, 0], start1: 0, end1: 1, vec2: [1, 0, 0], start2: 7, end2: 6, desc: '\\vec{A_1D_1} \\text{ і } \\vec{BC}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, -1, 0], start1: 6, end1: 5, vec2: [0, -1, 0], start2: 2, end2: 1, desc: '\\vec{CC_1} \\text{ і } \\vec{DD_1}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, 0, 1.111 * 0.9], start1: 3, end1: 7, vec2: [0, 0, 1.111 * 0.9], start2: 2, end2: 6, desc: '\\vec{AB} \\text{ і } \\vec{DC}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, 0, -1.111 * 0.9], start1: 6, end1: 2, vec2: [0, 0, -1.111 * 0.9], start2: 5, end2: 1, desc: '\\vec{CD} \\text{ і } \\vec{C_1D_1}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [1, 1, 0], start1: 0, end1: 2, vec2: [1, 1, 0], start2: 4, end2: 6, desc: '\\vec{A_1D} \\text{ і } \\vec{B_1C}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [1, 0, 1.111 * 0.9], start1: 0, end1: 5, vec2: [1, 0, 1.111 * 0.9], start2: 3, end2: 6, desc: '\\vec{A_1C_1} \\text{ і } \\vec{AC}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [-1, 0, 1.111 * 0.9], start1: 1, end1: 4, vec2: [-1, 0, 1.111 * 0.9], start2: 2, end2: 7, desc: '\\vec{D_1B_1} \\text{ і } \\vec{DB}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [1, 0, -1.111 * 0.9], start1: 7, end1: 2, vec2: [1, 0, -1.111 * 0.9], start2: 4, end2: 1, desc: '\\vec{BD} \\text{ і } \\vec{B_1D_1}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [-1, 0, 1.111 * 0.9], start1: 1, end1: 4, vec2: [-1, 0, 1.111 * 0.9], start2: 2, end2: 7, desc: '\\vec{D_1B_1} \\text{ і } \\vec{DB}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, 1, 0], start1: 4, end1: 7, vec2: [0, 1, 0], start2: 0, end2: 3, desc: '\\vec{B_1B} \\text{ і } \\vec{A_1A}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, -1, 0], start1: 7, end1: 4, vec2: [0, -1, 0], start2: 3, end2: 0, desc: '\\vec{BB_1} \\text{ і } \\vec{AA_1}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, 1, -1.111 * 0.9], start1: 5, end1: 2, vec2: [0, 1, -1.111 * 0.9], start2: 4, end2: 3, desc: '\\vec{C_1D} \\text{ і } \\vec{B_1A}', sharedOrigin: false, offset: [0, 0] }
+    ];
+
+    const typesOpposite = [
+        { vec1: [0, 0, 1.111 * 0.9], start1: 0, end1: 4, vec2: [0, 0, -1.111 * 0.9], start2: 6, end2: 2, desc: '\\vec{A_1B_1} \\text{ і } \\vec{CD}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, 0, 1.111 * 0.9], start1: 0, end1: 4, vec2: [0, 0, -1.111 * 0.9], start2: 7, end2: 3, desc: '\\vec{A_1B_1} \\text{ і } \\vec{BA}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [1, 0, 0], start1: 0, end1: 1, vec2: [-1, 0, 0], start2: 6, end2: 7, desc: '\\vec{A_1D_1} \\text{ і } \\vec{CB}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, -1, 0], start1: 6, end1: 5, vec2: [0, 1, 0], start2: 1, end2: 2, desc: '\\vec{CC_1} \\text{ і } \\vec{D_1D}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, 0, 1.111 * 0.9], start1: 3, end1: 7, vec2: [0, 0, -1.111 * 0.9], start2: 6, end2: 2, desc: '\\vec{AB} \\text{ і } \\vec{CD}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, 0, -1.111 * 0.9], start1: 2, end1: 5, vec2: [0, 0, 1.111 * 0.9], start2: 0, end2: 4, desc: '\\vec{DC} \\text{ і } \\vec{A_1B_1}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, 0, -1.111 * 0.9], start1: 6, end1: 2, vec2: [0, 0, 1.111 * 0.9], start2: 1, end2: 5, desc: '\\vec{CD} \\text{ і } \\vec{D_1C_1}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [1, 1, 0], start1: 0, end1: 2, vec2: [-1, -1, 0], start2: 6, end2: 4, desc: '\\vec{A_1D} \\text{ і } \\vec{CB_1}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [1, 0, 1.111 * 0.9], start1: 0, end1: 5, vec2: [-1, 0, -1.111 * 0.9], start2: 3, end2: 6, desc: '\\vec{A_1C_1} \\text{ і } \\vec{CA}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [1, 0, -1.111 * 0.9], start1: 7, end1: 2, vec2: [1, 0, 1.111 * 0.9], start2: 1, end2: 5, desc: '\\vec{DB} \\text{ і } \\vec{D_1C_1}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [-1, 0, 1.111 * 0.9], start1: 1, end1: 4, vec2: [1, 0, -1.111 * 0.9], start2: 7, end2: 2, desc: '\\vec{D_1B_1} \\text{ і } \\vec{BD}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, 1, 0], start1: 4, end1: 7, vec2: [0, -1, 0], start2: 3, end2: 0, desc: '\\vec{B_1B} \\text{ і } \\vec{AA_1}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, 1, 0], start1: 4, end1: 7, vec2: [0, -1, 0], start2: 2, end2: 1, desc: '\\vec{B_1B} \\text{ і } \\vec{DD_1}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, -1, 0], start1: 3, end1: 0, vec2: [0, 1, 0], start2: 5, end2: 6, desc: '\\vec{AA_1} \\text{ і } \\vec{C_1C}', sharedOrigin: false, offset: [0, 0] },
+        { vec1: [0, 0, 1.111 * 0.9], start1: 1, end1: 5, vec2: [0, 0, -1.111 * 0.9], start2: 6, end2: 2, desc: '\\vec{D_1C_1} \\text{ і } \\vec{CD}', sharedOrigin: false, offset: [0, 0] }
+    ];
+
+    console.log('Перевірка форматування для parallelSame:');
+    typesSame.forEach((type, index) => {
+        console.log(`Пара ${index + 1}: ${type.desc}`);
+    });
+
+    console.log('Перевірка форматування для parallelOpposite:');
+    typesOpposite.forEach((type, index) => {
+        console.log(`Пара ${index + 1}: ${type.desc}`);
+    });
+}
+
+    
+
+   function drawCube(ctx, canvasWidth, canvasHeight) {
+    if (!ctx) return;
+
+    const height = 1.5;
+    const shortY = 0.8;
+    const longY = 0.88;
+    const shortZ = 0.9;
+
+    const vertices = [
+        [0, 0, 0],               // A₁
+        [1, 0, 0],               // D₁
+        [1, longY, 0],           // D
+        [0, longY, 0],           // A
+        [0, 0, height * shortZ], // B₁
+        [1, 0, height * shortZ], // C₁
+        [1, longY, height * shortZ], // C
+        [0, longY, height * shortZ]  // B
+    ];
+
+    const scale = 100;
+    const offsetX = canvasWidth / 2 - 50;
+    const offsetY = canvasHeight / 2 - 30;
+    const angle = Math.PI / 4;
+    const k = 0.5;
+
+    const projected = vertices.map(([x, y, z]) => {
+        const px = x + k * z * Math.cos(angle);
+        const py = y - k * z * Math.sin(angle);
+        return [px * scale + offsetX, py * scale + offsetY];
+    });
+
+    // Ребра
+    const dashedEdges = [
+        [3,7], // AB
+        [7,6], // BC
+        [7,4]  // BB₁
+    ];
+
+    const solidEdges = [
+        [0,1],[1,2],[2,3],[0,3], // нижня
+        [4,5],[5,6],[6,7],[4,7], // верхня
+        [0,4],[1,5],[2,6],[3,7]  // вертикалі
+    ].filter(edge => !dashedEdges.some(d => (d[0]===edge[0] && d[1]===edge[1]) || (d[0]===edge[1] && d[1]===edge[0])));
+
+    // Малювання штрихпунктирних
+    ctx.strokeStyle = "#fff";
+    ctx.lineWidth = 1;
+    ctx.setLineDash([5,5]);
+    dashedEdges.forEach(([i,j])=>{
+        ctx.beginPath();
+        ctx.moveTo(...projected[i]);
+        ctx.lineTo(...projected[j]);
+        ctx.stroke();
+    });
+
+    // Малювання суцільних
+    ctx.setLineDash([]);
+    solidEdges.forEach(([i,j])=>{
+        ctx.beginPath();
+        ctx.moveTo(...projected[i]);
+        ctx.lineTo(...projected[j]);
+        ctx.stroke();
+    });
+
+    const labels = ['A₁','D₁','D','A','B₁','C₁','C','B'];
+
+    // Зсуви підписів
+    const labelOffsets = [
+        [-17, 0],  // A₁ лівіше
+        [10, 2],   // D₁ правіше
+        [8, 10],   // D правіше і трохи нижче
+        [-15, 10], // A лівіше і нижче
+        [-15, -2], // B₁ лівіше
+        [5, -2],   // C₁ правіше
+        [5, -2],   // C правіше
+        [-13, -2]  // B трохи нижче
+    ];
+
+    ctx.fillStyle = "yellow";
+    ctx.font = "14px Arial";
+    projected.forEach(([x, y], i) => {
+        const [dx, dy] = labelOffsets[i];
+        ctx.fillText(labels[i], x + dx, y + dy);
+    });
+}
+    
+ function drawCube(ctx, canvasWidth, canvasHeight) {
+    if (!ctx) return;
+
+    const height = 1.5;
+    const shortY = 0.8;
+    const longY = 0.88;
+    const shortZ = 0.9;
+
+    const vertices = [
+        [0, 0, 0],               // A₁
+        [1, 0, 0],               // D₁
+        [1, longY, 0],           // D
+        [0, longY, 0],           // A
+        [0, 0, height * shortZ], // B₁
+        [1, 0, height * shortZ], // C₁
+        [1, longY, height * shortZ], // C
+        [0, longY, height * shortZ]  // B
+    ];
+
+    const scale = 100;
+    const offsetX = canvasWidth / 2 - 50;
+    const offsetY = canvasHeight / 2 - 30;
+    const angle = Math.PI / 4;
+    const k = 0.5;
+
+    const projected = vertices.map(([x, y, z]) => {
+        const px = x + k * z * Math.cos(angle);
+        const py = y - k * z * Math.sin(angle);
+        return [px * scale + offsetX, py * scale + offsetY];
+    });
+
+    // Ребра
+    const dashedEdges = [
+        [3,7], // AB
+        [7,6], // BC
+        [7,4]  // BB₁
+    ];
+
+    const solidEdges = [
+        [0,1],[1,2],[2,3],[0,3], // нижня
+        [4,5],[5,6],[6,7],[4,7], // верхня
+        [0,4],[1,5],[2,6],[3,7]  // вертикалі
+    ].filter(edge => !dashedEdges.some(d => (d[0]===edge[0] && d[1]===edge[1]) || (d[0]===edge[1] && d[1]===edge[0])));
+
+    // Малювання штрихпунктирних
+    ctx.strokeStyle = "#fff";
+    ctx.lineWidth = 1;
+    ctx.setLineDash([5,5]);
+    dashedEdges.forEach(([i,j])=>{
+        ctx.beginPath();
+        ctx.moveTo(...projected[i]);
+        ctx.lineTo(...projected[j]);
+        ctx.stroke();
+    });
+
+    // Малювання суцільних
+    ctx.setLineDash([]);
+    solidEdges.forEach(([i,j])=>{
+        ctx.beginPath();
+        ctx.moveTo(...projected[i]);
+        ctx.lineTo(...projected[j]);
+        ctx.stroke();
+    });
+
+    const labels = ['A₁','D₁','D','A','B₁','C₁','C','B'];
+
+    // Зсуви підписів
+    const labelOffsets = [
+        [-17, 0],  // A₁ лівіше
+        [10, 2],   // D₁ правіше
+        [8, 10],   // D правіше і трохи нижче
+        [-15, 10], // A лівіше і нижче
+        [-15, -2], // B₁ лівіше
+        [5, -2],   // C₁ правіше
+        [5, -2],   // C правіше
+        [-13, -2]  // B трохи нижче
+    ];
+
+    ctx.fillStyle = "yellow";
+    ctx.font = "14px Arial";
+    projected.forEach(([x, y], i) => {
+        const [dx, dy] = labelOffsets[i];
+        ctx.fillText(labels[i], x + dx, y + dy);
+    });
+}
+
+function generateTetrahedronQuestion(useDegrees = true) {
+    const edgeLength = 1; // Базова довжина ребра
+
+    // Вершини тетраедра: основа ABC угорі, вершина D вище основи
+    const vertices = [
+        [0, 0, 0], // A (0)
+        [edgeLength * 1, 0, edgeLength * Math.sqrt(2 / 3)], // B (1)
+        [edgeLength * 0.9 / 2, edgeLength * 0.9 * Math.sqrt(3) / 2, edgeLength * Math.sqrt(2 / 3) * 1.5], // C (2)
+        [-edgeLength * 0.5, edgeLength * 0.9 * Math.sqrt(3) / 6, edgeLength * Math.sqrt(2 / 3) * 4] // D (3)
+    ];
+
+    // Додаємо точки K (середина AC) і M (середина BC)
+    const k = [
+        (vertices[0][0] + vertices[2][0]) / 2,
+        (vertices[0][1] + vertices[2][1]) / 2,
+        (vertices[0][2] + vertices[2][2]) / 2
+    ];
+    const m = [
+        (vertices[1][0] + vertices[2][0]) / 2,
+        (vertices[1][1] + vertices[2][1]) / 2,
+        (vertices[1][2] + vertices[2][2]) / 2
+    ];
+    vertices.push(k, m); // додаємо K (4), M (5)
+
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    // Виправлені пари векторів: start→end відповідає опису
+   const edgePairs = [
+    // 60°
+    { start1: 3, end1: 0, start2: 3, end2: 1, desc: '\\vec{DA} \\text{ і } \\vec{DB}' }, // DA (D→A), DB (D→B)
+    { start1: 0, end1: 3, start2: 0, end2: 2, desc: '\\vec{AD} \\text{ і } \\vec{AC}' }, // AD (A→D), AC (A→C)
+    { start1: 1, end1: 3, start2: 1, end2: 2, desc: '\\vec{BD} \\text{ і } \\vec{BC}' }, // BD (B→D), BC (B→C)
+    { start1: 1, end1: 3, start2: 1, end2: 0, desc: '\\vec{BD} \\text{ і } \\vec{BA}' }, // BD (B→D), BA (B→A)
+    { start1: 2, end1: 0, start2: 2, end2: 1, desc: '\\vec{CA} \\text{ і } \\vec{CB}' }, // CA (C→A), CB (C→B)
+    { start1: 0, end1: 1, start2: 0, end2: 2, desc: '\\vec{AB} \\text{ і } \\vec{AC}' }, // AB (A→B), AC (A→C)
+    { start1: 1, end1: 2, start2: 1, end2: 0, desc: '\\vec{BC} \\text{ і } \\vec{BA}' }, // BC (B→C), BA (B→A)
+    { start1: 2, end1: 3, start2: 3, end2: 0, desc: '\\vec{CD} \\text{ і } \\vec{DA}' }, // CD (C→D), DA (D→A)
+    { start1: 3, end1: 2, start2: 3, end2: 1, desc: '\\vec{DC} \\text{ і } \\vec{DB}' }, // DC (D→C), DB (D→B)
+    { start1: 3, end1: 0, start2: 2, end2: 3, desc: '\\vec{DA} \\text{ і } \\vec{CD}' }, // DA (D→A), CD (C→D)
+    { start1: 1, end1: 3, start2: 1, end2: 5, desc: '\\vec{BD} \\text{ і } \\vec{BM}' }, // BD (B→D), BM (B→M)
+    { start1: 2, end1: 3, start2: 2, end2: 5, desc: '\\vec{CD} \\text{ і } \\vec{CM}' }, // CD (C→D), CM (C→M)
+    { start1: 4, end1: 3, start2: 4, end2: 0, desc: '\\vec{KD} \\text{ і } \\vec{KA}' }, // KD (K→D), KA (K→A)
+    { start1: 4, end1: 3, start2: 4, end2: 2, desc: '\\vec{KD} \\text{ і } \\vec{KC}' }, // KD (K→D), KC (K→C)
+
+    // 30°
+    { start1: 3, end1: 4, start2: 2, end2: 3, desc: '\\vec{DK} \\text{ і } \\vec{CD}' }, // DK (D→K), CD (C→D)
+    { start1: 3, end1: 4, start2: 3, end2: 0, desc: '\\vec{DK} \\text{ і } \\vec{DA}' }, // DK (D→K), DA (D→A)
+    { start1: 3, end1: 5, start2: 2, end2: 3, desc: '\\vec{DM} \\text{ і } \\vec{CD}' }, // DM (D→M), CD (C→D)
+    { start1: 3, end1: 5, start2: 3, end2: 1, desc: '\\vec{DM} \\text{ і } \\vec{DB}' }, // DM (D→M), DB (D→B)
+
+    // 90°
+    { start1: 5, end1: 3, start2: 5, end2: 1, desc: '\\vec{MD} \\text{ і } \\vec{MB}' }, // MD (M→D), MB (M→B)
+    { start1: 5, end1: 3, start2: 5, end2: 2, desc: '\\vec{MD} \\text{ і } \\vec{MC}' }, // MD (M→D), MC (M→C)
+    { start1: 4, end1: 3, start2: 4, end2: 2, desc: '\\vec{KD} \\text{ і } \\vec{KC}' }, // KD (K→D), KC (K→C)
+    { start1: 4, end1: 3, start2: 4, end2: 0, desc: '\\vec{KD} \\text{ і } \\vec{KA}' }  // KD (K→D), KA (K→A)
+];
+
+
+    const pair = edgePairs[getRandomInt(0, edgePairs.length - 1)];
+
+    // Вектори
+    const vec1 = [
+        vertices[pair.end1][0] - vertices[pair.start1][0],
+        vertices[pair.end1][1] - vertices[pair.start1][1],
+        vertices[pair.end1][2] - vertices[pair.start1][2]
+    ];
+    const vec2 = [
+        vertices[pair.end2][0] - vertices[pair.start2][0],
+        vertices[pair.end2][1] - vertices[pair.start2][1],
+        vertices[pair.end2][2] - vertices[pair.start2][2]
+    ];
+
+    function calculateAngleBetweenVectors(v1, v2, inDegrees = true) {
+        if ([
+            '\\vec{DK} \\text{ і } \\vec{DC}', '\\vec{DK} \\text{ і } \\vec{DA}',
+            '\\vec{DM} \\text{ і } \\vec{DC}', '\\vec{DM} \\text{ і } \\vec{DB}'
+        ].includes(pair.desc)) {
+            return inDegrees ? '30^\\circ' : '\\pi/6';
+        } else if ([
+            '\\vec{MD} \\text{ і } \\vec{MB}', '\\vec{MD} \\text{ і } \\vec{MC}',
+            '\\vec{KD} \\text{ і } \\vec{KC}', '\\vec{KD} \\text{ і } \\vec{KA}'
+        ].includes(pair.desc)) {
+            return inDegrees ? '90^\\circ' : '\\pi/2';
+        } else {
+            return inDegrees ? '60^\\circ' : '\\pi/3';
+        }
+    }
+
+    const correctAnswer = calculateAngleBetweenVectors(vec1, vec2, useDegrees);
+
+    const centerX = (Math.max(...vertices.map(v => v[0])) + Math.min(...vertices.map(v => v[0]))) / 2;
+    const centerY = (Math.max(...vertices.map(v => v[1])) + Math.min(...vertices.map(v => v[1]))) / 2;
+    const centerZ = (Math.max(...vertices.map(v => v[2])) + Math.min(...vertices.map(v => v[2]))) / 2;
+    const offset = [-centerX - 20, -centerY + 50];
+
+    return {
+        type: 'options',
+        question: `Дано правильний тетраедр <span class="cube-formula">\\(ABCD\\)</span>. Точки <span class="cube-formula">\\(K\\)</span> і <span class="cube-formula">\\(M\\)</span>
+        є серединами сторін <span class="cube-formula">\\(AC\\)</span> і <span class="cube-formula">\\(BC\\)</span>.
+        Визначити кут між векторами <span class="vector-formula">\\(${pair.desc}\\)</span>.`,
+        vectors: [vec1, vec2],
+        startIndices: [[pair.start1, pair.end1], [pair.start2, pair.end2]],
+        sharedOrigin: pair.start1 === pair.start2,
+        offset: offset,
+        correct: correctAnswer,
+        options: useDegrees ? ['30^\\circ', '60^\\circ', '90^\\circ', '45^\\circ'] : ['\\pi/6', '\\pi/3', '\\pi/2', '\\pi/4'],
+        angleType: 'tetrahedron',
+        vertices: vertices
+    };
+}
+
+const drawVectors = (vectors, startIndices, sharedOrigin, offset = [0, 0], vertices, ctx = elements.vectorCanvas.getContext('2d')) => {
+    if (!ctx) {
+        console.error('Контекст canvas недоступний у drawVectors');
+        return;
+    }
+    console.log('Починаємо малювати вектори:', { vectors, startIndices, sharedOrigin, offset, vertices });
+
+    // Очищаємо canvas
+    ctx.clearRect(0, 0, elements.vectorCanvas.width, elements.vectorCanvas.height);
+
+    // Налаштування для ізометричної проєкції
+    const scale = 100;
+    const offsetX = elements.vectorCanvas.width / 2 - 50 + offset[0];
+    const offsetY = elements.vectorCanvas.height / 2 - 30 + offset[1];
+    const angle = Math.PI / 4;
+    const k = 0.5;
+
+    // Вибираємо вершини
+    const isTetrahedron = questions[currentQuestionIndex]?.angleType === 'tetrahedron';
+    const selectedVertices = isTetrahedron ? vertices : [
+        [0, 0, 0], [1, 0, 0], [1, 0.88, 0], [0, 0.88, 0],
+        [0, 0, 1.5 * 0.9], [1, 0, 1.5 * 0.9], [1, 0.88, 1.5 * 0.9], [0, 0.88, 1.5 * 0.9]
+    ];
+    console.log('Selected vertices:', selectedVertices);
+
+    // Проєктуємо вершини
+    const projected = selectedVertices.map(([x, y, z], i) => {
+        if (!Number.isFinite(x) || !Number.isFinite(y) || !Number.isFinite(z)) {
+            console.error(`Некоректні координати вершини ${i}: [${x}, ${y}, ${z}]`);
+            return [0, 0];
+        }
+        const px = x + k * z * Math.cos(angle);
+        const py = y - k * z * Math.sin(angle);
+        return [px * scale + offsetX, py * scale + offsetY];
+    });
+    console.log('Projected vertices length:', projected.length, 'Projected vertices:', projected);
+
+    // Малюємо фігуру
+    if (isTetrahedron) {
+        const edges = [
+            [0, 1], [0, 2], [1, 2], [0, 3], [1, 3], [2, 3], // AB, AC, BC, AD, BD, CD
+            [0, 4], [2, 4], // AK, CK
+            [1, 5], [2, 5]  // BM, CM
+        ];
+        const dashedEdges = [[0, 1]]; // Тільки AB як пунктир
+
+        // Малюємо пунктирні ребра
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = 1;
+        ctx.setLineDash([5, 5]);
+        dashedEdges.forEach(([i, j]) => {
+            if (i < projected.length && j < projected.length) {
+                ctx.beginPath();
+                ctx.moveTo(...projected[i]);
+                ctx.lineTo(...projected[j]);
+                ctx.stroke();
+            }
+        });
+
+        // Малюємо суцільні ребра
+        ctx.setLineDash([]);
+        edges.forEach(([i, j]) => {
+            if (!dashedEdges.some(([di, dj]) => (di === i && dj === j) || (di === j && dj === i))) {
+                if (i < projected.length && j < projected.length) {
+                    ctx.beginPath();
+                    ctx.moveTo(...projected[i]);
+                    ctx.lineTo(...projected[j]);
+                    ctx.stroke();
+                }
+            }
+        });
+
+        // Мітки вершин для тетраедра (A, B, C угорі, D нижче, K і M)
+        const labels = ['A', 'B', 'C', 'D', 'K', 'M'];
+        const labelOffsets = [
+            [-10, -10], [0, -10], [5, 15], [-20, 0], [-10, 15], [5, 12]
+        ];
+        ctx.fillStyle = 'yellow';
+        ctx.font = '14px Arial';
+        projected.forEach(([x, y], i) => {
+            if (i < labels.length) {
+                const [dx, dy] = labelOffsets[i];
+                ctx.fillText(labels[i], x + dx, y + dy);
+            }
+        });
+    } else {
+        drawCube(ctx, elements.vectorCanvas.width, elements.vectorCanvas.height);
+    }
+
+    // Функція для малювання вектора
+   const drawVector = (startIdx, endIdx, color, offset = [0, 0]) => {
+    console.log(`Малюємо вектор: startIdx=${startIdx}, endIdx=${endIdx}, color=${color}, offset=${offset}, projected.length=${projected.length}`);
+    if (startIdx < 0 || startIdx >= projected.length || endIdx < 0 || endIdx >= projected.length) {
+        console.error(`Некоректні індекси: startIdx=${startIdx}, endIdx=${endIdx}, projected.length=${projected.length}`);
+        return null;
+    }
+    const start = sharedOrigin ? projected[startIdx] : [projected[startIdx][0] + offset[0] * scale, projected[startIdx][1] + offset[1] * scale];
+    const end = sharedOrigin ? projected[endIdx] : [projected[endIdx][0] + offset[0] * scale, projected[endIdx][1] + offset[1] * scale];
+    ctx.beginPath();
+    ctx.moveTo(start[0], start[1]);
+    ctx.lineTo(end[0], end[1]);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    if (typeof drawArrowHead === 'function') {
+        drawArrowHead(ctx, start, end, color);
+    } else {
+        console.warn('Функція drawArrowHead не визначена');
+    }
+    return { start, end };
+};
+    // Малюємо вектори
+    if (startIndices && startIndices.length >= 2 && vectors && vectors.length >= 2) {
+        console.log('Дані для векторів:', { startIndices, sharedOrigin, offset, projectedLength: projected.length });
+       const redVector = drawVector(startIndices[0][0], startIndices[0][1], 'red', [0, 0]);
+const greenVector = drawVector(startIndices[1][0], startIndices[1][1], 'green', [0, 0]);
+        if (!redVector || !greenVector) {
+            console.error('Не вдалося намалювати один із векторів:', { redVector, greenVector, startIndices, projectedLength: projected.length });
+        } else {
+            console.log('Вектори намальовані:', { redVector, greenVector });
+        }
+    } else {
+        console.error('Недостатньо даних для малювання векторів:', { startIndices, vectors });
+    }
+};
+    function drawArrowHead(ctx, start, end, color) {
+    const dx = end[0] - start[0];
+    const dy = end[1] - start[1];
+    const angle = Math.atan2(dy, dx);
+    const length = 10; // Довжина стрілки
+    ctx.save();
+    ctx.translate(end[0], end[1]);
+    ctx.rotate(angle);
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(-length, -length / 2);
+    ctx.lineTo(-length, length / 2);
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.restore();
+}
+    function waitForMathJax(callback, maxAttempts = 10, attempt = 0) {
+        if (window.MathJax && MathJax.typesetPromise) {
+            MathJax.typesetPromise([elements.questionText, elements.optionsContainer]).then(() => {
+                console.log("MathJax типізація завершена");
+                callback();
+            }).catch(err => console.error('Помилка MathJax:', err));
+        } else if (attempt < maxAttempts) {
+            console.warn(`MathJax не завантажено, спроба ${attempt + 1}/${maxAttempts}`);
+            setTimeout(() => waitForMathJax(callback, maxAttempts, attempt + 1), 200);
+        } else {
+            console.error('MathJax не завантажено після максимальної кількості спроб');
+            callback();
+        }
+    }
+
+   function initializeQuestions() {
+    questions = [];
+    usedCombinations.clear();
+    useDegrees = Math.random() > 0.5;
+    console.log('useDegrees:', useDegrees);
+    currentQuestionIndex = 0;
+
+    // Генеруємо перше питання для рівня 1 (45°)
+    questions.push(generate45DegreeVectors());
+    console.log('Згенероване питання для рівня 1:', questions[0].question);
+    displayQuestion();
+}
+
+function generateNextQuestion(level) {
+    if (level === 0) {
+        return generate45DegreeVectors(); // Рівень 1: 45° (залишаємо як є)
+    } else if (level === 1) {
+        // Рівень 2: випадковий вибір між 0° і 180°
+        return Math.random() > 0.5 ? generateParallelSameVectors() : generateParallelOppositeVectors();
+    } else if (level === 2) {
+        return generate60DegreeVectors(); // Рівень 3: 60°
+    } else if (level === 3) {
+        return generateThreePerpendicularsVectors(); // Рівень 4: 90°
+    } else if (level === 4) {
+        return generateTetrahedronQuestion(useDegrees); // Рівень 5: тетраедр
+    }
+    console.error('Невідомий рівень:', level);
+    return null;
+}
+
+function displayQuestion() {
+    if (!elements.questionText || !elements.optionsContainer || !elements.questionNumber) {
+        console.error('Не вистачає елементів для відображення питання');
+        return;
+    }
+
+    if (!questions[currentQuestionIndex]) {
+        console.error('Питання за індексом', currentQuestionIndex, 'відсутнє:', questions);
+        showFeedback('Помилка: питання не знайдено.', false);
+        return;
+    }
+
+    console.log('Відображення питання:', {
+        index: currentQuestionIndex,
+        question: questions[currentQuestionIndex].question,
+        angleType: questions[currentQuestionIndex].angleType,
+        vectors: questions[currentQuestionIndex].vectors,
+        startIndices: questions[currentQuestionIndex].startIndices,
+        vertices: questions[currentQuestionIndex].vertices
+    });
+
+    selectedOption = null;
+    elements.submitAnswer.disabled = true;
+    elements.optionsContainer.innerHTML = '';
+    elements.feedback.innerHTML = '';
+    elements.optionsContainer.style.display = 'none'; // Спочатку ховаємо
+    elements.completionBlock.classList.add('hidden');
+    elements.questionNumber.parentElement.style.display = 'flex';
+    elements.questionNumber.textContent = `Питання ${currentQuestionIndex + 1}`;
+    elements.questionText.style.opacity = '0'; // Початковий стан для анімації
+    elements.questionText.style.display = 'block';
+    elements.submitAnswer.style.display = 'block';
+
+    // Встановлюємо стилі для анімації (якщо ще не додано)
+    elements.questionText.style.transition = 'opacity 0.5s ease-in-out';
+    elements.optionsContainer.style.transition = 'opacity 0.5s ease-in-out';
+
+    // Відображаємо питання з затримкою
+    elements.questionText.innerHTML = questions[currentQuestionIndex].question;
+    setTimeout(() => {
+        elements.questionText.style.opacity = '1'; // Плавна поява тексту
+    }, 100);
+
+    // Перевірка vertices
+    const verticesToUse = questions[currentQuestionIndex].angleType === 'tetrahedron'
+        ? questions[currentQuestionIndex].vertices
+        : [
+            [0, 0, 0], [1, 0, 0], [1, 0.88, 0], [0, 0.88, 0],
+            [0, 0, 1.5 * 0.9], [1, 0, 1.5 * 0.9], [1, 0.88, 1.5 * 0.9], [0, 0.88, 1.5 * 0.9]
+        ];
+
+    if (!verticesToUse) {
+        console.error('vertices не визначено для питання:', questions[currentQuestionIndex]);
+    }
+
+    // Малюємо фігуру та вектори асинхронно
+    requestAnimationFrame(() => {
+        drawVectors(
+            questions[currentQuestionIndex].vectors,
+            questions[currentQuestionIndex].startIndices,
+            questions[currentQuestionIndex].sharedOrigin,
+            questions[currentQuestionIndex].offset || [0, 0],
+            verticesToUse
+        );
+    });
+
+    const shuffledOptions = [...questions[currentQuestionIndex].options];
+    shuffleArray(shuffledOptions);
+    console.log('Перемішані варіанти:', shuffledOptions);
+
+    // Створюємо елементи опцій
+    const optionElements = shuffledOptions.map((option, index) => {
+        const optionElement = document.createElement('div');
+        optionElement.className = 'option';
+        optionElement.innerHTML = `\\(${option}\\)`; // Обертаємо в \(...\)
+        optionElement.setAttribute('data-option', option);
+        optionElement.setAttribute('tabindex', '0');
+        optionElement.setAttribute('role', 'button');
+        optionElement.setAttribute('aria-label', `Варіант відповіді ${index + 1}`);
+        optionElement.style.opacity = '0'; // Початковий стан для анімації
+        return optionElement;
+    });
+
+    // Додаємо опції з затримкою
+    elements.optionsContainer.append(...optionElements);
+    setTimeout(() => {
+        optionElements.forEach((element, index) => {
+            setTimeout(() => {
+                element.style.opacity = '1'; // Плавна поява кожної опції
+            }, index * 100); // Затримка 100мс між опціями
+        });
+        elements.optionsContainer.style.display = 'flex'; // Показуємо контейнер після анімації
+    }, 500); // Затримка перед появою опцій
+
+    const renderMathJax = () => {
+        if (window.MathJax && MathJax.typesetPromise) {
+            console.log('Запуск MathJax типізації');
+            MathJax.typesetPromise([elements.questionText, elements.optionsContainer])
+                .then(() => {
+                    console.log('MathJax типізація завершена');
+                    attachOptionEvents();
+                })
+                .catch(err => {
+                    console.error('Помилка MathJax:', err);
+                    attachOptionEvents();
+                });
+        } else {
+            console.warn('MathJax не завантажено, відображаємо без типізації');
+            attachOptionEvents();
+        }
+    };
+
+    const attachOptionEvents = () => {
+        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        const eventTypes = isTouchDevice ? ['touchstart', 'touchend'] : ['click'];
+        document.querySelectorAll('.option').forEach((optionElement, index) => {
+            const option = shuffledOptions[index];
+            eventTypes.forEach(eventType => {
+                optionElement.addEventListener(eventType, (e) => {
+                    if (eventType === 'touchstart') e.preventDefault();
+                    console.log(`Вибір варіанту: ${option} (індекс: ${index})`);
+                    handleOptionSelection(e, optionElement, option);
+                }, { passive: eventType !== 'touchstart' });
+            });
+        });
+    };
+
+    // Запускаємо рендеринг MathJax з затримкою
+    setTimeout(renderMathJax, 600); // Додаємо затримку, щоб синхронізувати з анімацією
+}
+    
+    
+    function handleOptionSelection(e, optionElement, option) {
+        e.preventDefault();
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.classList.remove('selected');
+            opt.style.background = 'linear-gradient(135deg, #34495e, #2c3e50)';
+        });
+
+        optionElement.classList.add('selected');
+        selectedOption = option;
+        elements.submitAnswer.disabled = false;
+    }
+
+   function showFeedback(message, isCorrect) {
+    elements.feedback.innerHTML = message;
+    elements.feedback.className = `feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'}`;
+    elements.feedback.classList.add('show');
+    setTimeout(() => {
+        elements.feedback.classList.remove('show');
+    }, 2500);
+}
+
+elements.submitAnswer.addEventListener('click', () => {
+    if (!selectedOption) {
+        console.error('Не вибрано жодної відповіді');
+        return;
+    }
+
+    const currentQuestion = questions[currentQuestionIndex];
+    const isCorrect = selectedOption === currentQuestion.correct;
+
+    showFeedback(isCorrect ? '✓ Правильно! Молодець!' : '✗ Неправильно. Спробуй ще раз!', isCorrect);
+
+    document.querySelectorAll('.option').forEach(opt => {
+        const optValue = opt.getAttribute('data-option');
+        if (isCorrect && optValue === currentQuestion.correct) {
+            opt.classList.add('correct');
+            opt.style.background = 'linear-gradient(135deg, #27ae60, #2ecc71)';
+        } else if (optValue === selectedOption && !isCorrect) {
+            opt.classList.add('incorrect');
+            opt.style.background = 'linear-gradient(135deg, #e74c3c, #c0392b)';
+        }
+        opt.style.pointerEvents = 'none'; // Вимикаємо взаємодію з варіантами
+    });
+
+    setTimeout(() => {
+        if (isCorrect) {
+            currentQuestionIndex++;
+            console.log('Перехід до питання:', currentQuestionIndex);
+
+            if (currentQuestionIndex >= 5) {
+                console.log('Тренажер завершено, відображаємо блок завершення');
+                const trainerContainer = document.getElementById('trainerContainer');
+                if (trainerContainer) trainerContainer.style.display = 'none';
+                elements.questionNumber.parentElement.style.display = 'none';
+                elements.questionText.style.display = 'none';
+                elements.optionsContainer.style.display = 'none';
+                elements.submitAnswer.style.display = 'none';
+                elements.feedback.classList.remove('show');
+                document.querySelector('canvas').style.display = 'none';
+
+                elements.completionBlock.classList.add('modal');
+                elements.completionBlock.classList.remove('hidden');
+                elements.resetTrainerBtn.focus();
+
+                elements.resetTrainerBtn.onclick = () => {
+                    console.log('Скидання тренажера');
+                    elements.completionBlock.classList.remove('modal');
+                    elements.completionBlock.classList.add('hidden');
+                    if (trainerContainer) trainerContainer.style.display = 'block';
+                    elements.questionNumber.parentElement.style.display = 'flex';
+                    elements.questionText.style.display = 'block';
+                    elements.optionsContainer.style.display = 'flex';
+                    elements.submitAnswer.style.display = 'block';
+                    document.querySelector('canvas').style.display = 'block';
+
+                    currentQuestionIndex = 0;
+                    questions = [generate45DegreeVectors()];
+                    console.log('Новий масив питань:', questions);
+                    displayQuestion();
+                };
+
+                if (window.MathJax && MathJax.typesetPromise) {
+                    MathJax.typesetPromise([elements.completionBlock]).catch(err => console.error('MathJax error:', err));
+                }
+            } else {
+                let newQuestion, attempts = 0;
+                const maxAttempts = 5;
+                do {
+                    console.log(`Спроба ${attempts + 1} генерації питання для рівня ${currentQuestionIndex}`);
+                    newQuestion = generateNextQuestion(currentQuestionIndex);
+                    attempts++;
+                    console.log(`Результат генерації:`, { newQuestion, options: newQuestion?.options, correct: newQuestion?.correct });
+                    if (!newQuestion || !newQuestion.options || newQuestion.options.length === 0) {
+                        console.warn('Некоректне питання:', newQuestion);
+                    }
+                } while (!newQuestion || !newQuestion.options || newQuestion.options.length === 0 && attempts < maxAttempts);
+
+                if (newQuestion && newQuestion.options && newQuestion.options.length > 0) {
+                    questions[currentQuestionIndex] = newQuestion;
+                    console.log('Нове питання додано:', questions[currentQuestionIndex]);
+                    displayQuestion();
+                } else {
+                    console.error('Не вдалося згенерувати коректне питання після', maxAttempts, 'спроб для рівня', currentQuestionIndex);
+                    showFeedback('Помилка генерації питання. Спробуйте ще раз.', false);
+                }
+            }
+        } else {
+            console.log('Неправильна відповідь, генеруємо нову пару з тієї ж категорії');
+            let newQuestion, attempts = 0;
+            const maxAttempts = 5;
+            const currentAngleType = currentQuestion.angleType;
+            do {
+                console.log(`Спроба ${attempts + 1} генерації нової пари для ${currentAngleType}`);
+                newQuestion = generateNextQuestion(currentQuestionIndex); // Генеруємо нове питання того ж рівня
+                attempts++;
+                if (!newQuestion || !newQuestion.options || newQuestion.options.length === 0) {
+                    console.warn('Некоректне питання:', newQuestion);
+                }
+            } while ((!newQuestion || !newQuestion.options || newQuestion.options.length === 0 || newQuestion.angleType !== currentAngleType) && attempts < maxAttempts);
+
+            if (newQuestion && newQuestion.options && newQuestion.options.length > 0 && newQuestion.angleType === currentAngleType) {
+                questions[currentQuestionIndex] = newQuestion;
+                console.log('Нове питання з тієї ж категорії:', questions[currentQuestionIndex]);
+                // Очищаємо стилі та дозволяємо повторний вибір
+                document.querySelectorAll('.option').forEach(opt => {
+                    opt.style.pointerEvents = 'auto';
+                    opt.classList.remove('correct', 'incorrect', 'selected');
+                    opt.style.background = 'linear-gradient(135deg, #34495e, #2c3e50)';
+                });
+                elements.feedback.innerHTML = '';
+                elements.submitAnswer.disabled = true;
+                selectedOption = null;
+                displayQuestion();
+            } else {
+                console.error('Не вдалося згенерувати коректне питання з тієї ж категорії після', maxAttempts, 'спроб');
+                showFeedback('Помилка генерації питання. Спробуйте ще раз.', false);
+            }
+        }
+    }, 2500);
+});
+    
+   elements.resetTrainerBtn.addEventListener('click', () => {
+    console.log("Кнопка скидання натиснута");
+    questions = [];
+    usedCombinations.clear();
+    useDegrees = Math.random() > 0.5;
+    console.log('useDegrees:', useDegrees);
+    currentQuestionIndex = 0;
+    questions.push(generate45DegreeVectors());
+    console.log('Згенероване питання для рівня 1:', questions[0].question);
+    elements.completionBlock.classList.add('hidden');
+    elements.submitAnswer.style.display = 'block';
+    displayQuestion();
+});
+
+    function toggleModal(modal, show) {
+        if (!modal) {
+            console.error('Модальне вікно не знайдено');
+            return;
+        }
+        const allModals = [
+            elements.theoryModal,
+            elements.questionsModal,
+            elements.trainerModal
+        ].filter(Boolean);
+        allModals.forEach(m => {
+            if (m && m !== modal) m.style.display = 'none';
+        });
+        modal.style.display = show ? 'flex' : 'none';
+        elements.modalOverlay.style.display = show ? 'block' : 'none';
+        document.body.style.overflow = show ? 'hidden' : 'auto';
+        if (show) {
+            const closeBtn = modal.querySelector('.close-btn');
+            if (closeBtn) closeBtn.focus();
+            if (modal === elements.trainerModal) {
+                currentQuestionIndex = 0;
+                initializeQuestions();
+            }
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise(['#trainerContent', '#questionsModal', '#theoryModal']).then(() => {
+                    console.log(`MathJax типізація завершена для ${modal.id}`);
+                    const modalContent = modal.querySelector('.modal-content');
+                    if (modalContent) {
+                        modalContent.scrollTop = 0;
+                    }
+                }).catch(err => console.error('Помилка MathJax:', err));
+            }
+        }
+    }
+
+    elements.openTheoryBtn?.addEventListener('click', () => toggleModal(elements.theoryModal, true));
+    elements.openQuestionsBtn?.addEventListener('click', () => toggleModal(elements.questionsModal, true));
+    elements.openTrainerBtn?.addEventListener('click', () => toggleModal(elements.trainerModal, true));
+
+    elements.closeTheoryBtn?.addEventListener('click', () => toggleModal(elements.theoryModal, false));
+    elements.closeQuestionsBtn?.addEventListener('click', () => toggleModal(elements.questionsModal, false));
+    elements.closeTrainerBtn?.addEventListener('click', () => toggleModal(elements.trainerModal, false));
+
+    elements.modalOverlay?.addEventListener('click', () => {
+        toggleModal(elements.theoryModal, false);
+        toggleModal(elements.questionsModal, false);
+        toggleModal(elements.trainerModal, false);
+    });
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            toggleModal(elements.theoryModal, false);
+            toggleModal(elements.questionsModal, false);
+            toggleModal(elements.trainerModal, false);
+        }
+    });
+});
+       
+    </script>
+</body>
+</html>
