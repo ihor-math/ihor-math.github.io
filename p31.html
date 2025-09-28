@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>31. Лінійна залежність та незалежність векторів, базис. Розкладання вектора за базисними векторами</title>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    console.log("MathJax is loaded and ready!");
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" onerror="console.error('Failed to load MathJax')"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Roboto:wght@400;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        *, *:before, *:after {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            background: linear-gradient(135deg, #1a3c34, #2e6f95, #4a7043);
+            font-family: 'Roboto', sans-serif;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: start;
+            min-height: 100vh;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        body.loaded {
+            visibility: visible;
+            opacity: 1;
+        }
+        .title-box {
+            margin-top: 60px;
+            padding: 20px 40px;
+            background: linear-gradient(135deg, #4a7043, #2e6f95);
+            border-radius: 15px;
+            box-shadow: 0 6px 16px rgba(74, 112, 67, 0.3);
+            max-width: 90%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .title-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        .title-box h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            font-family: 'Merriweather', serif;
+            position: relative;
+            z-index: 1;
+        }
+        .theory-content h2 {
+            color: #f39c12;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(243, 156, 18, 0.5);
+            margin-bottom: 20px;
+            font-family: 'Merriweather', serif;
+        }
+        .section-container {
+            margin-top: 80px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .section {
+            width: 260px;
+            height: 200px;
+            background: linear-gradient(45deg, #2e6f95, #4a7043);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            color: #ffffff;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(74, 112, 67, 0.2);
+        }
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(74, 112, 67, 0.1), transparent);
+            transition: left 0.5s;
+        }
+        .section:hover::before {
+            left: 100%;
+        }
+        .section:hover {
+            transform: scale(1.05) translateY(-5px);
+            box-shadow: 0 8px 20px rgba(74, 112, 67, 0.25);
+            background: linear-gradient(45deg, #2e6f95, #4a7043);
+            border-color: rgba(74, 112, 67, 0.4);
+        }
+        .section img {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 15px;
+            object-fit: cover;
+            border-radius: 8px;
+            filter: drop-shadow(0 0 5px rgba(74, 112, 67, 0.3));
+            transition: filter 0.3s ease;
+        }
+        .section:hover img {
+            filter: drop-shadow(0 0 10px rgba(74, 112, 67, 0.5));
+        }
+        .section h2 {
+            font-size: 20px;
+            margin: 0;
+            font-family: 'Merriweather', serif;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 5%;
+            left: 5%;
+            width: 90%;
+            height: 90%;
+            background: linear-gradient(135deg, #2e6f95, #4a7043);
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(74, 112, 67, 0.2);
+            z-index: 1001;
+            overflow: hidden;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            border: 1px solid rgba(74, 112, 67, 0.1);
+        }
+        #modalOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(26, 60, 52, 0.8);
+            z-index: 999;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            padding: 20px;
+            flex-grow: 1;
+            background: #2e6f95;
+            border-radius: 10px;
+            margin: 10px;
+            color: #ffffff;
+            width: calc(100% - 20px);
+            overflow-y: auto;
+            display: block;
+            max-height: calc(100% - 60px);
+        }
+        .modal-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .modal-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .modal-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #2e6f95, #4a7043);
+            border-radius: 3px;
+        }
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #1a3c34, #2e6f95);
+        }
+        .modal-header {
+            background: linear-gradient(0deg, #2e6f95, #4a7043);
+            padding: 8px 12px;
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1002;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            border-bottom: 1px solid rgba(74, 112, 67, 0.2);
+        }
+        .close-btn {
+            background: linear-gradient(135deg, #2e6f95, #4a7043);
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Roboto', sans-serif;
+            z-index: 1003;
+            box-shadow: 0 2px 8px rgba(74, 112, 67, 0.3);
+        }
+        .close-btn:hover {
+            background: linear-gradient(135deg, #1a3c34, #2e6f95);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(74, 112, 67, 0.4);
+        }
+        details {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 6px;
+            background: #4a7043;
+            cursor: pointer;
+            border: 1px solid rgba(74, 112, 67, 0.2);
+        }
+        summary {
+            font-weight: bold;
+            padding: 8px;
+            background: linear-gradient(135deg, #2e6f95, #4a7043);
+            border-radius: 6px;
+            color: #ffffff;
+            font-family: 'Merriweather', serif;
+            transition: all 0.3s ease;
+        }
+        summary:hover {
+            background: linear-gradient(135deg, #1a3c34, #2e6f95);
+            transform: scale(1.02);
+        }
+        details p {
+            padding: 0 15px 10px;
+            color: #ecf0f1;
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+        mjx-container {
+            color: #00ff00 !important;
+            background: none !important;
+            font-style: italic !important;
+        }
+        mjx-container.math-notation-centered {
+            display: inline-block !important;
+            text-align: center !important;
+            vertical-align: middle !important;
+            white-space: nowrap !important;
+            line-height: 1.4 !important;
+            font-size: clamp(18px, 3vw, 20px) !important;
+            color: #00ff00 !important;
+            background: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        mjx-container.math-notation-centered * {
+            color: #00ff00 !important;
+            font-style: italic !important;
+        }
+        .highlight-term {
+            color: #f19cbb;
+            font-weight: bold;
+        }
+        .question-block {
+            margin: 15px 0;
+            padding: 10px;
+            background: linear-gradient(135deg, #2e6f95, #4a7043);
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            cursor: pointer;
+            border: 1px solid rgba(74, 112, 67, 0.2);
+        }
+        .question-block summary {
+            font-size: 16px;
+            background: linear-gradient(135deg, #2e6f95, #4a7043);
+            color: #ffffff;
+        }
+        .question-block details summary {
+            background: linear-gradient(135deg, #1a3c34, #2e6f95);
+        }
+        .question-block details p {
+            color: #ecf0f1;
+            background: #2e6f95;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 3px solid #1a3c34;
+        }
+        .theory-content h3 {
+            color: #ff9900;
+            border-bottom: 2px solid #ff9900;
+            padding-bottom: 5px;
+            margin-top: 25px;
+        }
+        .theory-content p, .theory-content li {
+            color: #ecf0f1;
+            font-size: clamp(18px, 3vw, 20px);
+            line-height: 1.7;
+        }
+        .example {
+            color: #27ae60;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #27ae60;
+            margin: 15px 0;
+        }
+        .solution {
+            color: #3498db;
+            font-weight: bold;
+            text-align: center;
+            display: block;
+            padding: 10px;
+            border-radius: 6px;
+            border: 2px solid #3498db;
+            margin: 15px 0;
+        }
+        .note {
+            color: #f1c40f;
+            font-weight: bold;
+        }
+        .note-text {
+            font-style: italic;
+            color: #bdc3c7;
+            text-align: justify;
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #f1c40f;
+            margin: 10px 0;
+        }
+        .theory-content p:not(.math-notation-centered),
+        .theory-content li {
+            text-align: justify;
+        }
+        .vector-type {
+            font-style: italic;
+            color: #f1faee;
+        }
+        .main-types {
+            font-weight: bold;
+            color: #00ff00;
+        }
+        ol {
+            color: #00ff00;
+        }
+        ol li::marker {
+            color: #00ff00;
+        }
+        .modal-content::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        .modal-content::-webkit-scrollbar-track {
+            background: #2e6f95;
+            border-radius: 10px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
+        }
+        .modal-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #2e6f95, #4a7043);
+            border-radius: 10px;
+            border: 2px solid #2e6f95;
+        }
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #1a3c34, #2e6f95);
+        }
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #2e6f95;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #2e6f95, #4a7043);
+            border-radius: 10px;
+            border: 2px solid #2e6f95;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #1a3c34, #2e6f95);
+        }
+        .modal-content {
+            scrollbar-color: #2e6f95 #2e6f95;
+            scrollbar-width: thin;
+        }
+        .math-notation-centered {
+            display: block;
+            text-align: center;
+            width: 100%;
+            font-size: clamp(18px, 3vw, 20px);
+            margin: 10px 0;
+            line-height: 1.6;
+            font-family: 'Roboto', sans-serif;
+        }
+        .navigation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px auto;
+            max-width: 1000px;
+        }
+        .nav-button {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #2e6f95, #4a7043);
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+        }
+        .nav-button:hover {
+            background: linear-gradient(135deg, #1a3c34, #2e6f95);
+            color: #ffffff;
+            transform: scale(1.03);
+            box-shadow: 0 4px 12px rgba(74, 112, 67, 0.3);
+        }
+        .nav-button svg {
+            margin-right: 8px;
+            fill: currentColor;
+            transition: fill 0.3s ease;
+        }
+        .question-card {
+            perspective: 1000px;
+            margin: 20px auto;
+            max-width: 964px;
+            width: 100%;
+            min-height: 150px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            cursor: pointer;
+        }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            min-height: 200px;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            cursor: inherit;
+        }
+        .question-card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            cursor: inherit;
+            border: 1px solid rgba(74, 112, 67, 0.2);
+        }
+        .card-front {
+            background: #1a3c34;
+            color: #ffffff;
+        }
+        .card-back {
+            background: linear-gradient(135deg, #111827, #1f2937);
+            color: #ecf0f1;
+            transform: rotateY(180deg);
+            text-align: justify;
+            padding: 20px;
+            overflow: auto;
+            white-space: normal;
+        }
+        .card-front span, .card-back span {
+            font-family: 'Lora', serif;
+            font-size: clamp(18px, 3.1vw, 20px);
+            line-height: 1.6;
+            display: inline;
+            color: inherit;
+            text-align: center;
+        }
+        #questionsModal mjx-container {
+            display: inline !important;
+            vertical-align: middle !important;
+            font-size: clamp(18px, 3.2vw, 20px) !important;
+            color: #00ff00 !important;
+            background: none !important;
+            font-style: italic !important;
+            margin: 0 2px !important;
+            padding: 0 !important;
+        }
+        .card-back span {
+            text-align: justify;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        @media (max-width: 768px) {
+            .close-btn {
+                font-size: 16px;
+                padding: 6px 12px;
+                border-radius: 8px;
+            }
+            .theory-content p, .theory-content li {
+                font-size: clamp(18px, 3vw, 20px);
+            }
+            .theory-content mjx-container {
+                font-size: clamp(16px, 3vw, 18px) !important;
+            }
+            .theory-content h2, .theory-content h3 {
+                font-size: clamp(20px, 3vw, 24px);
+            }
+            .question-block summary {
+                font-size: clamp(18px, 3vw, 20px);
+            }
+            .question-block details p {
+                font-size: clamp(18px, 3vw, 20px);
+            }
+            #questionsModal mjx-container {
+                font-size: 20px !important;
+            }
+            .title-box {
+                margin-top: 40px;
+                padding: 15px 20px;
+            }
+            .title-box h1 {
+                font-size: 24px;
+            }
+            .section-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            .section {
+                width: 80%;
+                height: 180px;
+            }
+            .modal {
+                top: 2%;
+                left: 2%;
+                width: 96%;
+                height: 96%;
+            }
+            .modal-header {
+                padding: 5px 8px;
+            }
+            .modal-content {
+                max-height: calc(100% - 50px);
+            }
+            .question-card {
+                min-height: 180px;
+            }
+            .card-front, .card-back {
+                font-size: clamp(15px, 3vw, 17px);
+                padding: 12px;
+                line-height: 1.4;
+            }
+            .card-front span, .card-back span {
+                font-size: clamp(15px, 3vw, 17px);
+                line-height: 1.4;
+            }
+            #questionsModal mjx-container {
+                font-size: clamp(15px, 3vw, 17px) !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .close-btn {
+                font-size: 14px;
+                padding: 5px 10px;
+                border-radius: 6px;
+            }
+            .theory-content p, .theory-content li {
+                font-size: clamp(17px, 3.2vw, 19px);
+            }
+            .theory-content mjx-container {
+                font-size: clamp(17px, 3.2vw, 19px) !important;
+            }
+            .theory-content h2, .theory-content h3 {
+                font-size: clamp(20px, 3vw, 24px);
+            }
+            .question-block summary {
+                font-size: clamp(17px, 3.2vw, 19px);
+            }
+            .question-block details p {
+                font-size: clamp(17px, 3.2vw, 19px);
+            }
+            #questionsModal mjx-container {
+                font-size: 18px !important;
+            }
+            .title-box {
+                margin-top: 20px;
+                padding: 10px 15px;
+            }
+            .title-box h1 {
+                font-size: 20px;
+            }
+            .section {
+                width: 90%;
+                height: 150px;
+            }
+            .section img {
+                width: 50px;
+                height: 50px;
+            }
+            .section h2 {
+                font-size: 18px;
+            }
+            .modal-header {
+                padding: 4px 6px;
+            }
+            .modal-content {
+                max-height: calc(100% - 40px);
+            }
+            .question-card {
+                min-height: 200px;
+            }
+            .card-front, .card-back {
+                font-size: clamp(14px, 3vw, 16px);
+                padding: 10px;
+                line-height: 1.3;
+            }
+            .card-front span, .card-back span {
+                font-size: clamp(14px, 3vw, 16px);
+                line-height: 1.3;
+            }
+            #questionsModal mjx-container {
+                font-size: clamp(17px, 3vw, 18px) !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="title-box">
+        <h1>31. Лінійна залежність та незалежність векторів, базис. Розкладання вектора за базисними векторами</h1>
+    </div>
+
+    <div class="section-container">
+        <div class="section" id="openTheoryBtn">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Книга">
+            <h2>Теоретичні відомості</h2>
+        </div>
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Картки">
+            <h2>Питання і відповіді</h2>
+        </div>
+    </div>
+    <div class="navigation-buttons">
+        <a class="nav-button" href="{{ url_for('tema7') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            До теми 7
+        </a>
+        <a class="nav-button" href="{{ url_for('home') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            На головну
+        </a>
+    </div>
+
+  <div id="theoryModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="theoryTitle">
+    <div class="modal-header">
+        <button class="close-btn" id="closeTheoryBtn" aria-label="Закрити">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="theory-content">
+            <h2>Лінійна залежність та незалежність векторів, базис. Розкладання вектора за базисними векторами</h2>
+            <p>Вектори, їхня лінійна залежність і незалежність, а також поняття базису відіграють важливу роль у лінійній алгебрі та векторних просторах. Розглянемо ці поняття докладніше.</p>
+            
+            <h3>Лінійна залежність та незалежність векторів</h3>
+            <p>Вектор <span class="vector-type">\( \vec{a} \)</span> називається <span class="highlight-term">лінійною комбінацією</span> векторів <span class="vector-type">\( \vec{a_1}, \vec{a_2}, \ldots, \vec{a_n} \)</span>, якщо його можна подати у вигляді:</p>
+            <p class="math-notation-centered">\( \vec{a} = \lambda_1 \vec{a_1} + \lambda_2 \vec{a_2} + \cdots + \lambda_n \vec{a_n}, \quad (7.4) \)</p>
+            <p>де <span class="math-notation">\( \lambda_1, \lambda_2, \ldots, \lambda_n \)</span> – деякі числа (коефіцієнти).</p>
+            <p>Наприклад, вектор <span class="vector-type">\( \vec{a} = 3\vec{a_1} - 5\vec{a_2} + \frac{1}{2}\vec{a_3} \)</span> є лінійною комбінацією векторів <span class="vector-type">\( \vec{a_1}, \vec{a_2}, \vec{a_3} \)</span>.</p>
+            <p>Система векторів <span class="vector-type">\( \{\vec{a_1}, \vec{a_2}, \ldots, \vec{a_n}\} \)</span> називається <span class="highlight-term">лінійно залежною</span>, якщо існують числа <span class="math-notation">\( \lambda_1, \lambda_2, \ldots, \lambda_n \in \mathbb{R} \)</span>, не всі з яких дорівнюють нулю, такі що:</p>
+            <p class="math-notation-centered">\( \lambda_1 \vec{a_1} + \lambda_2 \vec{a_2} + \cdots + \lambda_n \vec{a_n} = \vec{0}, \quad (7.5) \)</p>
+            <p>Система векторів <span class="vector-type">\( \{\vec{a_1}, \vec{a_2}, \ldots, \vec{a_n}\} \)</span> називається <span class="highlight-term">лінійно незалежною</span>, якщо рівняння:</p>
+            <p class="math-notation-centered">\( \lambda_1 \vec{a_1} + \lambda_2 \vec{a_2} + \cdots + \lambda_n \vec{a_n} = \vec{0} \)</p>
+            <p>має єдиний розв’язок:</p>
+            <p class="math-notation-centered">\( \lambda_1 = \lambda_2 = \cdots = \lambda_n = 0. \)</p>
+            <p>Іншими словами, для лінійно незалежної системи векторів виконується тотожність:</p>
+            <p class="math-notation-centered">\( \lambda_1 \vec{a_1} + \lambda_2 \vec{a_2} + \cdots + \lambda_n \vec{a_n} = \vec{0} \iff \lambda_1 = \lambda_2 = \cdots = \lambda_n = 0, \quad (7.6) \)</p>
+            
+            <h3>Основні властивості лінійної залежності та незалежності векторів у різних вимірах</h3>
+            <ol>
+                <li><span class="main-types">Одновимірний простір (пряма):</span> Будь-які два вектори, що лежать на прямій, є лінійно залежними, оскільки вони колінеарні. Якщо вектори <span class="vector-type">\( \vec{a} \)</span> і <span class="vector-type">\( \vec{b} \)</span> лежать на одній прямій, то <span class="math-notation">\( \vec{a} = k \cdot \vec{b} \)</span> для деякого <span class="math-notation">\( k \)</span>. Тоді <span class="math-notation">\( \vec{a} - k \cdot \vec{b} = \vec{0} \)</span>, де коефіцієнти <span class="math-notation">\( \lambda_1 = 1 \)</span> і <span class="math-notation">\( \lambda_2 = -k \)</span>, при чому <span class="math-notation">\( \lambda_2 \neq 0 \)</span>. Отже, на прямій існує лише один лінійно незалежний вектор.</li>
+                <li><span class="main-types">Двовимірний простір (площина):</span> Будь-який вектор <span class="vector-type">\( \vec{c} \)</span> на площині можна подати і притому єдиним способом у вигляді лінійної комбінації двох будь-яких неколінеарних векторів <span class="vector-type">\( \vec{a} \)</span> і <span class="vector-type">\( \vec{b} \):</span></li>
+                <p class="math-notation-centered">\( \vec{c} = \lambda_1 \vec{a} + \lambda_2 \vec{b}, \quad (7.7) \)</p>
+                <p>де <span class="math-notation">\( \lambda_1 \)</span> і <span class="math-notation">\( \lambda_2 \)</span> – деякі числа. Такий процес називається розкладанням вектора за векторами <span class="vector-type">\( \vec{a} \)</span> і <span class="vector-type">\( \vec{b} \)</span>. Два неколінеарні вектори на площині завжди лінійно незалежні. Максимальна кількість лінійно незалежних векторів на площині – два.</p>
+                <li><span class="main-types">Тривимірний простір:</span> Будь-який вектор <span class="vector-type">\( \vec{d} \)</span> у просторі можна єдиним способом подати як лінійну комбінацію трьох некомпланарних векторів <span class="vector-type">\( \vec{a}, \vec{b}, \vec{c} \):</span></li>
+                <p class="math-notation-centered">\( \vec{d} = \lambda_1 \vec{a} + \lambda_2 \vec{b} + \lambda_3 \vec{c}, \quad (7.8) \)</p>
+                <p>де <span class="math-notation">\( \lambda_1, \lambda_2, \lambda_3 \)</span> – деякі числа. Три компланарні вектори (тобто такі, що лежать в одній площині) є лінійно залежними. Натомість три некомпланарні вектори є лінійно незалежними. Максимальна кількість лінійно незалежних векторів у тривимірному просторі – три.</p>
+            </ol>
+            
+            <h3>Базис. Розкладання вектора за базисними векторами</h3>
+            <p>Сукупність лінійно незалежних векторів <span class="vector-type">\( \vec{e_1}, \vec{e_2}, \ldots, \vec{e_n} \)</span> називається <span class="highlight-term">базисом</span> простору <span class="math-notation">\( \mathbb{R}^n \)</span>, якщо кожен вектор <span class="vector-type">\( \vec{a} \in \mathbb{R}^n \)</span> можна подати у вигляді:</p>
+            <p class="math-notation-centered">\( \vec{a} = \lambda_1 \vec{e_1} + \lambda_2 \vec{e_2} + \cdots + \lambda_n \vec{e_n}, \quad (7.9) \)</p>
+            <p>де <span class="math-notation">\( \lambda_1, \lambda_2, \ldots, \lambda_n \)</span> – дійсні числа, які називаються координатами вектора <span class="vector-type">\( \vec{a} \)</span> у цьому базисі. Цей вираз називається розкладом вектора <span class="vector-type">\( \vec{a} \)</span> за базисом <span class="vector-type">\( \vec{e_1}, \vec{e_2}, \ldots, \vec{e_n} \).</span></p>
+            
+            <h3>Базис і розкладання вектора в різних вимірах</h3>
+            <ol>
+                <li><span class="main-types">Базис на прямій (одновимірний простір):</span> Базисом на прямій є будь-який ненульовий вектор <span class="vector-type">\( \vec{e_1} \).</span> У цьому випадку кожен вектор <span class="vector-type">\( \vec{a} \)</span> на прямій можна єдиним способом подати як:</li>
+                <p class="math-notation-centered">\( \vec{a} = \lambda_1 \vec{e_1}, \quad (7.10) \)</p>
+                <p>де <span class="math-notation">\( \lambda_1 \)</span> – координата вектора <span class="vector-type">\( \vec{a} \)</span> у базисі <span class="vector-type">\( \vec{e_1} \).</span> У координатній формі це записують як <span class="vector-type">\( \vec{a} = (\lambda_1) \).</span></p>
+                <li><span class="main-types">Базис на площині (двовимірний простір):</span> Базисом на площині є будь-яка впорядкована пара неколінеарних векторів <span class="vector-type">\( \vec{e_1}, \vec{e_2} \).</span> Кожен вектор <span class="vector-type">\( \vec{a} \)</span> на площині можна єдиним способом розкласти за таким базисом:</li>
+                <p class="math-notation-centered">\( \vec{a} = \lambda_1 \vec{e_1} + \lambda_2 \vec{e_2}, \quad (7.11) \)</p>
+                <p>де <span class="math-notation">\( \lambda_1, \lambda_2 \)</span> – координати вектора <span class="vector-type">\( \vec{a} \)</span> у базисі <span class="vector-type">\( \vec{e_1}, \vec{e_2} \).</span> У координатній формі це записують як <span class="vector-type">\( \vec{a} = (\lambda_1; \lambda_2) \).</span></p>
+                <li><span class="main-types">Базис у просторі (тривимірний простір):</span> Базисом у тривимірному просторі є будь-яка впорядкована трійка некомпланарних векторів <span class="vector-type">\( \vec{e_1}, \vec{e_2}, \vec{e_3} \).</span> Кожен вектор <span class="vector-type">\( \vec{a} \)</span> у просторі можна єдиним способом розкласти за таким базисом:</li>
+                <p class="math-notation-centered">\( \vec{a} = \lambda_1 \vec{e_1} + \lambda_2 \vec{e_2} + \lambda_3 \vec{e_3}, \quad (7.12) \)</p>
+                <p>де <span class="math-notation">\( \lambda_1, \lambda_2, \lambda_3 \)</span> – координати вектора <span class="vector-type">\( \vec{a} \)</span> у базисі <span class="vector-type">\( \vec{e_1}, \vec{e_2}, \vec{e_3} \).</span> У координатній формі це записують як <span class="vector-type">\( \vec{a} = (\lambda_1; \lambda_2; \lambda_3) \).</span></p>
+            </ol>
+            
+            <div class="example">Приклад:</div>
+            <p>Розглянемо вектори <span class="vector-type">\( \vec{e_1} = (1, 0) \)</span>, <span class="vector-type">\( \vec{e_2} = (0, 1) \)</span> у двовимірному просторі. Вектор <span class="vector-type">\( \vec{a} = (3, 4) \)</span> можна розкласти як:</p>
+            <p class="math-notation-centered">\( \vec{a} = 3 \vec{e_1} + 4 \vec{e_2}. \)</p>
+            <p>Тут <span class="math-notation">\( \lambda_1 = 3 \)</span>, <span class="math-notation">\( \lambda_2 = 4 \)</span> є координатами вектора <span class="vector-type">\( \vec{a} \)</span> у базисі <span class="vector-type">\( \{\vec{e_1}, \vec{e_2}\} \).</span> У координатній формі: <span class="vector-type">\( \vec{a} = (3; 4) \).</span></p>
+            
+            <div class="note">Примітка:</div>
+            <p class="note-text">Розкладання векторів за базисом є основою для роботи з координатами у векторних просторах, що використовується в лінійній алгебрі, аналітичній геометрії та інших дисциплінах.</p>
+        </div>
+    </div>
+</div>
+
+   <div id="questionsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="questionsTitle">
+    <div class="modal-header">
+        <button class="close-btn" id="closeQuestionsBtn" aria-label="Закрити">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>1. Що означає, що вектор є лінійною комбінацією інших векторів?</span>
+                </div>
+                <div class="card-back">
+                    <span>Це означає, що його можна подати як суму цих векторів, помножених на певні числа: <span class="math-notation">\( \vec{a} = \lambda_1 \vec{a_1} + \lambda_2 \vec{a_2} + \cdots + \lambda_n \vec{a_n} \)</span>, де <span class="math-notation">\( \lambda_1, \lambda_2, \ldots, \lambda_n \)</span> – деякі числа (коефіцієнти).</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>2. Яка система векторів називається лінійно залежною?</span>
+                </div>
+                <div class="card-back">
+                    <span>Якщо існують коефіцієнти <span class="math-notation">\( \lambda_i \)</span>, не всі нульові, такі, що <span class="math-notation">\( \lambda_1 \vec{a_1} + \lambda_2 \vec{a_2} + \cdots + \lambda_n \vec{a_n} = \vec{0} \)</span>.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>3. Яка система векторів є лінійно незалежною?</span>
+                </div>
+                <div class="card-back">
+                    <span>Якщо рівняння <span class="math-notation">\( \lambda_1 \vec{a_1} + \lambda_2 \vec{a_2} + \cdots + \lambda_n \vec{a_n} = \vec{0} \)</span> має єдиний розв’язок: <span class="math-notation">\( \lambda_1 = \lambda_2 = \cdots = \lambda_n = 0 \)</span>.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>4. Скільки лінійно незалежних векторів може бути на прямій?</span>
+                </div>
+                <div class="card-back">
+                    <span>Лише один.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>5. Скільки лінійно незалежних векторів може бути на площині?</span>
+                </div>
+                <div class="card-back">
+                    <span>Максимум два (будь-які два неколінеарні вектори).</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>6. Скільки лінійно незалежних векторів може бути у просторі?</span>
+                </div>
+                <div class="card-back">
+                    <span>Максимум три (будь-які три некомпланарні вектори).</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>7. Що таке базис простору <span class="math-notation">\( \mathbb{R}^n \)</span>?</span>
+                </div>
+                <div class="card-back">
+                    <span>Це сукупність <span class="math-notation">\( n \)</span> лінійно незалежних векторів, через які можна виразити будь-який вектор простору.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>8. Як називаються коефіцієнти при розкладанні вектора за базисом?</span>
+                </div>
+                <div class="card-back">
+                    <span>Це координати вектора у цьому базисі.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>9. Який вигляд має розклад вектора на прямій (1D-базис)?</span>
+                </div>
+                <div class="card-back">
+                    <span><span class="math-notation">\( \vec{a} = \lambda_1 \vec{e_1} \)</span>, <span class="math-notation">\( \vec{a} = (\lambda_1) \)</span>.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>10. Який вигляд має розклад вектора на площині (2D-базис)?</span>
+                </div>
+                <div class="card-back">
+                    <span><span class="math-notation">\( \vec{a} = \lambda_1 \vec{e_1} + \lambda_2 \vec{e_2} \)</span>, <span class="math-notation">\( \vec{a} = (\lambda_1; \lambda_2) \)</span>.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>11. Який вигляд має розклад вектора у просторі (3D-базис)?</span>
+                </div>
+                <div class="card-back">
+                    <span><span class="math-notation">\( \vec{a} = \lambda_1 \vec{e_1} + \lambda_2 \vec{e_2} + \lambda_3 \vec{e_3} \)</span>, <span class="math-notation">\( \vec{a} = (\lambda_1; \lambda_2; \lambda_3) \)</span>.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>12. Чим відрізняються компланарні та некомпланарні вектори?</span>
+                </div>
+                <div class="card-back">
+                    <span>Компланарні лежать в одній площині (лінійно залежні), некомпланарні – не лежать в одній площині (лінійно незалежні).</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div id="modalOverlay"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.body.classList.add('loaded');
+
+            const elements = {
+                openTheoryBtn: document.getElementById('openTheoryBtn'),
+                openQuestionsBtn: document.getElementById('openQuestionsBtn'),
+                theoryModal: document.getElementById('theoryModal'),
+                questionsModal: document.getElementById('questionsModal'),
+                closeTheoryBtn: document.getElementById('closeTheoryBtn'),
+                closeQuestionsBtn: document.getElementById('closeQuestionsBtn'),
+                modalOverlay: document.getElementById('modalOverlay')
+            };
+
+            function toggleModal(modal, show) {
+                if (!modal) {
+                    console.error('Модальне вікно не знайдено');
+                    return;
+                }
+                const allModals = [
+                    elements.theoryModal,
+                    elements.questionsModal
+                ].filter(Boolean);
+                allModals.forEach(m => {
+                    if (m && m !== modal) m.style.display = 'none';
+                });
+                modal.style.display = show ? 'flex' : 'none';
+                elements.modalOverlay.style.display = show ? 'block' : 'none';
+                document.body.style.overflow = show ? 'hidden' : 'auto';
+                if (show) {
+                    const closeBtn = modal.querySelector('.close-btn');
+                    if (closeBtn) closeBtn.focus();
+                    if (window.MathJax && MathJax.typesetPromise) {
+                        MathJax.typesetPromise([modal]).then(() => {
+                            console.log(`MathJax типізація завершена для ${modal.id}`);
+                            const modalContent = modal.querySelector('.modal-content');
+                            if (modalContent) {
+                                modalContent.scrollTop = 0;
+                            }
+                        }).catch(err => console.error('Помилка MathJax:', err));
+                    }
+                }
+            }
+
+            elements.openTheoryBtn?.addEventListener('click', () => toggleModal(elements.theoryModal, true));
+            elements.openQuestionsBtn?.addEventListener('click', () => toggleModal(elements.questionsModal, true));
+
+            elements.closeTheoryBtn?.addEventListener('click', () => toggleModal(elements.theoryModal, false));
+            elements.closeQuestionsBtn?.addEventListener('click', () => toggleModal(elements.questionsModal, false));
+
+            elements.modalOverlay?.addEventListener('click', () => {
+                toggleModal(elements.theoryModal, false);
+                toggleModal(elements.questionsModal, false);
+            });
+
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') {
+                    toggleModal(elements.theoryModal, false);
+                    toggleModal(elements.questionsModal, false);
+                }
+            });
+
+            const cards = document.querySelectorAll(".question-card");
+            cards.forEach(card => {
+                card.addEventListener("click", () => {
+                    card.classList.toggle("flipped");
+                });
+            });
+        });
+    </script>
+</body>
+</html>
