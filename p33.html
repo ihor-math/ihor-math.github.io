@@ -1,0 +1,2463 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>33. Дії над векторами, заданими своїми координатами</title>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    console.log("MathJax is loaded and ready!");
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" onerror="console.error('Failed to load MathJax')"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Roboto:wght@400;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        *, *:before, *:after {
+            box-sizing: border-box;
+        }
+       body {
+    margin: 0;
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6, #60a5fa);
+    font-family: 'Roboto', sans-serif;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    min-height: 100vh;
+    /* прибери visibility та opacity */
+}
+
+        body.loaded {
+            visibility: visible;
+            opacity: 1;
+        }
+        .title-box {
+            margin-top: 60px;
+            padding: 20px 40px;
+            background: #b86514;
+            border-radius: 15px;
+            box-shadow: 0 6px 16px rgba(255, 140, 0, 0.3);
+            max-width: 90%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .title-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        .title-box h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            font-family: 'Merriweather', serif;
+            position: relative;
+            z-index: 1;
+        }
+        .section-container {
+            margin-top: 80px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .section {
+            width: 260px;
+            height: 200px;
+            background: linear-gradient(45deg, #4b0082, #8a2be2); /* Фіолетовий градієнт для секцій */
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            color: #ffffff;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(138, 43, 226, 0.2);
+        }
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(138, 43, 226, 0.1), transparent);
+            transition: left 0.5s;
+        }
+        .section:hover::before {
+            left: 100%;
+        }
+        .section:hover {
+            transform: scale(1.05) translateY(-5px);
+            box-shadow: 0 8px 20px rgba(138, 43, 226, 0.25);
+            background: linear-gradient(45deg, #6a5acd, #9370db); /* Світліший фіолетовий при наведенні */
+            border-color: rgba(138, 43, 226, 0.4);
+        }
+        .section img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 15px;
+            object-fit: cover;
+            border-radius: 8px;
+            filter: brightness(1.2);
+        }
+        .section:hover img {
+            filter: drop-shadow(0 0 10px rgba(138, 43, 226, 0.5));
+        }
+        .section h2 {
+            font-size: 20px;
+            margin: 0;
+            font-family: 'Merriweather', serif;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 5%;
+            left: 5%;
+            width: 90%;
+            height: 90%;
+            background: linear-gradient(135deg, #4b0082, #8a2be2); /* Фіолетовий градієнт для модального вікна */
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(138, 43, 226, 0.2);
+            z-index: 1001;
+            overflow: hidden;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            border: 1px solid rgba(138, 43, 226, 0.1);
+        }
+        #modalOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(44, 62, 80, 0.8);
+            z-index: 999;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            padding: 20px;
+            flex-grow: 1;
+            background: #4b0082; /* Фон модального вмісту */
+            border-radius: 10px;
+            margin: 10px;
+            color: #ffffff;
+            width: calc(100% - 20px);
+            overflow-y: auto;
+            display: block;
+            max-height: calc(100% - 60px);
+        }
+        .modal-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .modal-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .modal-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #6a5acd, #9370db); /* Градієнт скролбара */
+            border-radius: 3px;
+        }
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #483d8b, #7b68ee);
+        }
+        .modal-header {
+            background: linear-gradient(0deg, #4b0082, #8a2be2); /* Градієнт заголовка модального */
+            padding: 8px 12px;
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1002;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            border-bottom: 1px solid rgba(138, 43, 226, 0.2);
+        }
+        #trainerModal .modal-header {
+            background: linear-gradient(0deg, #6a5acd, #9370db);
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+        .close-btn {
+            background: linear-gradient(135deg, #6a5acd, #9370db);
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Roboto', sans-serif;
+            z-index: 1003;
+            box-shadow: 0 2px 8px rgba(138, 43, 226, 0.3);
+        }
+        .close-btn:hover {
+            background: linear-gradient(135deg, #483d8b, #7b68ee);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(138, 43, 226, 0.4);
+        }
+        #trainerModal .close-btn {
+            background: linear-gradient(135deg, #ff4500, #ff8c00);
+        }
+        #trainerModal .close-btn:hover {
+            background: linear-gradient(135deg, #e43a00, #e67700);
+        }
+        details {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 6px;
+            background: #4b0082;
+            cursor: pointer;
+            border: 1px solid rgba(138, 43, 226, 0.2);
+        }
+        details p {
+            padding: 0 15px 10px;
+            color: #ecf0f1;
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+      .math-notation {
+    font-style: italic;
+    color: #f1c40f;
+    display: inline !important;
+    font-size: 1.0em; /* 150% від стандартного */
+    
+}
+
+        #questionsModal .math-notation-centered {
+            display: none !important;
+        }
+        .highlight-term {
+            color: #c8f288;
+            font-weight: bold;
+        }
+        .formula-line {
+            display: inline-block;
+            white-space: nowrap;
+        }
+        .question-block {
+            margin: 15px 0;
+            padding: 10px;
+            background: linear-gradient(135deg, #4b0082, #8a2be2);
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            cursor: pointer;
+            border: 1px solid rgba(138, 43, 226, 0.2);
+        }
+        .question-block summary {
+            font-size: 16px;
+            background: linear-gradient(135deg, #6a5acd, #9370db);
+            color: #ffffff;
+        }
+        .question-block details summary {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+        .question-block details p {
+            color: #ecf0f1;
+            background: #4b0082;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 3px solid #27ae60;
+        }
+        #questionsModal mjx-container {
+            display: inline !important;
+            vertical-align: middle !important;
+            font-size: clamp(17px, 3vw, 19px) !important;
+            line-height: 1.4 !important;
+            color: #f1c40f !important;
+            background: none !important;
+            font-style: italic !important;
+            margin: 0 2px !important;
+            padding: 0 !important;
+        }
+        .trainer-container {
+    width: 90%;
+    max-width: 800px;
+    padding: 3vw 4vw;
+    text-align: center;
+    background: linear-gradient(135deg, #4b0082, #8a2be2);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(138, 43, 226, 0.2);
+    transition: all 0.3s ease;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100%;
+    border: 1px solid rgba(138, 43, 226, 0.2);
+    overflow: visible; /* Додано, щоб уникнути внутрішньої прокрутки */
+}
+        .question-circle {
+            width: clamp(80px, 15vw, 120px);
+            height: clamp(80px, 15vw, 120px);
+            margin: 0 auto 3vw;
+            background: linear-gradient(135deg, #6a5acd, #9370db);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(138, 43, 226, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .question-circle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        .question-circle:hover::before {
+            left: 100%;
+        }
+        .question-circle h3 {
+            color: #ffffff;
+            font-family: 'Lora', serif;
+            font-size: clamp(16px, 2.5vw, 20px);
+            margin: 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 1;
+        }
+        .cube-formula, .vector-formula {
+            color: #f1c40f;
+            display: inline-block;
+            font-size: clamp(15px, 2.5vw, 17px);
+        }
+        #completionBlock.modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        #completionBlock .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 90%;
+        }
+        .completion-emoji {
+            width: clamp(80px, 15vw, 120px);
+            height: clamp(80px, 15vw, 120px);
+            margin: 0 auto 3vw;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(138, 43, 226, 0.3);
+            border: 2px dashed #f1c40f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+        .completion-emoji::after {
+            content: '🎉';
+            font-size: clamp(40px, 8vw, 60px);
+            color: #f1c40f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
+        }
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2vw;
+            justify-content: center;
+            margin-bottom: 3vw;
+            width: 100%;
+        }
+        .option {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5vw 3vw;
+            border: 1.5px solid #6a5acd;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #4b0082, #8a2be2);
+            cursor: pointer;
+            font-size: clamp(15px, 3.5vw, 18px);
+            min-height: 45px;
+            min-width: 90px;
+            max-width: 45%;
+            text-align: center;
+            font-family: 'Lora', serif;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+            box-sizing: border-box;
+            touch-action: manipulation;
+            pointer-events: auto !important;
+            user-select: none;
+            transition: all 0.3s ease;
+            color: #ecf0f1;
+        }
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(138, 43, 226, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        .option:hover::before {
+            left: 100%;
+        }
+        .option:hover {
+            background: linear-gradient(135deg, #6a5acd, #9370db);
+            transform: scale(1.03);
+            border-color: #f1c40f;
+            box-shadow: 0 4px 12px rgba(138, 43, 226, 0.3);
+        }
+        .option.selected {
+            background: linear-gradient(135deg, #27ae60, #2ecc71) !important;
+            color: #ffffff !important;
+            border: 2px solid #f1c40f !important;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
+        }
+        .option:focus {
+            outline: 2px solid #f1c40f;
+            outline-offset: 2px;
+        }
+        .option {
+            min-height: 50px !important;
+            padding: 12px 20px !important;
+        }
+        mjx-container, mjx-container * {
+            pointer-events: none !important;
+            user-select: none !important;
+        }
+        mjx-frac {
+            font-size: 1.2em !important;
+            padding: 2px !important;
+        }
+        mjx-num, mjx-den {
+            padding: 2px !important;
+        }
+        button {
+            background: linear-gradient(135deg, #6a5acd, #9370db);
+            color: #ffffff;
+            border: none;
+            border-radius: 25px;
+            padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 24px);
+            font-size: clamp(16px, 3vw, 18px);
+            font-family: 'Lora', serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(138, 43, 226, 0.3);
+        }
+        button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #483d8b, #7b68ee);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(138, 43, 226, 0.4);
+        }
+        button:disabled {
+            background: #7f8c8d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .result {
+            margin-top: 3vw;
+            font-size: clamp(16px, 2.5vw, 18px);
+            font-family: 'Lora', serif;
+            color: #ffffff;
+        }
+        .completion-message {
+            font-family: 'Lora', serif;
+            font-weight: 700;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            border: 2.5px solid #27ae60;
+            border-radius: 15px;
+            padding: clamp(12px, 3vw, 18px);
+            box-shadow: 0 6px 12px rgba(46, 204, 113, 0.3);
+            margin: 2vw auto;
+            max-width: 90%;
+            position: relative;
+            overflow: hidden;
+        }
+        .completion-message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 1s;
+            animation: completionShine 2s infinite;
+        }
+        @keyframes completionShine {
+            0% { left: -100%; }
+            50% { left: 100%; }
+            100% { left: 100%; }
+        }
+        .completion-message h2 {
+            font-size: clamp(22px, 4.5vw, 30px);
+            margin: 0 0 1vw;
+            color: #ff7e00;
+            text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
+        }
+        .completion-message p {
+            font-size: clamp(18px, 3.5vw, 22px);
+            margin: 0;
+            color: #ffffff;
+        }
+        .math-notation-centered {
+            display: block;
+            text-align: center;
+            width: 100%;
+            font-size: clamp(18px, 3vw, 20px);
+            margin: 10px 0;
+            line-height: 1.6;
+            font-family: 'Roboto', sans-serif;
+        }
+        mjx-container.math-notation-centered {
+            display: inline-block !important;
+            text-align: center !important;
+            vertical-align: middle !important;
+            white-space: nowrap !important;
+            line-height: 1.4 !important;
+            font-size: clamp(18px, 3vw, 20px) !important;
+            color: #f1c40f !important;
+            background: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        mjx-container.math-notation-centered * {
+            color: #f1c40f !important;
+            font-style: italic !important;
+        }
+        #trainerModal .math-notation-centered {
+            font-size: clamp(16px, 3vw, 18px);
+            color: #ffffff;
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.5;
+            text-align: center;
+            margin: 5px 0;
+            display: block;
+        }
+        #trainerModal .options-container mjx-container {
+            display: inline !important;
+            vertical-align: middle !important;
+            font-size: clamp(17px, 3vw, 19px) !important;
+            color: #f1c40f !important;
+            background: none !important;
+            font-style: italic !important;
+            margin: 0 2px !important;
+            padding: 0 !important;
+        }
+        .feedback {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(24px, 5.8vw, 30px);
+            font-family: 'Lora', serif;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+            z-index: 1001;
+            opacity: 0;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            text-align: center;
+            border: 2px solid transparent;
+        }
+        .feedback.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1.05);
+        }
+        .correct-feedback {
+            color: #ffffff;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            border: 2px solid #27ae60;
+            box-shadow: 0 0 20px rgba(46, 204, 113, 0.5);
+        }
+        .incorrect-feedback {
+            color: #ffffff;
+            background: linear-gradient(135deg, #ff4500, #ff8c00);
+            border: 2px solid #ff4500;
+            box-shadow: 0 0 20px rgba(255, 69, 0, 0.5);
+        }
+        .navigation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px auto;
+            max-width: 1000px;
+        }
+        .nav-button {
+            display: flex;
+            align-items: center;
+            background: #b86514;
+            color: #ffff00;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(138, 43, 226, 0.3);
+        }
+        .nav-button:hover {
+            background: linear-gradient(135deg, #6a5acd, #9370db);
+            color: #ffffff;
+            transform: scale(1.03);
+            box-shadow: 0 4px 12px rgba(138, 43, 226, 0.3);
+        }
+        .nav-button svg {
+            margin-right: 8px;
+            fill: currentColor;
+            transition: fill 0.3s ease;
+        }
+        .question-card {
+            perspective: 1000px;
+            margin: 20px auto;
+            max-width: 964px;
+            width: 100%;
+            min-height: 150px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            cursor: pointer;
+        }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            min-height: 150px;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            cursor: inherit;
+        }
+        .question-card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            min-height: 150px;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            cursor: inherit;
+            border: 1px solid rgba(138, 43, 226, 0.2);
+        }
+        .card-front {
+            background: #660066;
+            color: #ffffff;
+        }
+        .card-back {
+            background: linear-gradient(135deg, #4b0082, #8a2be2);
+            color: #ecf0f1;
+            transform: rotateY(180deg);
+            text-align: justify;
+            padding: 20px;
+            overflow: auto;
+            white-space: normal;
+        }
+        .card-front span, .card-back span {
+            font-family: 'Lora', serif;
+            font-size: clamp(17px, 3vw, 19px);
+            line-height: 1.4;
+            display: inline;
+            color: inherit;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .card-back span {
+            text-align: justify;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .theory-content h2 {
+            color: #f1c40f;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
+            margin-bottom: 20px;
+            font-family: 'Merriweather', serif;
+        }
+        .theory-content h3 {
+            color: #ffff00;
+            border-bottom: 2px solid #6a5acd;
+            padding-bottom: 5px;
+            margin-top: 25px;
+        }
+        .theory-content p, .theory-content li {
+            color: #ecf0f1;
+            font-size: clamp(18px, 3vw, 20px);
+            line-height: 1.7;
+        }
+        .example {
+            font-size: 1.1rem;
+            color: #ff8c00;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #ff8c00;
+            margin: 15px 0;
+        }
+        .solution {
+            color: #27ae60;
+            font-weight: bold;
+            text-align: center;
+            display: block;
+            padding: 10px;
+            border-radius: 6px;
+            border: 2px solid #27ae60;
+            margin: 15px 0;
+        }
+        .note {
+            color: #ff8c00;
+            font-weight: bold;
+        }
+        .note-text {
+            font-style: italic;
+            color: #bdc3c7;
+            text-align: justify;
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #ff8c00;
+            margin: 10px 0;
+        }
+        .theory-content p:not(.math-notation-centered),
+        .theory-content li {
+            text-align: justify;
+        }
+        .vector-type {
+            font-style: italic;
+            color: #f1c40f;
+        }
+        .main-types {
+            font-weight: bold;
+            color: #6a5acd;
+        }
+        ol {
+            color: #ecf0f1;
+        }
+        ol li::marker {
+            color: #f1c40f;
+        }
+        mjx-container {
+            color: #f1c40f !important;
+            background: none !important;
+            font-style: italic !important;
+        }
+        .theory-content mjx-container {
+            color: #f1c40f !important;
+            background: none !important;
+        }
+        .modal-content::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        .modal-content::-webkit-scrollbar-track {
+            background: #4b0082;
+            border-radius: 10px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
+        }
+        .modal-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #6a5acd, #9370db);
+            border-radius: 10px;
+            border: 2px solid #4b0082;
+        }
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #483d8b, #7b68ee);
+        }
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #4b0082;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #6a5acd, #9370db);
+            border-radius: 10px;
+            border: 2px solid #4b0082;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #483d8b, #7b68ee);
+        }
+        .modal-content {
+            scrollbar-color: #6a5acd #4b0082;
+            scrollbar-width: thin;
+        }
+        .glow-title {
+            text-align: center;
+            color: #ffffff;
+            font-family: 'Merriweather', serif;
+            font-size: clamp(20px, 3vw, 24px);
+            margin: 10px 0;
+            text-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+            background: linear-gradient(135deg, #6a5acd, #9370db);
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: block;
+        }
+        .input-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            width: 100%;
+            max-width: 300px;
+            background: rgba(75, 0, 130, 0.5);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(138, 43, 226, 0.3);
+        }
+        #answerInput {
+            padding: 8px;
+            font-size: clamp(14px, 3vw, 16px);
+            width: 100px;
+            border: 2px solid #6a5acd;
+            border-radius: 6px;
+            background: #4b0082;
+            color: #ecf0f1;
+            text-align: center;
+            font-family: 'Roboto', sans-serif;
+        }
+        #answerInput:focus {
+            outline: none;
+            border-color: #f1c40f;
+            box-shadow: 0 0 8px rgba(241, 196, 15, 0.3);
+        }
+        .option.text-option {
+            font-size: clamp(14px, 3vw, 16px);
+            padding: 10px 20px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .figure-reference {
+            color: #ff8c00;
+            font-style: italic;
+            font-weight: bold;
+        }
+        .angle-notation {
+            color: #9b59b6;
+            font-weight: bold;
+        }
+        .vector-relation {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        #vectorCanvas {
+            display: block;
+            margin: 20px auto;
+            border: 1px solid rgba(138, 43, 226, 0.2);
+            background: #4b0082;
+            border-radius: 8px;
+            width: 400px;
+            height: 300px;
+        }
+        #optionsContainer {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        #submitAnswer {
+            margin-top: 20px;
+            padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 24px);
+            background: linear-gradient(135deg, #6a5acd, #9370db);
+            color: #ffffff;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: clamp(16px, 3vw, 18px);
+            font-family: 'Lora', serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(138, 43, 226, 0.3);
+        }
+        #submitAnswer:disabled {
+            background: #7f8c8d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        #submitAnswer:hover:not(:disabled) {
+            background: linear-gradient(135deg, #483d8b, #7b68ee);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(138, 43, 226, 0.4);
+        }
+        summary {
+            font-weight: bold;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, #6a5acd, #9370db);
+            border-radius: 8px;
+            color: #ffffff;
+            font-family: 'Merriweather', serif;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+            cursor: pointer;
+            list-style: none;
+        }
+        summary::-webkit-details-marker {
+            display: none;
+        }
+        summary::after {
+            content: " ▼";
+            font-size: 0.9rem;
+            transition: transform 0.3s ease;
+        }
+        details[open] summary::after {
+            transform: rotate(-180deg);
+        }
+        .example .MJX-TeXAtom-OP, .example .MathJax {
+            font-size: 120%;
+        }
+        .video-card {
+            width: 350px;
+            height: 250px;
+            background: #ffd700;
+            border-radius: 15px;
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 10px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            color: #0a0a5c;
+        }
+        .video-card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+        }
+        .video-card img {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 8px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+        .video-card h3 {
+            font-size: clamp(16px, 2.5vw, 18px);
+            font-weight: 600;
+            margin: 0;
+        }
+        .video-player-container {
+            width: 80vw;
+            max-width: 960px;
+            aspect-ratio: 16 / 9;
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .video-player-container iframe {
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            display: block;
+            border: none;
+        }
+            main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+            
+        @media (max-width: 768px) {
+            .close-btn {
+                font-size: 16px;
+                padding: 6px 12px;
+                border-radius: 8px;
+            }
+            .theory-content p, .theory-content li {
+                font-size: clamp(18px, 3vw, 20px);
+            }
+            .theory-content mjx-container {
+                font-size: clamp(16px, 3vw, 18px) !important;
+            }
+            .theory-content h2, .theory-content h3 {
+                font-size: clamp(20px, 3vw, 24px);
+            }
+            .question-block summary {
+                font-size: clamp(18px, 3vw, 20px);
+            }
+            .question-block details p {
+                font-size: clamp(18px, 3vw, 20px);
+            }
+            #questionsModal mjx-container {
+                font-size: 20px !important;
+            }
+            #submitAnswer {
+                font-size: clamp(16px, 3.5vw, 18px);
+                padding: clamp(12px, 3vw, 14px) clamp(24px, 5vw, 28px);
+            }
+            #answerInput {
+                width: 80px;
+                padding: 8px;
+                font-size: clamp(16px, 3vw, 18px);
+            }
+            .title-box {
+                margin-top: 40px;
+                padding: 15px 20px;
+            }
+            .title-box h1 {
+                font-size: 24px;
+            }
+            .section-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            .section {
+                width: 80%;
+                height: 180px;
+            }
+            .modal {
+                top: 2%;
+                left: 2%;
+                width: 96%;
+                height: 96%;
+            }
+            .modal-header {
+                padding: 5px 8px;
+            }
+            .modal-content {
+                max-height: calc(100% - 50px);
+            }
+            .question-card {
+                min-height: 180px;
+            }
+            .card-front, .card-back {
+                font-size: clamp(15px, 3vw, 17px);
+                padding: 12px;
+                line-height: 1.4;
+            }
+            .card-front span, .card-back span {
+                font-size: clamp(15px, 3vw, 17px);
+                line-height: 1.4;
+            }
+            #questionsModal mjx-container {
+                font-size: clamp(16px, 3vw, 18px) !important;
+            }
+            .trainer-container {
+                width: 95%;
+                padding: 4vw;
+            }
+            .question-circle, .completion-emoji {
+                width: 25vw;
+                height: 25vw;
+                min-width: 80px;
+                min-height: 80px;
+            }
+            .question-circle h3 {
+                font-size: clamp(14px, 3vw, 16px);
+            }
+            .completion-emoji::after {
+                font-size: clamp(30px, 7vw, 40px);
+            }
+            .options-container {
+                gap: 1.5vw;
+                flex-direction: column;
+                align-items: center;
+            }
+            .option {
+                font-size: clamp(14px, 4vw, 16px);
+                padding: 10px !important;
+                min-height: 60px !important;
+                min-width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                overflow: hidden;
+            }
+            .option mjx-container {
+                font-size: clamp(13px, 4vw, 15px) !important;
+                width: 100% !important;
+                text-align: center;
+                overflow: hidden;
+            }
+            button {
+                padding: 3vw 5vw;
+                font-size: clamp(12px, 3vw, 14px);
+            }
+            .feedback {
+                font-size: clamp(24px, 5.8vw, 32px);
+                padding: clamp(12px, 3.5vw, 18px) clamp(18px, 5vw, 25px);
+                max-width: 95vw;
+                word-wrap: break-word;
+            }
+            .completion-message {
+                padding: clamp(10px, 3vw, 15px);
+            }
+            .completion-message h2 {
+                font-size: clamp(20px, 4vw, 26px);
+            }
+            .completion-message p {
+                font-size: clamp(16px, 3vw, 20px);
+            }
+            .navigation-buttons {
+                margin: 20px auto;
+                gap: 15px;
+            }
+            .nav-button {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+            .math-notation-centered {
+                font-size: clamp(16px, 2.5vw, 18px);
+            }
+            mjx-container.math-notation-centered {
+                font-size: clamp(16px, 2.5vw, 18px) !important;
+            }
+            .input-container {
+                flex-direction: row;
+                align-items: center;
+                gap: 8px;
+            }
+            #vectorCanvas {
+                width: 260px;
+                height: 195px;
+            }
+            #trainerModal .options-container mjx-container {
+                font-size: clamp(16px, 3.2vw, 18px) !important;
+            }
+            .video-card-container {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            .video-card {
+                width: 260px;
+                height: 160px;
+                margin: 5px;
+            }
+            .video-card img {
+                width: 40px;
+                height: 40px;
+                margin-bottom: 6px;
+            }
+            .video-player-container {
+                width: 80vw;
+                max-width: 600px;
+                aspect-ratio: 16 / 9;
+            }
+            .video-card h3 {
+                font-size: clamp(14px, 2.5vw, 16px);
+            }
+        }
+        @media (max-width: 480px) {
+            .close-btn {
+                font-size: 14px;
+                padding: 5px 10px;
+                border-radius: 6px;
+            }
+            .theory-content p, .theory-content li {
+                font-size: clamp(16px, 3vw, 18px);
+            }
+            .theory-content mjx-container {
+                font-size: clamp(16px, 3vw, 18px) !important;
+            }
+            .theory-content h2, .theory-content h3 {
+                font-size: clamp(20px, 3vw, 24px);
+            }
+            .question-block summary {
+                font-size: clamp(17px, 3.2vw, 19px);
+            }
+            .question-block details p {
+                font-size: clamp(16px, 3vw, 18px);
+            }
+            #questionsModal mjx-container {
+                font-size: 20px !important;
+            }
+            #submitAnswer {
+                font-size: clamp(14px, 3.5vw, 16px);
+                padding: clamp(10px, 3vw, 12px) clamp(20px, 5vw, 24px);
+            }
+            #answerInput {
+                width: 70px;
+                padding: 6px;
+                font-size: clamp(14px, 3vw, 16px);
+            }
+            .title-box {
+                margin-top: 20px;
+                padding: 10px 15px;
+            }
+            .title-box h1 {
+                font-size: 20px;
+            }
+            .section {
+                width: 90%;
+                height: 150px;
+            }
+            .section img {
+                width: 50px;
+                height: 50px;
+            }
+            .section h2 {
+                font-size: 18px;
+            }
+            .modal-header {
+                padding: 4px 6px;
+            }
+            .modal-content {
+                max-height: calc(100% - 40px);
+            }
+            .question-card {
+                min-height: 200px;
+            }
+            .card-front, .card-back {
+                font-size: clamp(14px, 3vw, 16px);
+                padding: 10px;
+                line-height: 1.3;
+            }
+            .card-front span, .card-back span {
+                font-size: clamp(14px, 3vw, 16px);
+                line-height: 1.3;
+            }
+            #questionsModal mjx-container {
+                font-size: clamp(14px, 3vw, 16px) !important;
+            }
+            .card-inner {
+                min-height: 200px;
+            }
+            .trainer-container {
+                padding: 5vw;
+            }
+            .question-circle, .completion-emoji {
+                width: 25vw;
+                height: 25vw;
+                min-width: 60px;
+                min-height: 60px;
+            }
+            .completion-emoji::after {
+                font-size: clamp(25px, 6vw, 35px);
+            }
+            .option {
+                font-size: 16px !important;
+                padding: 10px !important;
+                min-height: 60px !important;
+                min-width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                overflow: hidden;
+            }
+            .option mjx-container {
+                font-size: clamp(13px, 4vw, 15px) !important;
+                width: 100% !important;
+                text-align: center;
+                overflow: hidden;
+            }
+            .feedback {
+                font-size: clamp(22px, 5.2vw, 28px);
+                padding: clamp(10px, 3vw, 15px) clamp(15px, 4.5vw, 20px);
+                max-width: 95vw;
+                word-wrap: break-word;
+            }
+            .completion-message {
+                padding: clamp(10px, 3vw, 15px);
+            }
+            .completion-message h2 {
+                font-size: clamp(18px, 3.5vw, 22px);
+            }
+            .completion-message p {
+                font-size: clamp(14px, 3vw, 18px);
+            }
+            .navigation-buttons {
+                margin: 15px auto;
+                gap: 10px;
+            }
+            .nav-button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+            .math-notation-centered {
+                font-size: clamp(14px, 2.5vw, 16px);
+                line-height: 1.2;
+            }
+            mjx-container.math-notation-centered {
+                font-size: clamp(14px, 2.5vw, 16px) !important;
+                line-height: 1.2 !important;
+            }
+            mjx-container {
+                font-size: 13px !important;
+            }
+            .input-container {
+                gap: 6px;
+            }
+            #trainerModal .options-container mjx-container {
+                font-size: clamp(14px, 3vw, 16px) !important;
+            }
+            .cube-formula, .vector-formula {
+                font-size: clamp(16px, 3vw, 18px);
+            }
+            .video-card-container {
+                gap: 10px;
+                padding: 10px;
+            }
+            .video-card {
+                width: 90%;
+                max-width: 260px;
+                height: 140px;
+                margin: 5px;
+            }
+            .video-card img {
+                width: 30px;
+                height: 30px;
+                margin-bottom: 5px;
+            }
+            .video-card h3 {
+                font-size: clamp(12px, 2.5vw, 14px);
+            }
+            .video-player-container {
+                width: 80vw;
+                max-width: 400px;
+                aspect-ratio: 16 / 9;
+            }
+            #trainerModal .math-notation-centered,
+            #questionsModal mjx-container {
+                font-size: clamp(18px, 4vw, 22px) !important;
+            }
+        }
+        @media (max-width: 600px) {
+            #trainerModal .math-notation-centered,
+            #questionsModal mjx-container {
+                font-size: clamp(18px, 4vw, 22px) !important;
+            }
+            #trainerModal .options-container mjx-container {
+                font-size: clamp(18px, 4vw, 20px) !important;
+            }
+        }
+        @media (max-width: 768px) {
+            #trainerModal .math-notation-centered,
+            #trainerModal mjx-container,
+            #questionsModal mjx-container {
+                font-size: 5vw !important;
+                line-height: 1.4 !important;
+            }
+            #trainerModal .options-container mjx-container {
+                font-size: 4.5vw !important;
+            }
+            mjx-frac {
+                font-size: 1.3em !important;
+            }
+        }
+   
+    </style>
+</head>
+<body>
+    <div class="title-box">
+        <h1>32. Декартова система координат. Координати вектора</h1>
+    </div>
+
+    <div class="section-container">
+        <div class="section" id="openTheoryBtn">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Книга" loading="lazy">
+            <h2>Теоретичні відомості</h2>
+        </div>
+        <div class="section" id="openVideoBtn">
+            <img src="https://img.icons8.com/fluency/96/video.png" alt="Відео" loading="lazy">
+            <h2>Відеоматеріали</h2>
+        </div>
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Картки" loading="lazy">
+            <h2>Питання і відповіді</h2>
+        </div>
+        <div class="section" id="openTrainerBtn">
+            <img src="https://img.icons8.com/fluency/96/flash-on.png" alt="Тренажер" loading="lazy">
+            <h2>Тренажер</h2>
+        </div>
+    </div>
+
+    <div class="navigation-buttons">
+        <a class="nav-button" href="{{ url_for('tema7') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            До теми 7
+        </a>
+        <a class="nav-button" href="{{ url_for('home') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            На головну
+        </a>
+    </div>
+
+   <div id="theoryModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="theoryTitle">
+    <div class="modal-header">
+        <button class="close-btn" id="closeTheoryBtn" aria-label="Закрити">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="theory-content">
+            <h2>Дії над векторами, заданими своїми координатами</h2>
+
+            <p>Дії над векторами, заданими своїми координатами, виконуються шляхом використання алгебраїчних дій з їхніми координатами. Розглянемо базові дії: <span class="highlight-term">додавання, віднімання та множення вектора на скаляр (число).</span></p>
+            <p>Нехай <span class="math-notation">\( \vec{a} = (a_x; a_y; a_z) \)</span> і <span class="math-notation">\( \vec{b} = (b_x; b_y; b_z) \)</span> – вектори, задані своїми координатами. Тоді дії над ними виконуються за такими правилами:</p>
+            <ol>
+                <li><strong style="color: #7cfc00;">Додавання векторів.</strong> При додаванні векторів відповідні координати додають:<br>
+                    <p class="math-notation-centered">\[ \vec{a} + \vec{b} = (a_x + b_x; a_y + b_y; a_z + b_z) \quad (7.15) \]</p></li>
+                <li><strong style="color: #7cfc00;">Віднімання векторів.</strong> При відніманні векторів їхні відповідні координати віднімають:<br>
+                    <p class="math-notation-centered">\[ \vec{a} - \vec{b} = (a_x - b_x; a_y - b_y; a_z - b_z) \quad (7.16) \]</p></li>
+                <li><strong style="color: #7cfc00;">Множення вектора на число.</strong> При множенні ненульового вектора <span class="math-notation">\( \vec{a} = (a_x; a_y; a_z) \)</span> на число <span class="math-notation">\( \lambda \)</span>, відмінне від нуля, усі його координати множать на це число:<br>
+                    <p class="math-notation-centered">\[ \lambda (a_x; a_y; a_z) = (\lambda a_x; \lambda a_y; \lambda a_z) \quad (7.17) \]</p></li>
+            </ol>
+            <div class="note">Примітка:</div>
+            <p class="note-text">Якщо <span class="math-notation">\( \lambda = 0 \)</span>, то результатом множення будь-якого вектора буде нульовий вектор <span class="math-notation">\( (0; 0; 0) \)</span>.</p>
+            <p>Ці правила дозволяють легко виконувати різні дії з векторами в просторі, використовуючи їхні координати.</p>
+            
+            <h3>Приклад 7.7</h3>
+            <div class="example">За координатами векторів <span class="math-notation">\( \vec{a} = (-4; 6; 0) \)</span>, <span class="math-notation">\( \vec{b} = (1; -1; 7) \)</span>, знайти координати векторів <span class="math-notation">\( \vec{a} + \vec{b} \)</span>, <span class="math-notation">\( \vec{a} - \vec{b} \)</span>, <span class="math-notation">\( 5\vec{a} \)</span>, <span class="math-notation">\( 3\vec{b} - \frac{1}{2}\vec{a} \)</span>.</div>
+            <p>Використовуючи формули (7.15) – (7.17), маємо:</p>
+            <p class="math-notation-centered">\[ \vec{a} + \vec{b} = (-4 + 1; 6 + (-1); 0 + 7) = (-3; 5; 7) \]</p>
+            <p class="math-notation-centered">\[ \vec{a} - \vec{b} = (-4 - 1; 6 - (-1); 0 - 7) = (-5; 7; -7) \]</p>
+            <p class="math-notation-centered">\[ 5\vec{a} = (5 \cdot (-4); 5 \cdot 6; 5 \cdot 0) = (-20; 30; 0) \]</p>
+            <p class="math-notation-centered">\[ 3\vec{b} - \frac{1}{2}\vec{a} = (3 \cdot 1; 3 \cdot (-1); 3 \cdot 7) - \left( \frac{1}{2} \cdot (-4); \frac{1}{2} \cdot 6; \frac{1}{2} \cdot 0 \right) = (3; -3; 21) - (-2; 3; 0) = (5; -6; 21) \]</p>
+            <p class="solution">Відповідь: <span class="math-notation">\( \vec{a} + \vec{b} = (-3; 5; 7) \)</span>, <span class="math-notation">\( \vec{a} - \vec{b} = (-5; 7; -7) \)</span>, <span class="math-notation">\( 5\vec{a} = (-20; 30; 0) \)</span>, <span class="math-notation">\( 3\vec{b} - \frac{1}{2}\vec{a} = (5; -6; 21) \)</span>.</p>
+
+            <ol start="4">
+                <li><strong style="color: #7cfc00;">Рівність векторів.</strong> Два вектори <span class="math-notation">\( \vec{a} \)</span> і <span class="math-notation">\( \vec{b} \)</span> рівні, якщо їх відповідні координати рівні.<br>
+                    <p class="math-notation-centered">\[ \vec{a} = \vec{b} \quad \Longleftrightarrow \begin{cases} a_x = b_x \\ a_y = b_y \\ a_z = b_z \end{cases} \quad (7.18) \]</p></li>
+            </ol>
+            <p>Рівність векторів означає, що два вектори мають однакову величину і однаковий напрямок. Це виконується, якщо і тільки якщо їх відповідні координати збігаються.</p>
+            
+            <h3>Приклад 7.8</h3>
+            <div class="example">Початок вектора <span class="math-notation">\( \vec{a} \)</span> має координати точки <span class="math-notation">\( M(-4; 6; 2) \)</span>, а сам вектор задано як <span class="math-notation">\( \vec{a} = (4; -3; 7) \)</span>. Визначте координати точки <span class="math-notation">\( N \)</span>, з якою співпадає кінець вектора <span class="math-notation">\( \vec{a} \)</span>.</div>
+            <p>Нехай точка <span class="math-notation">\( N \)</span> має координати <span class="math-notation">\( (x_N; y_N; z_N) \)</span>. Оскільки вектор, що сполучає точку <span class="math-notation">\( M \)</span> з точкою <span class="math-notation">\( N \)</span> (тобто <span class="math-notation">\( \overrightarrow{MN} \)</span>), дорівнює вектору <span class="math-notation">\( \vec{a} \)</span>, тоді, спочатку запишемо координати вектора <span class="math-notation">\( \overrightarrow{MN} \)</span> за формулою (7.14):</p>
+            <p class="math-notation-centered">\[ \overrightarrow{MN} = (x_N - x_M; y_N - y_M; z_N - z_M) \]</p>
+            <p>Відомо, що координати точки <span class="math-notation">\( M \)</span> рівні <span class="math-notation">\( (-4; 6; 2) \)</span>, тому маємо:</p>
+            <p class="math-notation-centered">\[ \overrightarrow{MN} = (x_N - (-4); y_N - 6; z_N - 2) = (x_N + 4; y_N - 6; z_N - 2) \]</p>
+            <p>За умовою задачі <span class="math-notation">\( \vec{a} = \overrightarrow{MN} \)</span> і <span class="math-notation">\( \vec{a} = (4; -3; 7) \)</span>, тоді:</p>
+            <p class="math-notation-centered">\[ (4; -3; 7) = (x_N + 4; y_N - 6; z_N - 2) \]</p>
+            <p>З рівності векторів (7.18) отримуємо:</p>
+            <p class="math-notation-centered">\[ \begin{cases} x_N + 4 = 4 \\ y_N - 6 = -3 \\ z_N - 2 = 7 \end{cases} \]</p>
+            <p>Розв’язуємо кожне рівняння:</p>
+            <p class="math-notation-centered">\[ x_N = 4 - 4 = 0 \]</p>
+            <p class="math-notation-centered">\[ y_N = -3 + 6 = 3 \]</p>
+            <p class="math-notation-centered">\[ z_N = 7 + 2 = 9 \]</p>
+            <p class="solution">Отже, точка <span class="math-notation">\( N \)</span> має координати <span class="math-notation">\( N(0; 3; 9) \)</span>.</p>
+
+            <ol start="5">
+                <li><strong style="color: #7cfc00;">Довжина вектора.</strong> Для вектора <span class="math-notation">\( \vec{a} \)</span>, довжина вектора визначається як:<br>
+                    <p class="math-notation-centered">\[ |\vec{a}| = \sqrt{a_x^2 + a_y^2 + a_z^2} \quad (7.19) \]</p></li>
+            </ol>
+            <p>Це дає довжину діагоналі прямокутного паралелепіпеда, де сторони рівні <span class="math-notation">\( |a_x| \)</span>, <span class="math-notation">\( |a_y| \)</span>, <span class="math-notation">\( |a_z| \)</span>.</p>
+            <p>Якщо вектор заданий двома точками <span class="math-notation">\( A(x_1; y_1; z_1) \)</span> і <span class="math-notation">\( B(x_2; y_2; z_2) \)</span>, то довжину вектора <span class="math-notation">\( |\overrightarrow{AB}| \)</span> обчислюється за формулою:</p>
+            <p class="math-notation-centered">\[ |\overrightarrow{AB}| = \sqrt{(x_2 - x_1)^2 + (y_2 - y_1)^2 + (z_2 - z_1)^2} \quad (7.20) \]</p>
+            <p>Ця ж формула використовується для знаходження відстані між двома точками <span class="math-notation">\( A \)</span> та <span class="math-notation">\( B \)</span> у просторі.</p>
+            
+            <h3>Приклад 7.9</h3>
+            <div class="example">Знайти довжину вектора <span class="math-notation">\( \vec{a} = (2; -3; 6) \)</span>.</div>
+            <p>Застосуємо формулу (7.19) для довжини вектора <span class="math-notation">\( \vec{a} \)</span>:</p>
+            <p class="math-notation-centered">\[ |\vec{a}| = \sqrt{2^2 + (-3)^2 + 6^2} = \sqrt{4 + 9 + 36} = \sqrt{49} = 7 \]</p>
+            <p class="solution">Отже, <span class="math-notation">\( |\vec{a}| = 7 \)</span>.</p>
+
+            <h3>Приклад 7.10</h3>
+            <div class="example">Знайти довжину вектора <span class="math-notation">\( \overrightarrow{AB} \)</span>, якщо <span class="math-notation">\( A(3; 5; 1) \)</span>, <span class="math-notation">\( B(5; 6; 3) \)</span>.</div>
+            <p>Застосуємо формулу (7.20) для довжини вектора <span class="math-notation">\( \overrightarrow{AB} \)</span>:</p>
+            <p class="math-notation-centered">\[ |\overrightarrow{AB}| = \sqrt{(5 - 3)^2 + (6 - 5)^2 + (3 - 1)^2} = \sqrt{4 + 1 + 4} = \sqrt{9} = 3 \]</p>
+            <p class="solution">Отже, <span class="math-notation">\( |\overrightarrow{AB}| = 3 \)</span>.</p>
+        </div>
+    </div>
+</div>
+
+     <div id="videoModal" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeVideoBtn" aria-label="Закрити">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <h2 class="glow-title">Оберіть відео</h2>
+        <div class="video-card-container">
+            <div class="video-card" data-video="1">
+                <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
+                <h3>Операції над векторами в просторі (сума та різниця векторів, множення вектора на число)</h3>
+            </div>
+            <div class="video-card" data-video="2">
+                <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
+                <h3>Вектори у просторі (задані координатами, довжина вектора)</h3>
+            </div>
+            <div class="video-card" data-video="3">
+                <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
+                <h3>Лінійні операції над векторами в координатній формі</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="videoPlayerModal1" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeVideoPlayerBtn1" aria-label="Закрити">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="video-player-container">
+            <iframe id="youtubePlayer1" width="100%" src="https://www.youtube.com/embed/Tc5Q7g92jIc" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+<div id="videoPlayerModal2" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeVideoPlayerBtn2" aria-label="Закрити">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="video-player-container">
+            <iframe id="youtubePlayer2" width="100%" src="https://www.youtube.com/embed/itBpw7Oi8MY" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+<div id="videoPlayerModal3" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeVideoPlayerBtn3" aria-label="Закрити">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="video-player-container">
+           <iframe id="youtubePlayer3" width="100%" src="https://www.youtube.com/embed/T66o3FkV7pM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+  <div id="questionsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="questionsTitle">
+    <div class="modal-header">
+        <button class="close-btn" id="closeQuestionsBtn" aria-label="Закрити">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>1. Як виконують додавання векторів, заданих координатами?</span>
+                </div>
+                <div class="card-back">
+                    <span>Додають відповідні координати: <span class="math-notation">\( \vec{a} + \vec{b} = (a_x + b_x; a_y + b_y; a_z + b_z) \)</span>.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>2. Як виконують віднімання векторів, заданих координатами?</span>
+                </div>
+                <div class="card-back">
+                    <span>Віднімають відповідні координати: <span class="math-notation">\( \vec{a} - \vec{b} = (a_x - b_x; a_y - b_y; a_z - b_z) \)</span>.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>3. Як множиться вектор на число <span class="math-notation">\( \lambda \)</span>?</span>
+                </div>
+                <div class="card-back">
+                    <span>Кожну координату множать на <span class="math-notation">\( \lambda \)</span>: <span class="math-notation">\( \lambda (a_x; a_y; a_z) = (\lambda a_x; \lambda a_y; \lambda a_z) \)</span>.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>4. Коли два вектори рівні?</span>
+                </div>
+                <div class="card-back">
+                    <span>Якщо рівні їхні відповідні координати: <span class="math-notation">\( \vec{a} = \vec{b} \quad \Longleftrightarrow \begin{cases} a_x = b_x \\ a_y = b_y \\ a_z = b_z \end{cases} \)</span>.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>5. Яка формула для довжини вектора <span class="math-notation">\( \vec{a}(a_x; a_y; a_z) \)</span>?</span>
+                </div>
+                <div class="card-back">
+                    <span><span class="math-notation">\( |\vec{a}| = \sqrt{a_x^2 + a_y^2 + a_z^2} \)</span>.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>6. Яка формула довжини вектора <span class="math-notation">\( |\overrightarrow{AB}| \)</span> за координатами точок <span class="math-notation">\( A(x_1; y_1; z_1) \)</span> і <span class="math-notation">\( B(x_2; y_2; z_2) \)</span>?</span>
+                </div>
+                <div class="card-back">
+                    <span><span class="math-notation">\( |\overrightarrow{AB}| = \sqrt{(x_2 - x_1)^2 + (y_2 - y_1)^2 + (z_2 - z_1)^2} \)</span>.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="trainerModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="trainerTitle">
+    <div class="modal-header">
+        <button class="close-btn" id="closeTrainerBtn" aria-label="Закрити">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="trainer-container" id="trainerContent">
+            <div class="question-circle">
+                <h3 id="questionNumber"></h3>
+            </div>
+            <p id="questionText" class="math-notation-centered"></p> <!-- Додано questionText -->
+            <div class="options-container" id="optionsContainer"></div>
+            <button id="submitAnswer" disabled>Підтвердити</button>
+            <div id="feedback" class="feedback"></div>
+            <div id="completionBlock" class="completion-message hidden">
+                <div class="completion-emoji"></div>
+                <h2>Тренування завершено!</h2>
+                <p>Молодець!</p>
+                <button id="resetTrainerBtn">Спробувати ще раз</button>
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="modalOverlay"></div>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    console.log('DOM завантажено');
+    document.body.classList.add('loaded');
+
+    const elements = {
+        openTheoryBtn: document.getElementById('openTheoryBtn'),
+        openVideoBtn: document.getElementById('openVideoBtn'),
+        openQuestionsBtn: document.getElementById('openQuestionsBtn'),
+        openTrainerBtn: document.getElementById('openTrainerBtn'),
+        theoryModal: document.getElementById('theoryModal'),
+        videoModal: document.getElementById('videoModal'),
+        questionsModal: document.getElementById('questionsModal'),
+        trainerModal: document.getElementById('trainerModal'),
+        closeTheoryBtn: document.getElementById('closeTheoryBtn'),
+        closeVideoBtn: document.getElementById('closeVideoBtn'),
+        closeQuestionsBtn: document.getElementById('closeQuestionsBtn'),
+        closeTrainerBtn: document.getElementById('closeTrainerBtn'),
+        closeVideoPlayerBtn1: document.getElementById('closeVideoPlayerBtn1'),
+        closeVideoPlayerBtn2: document.getElementById('closeVideoPlayerBtn2'),
+        closeVideoPlayerBtn3: document.getElementById('closeVideoPlayerBtn3'),
+        videoPlayerModal1: document.getElementById('videoPlayerModal1'),
+        videoPlayerModal2: document.getElementById('videoPlayerModal2'),
+        videoPlayerModal3: document.getElementById('videoPlayerModal3'),
+        modalOverlay: document.getElementById('modalOverlay'),
+        questionNumber: document.getElementById('questionNumber'),
+        questionText: document.getElementById('questionText'),
+        optionsContainer: document.getElementById('optionsContainer'),
+        feedback: document.getElementById('feedback'),
+        completionBlock: document.getElementById('completionBlock'),
+        resetTrainerBtn: document.getElementById('resetTrainerBtn'),
+        submitAnswer: document.getElementById('submitAnswer'),
+        youtubePlayer1: document.getElementById('youtubePlayer1'),
+        youtubePlayer2: document.getElementById('youtubePlayer2'),
+        youtubePlayer3: document.getElementById('youtubePlayer3'),
+        trainerContainer: document.getElementById('trainerContent')
+    };
+
+    // Перевірка наявності елементів
+    for (const [key, value] of Object.entries(elements)) {
+        if (!value) {
+            console.error(`Елемент ${key} не знайдено`);
+        }
+    }
+
+    // Зупиняємо виконання, якщо критичні елементи відсутні
+    const criticalElements = ['openTrainerBtn', 'trainerModal', 'modalOverlay', 'questionText', 'questionNumber', 'optionsContainer', 'submitAnswer'];
+    const missingCriticalElements = criticalElements.filter(key => !elements[key]);
+    if (missingCriticalElements.length > 0) {
+        console.error('Критичні елементи не знайдено:', missingCriticalElements);
+        document.body.innerHTML = '<h1>Помилка: відсутні критичні елементи. Перевірте HTML.</h1>';
+        return;
+    }
+
+    let players = {};
+    const playerIds = {
+        'youtubePlayer1': 'Tc5Q7g92jIc',
+        'youtubePlayer2': 'itBpw7Oi8MY',
+        'youtubePlayer3': 'T66o3FkV7pM'
+    };
+
+    const playerSrcs = {
+        'youtubePlayer1': elements.youtubePlayer1 ? elements.youtubePlayer1.src : '',
+        'youtubePlayer2': elements.youtubePlayer2 ? elements.youtubePlayer2.src : '',
+        'youtubePlayer3': elements.youtubePlayer3 ? elements.youtubePlayer3.src : ''
+    };
+
+    function loadYouTubeAPI() {
+        if (!window.YT) {
+            const tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            const firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            tag.onload = () => console.log('YouTube API завантажено');
+            tag.onerror = () => console.error('Помилка завантаження YouTube API');
+        } else {
+            window.onYouTubeIframeAPIReady();
+        }
+    }
+
+    window.onYouTubeIframeAPIReady = function () {
+        Object.keys(playerIds).forEach(playerId => {
+            const element = elements[playerId];
+            if (element) {
+                players[playerId] = new YT.Player(playerId, {
+                    videoId: playerIds[playerId],
+                    playerVars: {
+                        'autoplay': 0,
+                        'controls': 1,
+                        'rel': 0,
+                        'showinfo': 0,
+                        'enablejsapi': 1
+                    },
+                    events: {
+                        'onReady': function (event) {
+                            console.log(`YouTube плеєр ${playerId} готовий`);
+                        },
+                        'onError': function (error) {
+                            console.error(`Помилка YouTube плеєра ${playerId}:`, error);
+                        }
+                    }
+                });
+            }
+        });
+    };
+    loadYouTubeAPI();
+
+    function stopAllVideos() {
+        Object.keys(players).forEach(playerId => {
+            const player = players[playerId];
+            const element = elements[playerId];
+            if (player && typeof player.stopVideo === 'function') {
+                try {
+                    player.stopVideo();
+                    console.log(`Зупинено відео через API: ${playerId}`);
+                } catch (e) {
+                    console.error(`Помилка при зупинці відео ${playerId}:`, e);
+                }
+            }
+            if (element) {
+                element.src = '';
+                console.log(`Очищено src для ${playerId}`);
+                const parent = element.parentNode;
+                const newIframe = document.createElement('iframe');
+                newIframe.id = playerId;
+                newIframe.className = element.className;
+                newIframe.setAttribute('data-src', playerSrcs[playerId]);
+                newIframe.setAttribute('frameborder', '0');
+                newIframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+                newIframe.setAttribute('allowfullscreen', '');
+                parent.replaceChild(newIframe, element);
+                elements[playerId] = newIframe;
+                console.log(`Замінено iframe для ${playerId}`);
+                players[playerId] = new YT.Player(playerId, {
+                    videoId: playerIds[playerId],
+                    playerVars: {
+                        'autoplay': 0,
+                        'controls': 1,
+                        'rel': 0,
+                        'showinfo': 0,
+                        'enablejsapi': 1
+                    },
+                    events: {
+                        'onReady': function (event) {
+                            console.log(`YouTube плеєр ${playerId} переініціалізовано`);
+                        },
+                        'onError': function (error) {
+                            console.error(`Помилка YouTube плеєра ${playerId}:`, error);
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    function toggleModal(modal, show) {
+        if (!modal || !elements.modalOverlay) {
+            console.error('Модальне вікно або overlay не знайдено:', { modal: modal?.id, overlay: !!elements.modalOverlay });
+            return;
+        }
+        console.log(`Перемикаємо ${modal.id}: display=${show ? 'flex' : 'none'}`);
+        modal.style.display = show ? 'flex' : 'none';
+        elements.modalOverlay.style.display = show ? 'block' : 'none';
+        document.body.style.overflow = show ? 'hidden' : 'auto';
+        if (show) {
+            const closeBtn = modal.querySelector('.close-btn');
+            if (closeBtn) closeBtn.focus();
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise([modal]).then(() => {
+                    console.log(`MathJax типізація завершена для ${modal.id}`);
+                }).catch(err => console.error('Помилка MathJax:', err));
+            }
+        }
+    }
+
+    function openVideoPlayerModal(videoModal, playerId) {
+        stopAllVideos();
+        toggleModal(elements.videoModal, false);
+        toggleModal(videoModal, true);
+        const element = elements[playerId];
+        if (element && !element.src) {
+            element.src = playerSrcs[playerId];
+            console.log(`Відновлено src для ${playerId}: ${playerSrcs[playerId]}`);
+        }
+        if (players[playerId] && typeof players[playerId].loadVideoById === 'function') {
+            try {
+                players[playerId].loadVideoById(playerIds[playerId]);
+                console.log(`Завантаження відео: ${playerId} з videoId ${playerIds[playerId]}`);
+            } catch (e) {
+                console.error(`Помилка при завантаженні відео ${playerId}:`, e);
+            }
+        }
+    }
+
+    // Обробники подій
+    elements.openTheoryBtn?.addEventListener('click', () => {
+        console.log('Відкриваємо теорію');
+        toggleModal(elements.theoryModal, true);
+    });
+    elements.openVideoBtn?.addEventListener('click', () => {
+        console.log('Відкриваємо відео');
+        toggleModal(elements.videoModal, true);
+    });
+    elements.openQuestionsBtn?.addEventListener('click', () => {
+        console.log('Відкриваємо питання');
+        toggleModal(elements.questionsModal, true);
+    });
+    elements.openTrainerBtn?.addEventListener('click', () => {
+        console.log('Відкриваємо тренажер');
+        toggleModal(elements.trainerModal, true);
+        initializeQuestions();
+    });
+
+    elements.closeTheoryBtn?.addEventListener('click', () => {
+        console.log('Закриваємо теорію');
+        toggleModal(elements.theoryModal, false);
+    });
+    elements.closeVideoBtn?.addEventListener('click', () => {
+        console.log('Закриваємо відео');
+        toggleModal(elements.videoModal, false);
+    });
+    elements.closeQuestionsBtn?.addEventListener('click', () => {
+        console.log('Закриваємо питання');
+        toggleModal(elements.questionsModal, false);
+    });
+    elements.closeTrainerBtn?.addEventListener('click', () => {
+        console.log('Закриваємо тренажер');
+        toggleModal(elements.trainerModal, false);
+    });
+
+    elements.closeVideoPlayerBtn1?.addEventListener('click', () => {
+        console.log('Закриваємо відеоплеєр 1');
+        stopAllVideos();
+        toggleModal(elements.videoPlayerModal1, false);
+        toggleModal(elements.videoModal, true);
+    });
+    elements.closeVideoPlayerBtn2?.addEventListener('click', () => {
+        console.log('Закриваємо відеоплеєр 2');
+        stopAllVideos();
+        toggleModal(elements.videoPlayerModal2, false);
+        toggleModal(elements.videoModal, true);
+    });
+    elements.closeVideoPlayerBtn3?.addEventListener('click', () => {
+        console.log('Закриваємо відеоплеєр 3');
+        stopAllVideos();
+        toggleModal(elements.videoPlayerModal3, false);
+        toggleModal(elements.videoModal, true);
+    });
+
+    elements.modalOverlay?.addEventListener('click', () => {
+        console.log('Закриваємо через overlay');
+        stopAllVideos();
+        toggleModal(elements.theoryModal, false);
+        toggleModal(elements.videoModal, false);
+        toggleModal(elements.questionsModal, false);
+        toggleModal(elements.trainerModal, false);
+        toggleModal(elements.videoPlayerModal1, false);
+        toggleModal(elements.videoPlayerModal2, false);
+        toggleModal(elements.videoPlayerModal3, false);
+    });
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            console.log('Закриваємо через Escape');
+            stopAllVideos();
+            toggleModal(elements.theoryModal, false);
+            toggleModal(elements.videoModal, false);
+            toggleModal(elements.questionsModal, false);
+            toggleModal(elements.trainerModal, false);
+            toggleModal(elements.videoPlayerModal1, false);
+            toggleModal(elements.videoPlayerModal2, false);
+            toggleModal(elements.videoPlayerModal3, false);
+        }
+    });
+
+    document.querySelectorAll('.video-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const videoId = card.dataset.video;
+            console.log('Натиснуто відеокарточку, відкриваємо відеоплеєр:', videoId);
+            const videoModal = elements[`videoPlayerModal${videoId}`];
+            const playerId = `youtubePlayer${videoId}`;
+            if (videoModal) {
+                openVideoPlayerModal(videoModal, playerId);
+            } else {
+                console.error('Модальне вікно для videoId не знайдено:', videoId);
+            }
+        });
+    });
+
+    Object.keys(playerSrcs).forEach(playerId => {
+        const element = elements[playerId];
+        if (element && playerSrcs[playerId]) {
+            element.setAttribute('data-src', playerSrcs[playerId]);
+        }
+    });
+
+    let questions = [];
+    let currentQuestionIndex = 0;
+    let selectedOption = null;
+
+   // Допоміжна функція для генерації випадкового числа з виключенням певних значень
+function getRandomInt(min, max, exclude = []) {
+    let num;
+    do {
+        num = Math.floor(Math.random() * (max - min + 1)) + min;
+    } while (exclude.includes(num));
+    return num;
+}
+
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    function generateVectorQuestion() {
+        let ax, ay, az, bx, by, bz;
+        do {
+            ax = getRandomInt(-9, 9);
+            ay = getRandomInt(-9, 9);
+            az = getRandomInt(-9, 9);
+            bx = getRandomInt(-9, 9);
+            by = getRandomInt(-9, 9);
+            bz = getRandomInt(-9, 9);
+        } while (
+            (ax === 0 && ay === 0) || (ax === 0 && az === 0) || (ay === 0 && az === 0) ||
+            (bx === 0 && by === 0) || (bx === 0 && bz === 0) || (by === 0 && bz === 0)
+        );
+
+        const question = `Знайти координати вектора \\(\\vec{c} = \\vec{a} + \\vec{b}\\), якщо \\(\\vec{a} = (${ax}; ${ay}; ${az})\\), \\(\\vec{b} = (${bx}; ${by}; ${bz})\\).`;
+
+        const correct = `(${ax + bx}; ${ay + by}; ${az + bz})`;
+        const wrong1 = `(${ax + bx}; ${ay + by}; ${az - bz})`;
+        const wrong2 = `(${ax - bx}; ${ay + by}; ${az + bz})`;
+        const wrong3 = `(${ax + bx}; ${by - ay}; ${az + bz})`;
+
+        let options = [correct, wrong1, wrong2, wrong3];
+        console.log('Питання 1 - Перед перемішуванням:', [...options]);
+        shuffleArray(options);
+        console.log('Питання 1 - Після перемішування:', [...options]);
+
+        return { question, correct, options };
+    }
+
+    function generateVectorQuestion2() {
+        let ax, ay, az, bx, by, bz;
+        do {
+            ax = getRandomInt(-9, 9);
+            ay = getRandomInt(-9, 9);
+            az = getRandomInt(-9, 9);
+            bx = getRandomInt(-9, 9);
+            by = getRandomInt(-9, 9);
+            bz = getRandomInt(-9, 9);
+        } while (
+            (ax === 0 && ay === 0) || (ax === 0 && az === 0) || (ay === 0 && az === 0) ||
+            (bx === 0 && by === 0) || (bx === 0 && bz === 0) || (by === 0 && bz === 0)
+        );
+
+        const question = `Знайти координати вектора \\(\\vec{d} = \\vec{a} - \\vec{b}\\), якщо \\(\\vec{a} = (${ax}; ${ay}; ${az})\\), \\(\\vec{b} = (${bx}; ${by}; ${bz}).\\)`;
+
+        const correct = `(${ax - bx}; ${ay - by}; ${az - bz})`;
+        const wrong1 = `(${bx - ax}; ${by - ay}; ${bz - az})`;
+        const wrong2 = `(${ax - bx}; ${ay - by}; ${bz - az})`;
+        const wrong3 = `(${ax - bx}; ${by - ay}; ${az - bz})`;
+
+        let options = [correct, wrong1, wrong2, wrong3];
+        console.log('Питання 2 - Перед перемішуванням:', [...options]);
+        shuffleArray(options);
+        console.log('Питання 2 - Після перемішування:', [...options]);
+
+        return { question, correct, options };
+    }
+
+   function generateVectorQuestion3() {
+    let ax, ay, az, bx, by, bz;
+    do {
+        ax = getRandomInt(-6, 6);
+        ay = getRandomInt(-6, 6);
+        az = getRandomInt(-6, 6);
+        bx = getRandomInt(-6, 6);
+        by = getRandomInt(-6, 6);
+        bz = getRandomInt(-6, 6);
+    } while (
+        (ax === 0 && ay === 0) || (ax === 0 && az === 0) || (ay === 0 && az === 0) ||
+        (bx === 0 && by === 0) || (bx === 0 && bz === 0) || (by === 0 && bz === 0)
+    );
+
+    const coefA = [-3, -2, 2, 3][Math.floor(Math.random() * 4)];
+    const coefB = [-3, -2, 2, 3][Math.floor(Math.random() * 4)];
+
+    // Форматуємо перший член (coefA)
+    const coefAString = coefA === 1 ? '' : coefA === -1 ? '-' : coefA;
+    // Форматуємо другий член (coefB) із правильним знаком
+    const signB = coefB >= 0 && coefB !== 0 ? '+' : coefB === 0 ? '' : '-';
+    const coefBString = coefB === 0 ? '' : Math.abs(coefB) === 1 ? '' : Math.abs(coefB);
+    const vectorBTerm = coefB === 0 ? '' : `${signB}${coefBString}\\vec{b}`;
+    // Формуємо питання, додаючи пробіл перед vectorBTerm, якщо він не порожній
+    const question = `Знайти координати вектора \\(${coefAString}\\vec{a}${vectorBTerm ? ' ' + vectorBTerm : ''}\\), якщо \\(\\vec{a} = (${ax}; ${ay}; ${az})\\), \\(\\vec{b} = (${bx}; ${by}; ${bz})\\).`;
+
+    const correct = `(${coefA * ax + coefB * bx}; ${coefA * ay + coefB * by}; ${coefA * az + coefB * bz})`;
+    const wrong1 = `(${coefA * ax - coefB * bx}; ${coefA * ay + coefB * by}; ${coefA * az + coefB * bz})`;
+    const wrong2 = `(${coefA * ax + coefB * bx}; ${coefA * ay - coefB * by}; ${coefA * az + coefB * bz})`;
+    const wrong3 = `(${coefA * ax + coefB * bx}; ${coefA * ay + coefB * by}; ${coefB * az - coefA * az})`;
+
+    let options = [correct, wrong1, wrong2, wrong3];
+    console.log('Питання 3 - Перед перемішуванням:', [...options]);
+    shuffleArray(options);
+    console.log('Питання 3 - Після перемішування:', [...options]);
+
+    return { question, correct, options };
+}
+    
+ function generateVectorQuestion4() {
+    let ax, ay, az;
+    do {
+        ax = getRandomInt(-5, 5);
+        ay = getRandomInt(-5, 5);
+        az = getRandomInt(-5, 5);
+    } while (
+        (ax === 0 && ay === 0) || (ax === 0 && az === 0) || (ay === 0 && az === 0)
+    );
+
+    const terms = [];
+    if (ax !== 0) terms.push(`${ax === 1 ? '' : ax === -1 ? '-' : ax}\\vec{i}`);
+    if (ay !== 0) terms.push(`${ay > 0 ? '+' : ''}${ay === 1 ? '' : ay === -1 ? '-' : ay}\\vec{j}`);
+    if (az !== 0) terms.push(`${az > 0 ? '+' : ''}${az === 1 ? '' : az === -1 ? '-' : az}\\vec{k}`);
+    const vectorStr = terms.join('');
+
+    const question = `Знайти довжину вектора \\(\\vec{a} = ${vectorStr}\\).`;
+
+    const sumOfSquares = ax * ax + ay * ay + az * az;
+    const sqrtValue = Math.sqrt(sumOfSquares);
+    const perfectSquares = [1, 4, 9, 16, 25, 36, 49, 64, 81, 100];
+    const isPerfectSquare = perfectSquares.includes(sumOfSquares);
+    const correct = isPerfectSquare ? `${Math.floor(sqrtValue)}` : `\\sqrt{${sumOfSquares}}`;
+
+    let wrong1, wrong2, wrong3;
+    do {
+        const offset1 = getRandomInt(1, 4);
+        const offset2 = getRandomInt(1, 4);
+        const wrongSum1 = sumOfSquares + offset1;
+        const wrongSum2 = Math.max(1, sumOfSquares - offset2);
+        wrong1 = perfectSquares.includes(wrongSum1) ? `${Math.floor(Math.sqrt(wrongSum1))}` : `\\sqrt{${wrongSum1}}`;
+        wrong2 = perfectSquares.includes(wrongSum2) ? `${Math.floor(Math.sqrt(wrongSum2))}` : `\\sqrt{${wrongSum2}}`;
+        wrong3 = `${Math.abs(ax) + Math.abs(ay) + Math.abs(az)}`;
+    } while (
+        wrong1 === correct || wrong2 === correct || wrong3 === correct ||
+        wrong1 === wrong2 || wrong1 === wrong3 || wrong2 === wrong3
+    );
+
+    let options = [correct, wrong1, wrong2, wrong3];
+    console.log('Питання 4 - sumOfSquares:', sumOfSquares, 'sqrtValue:', sqrtValue, 'isPerfectSquare:', isPerfectSquare, 'correct:', correct);
+    console.log('Питання 4 - Перед перемішуванням:', [...options]);
+    shuffleArray(options);
+    console.log('Питання 4 - Після перемішування:', [...options]);
+
+    return { question, correct, options };
+}
+
+function generateVectorQuestion5() {
+    let xA, yA, zA, xB, yB, zB, xC, yC, zC;
+    do {
+        xA = getRandomInt(-5, 5);
+        yA = getRandomInt(-5, 5);
+        zA = getRandomInt(-5, 5);
+        xB = getRandomInt(-5, 5);
+        yB = getRandomInt(-5, 5);
+        zB = getRandomInt(-5, 5);
+        xC = getRandomInt(-5, 5);
+        yC = getRandomInt(-5, 5);
+        zC = getRandomInt(-5, 5);
+    } while (
+        (xA === xB && yA === yB && zA === zB) ||
+        (xA === xC && yA === yC && zA === zC) ||
+        (xB === xC && yB === yC && zB === zC)
+    );
+
+    const sides = ['AC', 'AB', 'BC'];
+    const selectedSide = sides[Math.floor(Math.random() * sides.length)];
+    let dx, dy, dz;
+
+    switch (selectedSide) {
+        case 'AC':
+            dx = xC - xA;
+            dy = yC - yA;
+            dz = zC - zA;
+            break;
+        case 'AB':
+            dx = xB - xA;
+            dy = yB - yA;
+            dz = zB - zA;
+            break;
+        case 'BC':
+            dx = xC - xB;
+            dy = yC - yB;
+            dz = zC - zB;
+            break;
+    }
+
+    const question = `Дано трикутник з вершинами \\(A(${xA}; ${yA}; ${zA})\\), \\(B(${xB}; ${yB}; ${zB})\\), і \\(C(${xC}; ${yC}; ${zC})\\). Знайти довжину сторони \\(\\overrightarrow{${selectedSide}}\\).`;
+
+    const sumOfSquares = dx * dx + dy * dy + dz * dz;
+    const sqrtValue = Math.sqrt(sumOfSquares);
+    const perfectSquares = [1, 4, 9, 16, 25, 36, 49, 64, 81, 100];
+    const isPerfectSquare = perfectSquares.includes(sumOfSquares);
+    const correct = isPerfectSquare ? `${Math.floor(sqrtValue)}` : `\\sqrt{${sumOfSquares}}`;
+
+    let wrong1, wrong2, wrong3;
+    do {
+        wrong1 = `${Math.abs(dx) + Math.abs(dy) + Math.abs(dz)}`;
+        const offset1 = getRandomInt(1, 4);
+        const offset2 = getRandomInt(1, 4);
+        const wrongSum1 = sumOfSquares + offset1;
+        const wrongSum2 = Math.max(1, sumOfSquares - offset2);
+        wrong2 = perfectSquares.includes(wrongSum1) ? `${Math.floor(Math.sqrt(wrongSum1))}` : `\\sqrt{${wrongSum1}}`;
+        wrong3 = perfectSquares.includes(wrongSum2) ? `${Math.floor(Math.sqrt(wrongSum2))}` : `\\sqrt{${wrongSum2}}`;
+    } while (
+        wrong1 === correct || wrong2 === correct || wrong3 === correct ||
+        wrong1 === wrong2 || wrong1 === wrong3 || wrong2 === wrong3
+    );
+
+    let options = [correct, wrong1, wrong2, wrong3];
+    console.log('Питання 5 - Обрана сторона:', selectedSide, 'sumOfSquares:', sumOfSquares, 'sqrtValue:', sqrtValue, 'isPerfectSquare:', isPerfectSquare, 'correct:', correct);
+    console.log('Питання 5 - Перед перемішуванням:', [...options]);
+    shuffleArray(options);
+    console.log('Питання 5 - Після перемішування:', [...options]);
+
+    return { question, correct, options };
+}
+   function generateVectorQuestion6() {
+    let A, C, D, x, y, z;
+    let fixedCoord = ['x', 'y', 'z'][Math.floor(Math.random() * 3)];
+    let question, correct, wrong1, wrong2, wrong3;
+
+    do {
+        A = [getRandomInt(-5, 5), getRandomInt(-5, 5), getRandomInt(-5, 5)];
+        C = [getRandomInt(-5, 5), getRandomInt(-5, 5), getRandomInt(-5, 5)];
+        D = [getRandomInt(-5, 5), getRandomInt(-5, 5), getRandomInt(-5, 5)];
+        x = (D[0] - C[0]) + A[0];
+        y = (D[1] - C[1]) + A[1];
+        z = (D[2] - C[2]) + A[2];
+    } while (
+        (A[0] === C[0] && A[1] === C[1] && A[2] === C[2]) ||
+        (A[0] === D[0] && A[1] === D[1] && A[2] === D[2]) ||
+        (C[0] === D[0] && C[1] === D[1] && C[2] === D[2]) ||
+        x < -10 || x > 10 || y < -10 || y > 10 || z < -10 || z > 10
+    );
+
+    if (fixedCoord === 'x') {
+        question = `Нехай \\(A(${A[0]}; ${A[1]}; ${A[2]})\\), \\(B(${x}; y; z)\\), \\(C(${C[0]}; ${C[1]}; ${C[2]})\\), \\(D(${D[0]}; ${D[1]}; ${D[2]})\\). Вектори \\(\\overrightarrow{AB}\\) і \\(\\overrightarrow{CD}\\) рівні. Знайдіть \\(y\\) та \\(z\\).`;
+        correct = `y = ${y}, z = ${z}`;
+        do {
+            wrong1 = `y = ${y + getRandomInt(-2, 2, [0])}, z = ${z}`;
+            wrong2 = `y = ${y}, z = ${z + getRandomInt(-2, 2, [0])}`;
+            wrong3 = `y = ${y + getRandomInt(-2, 2, [0])}, z = ${z + getRandomInt(-2, 2, [0])}`;
+        } while (
+            wrong1 === correct || wrong2 === correct || wrong3 === correct ||
+            wrong1 === wrong2 || wrong1 === wrong3 || wrong2 === wrong3
+        );
+    } else if (fixedCoord === 'y') {
+        question = `Нехай \\(A(${A[0]}; ${A[1]}; ${A[2]})\\), \\(B(x; ${y}; z)\\), \\(C(${C[0]}; ${C[1]}; ${C[2]})\\), \\(D(${D[0]}; ${D[1]}; ${D[2]})\\). Вектори \\(\\overrightarrow{AB}\\) і \\(\\overrightarrow{CD}\\) рівні. Знайдіть \\(x\\) та \\(z\\).`;
+        correct = `x = ${x}, z = ${z}`;
+        do {
+            wrong1 = `x = ${x + getRandomInt(-2, 2, [0])}, z = ${z}`;
+            wrong2 = `x = ${x}, z = ${z + getRandomInt(-2, 2, [0])}`;
+            wrong3 = `x = ${x + getRandomInt(-2, 2, [0])}, z = ${z + getRandomInt(-2, 2, [0])}`;
+        } while (
+            wrong1 === correct || wrong2 === correct || wrong3 === correct ||
+            wrong1 === wrong2 || wrong1 === wrong3 || wrong2 === wrong3
+        );
+    } else {
+        question = `Нехай \\(A(${A[0]}; ${A[1]}; ${A[2]})\\), \\(B(x; y; ${z})\\), \\(C(${C[0]}; ${C[1]}; ${C[2]})\\), \\(D(${D[0]}; ${D[1]}; ${D[2]})\\). Вектори \\(\\overrightarrow{AB}\\) і \\(\\overrightarrow{CD}\\) рівні. Знайдіть \\(x\\) та \\(y\\).`;
+        correct = `x = ${x}, y = ${y}`;
+        do {
+            wrong1 = `x = ${x + getRandomInt(-2, 2, [0])}, y = ${y}`;
+            wrong2 = `x = ${x}, y = ${y + getRandomInt(-2, 2, [0])}`;
+            wrong3 = `x = ${x + getRandomInt(-2, 2, [0])}, y = ${y + getRandomInt(-2, 2, [0])}`;
+        } while (
+            wrong1 === correct || wrong2 === correct || wrong3 === correct ||
+            wrong1 === wrong2 || wrong1 === wrong3 || wrong2 === wrong3
+        );
+    }
+
+    let options = [correct, wrong1, wrong2, wrong3];
+    console.log('Питання 6 - Фіксована координата:', fixedCoord, 'Координати A:', A, 'C:', C, 'D:', D, 'B:', [x, y, z]);
+    console.log('Питання 6 - Перед перемішуванням:', [...options]);
+    shuffleArray(options);
+    console.log('Питання 6 - Після перемішування:', [...options]);
+
+    return { question, correct, options };
+}
+
+
+   function initializeQuestions() {
+    console.log('Запуск initializeQuestions');
+    if (!window.MathJax || !MathJax.typesetPromise) {
+        console.error('MathJax не завантажено');
+        elements.questionText.innerHTML = 'Помилка: не вдалося завантажити MathJax. Перезавантажте сторінку.';
+        return;
+    }
+    questions = [
+        generateVectorQuestion(),
+        generateVectorQuestion2(),
+        generateVectorQuestion3(),
+        generateVectorQuestion4(),
+        generateVectorQuestion5(),
+        generateVectorQuestion6()
+    ];
+    currentQuestionIndex = 0;
+    console.log('Ініціалізація питань:', questions);
+    displayQuestion();
+}
+   function displayQuestion() {
+    if (!elements.questionText || !elements.optionsContainer || !elements.questionNumber) {
+        console.error('Не вистачає елементів для відображення питання', {
+            questionText: !!elements.questionText,
+            optionsContainer: !!elements.optionsContainer,
+            questionNumber: !!elements.questionNumber
+        });
+        return;
+    }
+
+    if (currentQuestionIndex >= questions.length) {
+        console.log('Усі питання завершені, викликаємо completeTrainer');
+        completeTrainer();
+        return;
+    }
+
+    console.log('Відображаємо питання для індексу:', currentQuestionIndex);
+    selectedOption = null;
+    elements.submitAnswer.disabled = true;
+    elements.submitAnswer.style.display = 'block';
+    elements.submitAnswer.style.margin = '0 auto';
+    elements.optionsContainer.innerHTML = '';
+    elements.feedback.innerHTML = '';
+    elements.optionsContainer.style.display = 'none';
+    elements.completionBlock.classList.add('hidden');
+    elements.questionNumber.parentElement.style.display = 'flex';
+    elements.questionNumber.textContent = `Питання ${currentQuestionIndex + 1}`;
+
+    // Переконайтеся, що trainer-container центрований
+    elements.trainerContainer.style.display = 'flex';
+    elements.trainerContainer.style.justifyContent = 'center';
+    elements.trainerContainer.style.alignItems = 'center';
+
+    elements.questionText.style.opacity = '0';
+    elements.questionText.style.display = 'block';
+    elements.questionText.innerHTML = questions[currentQuestionIndex].question;
+    console.log('Відображаємо питання:', questions[currentQuestionIndex].question);
+    setTimeout(() => {
+        elements.questionText.style.opacity = '1';
+    }, 100);
+
+    console.log('Варіанти для відображення:', questions[currentQuestionIndex].options);
+    const optionElements = questions[currentQuestionIndex].options.map((option, index) => {
+        const optionElement = document.createElement('div');
+        optionElement.className = 'option';
+        optionElement.innerHTML = `\\(${option}\\)`; // Обертаємо в \(...\)
+        optionElement.setAttribute('data-option', option);
+        optionElement.setAttribute('tabindex', '0');
+        optionElement.setAttribute('role', 'button');
+        optionElement.setAttribute('aria-label', `Варіант відповіді ${index + 1}`);
+        optionElement.style.opacity = '0';
+        return optionElement;
+    });
+
+    elements.optionsContainer.append(...optionElements);
+    setTimeout(() => {
+        elements.optionsContainer.style.display = 'flex';
+        optionElements.forEach((element, index) => {
+            setTimeout(() => {
+                element.style.opacity = '1';
+            }, index * 100);
+        });
+        MathJax.typesetPromise([elements.questionText, elements.optionsContainer]).then(() => {
+            console.log('MathJax обробив формули в питанні та варіантах відповідей');
+        }).catch(err => {
+            console.error('Помилка MathJax:', err);
+            elements.questionText.innerHTML = 'Помилка відображення формул. Перезавантажте сторінку.';
+        });
+    }, 100);
+
+    optionElements.forEach(element => {
+        element.addEventListener('click', () => selectOption(element, optionElements));
+        element.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                selectOption(element, optionElements);
+            }
+        });
+    });
+}
+
+    function selectOption(element, allOptions) {
+        console.log('Вибрано варіант:', element.getAttribute('data-option'));
+        allOptions.forEach(opt => opt.classList.remove('selected'));
+        element.classList.add('selected');
+        selectedOption = element.getAttribute('data-option');
+        elements.submitAnswer.disabled = false;
+        elements.submitAnswer.style.margin = '0 auto';
+        elements.submitAnswer.focus();
+    }
+
+    function showFeedback(isCorrect) {
+        elements.feedback.innerHTML = isCorrect ? '✓ Правильно! Молодець!' : '✗ Неправильно. Спробуй ще раз!';
+        elements.feedback.className = `feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'} show`;
+        console.log('Показуємо фідбек:', isCorrect ? 'Правильно' : 'Неправильно');
+        setTimeout(() => {
+            elements.feedback.classList.remove('show');
+            setTimeout(() => {
+                elements.feedback.innerHTML = '';
+            }, 500);
+        }, 1500);
+    }
+
+    function completeTrainer() {
+        elements.questionText.style.display = 'none';
+        elements.optionsContainer.style.display = 'none';
+        elements.submitAnswer.style.display = 'none';
+        elements.questionNumber.parentElement.style.display = 'none';
+        elements.completionBlock.classList.remove('hidden');
+        elements.resetTrainerBtn.focus();
+        console.log('Тренування завершено, відображаємо completionBlock');
+    }
+
+   elements.submitAnswer?.addEventListener('click', () => {
+    const correctAnswer = questions[currentQuestionIndex].correct;
+    const isCorrect = selectedOption === correctAnswer;
+    console.log('Відповідь:', selectedOption, 'Правильна:', correctAnswer, 'isCorrect:', isCorrect);
+    showFeedback(isCorrect);
+    setTimeout(() => {
+        if (isCorrect) {
+            currentQuestionIndex++;
+            displayQuestion();
+        } else {
+            if (currentQuestionIndex === 0) {
+                questions[0] = generateVectorQuestion();
+            } else if (currentQuestionIndex === 1) {
+                questions[1] = generateVectorQuestion2();
+            } else if (currentQuestionIndex === 2) {
+                questions[2] = generateVectorQuestion3();
+            } else if (currentQuestionIndex === 3) {
+                questions[3] = generateVectorQuestion4();
+            } else if (currentQuestionIndex === 4) {
+                questions[4] = generateVectorQuestion5();
+            } else {
+                questions[5] = generateVectorQuestion6();
+            }
+            displayQuestion();
+        }
+    }, 2000);
+});
+
+   elements.resetTrainerBtn?.addEventListener('click', () => {
+    currentQuestionIndex = 0;
+    elements.completionBlock.classList.add('hidden');
+    elements.trainerContainer.style.display = 'block';
+    elements.submitAnswer.style.display = 'block';
+    elements.submitAnswer.style.margin = '20px auto';
+    // Скидаємо прокрутку modal-content
+    const modalContent = document.querySelector('#trainerModal .modal-content');
+    if (modalContent) {
+        modalContent.scrollTop = 0;
+    }
+    console.log('Скидаємо тренажер');
+    initializeQuestions();
+});
+});
+</script>
+</body>
+</html>
