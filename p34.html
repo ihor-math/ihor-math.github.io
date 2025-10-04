@@ -1,0 +1,2639 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>34. Умова колінеарності двох векторів</title>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    console.log("MathJax is loaded and ready!");
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" onerror="console.error('Failed to load MathJax')"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Roboto:wght@400;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        *, *:before, *:after {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            background: linear-gradient(135deg, #0a0a23, #1e1e5f, #3b206b); /* Космічний градієнт */
+            font-family: 'Roboto', sans-serif;
+            color: #e0e7ff; /* Світло-сріблястий текст */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: start;
+            min-height: 100vh;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        body.loaded {
+            visibility: visible;
+            opacity: 1;
+        }
+        .title-box {
+            margin-top: 60px;
+            padding: 20px 40px;
+            background: linear-gradient(135deg, #4b0082, #00b7eb); /* Індиго-бірюзовий градієнт */
+            border-radius: 15px;
+            box-shadow: 0 6px 16px rgba(75, 0, 130, 0.4);
+            max-width: 90%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .title-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        .title-box h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #e0e7ff;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            font-family: 'Merriweather', serif;
+            position: relative;
+            z-index: 1;
+        }
+        .section-container {
+            margin-top: 80px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .section {
+            width: 260px;
+            height: 200px;
+            background: linear-gradient(45deg, #1e1e5f, #3b206b); /* Космічний фон секцій */
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            color: #e0e7ff;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0, 183, 235, 0.3); /* Бірюзовий контур */
+        }
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 183, 235, 0.15), transparent);
+            transition: left 0.5s;
+        }
+        .section:hover::before {
+            left: 100%;
+        }
+        .section:hover {
+            transform: scale(1.05) translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 183, 235, 0.3);
+            background: linear-gradient(45deg, #00b7eb, #8a2be2); /* Бірюзово-фіолетовий при ховері */
+            border-color: rgba(0, 183, 235, 0.5);
+        }
+        .section img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 15px;
+            object-fit: cover;
+            border-radius: 8px;
+            filter: brightness(1.2);
+        }
+        .section:hover img {
+            filter: drop-shadow(0 0 10px rgba(0, 183, 235, 0.5));
+        }
+        .section h2 {
+            font-size: 20px;
+            margin: 0;
+            font-family: 'Merriweather', serif;
+            color: #e0e7ff;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 5%;
+            left: 5%;
+            width: 90%;
+            height: 90%;
+            background: linear-gradient(135deg, #1e1e5f, #3b206b); /* Космічний фон модального вікна */
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 183, 235, 0.3);
+            z-index: 1001;
+            overflow: hidden;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            border: 1px solid rgba(0, 183, 235, 0.2);
+        }
+        #modalOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 35, 0.8); /* Темний космічний оверлей */
+            z-index: 999;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            padding: 20px;
+            flex-grow: 1;
+            background: #1e1e5f;
+            border-radius: 10px;
+            margin: 10px;
+            color: #e0e7ff;
+            width: calc(100% - 20px);
+            overflow-y: auto;
+            display: block;
+            max-height: calc(100% - 60px);
+        }
+        .modal-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .modal-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .modal-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #00b7eb, #8a2be2);
+            border-radius: 3px;
+        }
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #00a3cc, #6a1bb2);
+        }
+        .modal-header {
+            background: linear-gradient(0deg, #1e1e5f, #3b206b);
+            padding: 8px 12px;
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1002;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            border-bottom: 1px solid rgba(0, 183, 235, 0.2);
+        }
+        #trainerModal .modal-header {
+            background: linear-gradient(0deg, #00b7eb, #8a2be2);
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+        .close-btn {
+            background: linear-gradient(135deg, #00b7eb, #8a2be2);
+            color: #e0e7ff;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Roboto', sans-serif;
+            z-index: 1003;
+            box-shadow: 0 2px 8px rgba(0, 183, 235, 0.4);
+        }
+        .close-btn:hover {
+            background: linear-gradient(135deg, #00a3cc, #6a1bb2);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 183, 235, 0.5);
+        }
+        #trainerModal .close-btn {
+            background: linear-gradient(135deg, #ff4040, #d81b60);
+        }
+        #trainerModal .close-btn:hover {
+            background: linear-gradient(135deg, #e53935, #c2185b);
+        }
+        details {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 6px;
+            background: #3b206b;
+            cursor: pointer;
+            border: 1px solid rgba(0, 183, 235, 0.2);
+        }
+        details p {
+            padding: 0 15px 10px;
+            color: #d1d5ff;
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+        .math-notation {
+            font-style: italic;
+            color: #00ffcc; /* Неоновий бірюзовий для формул */
+            display: inline !important;
+        }
+        #questionsModal .math-notation-centered {
+            display: none !important;
+        }
+        .highlight-term {
+            color: #8a2be2; /* Фіолетовий акцент */
+            font-weight: bold;
+        }
+        .formula-line {
+            display: inline-block;
+            white-space: nowrap;
+        }
+        .question-block {
+            margin: 15px 0;
+            padding: 10px;
+            background: linear-gradient(135deg, #1e1e5f, #3b206b);
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            border: 1px solid rgba(0, 183, 235, 0.2);
+        }
+        .question-block summary {
+            font-size: 16px;
+            background: linear-gradient(135deg, #00b7eb, #8a2be2);
+            color: #e0e7ff;
+        }
+        .question-block details summary {
+            background: linear-gradient(135deg, #00cc99, #33ffcc);
+        }
+        .question-block details p {
+            color: #d1d5ff;
+            background: #1e1e5f;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 3px solid #00cc99;
+        }
+        #questionsModal mjx-container {
+            display: inline !important;
+            vertical-align: middle !important;
+            font-size: clamp(17px, 3vw, 19px) !important;
+            line-height: 1.4 !important;
+            color: #00ffcc !important;
+            background: none !important;
+            font-style: italic !important;
+            margin: 0 2px !important;
+            padding: 0 !important;
+        }
+        .trainer-container {
+            width: 90%;
+            max-width: 800px;
+            padding: 3vw 4vw;
+            text-align: center;
+            background: linear-gradient(135deg, #1e1e5f, #3b206b);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 183, 235, 0.3);
+            transition: all 0.3s ease;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100%;
+            border: 1px solid rgba(0, 183, 235, 0.2);
+        }
+        .question-circle {
+            width: clamp(80px, 15vw, 120px);
+            height: clamp(80px, 15vw, 120px);
+            margin: 0 auto 3vw;
+            background: linear-gradient(135deg, #00b7eb, #8a2be2);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 183, 235, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        .question-circle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        .question-circle:hover::before {
+            left: 100%;
+        }
+        .question-circle h3 {
+            color: #e0e7ff;
+            font-family: 'Lora', serif;
+            font-size: clamp(16px, 2.5vw, 20px);
+            margin: 0;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+        .cube-formula, .vector-formula {
+            color: #00ffcc;
+            display: inline-block;
+            font-size: clamp(15px, 2.5vw, 17px);
+        }
+       
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2vw;
+            justify-content: center;
+            margin-bottom: 3vw;
+            width: 100%;
+        }
+        .option {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5vw 3vw;
+            border: 1.5px solid #00b7eb;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #3b206b, #1e1e5f);
+            cursor: pointer;
+            font-size: clamp(15px, 3.5vw, 18px);
+            min-height: 45px;
+            min-width: 90px;
+            max-width: 45%;
+            text-align: center;
+            font-family: 'Lora', serif;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+            box-sizing: border-box;
+            touch-action: manipulation;
+            pointer-events: auto !important;
+            user-select: none;
+            transition: all 0.3s ease;
+            color: #d1d5ff;
+        }
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 183, 235, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        .option:hover::before {
+            left: 100%;
+        }
+        .option:hover {
+            background: linear-gradient(135deg, #00b7eb, #8a2be2);
+            transform: scale(1.03);
+            border-color: #00ffcc;
+            box-shadow: 0 4px 12px rgba(0, 183, 235, 0.4);
+        }
+        .option.selected {
+            background: linear-gradient(135deg, #00cc99, #33ffcc) !important;
+            color: #ffffff !important;
+            border: 2px solid #00ffcc !important;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 204, 153, 0.5);
+        }
+        .option:focus {
+            outline: 2px solid #00ffcc;
+            outline-offset: 2px;
+        }
+        .option {
+            min-height: 50px !important;
+            padding: 12px 20px !important;
+        }
+        mjx-container, mjx-container * {
+            pointer-events: none !important;
+            user-select: none !important;
+        }
+        mjx-frac {
+            font-size: 1.2em !important;
+            padding: 2px !important;
+        }
+        mjx-num, mjx-den {
+            padding: 2px !important;
+        }
+        button {
+            background: linear-gradient(135deg, #00b7eb, #8a2be2);
+            color: #e0e7ff;
+            border: none;
+            border-radius: 25px;
+            padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 24px);
+            font-size: clamp(16px, 3vw, 18px);
+            font-family: 'Lora', serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 183, 235, 0.4);
+        }
+        button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #00a3cc, #6a1bb2);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 183, 235, 0.5);
+        }
+        button:disabled {
+            background: #4b5e7a;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .result {
+            margin-top: 3vw;
+            font-size: clamp(16px, 2.5vw, 18px);
+            font-family: 'Lora', serif;
+            color: #e0e7ff;
+        }
+        
+        
+       
+        .math-notation-centered {
+            display: block;
+            text-align: center;
+            width: 100%;
+            font-size: clamp(18px, 3vw, 20px);
+            margin: 10px 0;
+            line-height: 1.6;
+            font-family: 'Roboto', sans-serif;
+        }
+        mjx-container.math-notation-centered {
+            display: inline-block !important;
+            text-align: center !important;
+            vertical-align: middle !important;
+            white-space: nowrap !important;
+            line-height: 1.4 !important;
+            font-size: clamp(18px, 3vw, 20px) !important;
+            color: #00ffcc !important;
+            background: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        mjx-container.math-notation-centered * {
+            color: #00ffcc !important;
+            font-style: italic !important;
+        }
+        #trainerModal .math-notation-centered {
+            font-size: clamp(16px, 3vw, 18px);
+            color: #e0e7ff;
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.5;
+            text-align: center;
+            margin: 5px 0;
+            display: block;
+        }
+        #trainerModal .options-container mjx-container {
+            display: inline !important;
+            vertical-align: middle !important;
+            font-size: clamp(14px, 3vw, 16px) !important;
+            color: #00ffcc !important;
+            background: none !important;
+            font-style: italic !important;
+            margin: 0 2px !important;
+            padding: 0 !important;
+        }
+        .feedback {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(24px, 5.8vw, 30px);
+            font-family: 'Lora', serif;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            opacity: 0;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            text-align: center;
+            border: 2px solid transparent;
+        }
+        .feedback.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1.05);
+        }
+        .correct-feedback {
+            color: #e0e7ff;
+            background: linear-gradient(135deg, #00cc99, #33ffcc);
+            border: 2px solid #00cc99;
+            box-shadow: 0 0 20px rgba(0, 204, 153, 0.5);
+        }
+        .incorrect-feedback {
+            color: #e0e7ff;
+            background: linear-gradient(135deg, #ff4040, #d81b60);
+            border: 2px solid #ff4040;
+            box-shadow: 0 0 20px rgba(255, 64, 64, 0.5);
+        }
+        .navigation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px auto;
+            max-width: 1000px;
+        }
+        .nav-button {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #1e1e5f, #3b206b);
+            color: #ffcc00;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 183, 235, 0.3);
+        }
+        .nav-button:hover {
+            background: linear-gradient(135deg, #00b7eb, #8a2be2);
+            color: #e0e7ff;
+            transform: scale(1.03);
+            box-shadow: 0 4px 12px rgba(0, 183, 235, 0.4);
+        }
+        .nav-button svg {
+            margin-right: 8px;
+            fill: currentColor;
+            transition: fill 0.3s ease;
+        }
+        .question-card {
+            perspective: 1000px;
+            margin: 20px auto;
+            max-width: 964px;
+            width: 100%;
+            min-height: 150px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            cursor: pointer;
+        }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            min-height: 150px;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            cursor: inherit;
+        }
+        .question-card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            min-height: 150px;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            cursor: inherit;
+            border: 1px solid rgba(0, 183, 235, 0.2);
+        }
+        .card-front {
+            background: #0a0a23;
+            color: #e0e7ff;
+        }
+        .card-back {
+            background: linear-gradient(135deg, #1e1e5f, #3b206b);
+            color: #d1d5ff;
+            transform: rotateY(180deg);
+            text-align: justify;
+            padding: 20px;
+            overflow: auto;
+            white-space: normal;
+        }
+        .card-front span, .card-back span {
+            font-family: 'Lora', serif;
+            font-size: clamp(17px, 3vw, 19px);
+            line-height: 1.4;
+            display: inline;
+            color: inherit;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .card-back span {
+            text-align: justify;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .theory-content h2 {
+            color: #00ffcc;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+            margin-bottom: 20px;
+            font-family: 'Merriweather', serif;
+        }
+        .theory-content h3 {
+            color: #8a2be2;
+            border-bottom: 2px solid #8a2be2;
+            padding-bottom: 5px;
+            margin-top: 25px;
+        }
+        .theory-content p, .theory-content li {
+            color: #d1d5ff;
+            font-size: clamp(18px, 3vw, 20px);
+            line-height: 1.7;
+        }
+        .example {
+            font-size: clamp(18px, 3vw, 20px);
+            color: #ffcc00;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #ffcc00;
+            margin: 15px 0;
+        }
+        .solution {
+            color: #00cc99;
+            font-weight: bold;
+            text-align: center;
+            display: block;
+            padding: 10px;
+            border-radius: 6px;
+            border: 2px solid #00cc99;
+            margin: 15px 0;
+        }
+        .note {
+            color: #8a2be2;
+            font-weight: bold;
+        }
+        .note-text {
+            font-style: italic;
+            color: #b0b7ff;
+            text-align: justify;
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #8a2be2;
+            margin: 10px 0;
+        }
+        .theory-content p:not(.math-notation-centered),
+        .theory-content li {
+            text-align: justify;
+        }
+        .vector-type {
+            font-style: italic;
+            color: #00ffcc;
+        }
+        .main-types {
+            font-weight: bold;
+            color: #8a2be2;
+        }
+        ol {
+            color: #d1d5ff;
+        }
+        ol li::marker {
+            color: #00ffcc;
+        }
+        mjx-container {
+            color: #00ffcc !important;
+            background: none !important;
+            font-style: italic !important;
+        }
+        .theory-content mjx-container {
+            color: #00ffcc !important;
+            background: none !important;
+        }
+        .modal-content::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        .modal-content::-webkit-scrollbar-track {
+            background: #1e1e5f;
+            border-radius: 10px;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+        .modal-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #00b7eb, #8a2be2);
+            border-radius: 10px;
+            border: 2px solid #1e1e5f;
+        }
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #00a3cc, #6a1bb2);
+        }
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e1e5f;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #00b7eb, #8a2be2);
+            border-radius: 10px;
+            border: 2px solid #1e1e5f;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #00a3cc, #6a1bb2);
+        }
+        .modal-content {
+            scrollbar-color: #00b7eb #1e1e5f;
+            scrollbar-width: thin;
+        }
+        .glow-title {
+            text-align: center;
+            color: #e0e7ff;
+            font-family: 'Merriweather', serif;
+            font-size: clamp(20px, 3vw, 24px);
+            margin: 10px 0;
+            text-shadow: 0 0 10px rgba(0, 183, 235, 0.5);
+            background: linear-gradient(135deg, #00b7eb, #8a2be2);
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: block;
+        }
+        .input-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            width: 100%;
+            max-width: 300px;
+            background: rgba(10, 10, 35, 0.5);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 183, 235, 0.3);
+        }
+        #answerInput {
+            padding: 8px;
+            font-size: clamp(14px, 3vw, 16px);
+            width: 100px;
+            border: 2px solid #00b7eb;
+            border-radius: 6px;
+            background: #3b206b;
+            color: #d1d5ff;
+            text-align: center;
+            font-family: 'Roboto', sans-serif;
+        }
+        #answerInput:focus {
+            outline: none;
+            border-color: #00ffcc;
+            box-shadow: 0 0 8px rgba(0, 255, 204, 0.3);
+        }
+        .option.text-option {
+            font-size: clamp(14px, 3vw, 16px);
+            padding: 10px 20px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .figure-reference {
+            color: #ffcc00;
+            font-style: italic;
+            font-weight: bold;
+        }
+        .angle-notation {
+            color: #8a2be2;
+            font-weight: bold;
+        }
+        .vector-relation {
+            color: #00cc99;
+            font-weight: bold;
+        }
+        #vectorCanvas {
+            display: block;
+            margin: 20px auto;
+            border: 1px solid rgba(0, 183, 235, 0.2);
+            background: #1e1e5f;
+            border-radius: 8px;
+            width: 400px;
+            height: 300px;
+        }
+        #optionsContainer {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        #submitAnswer {
+            margin-top: 20px;
+            padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 24px);
+            background: linear-gradient(135deg, #00b7eb, #8a2be2);
+            color: #e0e7ff;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: clamp(16px, 3vw, 18px);
+            font-family: 'Lora', serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 183, 235, 0.4);
+        }
+        #submitAnswer:disabled {
+            background: #4b5e7a;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        #submitAnswer:hover:not(:disabled) {
+            background: linear-gradient(135deg, #00a3cc, #6a1bb2);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 183, 235, 0.5);
+        }
+        summary {
+            font-weight: bold;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, #4b0082, #00b7eb);
+            border-radius: 8px;
+            color: #e0e7ff;
+            font-family: 'Merriweather', serif;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+            cursor: pointer;
+            list-style: none;
+        }
+        summary::-webkit-details-marker {
+            display: none;
+        }
+        summary::after {
+            content: " ▼";
+            font-size: 0.9rem;
+            transition: transform 0.3s ease;
+        }
+        details[open] summary::after {
+            transform: rotate(-180deg);
+        }
+        .example .MJX-TeXAtom-OP, .example .MathJax {
+            font-size: 120%;
+        }
+        .video-card {
+            width: 350px;
+            height: 250px;
+            background: linear-gradient(135deg, #2a2a6e, #4b0082); /* Космічний фон для відеокарток */
+            border-radius: 15px;
+            border: 1px solid rgba(0, 183, 235, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 10px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            color: #e0e7ff;
+        }
+        .video-card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+        }
+        .video-card img {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 8px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+        .video-card h3 {
+            font-size: clamp(16px, 2.5vw, 18px);
+            font-weight: 600;
+            margin: 0;
+        }
+        .video-player-container {
+            width: 80vw;
+            max-width: 960px;
+            aspect-ratio: 16 / 9;
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .video-player-container iframe {
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            display: block;
+            border: none;
+        }
+             .completion-emoji {
+            width: clamp(80px, 15vw, 120px);
+            height: clamp(80px, 15vw, 120px);
+            margin: 0 auto 3vw;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(138, 43, 226, 0.3);
+            border: 2px dashed #f1c40f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+        .completion-emoji::after {
+            content: '🎉';
+            font-size: clamp(40px, 8vw, 60px);
+            color: #f1c40f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
+        }
+            
+
+.completion-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#completionBlock.modal {
+    position: fixed;
+    top: 5%;
+    left: 5%;
+    width: 90%;
+    height: 90%;
+    background: linear-gradient(135deg, #1e1e5f, #3b206b); /* Такий же фон, як у trainerModal */
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 183, 235, 0.3);
+    z-index: 1001;
+    overflow: hidden;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    border: 1px solid rgba(0, 183, 235, 0.2);
+    display: none; /* За замовчуванням приховане */
+}
+            #completionBlock .modal-header {
+    background: linear-gradient(0deg, #00b7eb, #8a2be2); /* Такий же header, як у trainerModal */
+    padding: 8px 12px;
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    z-index: 1002;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    border-bottom: 1px solid rgba(0, 183, 235, 0.2);
+}
+#completionBlock h2 {
+    font-size: clamp(22px, 4.5vw, 30px);
+    margin: 0 0 1vw;
+    color: #ffcc00; /* Жовтий акцент */
+    text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+}
+
+#completionBlock p {
+    font-size: clamp(18px, 3.5vw, 22px);
+    margin: 0 0 1vw;
+    color: #e0e7ff;
+}
+
+#resetTrainerBtn {
+    background: linear-gradient(135deg, #00cc99, #33ffcc);
+    color: #082567;
+    border: none;
+    border-radius: 25px;
+    padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 24px);
+    font-size: clamp(16px, 3vw, 18px);
+    font-family: 'Lora', serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 183, 235, 0.4);
+}
+
+#resetTrainerBtn:hover {
+    background: linear-gradient(135deg, #00a3cc, #6a1bb2);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 183, 235, 0.5);
+}
+           #completionBlock .modal-content {
+    padding: 20px;
+    flex-grow: 1;
+    background: #1e1e5f;
+    border-radius: 10px;
+    margin: 10px;
+    color: #e0e7ff;
+    width: calc(100% - 20px);
+    overflow-y: auto;
+    display: flex; /* Змінено для центрування completion-container */
+    justify-content: center;
+    align-items: center;
+    max-height: calc(100% - 60px);
+}
+            #completionBlock .completion-container {
+    width: 90%;
+    max-width: 800px; /* Такий же max-width, як у trainer-container */
+    padding: 3vw 4vw;
+    text-align: center;
+    background: linear-gradient(135deg, #1e1e5f, #3b206b); /* Такий же фон */
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 183, 235, 0.3);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 50%; /* Обмежуємо висоту для уникнення "довгого" вигляду */
+    border: 1px solid rgba(0, 183, 235, 0.2);
+}
+#completionBlock .modal-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    animation: completionShine 2s infinite;
+}
+@keyframes completionShine {
+    0% { left: -100%; }
+    50% { left: 100%; }
+    100% { left: 100%; }
+}
+        @media (max-width: 768px) {
+            .close-btn {
+                font-size: 16px;
+                padding: 6px 12px;
+                border-radius: 8px;
+            }
+            .theory-content p, .theory-content li {
+                font-size: clamp(18px, 3vw, 20px);
+            }
+            .theory-content mjx-container {
+                font-size: clamp(16px, 3vw, 18px) !important;
+            }
+            .theory-content h2, .theory-content h3 {
+                font-size: clamp(20px, 3vw, 24px);
+            }
+            .question-block summary {
+                font-size: clamp(18px, 3vw, 20px);
+            }
+            .question-block details p {
+                font-size: clamp(18px, 3vw, 20px);
+            }
+            #questionsModal mjx-container {
+                font-size: 20px !important;
+            }
+            #submitAnswer {
+                font-size: clamp(16px, 3.5vw, 18px);
+                padding: clamp(12px, 3vw, 14px) clamp(24px, 5vw, 28px);
+            }
+            #answerInput {
+                width: 80px;
+                padding: 8px;
+                font-size: clamp(16px, 3vw, 18px);
+            }
+            .title-box {
+                margin-top: 40px;
+                padding: 15px 20px;
+            }
+            .title-box h1 {
+                font-size: 24px;
+            }
+            .section-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            .section {
+                width: 80%;
+                height: 180px;
+            }
+            .modal {
+                top: 2%;
+                left: 2%;
+                width: 96%;
+                height: 96%;
+            }
+            .modal-header {
+                padding: 5px 8px;
+            }
+            .modal-content {
+                max-height: calc(100% - 50px);
+            }
+            .question-card {
+                min-height: 180px;
+            }
+            .card-front, .card-back {
+                font-size: clamp(15px, 3vw, 17px);
+                padding: 12px;
+                line-height: 1.4;
+            }
+            .card-front span, .card-back span {
+                font-size: clamp(15px, 3vw, 17px);
+                line-height: 1.4;
+            }
+            #questionsModal mjx-container {
+                font-size: clamp(16px, 3vw, 18px) !important;
+            }
+            .trainer-container {
+                width: 95%;
+                padding: 4vw;
+            }
+            .question-circle, .completion-emoji {
+                width: 25vw;
+                height: 25vw;
+                min-width: 80px;
+                min-height: 80px;
+            }
+            .question-circle h3 {
+                font-size: clamp(14px, 3vw, 16px);
+            }
+            .completion-emoji::after {
+                font-size: clamp(30px, 7vw, 40px);
+            }
+            .options-container {
+                gap: 1.5vw;
+                flex-direction: column;
+                align-items: center;
+            }
+            .option {
+                font-size: clamp(14px, 4vw, 16px);
+                padding: 10px !important;
+                min-height: 60px !important;
+                min-width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                overflow: hidden;
+            }
+            .option mjx-container {
+                font-size: clamp(13px, 4vw, 15px) !important;
+                width: 100% !important;
+                text-align: center;
+                overflow: hidden;
+            }
+            button {
+                padding: 3vw 5vw;
+                font-size: clamp(12px, 3vw, 14px);
+            }
+            .feedback {
+                font-size: clamp(24px, 5.8vw, 32px);
+                padding: clamp(12px, 3.5vw, 18px) clamp(18px, 5vw, 25px);
+                max-width: 95vw;
+                word-wrap: break-word;
+            }
+            .completion-message {
+                padding: clamp(10px, 3vw, 15px);
+            }
+            .completion-message h2 {
+                font-size: clamp(20px, 4vw, 26px);
+            }
+            .completion-message p {
+                font-size: clamp(16px, 3vw, 20px);
+            }
+            .navigation-buttons {
+                margin: 20px auto;
+                gap: 15px;
+            }
+            .nav-button {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+            .math-notation-centered {
+                font-size: clamp(16px, 2.5vw, 18px);
+            }
+            mjx-container.math-notation-centered {
+                font-size: clamp(16px, 2.5vw, 18px) !important;
+            }
+            .input-container {
+                flex-direction: row;
+                align-items: center;
+                gap: 8px;
+            }
+            #vectorCanvas {
+                width: 260px;
+                height: 195px;
+            }
+            #trainerModal .options-container mjx-container {
+                font-size: clamp(16px, 3.2vw, 18px) !important;
+            }
+            .video-card-container {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            .video-card {
+                width: 260px;
+                height: 160px;
+                margin: 5px;
+            }
+            .video-card img {
+                width: 40px;
+                height: 40px;
+                margin-bottom: 6px;
+            }
+            .video-player-container {
+                width: 80vw;
+                max-width: 600px;
+                aspect-ratio: 16 / 9;
+            }
+            .video-card h3 {
+                font-size: clamp(14px, 2.5vw, 16px);
+            }
+        }
+        @media (max-width: 480px) {
+            .close-btn {
+                font-size: 14px;
+                padding: 5px 10px;
+                border-radius: 6px;
+            }
+            .theory-content p, .theory-content li {
+                font-size: clamp(16px, 3vw, 18px);
+            }
+            .theory-content mjx-container {
+                font-size: clamp(16px, 3vw, 18px) !important;
+            }
+            .theory-content h2, .theory-content h3 {
+                font-size: clamp(20px, 3vw, 24px);
+            }
+            .question-block summary {
+                font-size: clamp(17px, 3.2vw, 19px);
+            }
+            .question-block details p {
+                font-size: clamp(16px, 3vw, 18px);
+            }
+            #questionsModal mjx-container {
+                font-size: 20px !important;
+            }
+            #submitAnswer {
+                font-size: clamp(14px, 3.5vw, 16px);
+                padding: clamp(10px, 3vw, 12px) clamp(20px, 5vw, 24px);
+            }
+            #answerInput {
+                width: 70px;
+                padding: 6px;
+                font-size: clamp(14px, 3vw, 16px);
+            }
+            .title-box {
+                margin-top: 20px;
+                padding: 10px 15px;
+            }
+            .title-box h1 {
+                font-size: 20px;
+            }
+            .section {
+                width: 90%;
+                height: 150px;
+            }
+            .section img {
+                width: 50px;
+                height: 50px;
+            }
+            .section h2 {
+                font-size: 18px;
+            }
+            .modal-header {
+                padding: 4px 6px;
+            }
+            .modal-content {
+                max-height: calc(100% - 40px);
+            }
+            .question-card {
+                min-height: 200px;
+            }
+            .card-front, .card-back {
+                font-size: clamp(14px, 3vw, 16px);
+                padding: 10px;
+                line-height: 1.3;
+            }
+            .card-front span, .card-back span {
+                font-size: clamp(14px, 3vw, 16px);
+                line-height: 1.3;
+            }
+            #questionsModal mjx-container {
+                font-size: clamp(14px, 3vw, 16px) !important;
+            }
+            .card-inner {
+                min-height: 200px;
+            }
+            .trainer-container {
+                padding: 5vw;
+            }
+            .question-circle, .completion-emoji {
+                width: 25vw;
+                height: 25vw;
+                min-width: 60px;
+                min-height: 60px;
+            }
+            .completion-emoji::after {
+                font-size: clamp(25px, 6vw, 35px);
+            }
+            .option {
+                font-size: 16px !important;
+                padding: 10px !important;
+                min-height: 60px !important;
+                min-width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                overflow: hidden;
+            }
+            .option mjx-container {
+                font-size: clamp(13px, 4vw, 15px) !important;
+                width: 100% !important;
+                text-align: center;
+                overflow: hidden;
+            }
+            .feedback {
+                font-size: clamp(22px, 5.2vw, 28px);
+                padding: clamp(10px, 3vw, 15px) clamp(15px, 4.5vw, 20px);
+                max-width: 95vw;
+            }
+            .completion-message {
+                padding: clamp(10px, 3vw, 15px);
+            }
+            .completion-message h2 {
+                font-size: clamp(18px, 3.5vw, 22px);
+            }
+            .completion-message p {
+                font-size: clamp(14px, 3vw, 18px);
+            }
+            .navigation-buttons {
+                margin: 15px auto;
+                gap: 10px;
+            }
+            .nav-button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+            .math-notation-centered {
+                font-size: clamp(14px, 2.5vw, 16px);
+                line-height: 1.2;
+            }
+            mjx-container.math-notation-centered {
+                font-size: clamp(14px, 2.5vw, 16px) !important;
+                line-height: 1.2 !important;
+            }
+            mjx-container {
+                font-size: 13px !important;
+            }
+            .input-container {
+                gap: 6px;
+            }
+            #trainerModal .options-container mjx-container {
+                font-size: clamp(14px, 3vw, 16px) !important;
+            }
+            .cube-formula, .vector-formula {
+                font-size: clamp(16px, 3vw, 18px);
+            }
+            .video-card-container {
+                gap: 10px;
+                padding: 10px;
+            }
+            .video-card {
+                width: 90%;
+                max-width: 260px;
+                height: 140px;
+                margin: 5px;
+            }
+            .video-card img {
+                width: 30px;
+                height: 30px;
+                margin-bottom: 5px;
+            }
+            .video-card h3 {
+                font-size: clamp(12px, 2.5vw, 14px);
+            }
+            .video-player-container {
+                width: 80vw;
+                max-width: 400px;
+                aspect-ratio: 16 / 9;
+            }
+            #trainerModal .math-notation-centered,
+            #questionsModal mjx-container {
+                font-size: clamp(18px, 4vw, 22px) !important;
+            }
+        }
+        @media (max-width: 600px) {
+            #trainerModal .math-notation-centered,
+            #questionsModal mjx-container {
+                font-size: clamp(18px, 4vw, 22px) !important;
+            }
+            #trainerModal .options-container mjx-container {
+                font-size: clamp(18px, 4vw, 20px) !important;
+            }
+        }
+        @media (max-width: 768px) {
+            #trainerModal .math-notation-centered,
+            #trainerModal mjx-container,
+            #questionsModal mjx-container {
+                font-size: 5vw !important;
+                line-height: 1.4 !important;
+            }
+            #trainerModal .options-container mjx-container {
+                font-size: 4.5vw !important;
+            }
+            mjx-frac {
+                font-size: 1.3em !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="title-box">
+        <h1>34. Умова колінеарності двох векторів</h1>
+    </div>
+
+    <div class="section-container">
+        <div class="section" id="openTheoryBtn">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Книга" loading="lazy">
+            <h2>Теоретичні відомості</h2>
+        </div>
+        <div class="section" id="openVideoBtn">
+            <img src="https://img.icons8.com/fluency/96/video.png" alt="Відео" loading="lazy">
+            <h2>Відеоматеріали</h2>
+        </div>
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Картки" loading="lazy">
+            <h2>Питання і відповіді</h2>
+        </div>
+        <div class="section" id="openTrainerBtn">
+            <img src="https://img.icons8.com/fluency/96/flash-on.png" alt="Тренажер" loading="lazy">
+            <h2>Тренажер</h2>
+        </div>
+    </div>
+
+    <div class="navigation-buttons">
+        <a class="nav-button" href="{{ url_for('tema7') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            До теми 7
+        </a>
+        <a class="nav-button" href="{{ url_for('home') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            На головну
+        </a>
+    </div>
+
+    <div id="theoryModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="theoryTitle">
+        <div class="modal-header">
+            <button class="close-btn" id="closeTheoryBtn" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+           <div class="theory-content">
+    <h2>Колінеарність векторів</h2>
+    <p>Для того, щоб вектор <span class="vector-type">\( \vec{a} \)</span> був колінеарним ненульовому вектору <span class="vector-type">\( \vec{b} \)</span>, необхідно і достатньо, щоб існував скаляр <span class="math-notation">\( \lambda \)</span>, який задовольняє умову:</p>
+    <p class="math-notation-centered">\[ \vec{a} = \lambda \vec{b} \tag{7.21} \]</p>
+    <h3>Умова колінеарності в координатах</h3>
+    <p>У координатній формі, якщо вектори мають координати <span class="vector-type">\( \vec{a} = (a_x, a_y, a_z) \)</span> і <span class="vector-type">\( \vec{b} = (b_x, b_y, b_z) \)</span>, то виконуються рівності:</p>
+    <p class="math-notation-centered">\[ a_x = \lambda b_x, \quad a_y = \lambda b_y, \quad a_z = \lambda b_z \]</p>
+    <p>Звідси випливає умова колінеарності:</p>
+    <p class="math-notation-centered">\[ \frac{a_x}{b_x} = \frac{a_y}{b_y} = \frac{a_z}{b_z} = \lambda \quad \tag{7.22} \]</p>
+    <p>Отже, два вектори є <span class="highlight-term">колінеарними</span>, якщо їхні відповідні координати пропорційні.</p>
+    <h3>Приклад 7.11: Перевірка колінеарності</h3>
+    <div class="example">
+        Чи колінеарні вектори <span class="vector-type">\( \vec{a} = -2\vec{i} + 5\vec{j} - 3\vec{k} \)</span> і <span class="vector-type">\( \vec{b} = 4\vec{i} - 10\vec{j} + 6\vec{k} \)</span>?
+    </div>
+    <p>Запишемо координати векторів:</p>
+    <p class="math-notation-centered">\[ \vec{a} = (-2, 5, -3), \quad \vec{b} = (4, -10, 6) \]</p>
+    <p>За умовою колінеарності (7.22), перевіримо пропорційність координат:</p>
+    <p class="math-notation-centered">\[ \frac{a_x}{b_x} = \frac{-2}{4} = -\frac{1}{2} \]</p>
+    <p class="math-notation-centered">\[ \frac{a_y}{b_y} = \frac{5}{-10} = -\frac{1}{2} \]</p>
+    <p class="math-notation-centered">\[ \frac{a_z}{b_z} = \frac{-3}{6} = -\frac{1}{2} \]</p>
+    <p>Оскільки всі частки рівні і дорівнюють <span class="math-notation">\( \lambda = -\frac{1}{2} \)</span>, вектори <span class="vector-type">\( \vec{a} \)</span> і <span class="vector-type">\( \vec{b} \)</span> є колінеарними.</p>
+    <p class="solution">Відповідь: Вектори <span class="vector-type">\( \vec{a} \)</span> і <span class="vector-type">\( \vec{b} \)</span> колінеарні, <span class="math-notation">\( \vec{a} = -\frac{1}{2} \vec{b} \)</span>.</p>
+    <div class="note">Примітка:</div>
+    <p class="note-text">Якщо один із векторів є нульовим, перевірка пропорційності координат не застосовується, оскільки нульовий вектор колінеарний будь-якому іншому вектору.</p>
+</div>
+        </div>
+    </div>
+
+    <div id="videoModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoBtn" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <h2 class="glow-title">Оберіть відео</h2>
+            <div class="video-card-container">
+                <div class="video-card" data-video="1">
+                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
+                    <h3>Колінеарні вектори в просторі</h3>
+                </div>
+                           </div>
+        </div>
+    </div>
+
+    <div id="videoPlayerModal1" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoPlayerBtn1" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-player-container">
+                <iframe id="youtubePlayer1" width="100%" src="https://www.youtube.com/embed/1oSMimYKJFY" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+   
+    <div id="questionsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="questionsTitle">
+    <div class="modal-header">
+        <button class="close-btn" id="closeQuestionsBtn" aria-label="Закрити">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>1. Що означає, що два вектори колінеарні?</span>
+                </div>
+                <div class="card-back">
+                    <span>Вони лежать на одній прямій або на паралельних прямих.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>2. Яка умова колінеарності двох векторів <span class="vector-type">\( \vec{a} \)</span> і <span class="vector-type">\( \vec{b} \)</span>?</span>
+                </div>
+                <div class="card-back">
+                    <span>Існування числа <span class="math-notation">\( \lambda \)</span>, такого що <span class="math-notation">\( \vec{a} = \lambda \vec{b} \)</span>.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>3. Яка умова колінеарності в координатах?</span>
+                </div>
+                <div class="card-back">
+                    <span>Для векторів <span class="vector-type">\( \vec{a} = (a_x, a_y, a_z) \)</span> і <span class="vector-type">\( \vec{b} = (b_x, b_y, b_z) \)</span> виконується: <span class="math-notation">\( \frac{a_x}{b_x} = \frac{a_y}{b_y} = \frac{a_z}{b_z} \)</span>.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>4. Чому відповідає число <span class="math-notation">\( \lambda \)</span> у виразі <span class="vector-type">\( \vec{a} = \lambda \vec{b} \)</span>?</span>
+                </div>
+                <div class="card-back">
+                    <span>Це коефіцієнт пропорційності між координатами векторів.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>5. Що означає, якщо <span class="math-notation">\( \lambda > 0 \)</span>?</span>
+                </div>
+                <div class="card-back">
+                    <span>Вектори колінеарні й співнапрямлені.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>6. Що означає, якщо <span class="math-notation">\( \lambda < 0 \)</span>?</span>
+                </div>
+                <div class="card-back">
+                    <span>Вектори колінеарні, але протилежно напрямлені.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>7. Чи є колінеарними вектори <span class="vector-type">\( \vec{a} = (2, 4, -6) \)</span> і <span class="vector-type">\( \vec{b} = (3, 6, -9) \)</span>?</span>
+                </div>
+                <div class="card-back">
+                    <span>Так, вони колінеарні, бо <span class="math-notation">\( \frac{2}{3} = \frac{4}{6} = \frac{-6}{-9} = \frac{2}{3} \)</span>.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <span>8. Чи є колінеарними вектори <span class="vector-type">\( \vec{a} = (1, 2, 3) \)</span> і <span class="vector-type">\( \vec{b} = (2, 5, 6) \)</span>?</span>
+                    </div>
+                    <div class="card-back">
+                        <span>Ні, вони не колінеарні, бо <span class="math-notation">\( \frac{1}{2} \neq \frac{2}{5} \)</span>.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>9. Чи є нульовий вектор колінеарним будь-якому іншому вектору?</span>
+                </div>
+                <div class="card-back">
+                    <span>Так, нульовий вектор колінеарний будь-якому вектору.</span>
+                </div>
+            </div>
+        </div>
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>10. Чи можуть два нульові вектори бути колінеарними?</span>
+                </div>
+                <div class="card-back">
+                    <span>Ні, умова колінеарності розглядається лише для ненульових векторів.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+  <div id="trainerModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="trainerTitle">
+    <div class="modal-header">
+        <button class="close-btn" id="closeTrainerBtn" aria-label="Закрити">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="trainer-container" id="trainerContent">
+            <div class="question-circle">
+                <h3 id="questionNumber"></h3>
+            </div>
+            <p id="questionText" class="math-notation-centered"></p>
+            <div class="options-container" id="optionsContainer"></div>
+            <button id="submitAnswer" disabled>Підтвердити</button>
+            <div id="feedback" class="feedback"></div>
+        </div>
+    </div>
+</div>
+
+<div id="completionBlock" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="completionTitle">
+    <div class="modal-header">
+        <button class="close-btn" id="closeCompletionBtn" aria-label="Закрити">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="completion-container">
+            <div class="completion-emoji"></div>
+            <h2>Тренування завершено!</h2>
+            <p>Молодець!</p>
+            <button id="resetTrainerBtn">Спробувати ще раз</button>
+        </div>
+    </div>
+</div>
+
+<div id="modalOverlay"></div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.body.classList.add('loaded');
+
+    // Визначення елементів
+    const elements = {
+        openTheoryBtn: document.getElementById('openTheoryBtn'),
+        openVideoBtn: document.getElementById('openVideoBtn'),
+        openQuestionsBtn: document.getElementById('openQuestionsBtn'),
+        openTrainerBtn: document.getElementById('openTrainerBtn'),
+        theoryModal: document.getElementById('theoryModal'),
+        videoModal: document.getElementById('videoModal'),
+        questionsModal: document.getElementById('questionsModal'),
+        trainerModal: document.getElementById('trainerModal'),
+        closeTheoryBtn: document.getElementById('closeTheoryBtn'),
+        closeVideoBtn: document.getElementById('closeVideoBtn'),
+        closeQuestionsBtn: document.getElementById('closeQuestionsBtn'),
+        closeTrainerBtn: document.getElementById('closeTrainerBtn'),
+        closeVideoPlayerBtn1: document.getElementById('closeVideoPlayerBtn1'),
+        videoPlayerModal1: document.getElementById('videoPlayerModal1'),
+        modalOverlay: document.getElementById('modalOverlay'),
+        questionNumber: document.getElementById('questionNumber'),
+        questionText: document.getElementById('questionText'),
+        optionsContainer: document.getElementById('optionsContainer'),
+        feedback: document.getElementById('feedback'),
+        completionBlock: document.getElementById('completionBlock'),
+        submitAnswer: document.getElementById('submitAnswer'),
+        youtubePlayer1: document.getElementById('youtubePlayer1'),
+        trainerContainer: document.getElementById('trainerContent'),
+        resetTrainerBtn: document.getElementById('resetTrainerBtn')
+    };
+
+    // Перевірка наявності всіх елементів
+    for (const [key, value] of Object.entries(elements)) {
+        if (!value) {
+            console.error(`Елемент ${key} не знайдено`);
+        }
+    }
+
+    // Зупиняємо виконання, якщо критичні елементи відсутні
+    const criticalElements = ['openTheoryBtn', 'openVideoBtn', 'openQuestionsBtn', 'openTrainerBtn', 'modalOverlay', 'trainerModal', 'completionBlock', 'submitAnswer', 'resetTrainerBtn'];
+    const missingCriticalElements = criticalElements.filter(key => !elements[key]);
+    if (missingCriticalElements.length > 0) {
+        console.error('Критичні елементи не знайдено:', missingCriticalElements);
+        return;
+    }
+
+    // Ініціалізація YouTube API
+    let players = {};
+    const playerIds = {
+        'youtubePlayer1': '1oSMimYKJFY'
+    };
+    const playerSrcs = {
+        'youtubePlayer1': elements.youtubePlayer1 ? elements.youtubePlayer1.src : ''
+    };
+
+    function loadYouTubeAPI() {
+        if (!window.YT) {
+            const tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            const firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            tag.onload = () => console.log('YouTube API завантажено');
+            tag.onerror = () => console.error('Помилка завантаження YouTube API');
+        } else {
+            window.onYouTubeIframeAPIReady();
+        }
+    }
+
+    window.onYouTubeIframeAPIReady = function () {
+        Object.keys(playerIds).forEach(playerId => {
+            const element = elements[playerId];
+            if (element) {
+                players[playerId] = new YT.Player(playerId, {
+                    videoId: playerIds[playerId],
+                    playerVars: {
+                        'autoplay': 0,
+                        'controls': 1,
+                        'rel': 0,
+                        'showinfo': 0,
+                        'enablejsapi': 1
+                    },
+                    events: {
+                        'onReady': function (event) {
+                            console.log(`YouTube плеєр ${playerId} готовий`);
+                        },
+                        'onError': function (error) {
+                            console.error(`Помилка YouTube плеєра ${playerId}:`, error);
+                        }
+                    }
+                });
+            }
+        });
+    };
+    loadYouTubeAPI();
+
+    function stopAllVideos() {
+        Object.keys(players).forEach(playerId => {
+            const player = players[playerId];
+            const element = elements[playerId];
+            if (player && typeof player.stopVideo === 'function') {
+                try {
+                    player.stopVideo();
+                    console.log(`Зупинено відео через API: ${playerId}`);
+                } catch (e) {
+                    console.error(`Помилка при зупинці відео ${playerId}:`, e);
+                }
+            }
+            if (element) {
+                element.src = '';
+                console.log(`Очищено src для ${playerId}`);
+                const parent = element.parentNode;
+                const newIframe = document.createElement('iframe');
+                newIframe.id = playerId;
+                newIframe.className = element.className;
+                newIframe.setAttribute('data-src', playerSrcs[playerId]);
+                newIframe.setAttribute('frameborder', '0');
+                newIframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+                newIframe.setAttribute('allowfullscreen', '');
+                parent.replaceChild(newIframe, element);
+                elements[playerId] = newIframe;
+                console.log(`Замінено iframe для ${playerId}`);
+                players[playerId] = new YT.Player(playerId, {
+                    videoId: playerIds[playerId],
+                    playerVars: {
+                        'autoplay': 0,
+                        'controls': 1,
+                        'rel': 0,
+                        'showinfo': 0,
+                        'enablejsapi': 1
+                    },
+                    events: {
+                        'onReady': function (event) {
+                            console.log(`YouTube плеєр ${playerId} переініціалізовано`);
+                        },
+                        'onError': function (error) {
+                            console.error(`Помилка YouTube плеєра ${playerId}:`, error);
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+   // Оновлена функція toggleModal
+function toggleModal(modal, show) {
+    if (!modal || !elements.modalOverlay) {
+        console.error('Модальне вікно або overlay не знайдено');
+        return;
+    }
+    if (show) {
+        modal.style.display = 'flex';
+        modal.classList.remove('hidden'); // Видаляємо клас hidden
+        elements.modalOverlay.style.display = 'block';
+    } else {
+        modal.style.display = 'none';
+        modal.classList.add('hidden'); // Додаємо клас hidden для сумісності
+        elements.modalOverlay.style.display = 'none';
+    }
+    document.body.style.overflow = show ? 'hidden' : 'auto';
+    if (show && window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([modal]).then(() => {
+            console.log(`MathJax типізація завершена для ${modal.id}`);
+        }).catch(err => console.error('Помилка MathJax:', err));
+    }
+    console.log(`toggleModal: ${modal.id} show=${show}, display=${modal.style.display}, hidden=${modal.classList.contains('hidden')}`);
+}
+
+    function openVideoPlayerModal(videoModal, playerId) {
+        stopAllVideos();
+        toggleModal(elements.videoModal, false);
+        toggleModal(videoModal, true);
+        const element = elements[playerId];
+        if (element && !element.src) {
+            element.src = playerSrcs[playerId];
+            console.log(`Відновлено src для ${playerId}: ${playerSrcs[playerId]}`);
+        }
+        if (players[playerId] && typeof players[playerId].loadVideoById === 'function') {
+            try {
+                players[playerId].loadVideoById(playerIds[playerId]);
+                console.log(`Завантаження відео: ${playerId} з videoId ${playerIds[playerId]}`);
+            } catch (e) {
+                console.error(`Помилка при завантаженні відео ${playerId}:`, e);
+            }
+        }
+    }
+
+    // Обробники подій для відкриття модальних вікон
+    elements.openTheoryBtn?.addEventListener('click', () => toggleModal(elements.theoryModal, true));
+    elements.openVideoBtn?.addEventListener('click', () => toggleModal(elements.videoModal, true));
+    elements.openQuestionsBtn?.addEventListener('click', () => toggleModal(elements.questionsModal, true));
+    elements.openTrainerBtn?.addEventListener('click', () => {
+        toggleModal(elements.trainerModal, true);
+        toggleModal(elements.completionBlock, false);
+        loadQuestion();
+    });
+
+    // Обробники подій для закриття модальних вікон
+    elements.closeTheoryBtn?.addEventListener('click', () => toggleModal(elements.theoryModal, false));
+    elements.closeVideoBtn?.addEventListener('click', () => toggleModal(elements.videoModal, false));
+    elements.closeQuestionsBtn?.addEventListener('click', () => toggleModal(elements.questionsModal, false));
+    elements.closeTrainerBtn?.addEventListener('click', () => {
+        toggleModal(elements.trainerModal, false);
+        toggleModal(elements.completionBlock, false);
+    });
+    elements.closeVideoPlayerBtn1?.addEventListener('click', () => {
+        stopAllVideos();
+        toggleModal(elements.videoPlayerModal1, false);
+        toggleModal(elements.videoModal, true);
+    });
+
+    // Закриття модальних вікон через overlay
+    elements.modalOverlay?.addEventListener('click', () => {
+        stopAllVideos();
+        toggleModal(elements.theoryModal, false);
+        toggleModal(elements.videoModal, false);
+        toggleModal(elements.questionsModal, false);
+        toggleModal(elements.trainerModal, false);
+        toggleModal(elements.videoPlayerModal1, false);
+        toggleModal(elements.completionBlock, false);
+    });
+
+    // Закриття модальних вікон через клавішу Escape
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            stopAllVideos();
+            toggleModal(elements.theoryModal, false);
+            toggleModal(elements.videoModal, false);
+            toggleModal(elements.questionsModal, false);
+            toggleModal(elements.trainerModal, false);
+            toggleModal(elements.videoPlayerModal1, false);
+            toggleModal(elements.completionBlock, false);
+        }
+    });
+
+    // Обробка кліків по відеокартках
+    document.querySelectorAll('.video-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const videoId = card.dataset.video;
+            console.log('Натиснуто відеокарточку, відкриваємо відеоплеєр:', videoId);
+            const videoModal = elements[`videoPlayerModal${videoId}`];
+            const playerId = `youtubePlayer${videoId}`;
+            if (videoModal) {
+                openVideoPlayerModal(videoModal, playerId);
+            } else {
+                console.error('Модальне вікно для videoId не знайдено:', videoId);
+            }
+        });
+    });
+
+    // Встановлення data-src для iframe
+    Object.keys(playerSrcs).forEach(playerId => {
+        const element = elements[playerId];
+        if (element && playerSrcs[playerId]) {
+            element.setAttribute('data-src', playerSrcs[playerId]);
+        }
+    });
+
+     // Список питань
+    const questionList = [
+        {
+            text: `Перевірте, чи є вектори \\(\\vec{a} = (-2, 5, -3)\\) і \\(\\vec{b} = (4, -10, 6)\\) колінеарними:`,
+            options: ["Так", "Ні", "Не можливо визначити"],
+            correct: "Так"
+        },
+        {
+            text: `Перевірте, чи є вектори \\(\\vec{a} = (3, 1, 2)\\) і \\(\\vec{b} = (6, 2, 4)\\) колінеарними:`,
+            options: ["Так", "Ні", "Не можливо визначити"],
+            correct: "Так"
+        },
+        {
+            text: `Перевірте, чи є вектори \\(\\vec{a} = (10, 5, 5)\\) і \\(\\vec{b} = (5, 1, 0)\\) колінеарними:`,
+            options: ["Так", "Ні", "Не можливо визначити"],
+            correct: "Ні"
+        },
+        {
+            text: `Перевірте, чи є вектори \\(\\vec{a} = (-1, 3, 4)\\) і \\(\\vec{b} = (4, -12, 16)\\) колінеарними:`,
+            options: ["Так", "Ні", "Не можливо визначити"],
+            correct: "Ні"
+        },
+        {
+            text: `Перевірте, чи є вектори \\(\\vec{a} = (2, -3, 4)\\) і \\(\\vec{b} = (-6, 9, -12)\\) колінеарними:`,
+            options: ["Так", "Ні", "Не можливо визначити"],
+            correct: "Так"
+        },
+        {
+            text: `Перевірте, чи є вектори \\(\\vec{a} = (12, -4, 8)\\) і \\(\\vec{b} = (9, -3, 6)\\) колінеарними:`,
+            options: ["Так", "Ні", "Не можливо визначити"],
+            correct: "Так"
+        },
+        {
+            text: `Перевірте, чи є вектори \\(\\vec{a} = (1, 2, 3)\\) і \\(\\vec{b} = (3, 2, 1)\\) колінеарними:`,
+            options: ["Так", "Ні", "Не можливо визначити"],
+            correct: "Ні"
+        },
+        {
+            text: `Перевірте, чи є вектори \\(\\vec{a} = (7, 2, 8)\\) і \\(\\vec{b} = (-7, -2, -1)\\) колінеарними:`,
+            options: ["Так", "Ні", "Не можливо визначити"],
+            correct: "Ні"
+        },
+        {
+            text: `Перевірте, чи є вектори \\(\\vec{a} = (-2, -3, -1)\\) і \\(\\vec{b} = (4, 6, 2)\\) колінеарними:`,
+            options: ["Так", "Ні", "Не можливо визначити"],
+            correct: "Так"
+        },
+        {
+            text: `Перевірте, чи є вектори \\(\\vec{a} = (1, 0, 2)\\) і \\(\\vec{b} = (4, 0, 8)\\) колінеарними:`,
+            options: ["Так", "Ні", "Не можливо визначити"],
+            correct: "Так"
+        },
+        {
+            text: `Перевірте, чи є вектори \\(\\vec{a} = (9, 6, -2)\\) і \\(\\vec{b} = (6, 4, -3)\\) колінеарними:`,
+            options: ["Так", "Ні", "Не можливо визначити"],
+            correct: "Ні"
+        },
+        {
+            text: `Перевірте, чи є вектори \\(\\vec{a} = (4, 1, 4)\\) і \\(\\vec{b} = (-8, -2, -8)\\) колінеарними:`,
+            options: ["Так", "Ні", "Не можливо визначити"],
+            correct: "Так"
+        },
+        {
+            text: `Перевірте, чи є вектори \\(\\vec{a} = (4, 1, 4)\\) і \\(\\vec{b} = (-8, -2, 8)\\) колінеарними:`,
+            options: ["Так", "Ні", "Не можливо визначити"],
+            correct: "Ні"
+        }
+    ];
+const questionList2 = [
+    {
+        text: `Чи колінеарні вектори \\(\\vec{a} = -2\\vec{i} + 5\\vec{j} - 3\\vec{k}\\) і \\(\\vec{b} = 4\\vec{i} - 10\\vec{j} + 6\\vec{k}\\)?`,
+        options: ["Так", "Ні", "Не можливо визначити"],
+        correct: "Так"
+    },
+    {
+        text: `Чи колінеарні вектори \\(\\vec{a} = \\vec{i} - 6\\vec{j} - 2\\vec{k}\\) і \\(\\vec{b} = 2\\vec{i} - 12\\vec{j} + 4\\vec{k}\\)?`,
+        options: ["Так", "Ні", "Не можливо визначити"],
+        correct: "Ні"
+    },
+    {
+        text: `Чи колінеарні вектори \\(\\vec{a} = 3\\vec{i} + 6\\vec{j} - 9\\vec{k}\\) і \\(\\vec{b} = 2\\vec{i} + 4\\vec{j} - 6\\vec{k}\\)?`,
+        options: ["Так", "Ні", "Не можливо визначити"],
+        correct: "Так"
+    },
+    {
+        text: `Чи колінеарні вектори \\(\\vec{a} = -3\\vec{i} - 2\\vec{k}\\) і \\(\\vec{b} = 6\\vec{i} + 8\\vec{k}\\)?`,
+        options: ["Так", "Ні", "Не можливо визначити"],
+        correct: "Ні"
+    },
+    {
+        text: `Чи колінеарні вектори \\(\\vec{a} = \\vec{i} + 4\\vec{j} + \\vec{k}\\) і \\(\\vec{b} = -4\\vec{i} - 16\\vec{j} - 4\\vec{k}\\)?`,
+        options: ["Так", "Ні", "Не можливо визначити"],
+        correct: "Так"
+    },
+    {
+        text: `Чи колінеарні вектори \\(\\vec{a} = \\vec{i} - 4\\vec{j} + \\vec{k}\\) і \\(\\vec{b} = -3\\vec{i} - 12\\vec{j} - 3\\vec{k}\\)?`,
+        options: ["Так", "Ні", "Не можливо визначити"],
+        correct: "Ні"
+    },
+    {
+        text: `Чи колінеарні вектори \\(\\vec{a} = -\\vec{i} - \\vec{j} + \\vec{k}\\) і \\(\\vec{b} = 2\\vec{i} + 2\\vec{j} + 2\\vec{k}\\)?`,
+        options: ["Так", "Ні", "Не можливо визначити"],
+        correct: "Ні"
+    },
+    {
+        text: `Чи колінеарні вектори \\(\\vec{a} = -\\vec{i} + \\vec{j} - \\vec{k}\\) і \\(\\vec{b} = 3\\vec{i} - 3\\vec{j} + 3\\vec{k}\\)?`,
+        options: ["Так", "Ні", "Не можливо визначити"],
+        correct: "Так"
+    },
+    {
+        text: `Чи колінеарні вектори \\(\\vec{a} = \\vec{i} - 5\\vec{j} + 4\\vec{k}\\) і \\(\\vec{b} = 5\\vec{i} - 25\\vec{j} + 20\\vec{k}\\)?`,
+        options: ["Так", "Ні", "Не можливо визначити"],
+        correct: "Так"
+    },
+    {
+        text: `Чи колінеарні вектори \\(\\vec{a} = 2\\vec{i} - \\vec{j} + 2\\vec{k}\\) і \\(\\vec{b} = -10\\vec{i} + 5\\vec{j} + 10\\vec{k}\\)?`,
+        options: ["Так", "Ні", "Не можливо визначити"],
+        correct: "Ні"
+    },
+    {
+        text: `Чи колінеарні вектори \\(\\vec{a} = 3\\vec{i} + 4\\vec{j} - 5\\vec{k}\\) і \\(\\vec{b} = 6\\vec{i} + 8\\vec{j} - 10\\vec{k}\\)?`,
+        options: ["Так", "Ні", "Не можливо визначити"],
+        correct: "Так"
+    },
+    {
+        text: `Чи колінеарні вектори \\(\\vec{a} = -\\vec{i} + 5\\vec{j} + \\vec{k}\\) і \\(\\vec{b} = 2\\vec{i} - 10\\vec{j} - 2\\vec{k}\\)?`,
+        options: ["Так", "Ні", "Не можливо визначити"],
+        correct: "Так"
+    },
+    {
+        text: `Чи колінеарні вектори \\(\\vec{a} = \\vec{i} - \\vec{j} + 5\\vec{k}\\) і \\(\\vec{b} = -5\\vec{i} + 5\\vec{j} + 25\\vec{k}\\)?`,
+        options: ["Так", "Ні", "Не можливо визначити"],
+        correct: "Ні"
+    }
+];
+// Масив питань і використаних індексів
+let questions = [];
+let usedQuestionIndices1 = [];
+let usedQuestionIndices2 = [];
+let usedQuestionIndices3 = [];
+let usedQuestionIndices4 = [];
+let usedQuestionIndices5 = [];
+let currentQuestionIndex = 0;
+let correctAnswers = 0;
+
+// Функція для генерації випадкового ненульового числа
+function getRandomNonZeroNumber(range) {
+    const min = -range;
+    const max = range;
+    const number = Math.floor(Math.random() * (2 * range + 1)) + min;
+    return number === 0 ? getRandomNonZeroNumber(range) : number;
+}
+
+// Функція для спрощення дробу
+function simplifyFraction(num, den) {
+    const gcd = (a, b) => {
+        a = Math.abs(a);
+        b = Math.abs(b);
+        while (b) {
+            const temp = b;
+            b = a % b;
+            a = temp;
+        }
+        return a;
+    };
+    const sign = (num < 0 && den > 0) || (num > 0 && den < 0) ? -1 : 1;
+    num = Math.abs(num);
+    den = Math.abs(den);
+    const divisor = gcd(num, den);
+    num = num / divisor;
+    den = den / divisor;
+    if (den === 1) {
+        return sign * num;
+    }
+    return sign < 0 ? `\\frac{${num}}{${den}}` : `\\frac{${num}}{${den}}`;
+}
+
+// Функція для вибору випадкового питання для Питання 1
+function generateQuestion1() {
+    let availableIndices = questionList.map((_, index) => index).filter(index => !usedQuestionIndices1.includes(index));
+    if (availableIndices.length === 0) {
+        usedQuestionIndices1 = [];
+        availableIndices = questionList.map((_, index) => index);
+    }
+    const randomIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
+    usedQuestionIndices1.push(randomIndex);
+    console.log('Вибрано питання 1 з індексом:', randomIndex);
+    return questionList[randomIndex];
+}
+
+// Функція для вибору випадкового питання для Питання 2
+function generateQuestion2() {
+    let availableIndices = questionList2.map((_, index) => index).filter(index => !usedQuestionIndices2.includes(index));
+    if (availableIndices.length === 0) {
+        usedQuestionIndices2 = [];
+        availableIndices = questionList2.map((_, index) => index);
+    }
+    const randomIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
+    usedQuestionIndices2.push(randomIndex);
+    console.log('Вибрано питання 2 з індексом:', randomIndex);
+    return questionList2[randomIndex];
+}
+
+// Функція для генерації питання для Питання 3
+function generateQuestion3() {
+    const variables = ['x', 'y', 'z'];
+    const variableIndex = Math.floor(Math.random() * 3);
+    const variable = variables[variableIndex];
+
+    const a1 = getRandomNonZeroNumber(5);
+    const a2 = getRandomNonZeroNumber(5);
+    const k = getRandomNonZeroNumber(5);
+    const correctValue = getRandomNonZeroNumber(5);
+
+    let a = [0, 0, 0];
+    a[variableIndex] = variable;
+    a[(variableIndex + 1) % 3] = a1;
+    a[(variableIndex + 2) % 3] = a2;
+
+    let b = [0, 0, 0];
+    b[(variableIndex + 1) % 3] = k * a1;
+    b[(variableIndex + 2) % 3] = k * a2;
+    b[variableIndex] = k * correctValue;
+
+    if (Math.abs(b[0]) > 25 || Math.abs(b[1]) > 25 || Math.abs(b[2]) > 25) {
+        return generateQuestion3();
+    }
+
+    const aText = `(${a[0]}, ${a[1]}, ${a[2]})`;
+    const bText = `(${b[0]}, ${b[1]}, ${b[2]})`;
+
+    const optionsSet = new Set();
+    const correctOption = `\\(${variable} = ${correctValue}\\)`; 
+    optionsSet.add(correctOption);
+    optionsSet.add(`\\(${variable} = ${-correctValue}\\)`);
+
+    while (optionsSet.size < 4) {
+        const randomValue = getRandomNonZeroNumber(5);
+        if (randomValue !== correctValue && randomValue !== -correctValue) {
+            optionsSet.add(`\\(${variable} = ${randomValue}\\)`);
+        }
+    }
+
+    const options = Array.from(optionsSet).sort(() => Math.random() - 0.5);
+
+    const question = {
+        text: `При якому значенні \\(${variable}\\) вектори \\(\\vec{a} = ${aText}\\) і \\(\\vec{b} = ${bText}\\) колінеарні?`,
+        options: options,
+        correct: correctOption,
+        correctIndex: options.indexOf(correctOption)
+    };
+
+    usedQuestionIndices3.push(usedQuestionIndices3.length);
+    console.log('Згенеровано питання 3:', JSON.stringify(question, null, 2));
+    return question;
+}
+
+// Функція для генерації питання для Питання 4
+// Функція для генерації питання для Питання 4
+function generateQuestion4() {
+    let recursionCount = 0;
+    const maxRecursion = 100;
+
+    function generate() {
+        if (recursionCount >= maxRecursion) {
+            console.error('generateQuestion4: Досягнуто максимальної кількості рекурсій');
+            return null;
+        }
+        recursionCount++;
+
+        const variablePairs = [['x', 'y'], ['x', 'z'], ['y', 'z']];
+        const pairIndex = Math.floor(Math.random() * 3);
+        const [var1, var2] = variablePairs[pairIndex];
+
+        const varIndices = { 'x': 0, 'y': 1, 'z': 2 };
+        const var1Index = varIndices[var1];
+        const var2Index = varIndices[var2];
+        const constIndex = [0, 1, 2].find(i => i !== var1Index && i !== var2Index);
+
+        const k = getRandomNonZeroNumber(5);
+        const b1 = getRandomNonZeroNumber(5);
+        const b2 = getRandomNonZeroNumber(5);
+        const bConst = getRandomNonZeroNumber(5);
+        const aConst = k * bConst;
+
+        if (Math.abs(aConst) > 25) {
+            console.log('generateQuestion4: aConst поза межами:', aConst, 'Рекурсія:', recursionCount);
+            return generate();
+        }
+
+        const correctValue1 = simplifyFraction(k * b1, 1);
+        const correctValue2 = simplifyFraction(k * b2, 1);
+
+        let num1 = correctValue1;
+        let den1 = 1;
+        if (typeof correctValue1 === 'string' && correctValue1.includes('\\frac')) {
+            const match = correctValue1.match(/(-?)\\frac\{(\d+)\}\{(\d+)\}/);
+            if (match) {
+                num1 = parseInt(match[2]) * (match[1] === '-' ? -1 : 1);
+                den1 = parseInt(match[3]);
+            }
+        } else {
+            num1 = Number(correctValue1);
+        }
+        if (Math.abs(num1 / den1) > 25 || den1 > 5) {
+            console.log('generateQuestion4: Некоректне correctValue1:', correctValue1, 'Рекурсія:', recursionCount);
+            return generate();
+        }
+
+        let num2 = correctValue2;
+        let den2 = 1;
+        if (typeof correctValue2 === 'string' && correctValue2.includes('\\frac')) {
+            const match = correctValue2.match(/(-?)\\frac\{(\d+)\}\{(\d+)\}/);
+            if (match) {
+                num2 = parseInt(match[2]) * (match[1] === '-' ? -1 : 1);
+                den2 = parseInt(match[3]);
+            }
+        } else {
+            num2 = Number(correctValue2);
+        }
+        if (Math.abs(num2 / den2) > 25 || den2 > 5) {
+            console.log('generateQuestion4: Некоректне correctValue2:', correctValue2, 'Рекурсія:', recursionCount);
+            return generate();
+        }
+
+        let a = [0, 0, 0];
+        a[var1Index] = var1;
+        a[var2Index] = var2;
+        a[constIndex] = aConst;
+
+        let b = [0, 0, 0];
+        b[var1Index] = b1;
+        b[var2Index] = b2;
+        b[constIndex] = bConst;
+
+        if (Math.abs(b[0]) > 25 || Math.abs(b[1]) > 25 || Math.abs(b[2]) > 25) {
+            console.log('generateQuestion4: Координати b поза межами:', b, 'Рекурсія:', recursionCount);
+            return generate();
+        }
+
+        const aText = `(${a[0]}, ${a[1]}, ${a[2]})`;
+        const bText = `(${b[0]}, ${b[1]}, ${b[2]})`;
+
+        const optionsSet = new Set();
+        const correctOption = `\\(${var1} = ${correctValue1}, ${var2} = ${correctValue2}\\)`; 
+        optionsSet.add(correctOption);
+
+        const negValue1 = simplifyFraction(-(k * b1), 1);
+        const negValue2 = simplifyFraction(-(k * b2), 1);
+        optionsSet.add(`\\(${var1} = ${negValue1}, ${var2} = ${negValue2}\\)`);
+
+        while (optionsSet.size < 4) {
+            const randomValue1 = getRandomNonZeroNumber(10);
+            const randomValue2 = getRandomNonZeroNumber(10);
+            const option = `\\(${var1} = ${randomValue1}, ${var2} = ${randomValue2}\\)`; 
+            if (!optionsSet.has(option)) {
+                optionsSet.add(option);
+            }
+        }
+
+        const options = Array.from(optionsSet).sort(() => Math.random() - 0.5);
+
+        const question = {
+            text: `При яких значеннях \\(${var1}\\) і \\(${var2}\\) вектори \\(\\vec{a} = ${aText}\\) і \\(\\vec{b} = ${bText}\\) колінеарні?`,
+            options: options,
+            correct: correctOption,
+            correctIndex: options.indexOf(correctOption)
+        };
+
+        console.log('generateQuestion4: Згенеровано питання 4:', JSON.stringify(question, null, 2));
+        return question;
+    }
+
+    const question = generate();
+    if (!question) {
+        console.warn('generateQuestion4: Використано резервне питання');
+        return {
+            text: `При яких значеннях \\(x\\) і \\(y\\) вектори \\(\\vec{a} = (x, y, 1)\\) і \\(\\vec{b} = (2, 1, 2)\\) колінеарні?`,
+            options: ['\\(x = 4, y = 2\\)', '\\(x = -4, y = -2\\)', '\\(x = 1, y = 2\\)', '\\(x = -1, y = -2\\)'],
+            correct: '\\(x = 4, y = 2\\)',
+            correctIndex: 0
+        };
+    }
+    usedQuestionIndices4.push(usedQuestionIndices4.length);
+    return question;
+}
+
+// Функція для генерації питання для Питання 5
+// Функція для генерації питання для Питання 5
+function generateQuestion5() {
+    let recursionCount = 0;
+    const maxRecursion = 50; // Зменшено для швидшого виявлення проблем
+
+    function generate() {
+        if (recursionCount >= maxRecursion) {
+            console.error('generateQuestion5: Досягнуто максимальної кількості рекурсій');
+            return null;
+        }
+        recursionCount++;
+        console.log('generateQuestion5: Спроба генерації, рекурсія:', recursionCount);
+
+        const variablePairs = [['x', 'y'], ['x', 'z'], ['y', 'z']];
+        const pairIndex = Math.floor(Math.random() * 3);
+        const [var1, var2] = variablePairs[pairIndex];
+
+        const varIndices = { 'x': 0, 'y': 1, 'z': 2 };
+        const var1Index = varIndices[var1];
+        const var2Index = varIndices[var2];
+        const constIndex = [0, 1, 2].find(i => i !== var1Index && i !== var2Index);
+
+        const k = getRandomNonZeroNumber(2); // Обмежено до [-2, 2]
+        const b1 = getRandomNonZeroNumber(4); // b[var1Index], [-4, 4]
+        const bVar2 = getRandomNonZeroNumber(4); // b[var2Index], [-4, 4]
+        const bConst = getRandomNonZeroNumber(4); // b[constIndex], [-4, 4]
+        const aConst = k * bConst; // a[constIndex]
+        const aVar2 = k * bVar2; // a[var2Index]
+
+        if (Math.abs(aConst) > 15 || Math.abs(aVar2) > 15) {
+            console.log('generateQuestion5: aConst або aVar2 поза межами:', { aConst, aVar2 }, 'Рекурсія:', recursionCount);
+            return generate();
+        }
+
+        const correctValue1 = simplifyFraction(k * b1, 1); // var1 = k * b1
+        const correctValue2 = simplifyFraction(aVar2, k); // var2 = aVar2 / k
+
+        let num1 = correctValue1;
+        let den1 = 1;
+        if (typeof correctValue1 === 'string' && correctValue1.includes('\\frac')) {
+            const match = correctValue1.match(/(-?)\\frac\{(\d+)\}\{(\d+)\}/);
+            if (match) {
+                num1 = parseInt(match[2]) * (match[1] === '-' ? -1 : 1);
+                den1 = parseInt(match[3]);
+            }
+        } else {
+            num1 = Number(correctValue1);
+        }
+        if (Math.abs(num1 / den1) > 15 || den1 > 4) {
+            console.log('generateQuestion5: Некоректне correctValue1:', correctValue1, 'Рекурсія:', recursionCount);
+            return generate();
+        }
+
+        let num2 = correctValue2;
+        let den2 = 1;
+        if (typeof correctValue2 === 'string' && correctValue2.includes('\\frac')) {
+            const match = correctValue2.match(/(-?)\\frac\{(\d+)\}\{(\d+)\}/);
+            if (match) {
+                num2 = parseInt(match[2]) * (match[1] === '-' ? -1 : 1);
+                den2 = parseInt(match[3]);
+            }
+        } else {
+            num2 = Number(correctValue2);
+        }
+        if (Math.abs(num2 / den2) > 15 || den2 > 4) {
+            console.log('generateQuestion5: Некоректне correctValue2:', correctValue2, 'Рекурсія:', recursionCount);
+            return generate();
+        }
+
+        let a = [0, 0, 0];
+        a[var1Index] = var1;
+        a[var2Index] = aVar2;
+        a[constIndex] = aConst;
+
+        let b = [0, 0, 0];
+        b[var1Index] = b1;
+        b[var2Index] = var2;
+        b[constIndex] = bConst;
+
+        if (Math.abs(b[0]) > 15 || Math.abs(b[1]) > 15 || Math.abs(b[2]) > 15) {
+            console.log('generateQuestion5: Координати b поза межами:', b, 'Рекурсія:', recursionCount);
+            return generate();
+        }
+
+        const aText = `(${a[0]}, ${a[1]}, ${a[2]})`;
+        const bText = `(${b[0]}, ${b[1]}, ${b[2]})`;
+
+        const optionsSet = new Set();
+        const correctOption = `\\(${var1} = ${correctValue1}, ${var2} = ${correctValue2}\\)`; 
+        optionsSet.add(correctOption);
+        optionsSet.add(`\\(${var1} = ${simplifyFraction(-num1, den1)}, ${var2} = ${simplifyFraction(-num2, den2)}\\)`);
+
+        while (optionsSet.size < 4) {
+            const randomValue1 = getRandomNonZeroNumber(4);
+            const randomValue2 = getRandomNonZeroNumber(4);
+            const option = `\\(${var1} = ${randomValue1}, ${var2} = ${randomValue2}\\)`; 
+            if (!optionsSet.has(option)) {
+                optionsSet.add(option);
+            }
+        }
+
+        const options = Array.from(optionsSet).sort(() => Math.random() - 0.5);
+
+        const question = {
+            text: `При яких значеннях \\(${var1}\\) і \\(${var2}\\) вектори \\(\\vec{a} = ${aText}\\) і \\(\\vec{b} = ${bText}\\) колінеарні?`,
+            options: options,
+            correct: correctOption,
+            correctIndex: options.indexOf(correctOption)
+        };
+
+        console.log('generateQuestion5: Успішно згенеровано питання 5:', JSON.stringify(question, null, 2));
+        return question;
+    }
+
+    const question = generate();
+    if (!question) {
+        console.warn('generateQuestion5: Використано резервне питання');
+        return {
+            text: `При яких значеннях \\(x\\) і \\(y\\) вектори \\(\\vec{a} = (x, 2, 4)\\) і \\(\\vec{b} = (2, y, 2)\\) колінеарні?`,
+            options: ['\\(x = 4, y = 1\\)', '\\(x = -4, y = -1\\)', '\\(x = 2, y = 2\\)', '\\(x = 1, y = 3\\)'],
+            correct: '\\(x = 4, y = 1\\)',
+            correctIndex: 0
+        };
+    }
+    usedQuestionIndices5.push(usedQuestionIndices5.length);
+    return question;
+}
+
+// Функція для відображення питання
+function loadQuestion() {
+    console.log('loadQuestion: Поточний індекс питання:', currentQuestionIndex, 'Довжина масиву questions:', questions.length);
+
+    if (!elements.questionNumber || !elements.questionText || !elements.optionsContainer || !elements.submitAnswer) {
+        console.error('loadQuestion: Один або кілька DOM-елементів не знайдено:', {
+            questionNumber: !!elements.questionNumber,
+            questionText: !!elements.questionText,
+            optionsContainer: !!elements.optionsContainer,
+            submitAnswer: !!elements.submitAnswer
+        });
+        return;
+    }
+
+    if (questions.length <= currentQuestionIndex) {
+        console.log('loadQuestion: Генеруємо нове питання для індексу:', currentQuestionIndex);
+        questions[currentQuestionIndex] = currentQuestionIndex === 0 ? generateQuestion1() :
+                                        currentQuestionIndex === 1 ? generateQuestion2() :
+                                        currentQuestionIndex === 2 ? generateQuestion3() :
+                                        currentQuestionIndex === 3 ? generateQuestion4() : generateQuestion5();
+    }
+
+    const question = questions[currentQuestionIndex];
+    if (!question) {
+        console.error('loadQuestion: Питання не згенеровано для індексу:', currentQuestionIndex);
+        // Використаємо резервне питання
+        questions[currentQuestionIndex] = generateQuestion5();
+        console.log('loadQuestion: Спроба з резервним питанням:', JSON.stringify(questions[currentQuestionIndex], null, 2));
+    }
+
+    console.log('loadQuestion: Відображаємо питання:', question.text);
+    elements.questionNumber.textContent = `Питання ${currentQuestionIndex + 1}`;
+    elements.questionText.innerHTML = question.text;
+    elements.optionsContainer.innerHTML = '';
+
+    question.options.forEach((option, index) => {
+        const optionElement = document.createElement('div');
+        optionElement.classList.add('option', 'short');
+        optionElement.innerHTML = option;
+        optionElement.dataset.index = index;
+        optionElement.addEventListener('click', () => {
+            document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+            optionElement.classList.add('selected');
+            elements.submitAnswer.disabled = false;
+            console.log(`loadQuestion: Вибір варіанту для питання ${currentQuestionIndex + 1}:`, option, 'індекс:', index);
+        });
+        elements.optionsContainer.appendChild(optionElement);
+    });
+
+    console.log('loadQuestion: DOM оновлено, чекаємо MathJax');
+    if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+        MathJax.typesetPromise([elements.questionText, elements.optionsContainer]).then(() => {
+            console.log(`MathJax типізація завершена для питання ${currentQuestionIndex + 1}`);
+        }).catch(err => console.error('Помилка MathJax:', err));
+    } else {
+        console.warn('loadQuestion: MathJax не підключений');
+        elements.questionText.innerHTML += ' (MathJax не підключений)';
+    }
+}
+
+// Функція для відображення зворотного зв’язку
+function showFeedback(isCorrect) {
+    if (!elements.feedback) {
+        console.error('showFeedback: Елемент feedback не знайдено');
+        return;
+    }
+    elements.feedback.textContent = isCorrect ? '✓ Правильно! Молодець!' : '✗ Неправильно. Спробуй ще раз!';
+    elements.feedback.className = `feedback show ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'}`;
+    setTimeout(() => {
+        elements.feedback.classList.remove('show');
+    }, 2000);
+}
+
+// Обробник натискання кнопки "Підтвердити"
+elements.submitAnswer?.addEventListener('click', () => {
+    console.log('submitAnswer: Натиснуто "Підтвердити", індекс:', currentQuestionIndex);
+    const selectedOption = document.querySelector('.option.selected');
+    if (!selectedOption) {
+        console.error('submitAnswer: Не вибрано варіант');
+        return;
+    }
+
+    const question = questions[currentQuestionIndex];
+    if (!question) {
+        console.error('submitAnswer: Питання не визначене для індексу:', currentQuestionIndex);
+        return;
+    }
+
+    let isCorrect;
+    if (currentQuestionIndex >= 2) {
+        const selectedIndex = parseInt(selectedOption.dataset.index);
+        isCorrect = selectedIndex === question.correctIndex;
+        console.log(`submitAnswer: Питання ${currentQuestionIndex + 1}: Вибрано індекс:`, selectedIndex, 'Правильний:', question.correctIndex, 'isCorrect:', isCorrect);
+        console.log('submitAnswer: Відповідь:', selectedOption.innerHTML, 'Правильна:', question.correct);
+    } else {
+        isCorrect = selectedOption.textContent === question.correct;
+        console.log(`submitAnswer: Питання ${currentQuestionIndex + 1}: Відповідь:`, selectedOption.textContent, 'Правильна:', question.correct, 'isCorrect:', isCorrect);
+    }
+
+    if (isCorrect) correctAnswers++;
+
+    showFeedback(isCorrect);
+
+    setTimeout(() => {
+        if (isCorrect) {
+            if (currentQuestionIndex < 4) {
+                currentQuestionIndex++;
+                console.log(`submitAnswer: Переходимо до Питання ${currentQuestionIndex + 1}, індекс:`, currentQuestionIndex);
+                loadQuestion();
+                elements.submitAnswer.disabled = true;
+                document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+            } else {
+                console.log('submitAnswer: Завершення після Питання 5');
+                toggleModal(elements.trainerModal, false);
+                toggleModal(elements.completionBlock, true);
+                elements.resetTrainerBtn.focus();
+            }
+        } else {
+            questions[currentQuestionIndex] = currentQuestionIndex === 0 ? generateQuestion1() :
+                                            currentQuestionIndex === 1 ? generateQuestion2() :
+                                            currentQuestionIndex === 2 ? generateQuestion3() :
+                                            currentQuestionIndex === 3 ? generateQuestion4() : generateQuestion5();
+            console.log(`submitAnswer: Нове питання ${currentQuestionIndex + 1} після помилки`);
+            loadQuestion();
+            elements.submitAnswer.disabled = true;
+            document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+        }
+    }, 2000);
+});
+
+// Обробник кнопки "Спробувати ще раз"
+elements.resetTrainerBtn?.addEventListener('click', () => {
+    currentQuestionIndex = 0;
+    correctAnswers = 0;
+    questions = [];
+    usedQuestionIndices1 = [];
+    usedQuestionIndices2 = [];
+    usedQuestionIndices3 = [];
+    usedQuestionIndices4 = [];
+    usedQuestionIndices5 = [];
+    toggleModal(elements.completionBlock, false);
+    toggleModal(elements.trainerModal, true);
+    const modalContent = document.querySelector('#trainerModal .modal-content');
+    if (modalContent) {
+        modalContent.scrollTop = 0;
+    }
+    console.log('resetTrainerBtn: Скидаємо тренажер');
+    loadQuestion();
+    elements.submitAnswer.disabled = true;
+    document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+});
+    });
+</script>
