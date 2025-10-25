@@ -1,0 +1,2588 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>39. Мішаний добуток трьох векторів і його властивості</title>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    console.log("MathJax is loaded and ready!");
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" onerror="console.error('Failed to load MathJax')"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Roboto:wght@400;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        *, *:before, *:after {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            font-family: 'Roboto', sans-serif;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: start;
+            min-height: 100vh;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        body.loaded {
+            visibility: visible;
+            opacity: 1;
+        }
+        .title-box {
+            margin-top: 60px;
+            padding: 20px 40px;
+            background: #6d351a;
+            border-radius: 15px;
+            box-shadow: 0 6px 16px rgba(95, 39, 205, 0.3);
+            max-width: 90%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .title-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        .title-box h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            font-family: 'Merriweather', serif;
+            position: relative;
+            z-index: 1;
+        }
+        .section-container {
+            margin-top: 80px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .section {
+            width: 260px;
+            height: 200px;
+            background: linear-gradient(45deg, #2c3e50, #34495e);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            color: #ffffff;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(95, 39, 205, 0.2);
+        }
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(95, 39, 205, 0.1), transparent);
+            transition: left 0.5s;
+        }
+        .section:hover::before {
+            left: 100%;
+        }
+        .section:hover {
+            transform: scale(1.05) translateY(-5px);
+            box-shadow: 0 8px 20px rgba(95, 39, 205, 0.25);
+            background: linear-gradient(45deg, #3498db, #5f27cd);
+            border-color: rgba(95, 39, 205, 0.4);
+        }
+        .section img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 15px;
+            object-fit: cover;
+            border-radius: 8px;
+            filter: brightness(1.2);
+        }
+        .section:hover img {
+            filter: drop-shadow(0 0 10px rgba(95, 39, 205, 0.5));
+        }
+        .section h2 {
+            font-size: 20px;
+            margin: 0;
+            font-family: 'Merriweather', serif;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 5%;
+            left: 5%;
+            width: 90%;
+            height: 90%;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(95, 39, 205, 0.2);
+            z-index: 1001;
+            overflow: hidden;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            border: 1px solid rgba(95, 39, 205, 0.1);
+        }
+        #modalOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(44, 62, 80, 0.8);
+            z-index: 999;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            padding: 20px;
+            flex-grow: 1;
+            background: #2c3e50;
+            border-radius: 10px;
+            margin: 10px;
+            color: #ffffff;
+            width: calc(100% - 20px);
+            overflow-y: auto;
+            display: block;
+            max-height: calc(100% - 60px);
+        }
+        .modal-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .modal-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .modal-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #3498db, #5f27cd);
+            border-radius: 3px;
+        }
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #2980b9, #8e44ad);
+        }
+        .modal-header {
+            background: linear-gradient(0deg, #2c3e50, #34495e);
+            padding: 8px 12px;
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1002;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            border-bottom: 1px solid rgba(95, 39, 205, 0.2);
+        }
+        #trainerModal .modal-header {
+            background: linear-gradient(0deg, #3498db, #5f27cd);
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+        .close-btn {
+            background: linear-gradient(135deg, #3498db, #5f27cd);
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Roboto', sans-serif;
+            z-index: 1003;
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+        }
+        .close-btn:hover {
+            background: linear-gradient(135deg, #2980b9, #8e44ad);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(95, 39, 205, 0.4);
+        }
+        #trainerModal .close-btn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        #trainerModal .close-btn:hover {
+            background: linear-gradient(135deg, #c0392b, #a93226);
+        }
+        details {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 6px;
+            background: #34495e;
+            cursor: pointer;
+            border: 1px solid rgba(95, 39, 205, 0.2);
+        }
+        
+        details p {
+            padding: 0 15px 10px;
+            color: #ecf0f1;
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+        .math-notation {
+            font-style: italic;
+            color: #f1c40f;
+            display: inline !important;
+        }
+        #questionsModal .math-notation-centered {
+            display: none !important;
+        }
+        .highlight-term {
+            color: #3498db;
+            font-weight: bold;
+        }
+        .formula-line {
+            display: inline-block;
+            white-space: nowrap;
+        }
+        .question-block {
+            margin: 15px 0;
+            padding: 10px;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            cursor: pointer;
+            border: 1px solid rgba(95, 39, 205, 0.2);
+        }
+        .question-block summary {
+            font-size: 16px;
+            background: linear-gradient(135deg, #3498db, #5f27cd);
+            color: #ffffff;
+        }
+        .question-block details summary {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+        .question-block details p {
+            color: #ecf0f1;
+            background: #2c3e50;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 3px solid #27ae60;
+        }
+        
+/* Стилі для MathJax у флеш-картках */
+#questionsModal mjx-container {
+    display: inline !important;
+    vertical-align: middle !important; /* Вирівнювання по вертикалі */
+    font-size: clamp(17px, 3vw, 19px) !important; /* Такий самий розмір, як у тексту */
+    line-height: 1.4 !important; /* Такий самий line-height, як у тексту */
+    color: #f1c40f !important;
+    background: none !important;
+    font-style: italic !important;
+    margin: 0 2px !important;
+    padding: 0 !important;
+}
+
+        .trainer-container {
+            width: 90%;
+            max-width: 800px;
+            padding: 3vw 4vw;
+            text-align: center;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(95, 39, 205, 0.2);
+            transition: all 0.3s ease;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100%;
+            border: 1px solid rgba(95, 39, 205, 0.2);
+        }
+        .question-circle {
+            width: clamp(80px, 15vw, 120px);
+            height: clamp(80px, 15vw, 120px);
+            margin: 0 auto 3vw;
+            background: linear-gradient(135deg, #3498db, #5f27cd);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(95, 39, 205, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .question-circle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        .question-circle:hover::before {
+            left: 100%;
+        }
+        .question-circle h3 {
+            color: #ffffff;
+            font-family: 'Lora', serif;
+            font-size: clamp(16px, 2.5vw, 20px);
+            margin: 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 1;
+        }
+        .cube-formula, .vector-formula {
+            color: #f1c40f;
+            display: inline-block;
+            font-size: clamp(15px, 2.5vw, 17px);
+        }
+        #completionBlock.modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        #completionBlock .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 90%;
+        }
+        .completion-emoji {
+            width: clamp(80px, 15vw, 120px);
+            height: clamp(80px, 15vw, 120px);
+            margin: 0 auto 3vw;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(95, 39, 205, 0.3);
+            border: 2px dashed #f1c40f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+        .completion-emoji::after {
+            content: '🎉';
+            font-size: clamp(40px, 8vw, 60px);
+            color: #f1c40f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
+        }
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2vw;
+            justify-content: center;
+            margin-bottom: 3vw;
+            width: 100%;
+        }
+        .option {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5vw 3vw;
+            border: 1.5px solid #3498db;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #34495e, #2c3e50);
+            cursor: pointer;
+            font-size: clamp(15px, 3.5vw, 18px);
+            min-height: 45px;
+            min-width: 90px;
+            max-width: 45%;
+            text-align: center;
+            font-family: 'Lora', serif;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+            box-sizing: border-box;
+            touch-action: manipulation;
+            pointer-events: auto !important;
+            user-select: none;
+            transition: all 0.3s ease;
+            color: #ecf0f1;
+        }
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(52, 152, 219, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        .option:hover::before {
+            left: 100%;
+        }
+        .option:hover {
+            background: linear-gradient(135deg, #3498db, #5f27cd);
+            transform: scale(1.03);
+            border-color: #f1c40f;
+            box-shadow: 0 4px 12px rgba(95, 39, 205, 0.3);
+        }
+        .option.selected {
+            background: linear-gradient(135deg, #27ae60, #2ecc71) !important;
+            color: #ffffff !important;
+            border: 2px solid #f1c40f !important;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
+        }
+        .option:focus {
+            outline: 2px solid #f1c40f;
+            outline-offset: 2px;
+        }
+        .option {
+            min-height: 50px !important;
+            padding: 12px 20px !important;
+        }
+        mjx-container, mjx-container * {
+            pointer-events: none !important;
+            user-select: none !important;
+        }
+        mjx-frac {
+            font-size: 1.2em !important;
+            padding: 2px !important;
+        }
+        mjx-num, mjx-den {
+            padding: 2px !important;
+        }
+        button {
+            background: linear-gradient(135deg, #3498db, #5f27cd);
+            color: #ffffff;
+            border: none;
+            border-radius: 25px;
+            padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 24px);
+            font-size: clamp(16px, 3vw, 18px);
+            font-family: 'Lora', serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(95, 39, 205, 0.3);
+        }
+        button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #2980b9, #8e44ad);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(95, 39, 205, 0.4);
+        }
+        button:disabled {
+            background: #7f8c8d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .result {
+            margin-top: 3vw;
+            font-size: clamp(16px, 2.5vw, 18px);
+            font-family: 'Lora', serif;
+            color: #ffffff;
+        }
+        .completion-message {
+            font-family: 'Lora', serif;
+            font-weight: 700;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            border: 2.5px solid #27ae60;
+            border-radius: 15px;
+            padding: clamp(12px, 3vw, 18px);
+            box-shadow: 0 6px 12px rgba(46, 204, 113, 0.3);
+            margin: 2vw auto;
+            max-width: 90%;
+            position: relative;
+            overflow: hidden;
+        }
+        .completion-message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 1s;
+            animation: completionShine 2s infinite;
+        }
+        @keyframes completionShine {
+            0% { left: -100%; }
+            50% { left: 100%; }
+            100% { left: 100%; }
+        }
+        .completion-message h2 {
+            font-size: clamp(22px, 4.5vw, 30px);
+            margin: 0 0 1vw;
+            color: #ff7e00;
+            text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
+        }
+        .completion-message p {
+            font-size: clamp(18px, 3.5vw, 22px);
+            margin: 0;
+            color: #ffffff;
+        }
+        .math-notation-centered {
+            display: block;
+            text-align: center;
+            width: 100%;
+            font-size: clamp(18px, 3vw, 20px);
+            margin: 10px 0;
+            line-height: 1.6;
+            font-family: 'Roboto', sans-serif;
+        }
+        mjx-container.math-notation-centered {
+            display: inline-block !important;
+            text-align: center !important;
+            vertical-align: middle !important;
+            white-space: nowrap !important;
+            line-height: 1.4 !important;
+            font-size: clamp(18px, 3vw, 20px) !important;
+            color: #f1c40f !important;
+            background: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        mjx-container.math-notation-centered * {
+            color: #f1c40f !important;
+            font-style: italic !important;
+        }
+        #trainerModal .math-notation-centered {
+            font-size: clamp(16px, 3vw, 18px);
+            color: #ffffff;
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.5;
+            text-align: center;
+            margin: 5px 0;
+            display: block;
+        }
+        #trainerModal .options-container mjx-container {
+            display: inline !important;
+            vertical-align: middle !important;
+            font-size: clamp(14px, 3vw, 16px) !important;
+            color: #f1c40f !important;
+            background: none !important;
+            font-style: italic !important;
+            margin: 0 2px !important;
+            padding: 0 !important;
+        }
+        .feedback {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(24px, 5.8vw, 30px);
+            font-family: 'Lora', serif;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+            z-index: 1001;
+            opacity: 0;
+           transition: opacity 0.3s ease;
+            text-align: center;
+            border: 2px solid transparent;
+        }
+        .feedback.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1.05);
+        }
+        .correct-feedback {
+            color: #ffffff;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            border: 2px solid #27ae60;
+            box-shadow: 0 0 20px rgba(46, 204, 113, 0.5);
+        }
+        .incorrect-feedback {
+            color: #ffffff;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            border: 2px solid #e74c3c;
+            box-shadow: 0 0 20px rgba(231, 76, 60, 0.5);
+        }
+        .navigation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px auto;
+            max-width: 1000px;
+        }
+        .nav-button {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: #ffff00;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+        }
+        .nav-button:hover {
+            background: linear-gradient(135deg, #3498db, #5f27cd);
+            color: #ffffff;
+            transform: scale(1.03);
+            box-shadow: 0 4px 12px rgba(95, 39, 205, 0.3);
+        }
+        .nav-button svg {
+            margin-right: 8px;
+            fill: currentColor;
+            transition: fill 0.3s ease;
+        }
+        .question-card {
+            perspective: 1000px;
+            margin: 20px auto;
+            max-width: 964px;
+            width: 100%;
+            min-height: 150px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            cursor: pointer;
+        }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            min-height: 200px;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            cursor: inherit;
+        }
+        .question-card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            min-height: 200px;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            cursor: inherit;
+            border: 1px solid rgba(95, 39, 205, 0.2);
+        }
+        .card-front {
+            background: #3a2e56;
+            color: #ffffff;
+        }
+        .card-back {
+            background: linear-gradient(135deg, #111827, #1f2937);
+            color: #ecf0f1;
+            transform: rotateY(180deg);
+            text-align: justify;
+            padding: 20px;
+            overflow: auto;
+            white-space: normal;
+        }
+        
+/* Оновлені стилі для span у флеш-картках */
+.card-front span, .card-back span {
+    font-family: 'Lora', serif;
+    font-size: clamp(17px, 3vw, 19px);
+    line-height: 1.4; /* Зменшено line-height для кращого вирівнювання */
+    display: inline;
+    color: inherit;
+    text-align: center;
+    vertical-align: middle; /* Додано для вирівнювання */
+}
+
+        .card-back span {
+            text-align: justify;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .theory-content h2 {
+            color: #f1c40f;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
+            margin-bottom: 20px;
+            font-family: 'Merriweather', serif;
+        }
+        .theory-content h3 {
+            color: #3498db;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+            margin-top: 25px;
+        }
+        .theory-content p, .theory-content li {
+            color: #ecf0f1;
+            font-size: clamp(18px, 3vw, 20px);
+            line-height: 1.7;
+        }
+        .example {
+    font-size: 1.1rem; /* Збільшення шрифту, наприклад, до 1.2rem (можете встановити більше, наприклад, 1.3rem або 18px) */
+    color: #e67e22;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #e67e22;
+            margin: 15px 0;
+
+}
+        .solution {
+            color: #27ae60;
+            font-weight: bold;
+            text-align: center;
+            display: block;
+            padding: 10px;
+            border-radius: 6px;
+            border: 2px solid #27ae60;
+            margin: 15px 0;
+        }
+        .note {
+            color: #9b59b6;
+            font-weight: bold;
+        }
+        .note-text {
+            font-style: italic;
+            color: #bdc3c7;
+            text-align: justify;
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #9b59b6;
+            margin: 10px 0;
+        }
+        .theory-content p:not(.math-notation-centered),
+        .theory-content li {
+            text-align: justify;
+        }
+        .vector-type {
+            font-style: italic;
+            color: #f1c40f;
+        }
+        .main-types {
+            font-weight: bold;
+            color: #3498db;
+        }
+        ol {
+            color: #ecf0f1;
+        }
+        ol li::marker {
+            color: #f1c40f;
+        }
+        mjx-container {
+            color: #f1c40f !important;
+            background: none !important;
+            font-style: italic !important;
+        }
+        .theory-content mjx-container {
+            color: #f1c40f !important;
+            background: none !important;
+        }
+        .modal-content::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        .modal-content::-webkit-scrollbar-track {
+            background: #2c3e50;
+            border-radius: 10px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
+        }
+        .modal-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #3498db, #5f27cd);
+            border-radius: 10px;
+            border: 2px solid #2c3e50;
+        }
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #2980b9, #8e44ad);
+        }
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #2c3e50;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #3498db, #5f27cd);
+            border-radius: 10px;
+            border: 2px solid #2c3e50;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #2980b9, #8e44ad);
+        }
+        .modal-content {
+            scrollbar-color: #3498db #2c3e50;
+            scrollbar-width: thin;
+        }
+        .glow-title {
+            text-align: center;
+            color: #ffffff;
+            font-family: 'Merriweather', serif;
+            font-size: clamp(20px, 3vw, 24px);
+            margin: 10px 0;
+            text-shadow: 0 0 10px rgba(95, 39, 205, 0.5);
+            background: linear-gradient(135deg, #3498db, #5f27cd);
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: block;
+        }
+        .input-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            width: 100%;
+            max-width: 300px;
+            background: rgba(44, 62, 80, 0.5);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(95, 39, 205, 0.3);
+        }
+        #answerInput {
+            padding: 8px;
+            font-size: clamp(14px, 3vw, 16px);
+            width: 100px;
+            border: 2px solid #3498db;
+            border-radius: 6px;
+            background: #34495e;
+            color: #ecf0f1;
+            text-align: center;
+            font-family: 'Roboto', sans-serif;
+        }
+        #answerInput:focus {
+            outline: none;
+            border-color: #f1c40f;
+            box-shadow: 0 0 8px rgba(241, 196, 15, 0.3);
+        }
+        .option.text-option {
+            font-size: clamp(14px, 3vw, 16px);
+            padding: 10px 20px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .figure-reference {
+            color: #e67e22;
+            font-style: italic;
+            font-weight: bold;
+        }
+        .angle-notation {
+            color: #9b59b6;
+            font-weight: bold;
+        }
+        .vector-relation {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        
+        #optionsContainer {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        #submitAnswer {
+            margin-top: 20px;
+            padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 24px);
+            background: linear-gradient(135deg, #3498db, #5f27cd);
+            color: #ffffff;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: clamp(16px, 3vw, 18px);
+            font-family: 'Lora', serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(95, 39, 205, 0.3);
+        }
+        #submitAnswer:disabled {
+            background: #7f8c8d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        #submitAnswer:hover:not(:disabled) {
+            background: linear-gradient(135deg, #2980b9, #8e44ad);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(95, 39, 205, 0.4);
+        }
+            summary {
+    font-weight: bold;
+    padding: 12px 16px;
+    background: #704214;
+    border-radius: 8px;
+    color: #ffffff;
+    font-family: 'Merriweather', serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+    list-style: none;
+}
+
+summary::-webkit-details-marker {
+    display: none; /* ховає стандартний трикутничок браузера */
+}
+
+summary::after {
+    content: " ▼"; /* додаємо свій маркер */
+    font-size: 0.9rem;
+    transition: transform 0.3s ease;
+}
+
+details[open] summary::after {
+    transform: rotate(-180deg); /* обертання при відкриванні */
+}
+    .example .MJX-TeXAtom-OP, .example .MathJax {
+    font-size: 120%; /* Збільшення шрифту MathJax на 20% */
+}
+.video-card {
+            width: 350px;
+            height: 250px;
+            background: #78866b;
+            border-radius: 15px;
+            border: 1px solid rgba(163, 166, 139, 0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 10px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            color: #e8e8e8;
+        }
+        .video-card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+        }
+        .video-card img {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 8px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+        .video-card h3 {
+            font-size: clamp(16px, 2.5vw, 18px);
+            font-weight: 600;
+            margin: 0;
+        }
+        .video-player-container {
+            width: 80vw;
+            max-width: 960px;
+            aspect-ratio: 16 / 9;
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .video-player-container iframe {
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            display: block;
+            border: none;
+        }
+            
+
+        @media (max-width: 768px) {
+            .close-btn {
+                font-size: 16px;
+                padding: 6px 12px;
+                border-radius: 8px;
+            }
+            .theory-content p, .theory-content li {
+                font-size: clamp(18px, 3vw, 20px);
+            }
+            .theory-content mjx-container {
+                font-size: clamp(16px, 3vw, 18px) !important;
+            }
+            .theory-content h2, .theory-content h3 {
+                font-size: clamp(20px, 3vw, 24px);
+            }
+            .question-block summary {
+                font-size: clamp(18px, 3vw, 20px);
+            }
+            .question-block details p {
+                font-size: clamp(18px, 3vw, 20px);
+            }
+            #questionsModal mjx-container {
+                font-size: 20px !important;
+            }
+            #submitAnswer {
+                font-size: clamp(16px, 3.5vw, 18px);
+                padding: clamp(12px, 3vw, 14px) clamp(24px, 5vw, 28px);
+            }
+            #answerInput {
+                width: 80px;
+                padding: 8px;
+                font-size: clamp(16px, 3vw, 18px);
+            }
+            .title-box {
+                margin-top: 40px;
+                padding: 15px 20px;
+            }
+            .title-box h1 {
+                font-size: 24px;
+            }
+            .section-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            .section {
+                width: 80%;
+                height: 180px;
+            }
+            .modal {
+                top: 2%;
+                left: 2%;
+                width: 96%;
+                height: 96%;
+            }
+            .modal-header {
+                padding: 5px 8px;
+            }
+            .modal-content {
+                max-height: calc(100% - 50px);
+            }
+            .question-card {
+                min-height: 180px;
+            }
+            .card-front, .card-back {
+                font-size: clamp(15px, 3vw, 17px);
+                padding: 12px;
+                line-height: 1.4;
+            }
+            .card-front span, .card-back span {
+                font-size: clamp(15px, 3vw, 17px);
+                line-height: 1.4;
+            }
+            #questionsModal mjx-container {
+                font-size: clamp(16px, 3vw, 18px) !important;
+            }
+            .trainer-container {
+                width: 95%;
+                padding: 4vw;
+            }
+            .question-circle, .completion-emoji {
+                width: 25vw;
+                height: 25vw;
+                min-width: 80px;
+                min-height: 80px;
+            }
+            .question-circle h3 {
+                font-size: clamp(14px, 3vw, 16px);
+            }
+            .completion-emoji::after {
+                font-size: clamp(30px, 7vw, 40px);
+            }
+            .options-container {
+                gap: 1.5vw;
+                flex-direction: column;
+                align-items: center;
+            }
+            .option {
+                font-size: clamp(14px, 4vw, 16px);
+                padding: 10px !important;
+                min-height: 60px !important;
+                min-width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                overflow: hidden;
+            }
+            .option mjx-container {
+                font-size: clamp(13px, 4vw, 15px) !important;
+                width: 100% !important;
+                text-align: center;
+                overflow: hidden;
+            }
+            button {
+                padding: 3vw 5vw;
+                font-size: clamp(12px, 3vw, 14px);
+            }
+            .feedback {
+                font-size: clamp(24px, 5.8vw, 32px);
+                padding: clamp(12px, 3.5vw, 18px) clamp(18px, 5vw, 25px);
+                max-width: 95vw;
+                word-wrap: break-word;
+            }
+            .completion-message {
+                padding: clamp(10px, 3vw, 15px);
+            }
+            .completion-message h2 {
+                font-size: clamp(20px, 4vw, 26px);
+            }
+            .completion-message p {
+                font-size: clamp(16px, 3vw, 20px);
+            }
+            .navigation-buttons {
+                margin: 20px auto;
+                gap: 15px;
+            }
+            .nav-button {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+            .math-notation-centered {
+                font-size: clamp(16px, 2.5vw, 18px);
+            }
+            mjx-container.math-notation-centered {
+                font-size: clamp(16px, 2.5vw, 18px) !important;
+            }
+            .input-container {
+                flex-direction: row;
+                align-items: center;
+                gap: 8px;
+            }
+            
+            #trainerModal .options-container mjx-container {
+                font-size: clamp(16px, 3.2vw, 18px) !important;
+            }
+             .video-card-container {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            .video-card {
+                width: 260px;
+                height: 160px;
+                margin: 5px;
+            }
+            .video-card img {
+                width: 40px;
+                height: 40px;
+                margin-bottom: 6px;
+            }
+            .video-player-container {
+                width: 80vw;
+                max-width: 600px;
+                aspect-ratio: 16 / 9;
+            }
+            .video-card h3 {
+                font-size: clamp(14px, 2.5vw, 16px);
+            }
+             summary {
+   
+    font-size: 0.9rem;
+    
+}
+                    }
+        @media (max-width: 480px) {
+            .close-btn {
+                font-size: 14px;
+                padding: 5px 10px;
+                border-radius: 6px;
+            }
+            .theory-content p, .theory-content li {
+                font-size: clamp(16px, 3vw, 18px);
+            }
+            .theory-content mjx-container {
+                font-size: clamp(16px, 3vw, 18px) !important;
+            }
+            .theory-content h2, .theory-content h3 {
+                font-size: clamp(20px, 3vw, 24px);
+            }
+            .question-block summary {
+                font-size: clamp(17px, 3.2vw, 19px);
+            }
+            .question-block details p {
+                font-size: clamp(16px, 3vw, 18px);
+            }
+            #questionsModal mjx-container {
+                font-size: 20px !important;
+            }
+            #submitAnswer {
+                font-size: clamp(14px, 3.5vw, 16px);
+                padding: clamp(10px, 3vw, 12px) clamp(20px, 5vw, 24px);
+            }
+            #answerInput {
+                width: 70px;
+                padding: 6px;
+                font-size: clamp(14px, 3vw, 16px);
+            }
+            .title-box {
+                margin-top: 20px;
+                padding: 10px 15px;
+            }
+            .title-box h1 {
+                font-size: 20px;
+            }
+            .section {
+                width: 90%;
+                height: 150px;
+            }
+            .section img {
+                width: 50px;
+                height: 50px;
+            }
+            .section h2 {
+                font-size: 18px;
+            }
+            .modal-header {
+                padding: 4px 6px;
+            }
+            .modal-content {
+                max-height: calc(100% - 40px);
+            }
+            .question-card {
+                min-height: 200px;
+            }
+            .card-front, .card-back {
+                font-size: clamp(14px, 3vw, 16px);
+                padding: 10px;
+                line-height: 1.3;
+            }
+            .card-front span, .card-back span {
+                font-size: clamp(14px, 3vw, 16px);
+                line-height: 1.3;
+            }
+            #questionsModal mjx-container {
+                font-size: clamp(14px, 3vw, 16px) !important;
+            }
+            .card-inner {
+                min-height: 200px;
+            }
+            .trainer-container {
+                padding: 5vw;
+            }
+            .question-circle, .completion-emoji {
+                width: 25vw;
+                height: 25vw;
+                min-width: 60px;
+                min-height: 60px;
+            }
+            .completion-emoji::after {
+                font-size: clamp(25px, 6vw, 35px);
+            }
+            .option {
+                font-size: 16px !important;
+                padding: 10px !important;
+                min-height: 60px !important;
+                min-width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                overflow: hidden;
+            }
+            .option mjx-container {
+                font-size: clamp(13px, 4vw, 15px) !important;
+                width: 100% !important;
+                text-align: center;
+                overflow: hidden;
+            }
+            .feedback {
+                font-size: clamp(22px, 5.2vw, 28px);
+                padding: clamp(10px, 3vw, 15px) clamp(15px, 4.5vw, 20px);
+                max-width: 95vw;
+            }
+            .completion-message {
+                padding: clamp(10px, 3vw, 15px);
+            }
+            .completion-message h2 {
+                font-size: clamp(18px, 3.5vw, 22px);
+            }
+            .completion-message p {
+                font-size: clamp(14px, 3vw, 18px);
+            }
+            .navigation-buttons {
+                margin: 15px auto;
+                gap: 10px;
+            }
+            .nav-button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+            .math-notation-centered {
+                font-size: clamp(14px, 2.5vw, 16px);
+                line-height: 1.2;
+            }
+            mjx-container.math-notation-centered {
+                font-size: clamp(14px, 2.5vw, 16px) !important;
+                line-height: 1.2 !important;
+            }
+            mjx-container {
+                font-size: 13px !important;
+            }
+            .input-container {
+                gap: 6px;
+            }
+                   
+            #trainerModal .options-container mjx-container {
+                font-size: clamp(14px, 3vw, 16px) !important;
+            }
+            .cube-formula, .vector-formula {
+                font-size: clamp(16px, 3vw, 18px);
+            }
+            .video-card-container {
+                gap: 10px;
+                padding: 10px;
+            }
+            .video-card {
+                width: 90%;
+                max-width: 260px;
+                height: 140px;
+                margin: 5px;
+            }
+            .video-card img {
+                width: 30px;
+                height: 30px;
+                margin-bottom: 5px;
+            }
+            .video-card h3 {
+                font-size: clamp(12px, 2.5vw, 14px);
+            }
+            .video-player-container {
+                width: 80vw;
+                max-width: 400px;
+                aspect-ratio: 16 / 9;
+            }
+            #trainerModal .math-notation-centered,
+            #questionsModal mjx-container {
+                font-size: clamp(18px, 4vw, 22px) !important;
+            }
+            
+        }
+        @media (max-width: 600px) {
+            #trainerModal .math-notation-centered,
+            #questionsModal mjx-container {
+                font-size: clamp(18px, 4vw, 22px) !important;
+            }
+            #trainerModal .options-container mjx-container {
+                font-size: clamp(18px, 4vw, 20px) !important;
+            }
+        }
+            /* Для мобільних пристроїв */
+@media (max-width: 768px) {
+    #trainerModal .math-notation-centered,
+    #trainerModal mjx-container,
+    #questionsModal mjx-container {
+        font-size: 5vw !important;   /* Розмір шрифту у відсотках від ширини екрану */
+        line-height: 1.4 !important;
+    }
+
+    #trainerModal .options-container mjx-container {
+        font-size: 4.5vw !important;
+    }
+
+   }
+            /* Зменшення дробів на мобільних пристроях */
+@media (max-width: 768px) {
+    mjx-frac {
+        font-size: 1.1em !important; /* Зменшуємо дріб на ~15% */
+        transform: scale(1.1);       /* Додатково зменшуємо масштаб */
+        transform-origin: center;
+        display: inline-block !important;
+        vertical-align: middle !important;
+    }
+
+    /* Зменшуємо відступи всередині дробу */
+    mjx-frac > mjx-num,
+    mjx-frac > mjx-den {
+        padding: 1px 0 !important;
+    }
+
+    /* Опціонально: зменшуємо висоту лінії дробу */
+    mjx-frac > mjx-box {
+        margin: 0 1px !important;
+    }
+
+    /* Якщо дріб у варіантах відповідей — ще сильніше зменшуємо */
+    #trainerModal .option mjx-frac,
+    .options-container mjx-frac {
+        font-size: 1.1em !important;
+        transform: scale(0.9);
+    }
+}
+
+@media (max-width: 480px) {
+    mjx-frac {
+        font-size: 1.0em !important;
+        transform: scale(0.9);
+    }
+
+    #trainerModal .option mjx-frac,
+    .options-container mjx-frac {
+        font-size: 1.0em !important;
+        transform: scale(0.9);
+    }
+}
+
+    </style>
+
+</head>
+<body>
+    <div class="title-box">
+        <h1>39. Мішаний добуток трьох векторів і його властивості</h1>
+    </div>
+
+    <div class="section-container">
+        <div class="section" id="openTheoryBtn">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Книга" loading="lazy">
+            <h2>Теоретичні відомості</h2>
+        </div>
+        <div class="section" id="openVideoBtn">
+            <img src="https://img.icons8.com/fluency/96/video.png" alt="Відео" loading="lazy">
+            <h2>Відеоматеріали</h2>
+        </div>
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Картки" loading="lazy">
+            <h2>Питання і відповіді</h2>
+        </div>
+        <div class="section" id="openTrainerBtn">
+            <img src="https://img.icons8.com/fluency/96/flash-on.png" alt="Тренажер" loading="lazy">
+            <h2>Тренажер</h2>
+        </div>
+    </div>
+
+    <div class="navigation-buttons">
+        <a class="nav-button" href="{{ url_for('tema8') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            До теми 8
+        </a>
+        <a class="nav-button" href="{{ url_for('home') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            На головну
+        </a>
+    </div>
+
+   <!-- Теорія -->
+    <div id="theoryModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="theoryTitle">
+        <div class="modal-header">
+            <button class="close-btn" id="closeTheoryBtn" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="theory-content">
+    <!-- Вкладка 1 -->
+    <details class="accordion-item">
+    <summary class="accordion-summary">
+        Мішаний добуток. Геометричний зміст
+        <span class="accordion-icon"></span>
+    </summary>
+    <div class="accordion-content">
+        <p><em>Мішаним добутком </em>трьох векторів <span class="vector-type">\( \vec{a}, \vec{b}, \vec{c} \)</span> називається <em>число</em>, яке обчислюється як скалярний добуток вектора <span class="math-notation">\( \vec{a} \times \vec{b} \)</span> на вектор <span class="vector-type">\( \vec{c} \)</span>. Математично це записується як:</p>
+        <p class="math-notation-centered">\[ (\vec{a}, \vec{b}, \vec{c}) = (\vec{a} \times \vec{b}) \cdot \vec{c} \quad (8.19) \]</p>
+        <p>Отже, мішаний добуток є числовим значенням, яке залежить від величин і напрямків усіх трьох векторів.</p>
+        
+        <p>Цей добуток також можна виразити через модулі векторів і кут між ними:</p>
+        <p class="math-notation-centered">\[ (\vec{a}, \vec{b}, \vec{c}) = |\vec{a} \times \vec{b}| \cdot |\vec{c}| \cdot \cos \psi \quad (8.20) \]</p>
+        <p>де <span class="math-notation">\( |\vec{a} \times \vec{b}| \)</span> – довжина векторного добутку векторів <span class="vector-type">\( \vec{a} \)</span> і <span class="vector-type">\( \vec{b} \)</span>; <span class="math-notation">\( |\vec{c}| \)</span> – довжина вектора <span class="vector-type">\( \vec{c} \)</span>; <span class="math-notation">\( \psi \)</span> – кут між вектором <span class="math-notation">\( \vec{a} \times \vec{b} \)</span> і вектором <span class="vector-type">\( \vec{c} \)</span>.</p>
+
+        <h3>Геометричний зміст мішаного добутку</h3>
+        <p><strong style="color: orange;">Теорема 1.</strong><em> Модуль мішаного добутку трьох некомпланарних векторів <span class="vector-type">\( \vec{a}, \vec{b}, \vec{c} \)</span> дорівнює об’єму паралелепіпеда, побудованого на цих векторах:</p>
+     </em>  <p class="math-notation-centered">\[ V = |(\vec{a}, \vec{b}, \vec{c})| \quad (8.21) \]</p>
+
+        <p>Розглянемо паралелепіпед, утворений векторами <span class="vector-type">\( \vec{a}, \vec{b}, \vec{c} \)</span>:</p>
+        <ul>
+            <li><strong>Площа основи \( S \).</strong> Основа паралелепіпеда – це паралелограм, побудований на векторах <span class="vector-type">\( \vec{a} \)</span> і <span class="vector-type">\( \vec{b} \)</span>. Її площа дорівнює модулю векторного добутку:</li>
+            <p class="math-notation-centered">\[ S = |\vec{a} \times \vec{b}| \]</p>
+            <li><strong>Висота \( h \).</strong> Висота паралелепіпеда – це проекція вектора <span class="vector-type">\( \vec{c} \)</span> на напрямок, перпендикулярний до його основи, тобто на вектор <span class="math-notation">\( \vec{a} \times \vec{b} \)</span>. Її значення визначається як:</li>
+            <p class="math-notation-centered">\[ h = |\vec{c}| \cdot \cos \psi \]</p>
+            figure8.10
+            <p>де <span class="math-notation">\( \psi \)</span> – кут між вектором <span class="math-notation">\( \vec{a} \times \vec{b} \)</span> і вектором <span class="vector-type">\( \vec{c} \)</span>.</p>
+            <li><strong>Об’єм \( V \).</strong> Об’єм паралелепіпеда дорівнює добутку площі основи на висоту:</li>
+            <p class="math-notation-centered">\[ V = S \cdot h = |\vec{a} \times \vec{b}| \cdot |\vec{c}| \cdot \cos \psi \]</p>
+        </ul>
+        <p>З урахуванням формули (8.20), де <span class="math-notation">\( (\vec{a}, \vec{b}, \vec{c}) = |\vec{a} \times \vec{b}| \cdot |\vec{c}| \cdot \cos \psi \)</span>, модуль цього виразу дорівнює <span class="math-notation">\( |(\vec{a}, \vec{b}, \vec{c})| \)</span>, тобто:</p>
+        <p class="math-notation-centered">\[ V = |(\vec{a}, \vec{b}, \vec{c})| \]</p>
+
+        <p>З формули (8.20) випливає, що коли мішаний добуток не дорівнює нулю, його знак збігається зі знаком <span class="math-notation">\( \cos \psi \)</span>:</p>
+        <ul>
+            <li><span class="math-notation">\( (\vec{a}, \vec{b}, \vec{c}) > 0 \)</span>, якщо вектор <span class="vector-type">\( \vec{c} \)</span> спрямований у той самий бік від площини, утвореної векторами <span class="vector-type">\( \vec{a} \)</span> і <span class="vector-type">\( \vec{b} \)</span>, що й вектор <span class="math-notation">\( \vec{a} \times \vec{b} \)</span>. Така орієнтація називається <span class="highlight-term">правою трійкою</span> (рис. 8.10).</li>
+            <li><span class="math-notation">\( (\vec{a}, \vec{b}, \vec{c}) < 0 \)</span>, якщо вектор <span class="vector-type">\( \vec{c} \)</span> і вектор <span class="math-notation">\( \vec{a} \times \vec{b} \)</span> спрямовані в протилежні боки. Така орієнтація називається <span class="highlight-term">лівою трійкою</span> (рис. 8.11).</li>
+        </ul>
+<img src="/static/figure8.10.jpg" alt="Геометрична побудова" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+      
+         <p><strong style="color: orange;">Теорема 2.</strong><em> Мішаний добуток трьох векторів дорівнює нулю тоді і тільки тоді, коли ці вектори компланарні.</em></p>
+       <p><strong style="text-decoration: underline; text-decoration-color: orange;">Необхідність.</strong> Нехай <span class="math-notation">\( (\vec{a}, \vec{b}, \vec{c}) = 0 \)</span>. Припустимо, що вектори <span class="vector-type">\( \vec{a}, \vec{b}, \vec{c} \)</span> некомпланарні. У такому разі паралелепіпед, побудований на цих векторах, матиме об’єм <span class="math-notation">\( V > 0 \)</span>. Однак, за Теоремою 1, об’єм паралелепіпеда дорівнює <span class="math-notation">\( V = |(\vec{a}, \vec{b}, \vec{c})| \)</span>. Оскільки <span class="math-notation">\( (\vec{a}, \vec{b}, \vec{c}) = 0 \)</span>, то <span class="math-notation">\( V = 0 \)</span>, що суперечить припущенню про <span class="math-notation">\( V > 0 \)</span>. Отже, вектори <span class="vector-type">\( \vec{a}, \vec{b}, \vec{c} \)</span> повинні бути компланарними.</p>
+<p><strong style="text-decoration: underline; text-decoration-color: orange;">Достатність.</strong> Нехай вектори <span class="vector-type">\( \vec{a}, \vec{b}, \vec{c} \)</span> компланарні. Тоді вектор <span class="vector-type">\( \vec{c} \)</span> лежить у площині, утвореній векторами <span class="vector-type">\( \vec{a} \)</span> і <span class="vector-type">\( \vec{b} \)</span>. У цьому випадку вектор <span class="math-notation">\( \vec{a} \times \vec{b} \)</span>, який перпендикулярний до цієї площини, буде перпендикулярним до <span class="vector-type">\( \vec{c} \)</span>. Скалярний добуток перпендикулярних векторів дорівнює нулю, тобто: <span class="math-notation">\( (\vec{a} \times \vec{b}) \cdot \vec{c} = 0 \)</span>, звідки <span class="math-notation">\( (\vec{a}, \vec{b}, \vec{c}) = 0 \)</span>.</p>
+    </div>
+</details>
+<!-- Вкладка 2 -->
+<details class="accordion-item">
+    <summary class="accordion-summary">
+        Властивості мішаного добутку. Приклад
+        <span class="accordion-icon"></span>
+    </summary>
+    <div class="accordion-content">
+        <h3>Властивості мішаного добутку</h3>
+        <ol>
+            <li><strong>Комутативність мішаного добутку.</strong> Мішаний добуток можна обчислити як скалярний добуток <span class="math-notation">\( \vec{a} \times \vec{b} \)</span> на <span class="vector-type">\( \vec{c} \)</span> або як скалярний добуток <span class="vector-type">\( \vec{a} \)</span> на <span class="math-notation">\( \vec{b} \times \vec{c} \)</span>:
+                <p class="math-notation-centered">\[ (\vec{a} \times \vec{b}) \cdot \vec{c} = \vec{a} \cdot (\vec{b} \times \vec{c}) \]</p>
+                Завдяки цій властивості мішаний добуток записується у зрозумілій формі:
+                <p class="math-notation-centered">\[ (\vec{a}, \vec{b}, \vec{c}) \]</p>
+            </li>
+            <li><strong>Циклічність.</strong> Мішаний добуток залишається незмінним при циклічній перестановці векторів:
+                <p class="math-notation-centered">\[ (\vec{a}, \vec{b}, \vec{c}) = (\vec{b}, \vec{c}, \vec{a}) = (\vec{c}, \vec{a}, \vec{b}) \]</p>
+                Це означає, що порядок векторів можна змінити, обертаючи їх по колу, без зміни значення.
+            </li>
+            <li><strong>Зміна знака.</strong> Знак мішаного добутку змінюється на протилежний при перестановці будь-яких двох векторів:
+                <p class="math-notation-centered">\[ (\vec{a}, \vec{b}, \vec{c}) = -(\vec{b}, \vec{a}, \vec{c}) = -(\vec{c}, \vec{b}, \vec{a}) = -(\vec{a}, \vec{c}, \vec{b}) \]</p>
+                Ця властивість відображає зміну орієнтації трійки векторів.
+            </li>
+            <li><strong>Геометричний зміст.</strong> Мішаний добуток визначає об’єм паралелепіпеда, побудованого на векторах <span class="vector-type">\( \vec{a}, \vec{b}, \vec{c} \)</span>. Його значення залежить від орієнтації трійки:
+                <p class="math-notation-centered">\[ (\vec{a}, \vec{b}, \vec{c}) = \pm V \]</p>
+                де <span class="math-notation">\( V \)</span> – об’єм паралелепіпеда, знак «+» відповідає <span class="highlight-term">правій трійці</span> векторів (рис. 8.10), а знак «-» – <span class="highlight-term">лівій трійці</span> (рис. 8.11). Модуль мішаного добутку дорівнює об’єму паралелепіпеда (згідно з Теоремою 1):
+                <p class="math-notation-centered">\[ V_{\text{паралелепіпеда}} = |(\vec{a}, \vec{b}, \vec{c})| \]</p>
+            <img src="/static/figure8.11.jpg" alt="Геометрична побудова" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+   
+                Об’єм тетраедра, утвореного тими ж векторами з вершиною в початку координат, обчислюється як:
+                <p class="math-notation-centered">\[ V_{\text{тетраедра}} = \frac{1}{6} |(\vec{a}, \vec{b}, \vec{c})| \quad (8.22) \]</p>
+            </li>
+            <li><strong>Умова рівності нулю.</strong> Мішаний добуток дорівнює нулю, якщо виконується хоча б одна з таких умов:
+                <ul>
+                    <li>Один із векторів дорівнює нулю;</li>
+                    <li>Два з векторів колінеарні;</li>
+                    <li>Вектори <span class="vector-type">\( \vec{a}, \vec{b}, \vec{c} \)</span> компланарні.</li>
+                </ul>
+                У цих випадках:
+                <p class="math-notation-centered">\[ (\vec{a}, \vec{b}, \vec{c}) = 0 \]</p>
+            </li>
+        </ol>
+
+        <h3>Приклад 8.15</h3>
+        <div class="example">Обчислити мішаний добуток <span class="math-notation">\( (\vec{a}, \vec{b}, \vec{c}) \)</span>, якщо вектори <span class="vector-type">\( \vec{a}, \vec{b}, \vec{c} \)</span> утворюють праву трійку, причому: <span class="vector-type">\( \vec{a} \perp \vec{c} \)</span>, <span class="vector-type">\( \vec{b} \perp \vec{c} \)</span>, <span class="math-notation">\( \angle(\vec{a}, \vec{b}) = 120^\circ \)</span>, <span class="math-notation">\( |\vec{a}| = |\vec{b}| = 3 \)</span>, <span class="math-notation">\( |\vec{c}| = 2\sqrt{3} \)</span>.</div>
+        
+        <p>За формулою мішаного добутку (8.20):</p>
+        <p class="math-notation-centered">\[ (\vec{a}, \vec{b}, \vec{c}) = |\vec{a} \times \vec{b}| \cdot |\vec{c}| \cdot \cos \psi \]</p>
+        <p>де <span class="math-notation">\( \psi \)</span> – це кут між вектором <span class="math-notation">\( \vec{a} \times \vec{b} \)</span> і вектором <span class="vector-type">\( \vec{c} \)</span>.</p>
+        
+        <p>Модуль векторного добутку визначається як:</p>
+        <p class="math-notation-centered">\[ |\vec{a} \times \vec{b}| = |\vec{a}| \cdot |\vec{b}| \cdot \sin \varphi\]</p>
+        <p>де <span class="math-notation">\( \varphi = \angle(\vec{a}, \vec{b}) \)</span>.</p>
+        
+        <p>Обчислимо модуль векторного добутку, підставляючи відомі значення:</p>
+        <p class="math-notation-centered">\[ |\vec{a} \times \vec{b}| = 3 \cdot 3 \cdot \sin 120^\circ = 9 \cdot \frac{\sqrt{3}}{2} = \frac{9\sqrt{3}}{2} \]</p>
+        
+        <p>Оскільки <span class="vector-type">\( \vec{a} \perp \vec{c} \)</span> та <span class="vector-type">\( \vec{b} \perp \vec{c} \)</span>, то вектор <span class="math-notation">\( \vec{a} \times \vec{b} \)</span> є перпендикулярним до площини, утвореної векторами <span class="vector-type">\( \vec{a} \)</span> і <span class="vector-type">\( \vec{b} \)</span>. У правій трійці вектор <span class="math-notation">\( \vec{a} \times \vec{b} \)</span> спрямований уздовж того ж напряму, що й <span class="vector-type">\( \vec{c} \)</span> (за правилом правої руки). Отже, <span class="math-notation">\( \vec{a} \times \vec{b} \)</span> і <span class="vector-type">\( \vec{c} \)</span> колінеарні і мають однаковий напрям, тому кут між ними <span class="math-notation">\( \psi = 0^\circ \)</span>.</p>
+        
+        <p>Підставимо значення в формулу:</p>
+        <p class="math-notation-centered">\[ (\vec{a}, \vec{b}, \vec{c}) = |\vec{a} \times \vec{b}| \cdot |\vec{c}| \cdot \cos \psi = \frac{9\sqrt{3}}{2} \cdot 2\sqrt{3} \cdot \cos 0^\circ = \frac{9\sqrt{3} \cdot 2\sqrt{3}}{2} \cdot 1 = 9 \cdot 3 = 27 \]</p>
+        
+        <p class="solution">Відповідь: <span class="math-notation">\( (\vec{a}, \vec{b}, \vec{c}) = 27 \)</span>.</p>
+    </div>
+</details>
+    <!-- Вкладка 3 -->
+<details class="accordion-item">
+    <summary class="accordion-summary">
+        Мішаний добуток трьох векторів, заданих координатами
+        <span class="accordion-icon"></span>
+    </summary>
+    <div class="accordion-content">
+        <p>Нехай вектори <span class="vector-type">\( \vec{a}, \vec{b}, \vec{c} \)</span> задані своїми прямокутними декартовими координатами:</p>
+        <p class="math-notation-centered">
+            \[ \vec{a} = (a_x, a_y, a_z), \quad \vec{b} = (b_x, b_y, b_z), \quad \vec{c} = (c_x, c_y, c_z) \]
+        </p>
+        
+        <p>Щоб обчислити мішаний добуток <span class="math-notation">\( (\vec{a}, \vec{b}, \vec{c}) \)</span>, знайдемо спочатку векторний добуток векторів <span class="vector-type">\( \vec{a} \)</span> і <span class="vector-type">\( \vec{b} \)</span>:</p>
+        <p class="math-notation-centered">
+            \[ \vec{a} \times \vec{b} = \begin{vmatrix}
+            \vec{i} & \vec{j} & \vec{k} \\
+            a_x & a_y & a_z \\
+            b_x & b_y & b_z
+            \end{vmatrix} = \begin{vmatrix} a_y & a_z \\ b_y & b_z \end{vmatrix} \vec{i} - \begin{vmatrix} a_x & a_z \\ b_x & b_z \end{vmatrix} \vec{j} + \begin{vmatrix} a_x & a_y \\ b_x & b_y \end{vmatrix} \vec{k} \]
+        </p>
+        
+        <p>Таким чином, координати вектора <span class="math-notation">\( \vec{a} \times \vec{b} \)</span> будуть:</p>
+        <p class="math-notation-centered">
+            \[ \vec{a} \times \vec{b} = \left( \begin{vmatrix} a_y & a_z \\ b_y & b_z \end{vmatrix}, -\begin{vmatrix} a_x & a_z \\ b_x & b_z \end{vmatrix}, \begin{vmatrix} a_x & a_y \\ b_x & b_y \end{vmatrix} \right) \]
+        </p>
+        
+        <p>Тепер виконаємо скалярний добуток вектора <span class="math-notation">\( \vec{a} \times \vec{b} \)</span> на вектор <span class="vector-type">\( \vec{c} = (c_x, c_y, c_z) \)</span>:</p>
+        <p class="math-notation-centered">
+            \[ (\vec{a} \times \vec{b}) \cdot \vec{c} = c_x \begin{vmatrix} a_y & a_z \\ b_y & b_z \end{vmatrix} - c_y \begin{vmatrix} a_x & a_z \\ b_x & b_z \end{vmatrix} + c_z \begin{vmatrix} a_x & a_y \\ b_x & b_y \end{vmatrix} \]
+        </p>
+        
+        <p>Цей вираз є мішаним добутком <span class="math-notation">\( (\vec{a}, \vec{b}, \vec{c}) \)</span>.</p>
+        
+        <p>Мішаний добуток можна записати у вигляді визначника третього порядку:</p>
+        <p class="math-notation-centered">
+            \[ (\vec{a}, \vec{b}, \vec{c}) = \begin{vmatrix}
+            a_x & a_y & a_z \\
+            b_x & b_y & b_z \\
+            c_x & c_y & c_z
+            \end{vmatrix} \quad (8.23)
+        \]</p>
+        
+        <p>Таким чином, мішаний добуток трьох векторів дорівнює визначнику, у першому рядку якого записані координати вектора <span class="vector-type">\( \vec{a} \)</span>, у другому – координати <span class="vector-type">\( \vec{b} \)</span>, а в третьому – координати <span class="vector-type">\( \vec{c} \)</span>.</p>
+        
+        <h3>Теорема 2 (переформульована): Ознака компланарності</h3>
+        <p><em>Вектори <span class="vector-type">\( \vec{a} = (a_x, a_y, a_z) \)</span>, <span class="vector-type">\( \vec{b} = (b_x, b_y, b_z) \)</span> і <span class="vector-type">\( \vec{c} = (c_x, c_y, c_z) \)</span> компланарні тоді і тільки тоді, коли їхній мішаний добуток дорівнює нулю:</p>
+       </em> <p class="math-notation-centered">
+            \[ \begin{vmatrix}
+            a_x & a_y & a_z \\
+            b_x & b_y & b_z \\
+            c_x & c_y & c_z
+            \end{vmatrix} = 0 \quad (8.24)
+        \]</p>
+        
+       
+</details>
+
+   <!-- Вкладка 4 -->
+<details class="accordion-item">
+    <summary class="accordion-summary">
+        Приклади
+        <span class="accordion-icon"></span>
+    </summary>
+    <div class="accordion-content">
+        <h3>Приклад 8.16</h3>
+        <div class="example">Перевірити, чи будуть компланарними вектори <span class="vector-type">\( \vec{a} = (2, -1, 1) \)</span>, <span class="vector-type">\( \vec{b} = (1, 2, -3) \)</span>, <span class="vector-type">\( \vec{c} = (3, -4, 5) \)</span>.</div>
+        
+        <p>Для перевірки компланарності векторів скористаємося умовою (8.24), яка стверджує, що вектори компланарні тоді і тільки тоді, коли їхній мішаний добуток дорівнює нулю. Мішаний добуток обчислимо як визначник третього порядку, елементами якого є координати векторів <span class="vector-type">\( \vec{a}, \vec{b}, \vec{c} \)</span>:</p>
+        <p class="math-notation-centered">
+            \[ (\vec{a}, \vec{b}, \vec{c}) = \begin{vmatrix}
+            2 & -1 & 1 \\
+            1 & 2 & -3 \\
+            3 & -4 & 5
+            \end{vmatrix} = 20 + 9 - 4 - 6 + 5 - 24 = 0            \]
+        </p>
+       
+        <p>Оскільки мішаний добуток дорівнює нулю, за умовою (8.24) вектори <span class="vector-type">\( \vec{a}, \vec{b}, \vec{c} \)</span> є компланарними.</p>
+        <p class="solution">Відповідь: Вектори <span class="vector-type">\( \vec{a}, \vec{b}, \vec{c} \)</span> компланарні.</p>
+
+        <h3>Приклад 8.17</h3>
+        <div class="example">Обчислити об’єм паралелепіпеда, ребра якого задані векторами <span class="vector-type">\( \vec{a} = (1, 1, 3) \)</span>, <span class="vector-type">\( \vec{b} = (2, 1, 4) \)</span>, <span class="vector-type">\( \vec{c} = (5, 1, -2) \)</span>.</div>
+        
+        <p>Об’єм паралелепіпеда, побудованого на трьох векторах, дорівнює модулю їхнього мішаного добутку (згідно з Теоремою 1):</p>
+        <p class="math-notation-centered">\[ V_{\text{паралелепіпеда}} = |(\vec{a}, \vec{b}, \vec{c})| \]</p>
+        <p>Мішаний добуток обчислимо як визначник третього порядку, рядки якого утворені координатами векторів <span class="vector-type">\( \vec{a}, \vec{b}, \vec{c} \)</span>:</p>
+        <p class="math-notation-centered">
+            \[ (\vec{a}, \vec{b}, \vec{c}) = \begin{vmatrix}
+            1 & 1 & 3 \\
+            2 & 1 & 4 \\
+            5 & 1 & -2
+            \end{vmatrix} = -2 + 20 + 6 - 15 - 4 + 4 = 9             \]
+        </p>
+        
+        
+        <p>Підставимо знайдені значення:</p>
+        <p class="math-notation-centered">\[ V = |(\vec{a}, \vec{b}, \vec{c})| = |7| = 7 \text{ куб. од.} \]</p>
+        <p class="solution">Відповідь: 7 куб. од.</p>
+
+        <h3>Приклад 8.18</h3>
+       <div class="example">
+    Обчислити об’єм тетраедра \(ABCD\) і довжину висоти, опущеної з вершини \(D\) 
+    на площину основи \(ABC\), якщо координати вершин тетраедра: 
+    \(A(6, 3, 3)\), \(B(6, 4, 2)\), \(C(4, 1, 4)\), \(D(0, 6, 6)\).
+</div>
+
+        <p>Розглянемо тетраедр ABCD (рис. 8.12).
+ <img src="/static/figure8.12.jpg" alt="Геометрична побудова" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+   
+            Для обчислення об’єму знаходимо координати векторів, які виходять із вершини A:</p>
+        <p class="math-notation-centered">
+            \[ \overrightarrow{AB} = (6-6, 4-3, 2-3) = (0, 1, -1) \]
+            \[ \overrightarrow{AC} = (4-6, 1-3, 4-3) = (-2, -2, 1) \]
+            \[ \overrightarrow{AD} = (0-6, 6-3, 6-3) = (-6, 3, 3) \]  </p>
+        
+        <p>Об’єм тетраедра визначається за формулою (8.22):</p>
+        <p class="math-notation-centered">\[ V_{\text{тетраедра}} = \frac{1}{6} |(\overrightarrow{AB}, \overrightarrow{AC}, \overrightarrow{AD})| \]</p>
+        
+        <p>Мішаний добуток <span class="math-notation">\( (\overrightarrow{AB}, \overrightarrow{AC}, \overrightarrow{AD}) \)</span> обчислюємо як визначник третього порядку, рядки якого утворені координатами цих векторів:</p>
+        <p class="math-notation-centered">
+            \[ (\overrightarrow{AB}, \overrightarrow{AC}, \overrightarrow{AD}) = \begin{vmatrix}
+            0 & 1 & -1 \\
+            -2 & -2 & 1 \\
+            -6 & 3 & 3
+            \end{vmatrix} = 0 - 6 + 6 + 12 + 6 - 0 = 18             \]
+        </p>
+        
+        <p>Тоді об’єм тетраедра:</p>
+        <p class="math-notation-centered">\[ V_{\text{тетраедра}} = \frac{1}{6} \cdot 18 = 3 \]</p>
+        
+        <p>Для знаходження висоти піраміди скористаємося формулою об’єму піраміди з шкільного курсу стереометрії:</p>
+        <p class="math-notation-centered">\[ V_{\text{піраміди}} = \frac{1}{3} S_{\text{осн.}} \cdot H \]</p>
+        <p>Оскільки <span class="math-notation">\( V_{\text{піраміди}} = V_{\text{тетраедра}} \)</span>, то можемо виразити висоту піраміди через об’єм тетраедра та площу основи:</p>
+        <p class="math-notation-centered">\[ H = \frac{3 V_{\text{тетраедра}}}{S_{\text{осн.}}} \]</p>
+        
+        <p>Знайдемо площу основи трикутника \( \triangle ABC \). Площа цього трикутника обчислюється через площу паралелограма, побудованого на векторах <span class="math-notation">\( \overrightarrow{AB} \)</span> та <span class="math-notation">\( \overrightarrow{AC} \)</span>:</p>
+        <p class="math-notation-centered">\[ S_{\triangle} = \frac{1}{2} |\overrightarrow{AB} \times \overrightarrow{AC}| \]</p>
+        
+        <p>Знайдемо векторний добуток цих векторів:</p>
+       <p class="math-notation-centered">
+\[ 
+\overrightarrow{AB} \times \overrightarrow{AC} =
+\begin{vmatrix}
+\vec{i} & \vec{j} & \vec{k} \\
+0 & 1 & -1 \\
+-2 & -2 & 1
+\end{vmatrix}
+= 
+\begin{vmatrix} 1 & -1 \\ -2 & 1 \end{vmatrix} \vec{i}
+- \begin{vmatrix} 0 & -1 \\ -2 & 1 \end{vmatrix} \vec{j}
++ \begin{vmatrix} 0 & 1 \\ -2 & -2 \end{vmatrix} \vec{k}
+= (-1)\vec{i} + 2\vec{j} + 2\vec{k} = (-1;\,2;\,2)
+\]
+     </p>
+                <p>Довжина векторного добутку:</p>
+        <p class="math-notation-centered">\[ |\overrightarrow{AB} \times \overrightarrow{AC}| = \sqrt{(-1)^2 + 2^2 + 2^2} = \sqrt{1 + 4 + 4} = \sqrt{9} = 3 \]</p>
+        <p>Тоді площа трикутника \( \triangle ABC \):</p>
+        <p class="math-notation-centered">\[ S_{\triangle} = \frac{1}{2} \cdot 3 = \frac{3}{2} \]</p>
+        
+        <p>Обчислюємо висоту піраміди \( H \):</p>
+        <p class="math-notation-centered">\[ H = \frac{3 V_{\text{тетраедра}}}{S_{\text{осн.}}} = \frac{3 \cdot 3}{\frac{3}{2}} = \frac{9}{\frac{3}{2}} = 9 \cdot \frac{2}{3} = 6 \]</p>
+        
+        <p class="solution">Відповідь: <span class="math-notation">\( V_{\text{пірам.}} = 3 \), \( H = 6 \).</span></p>
+    </div>
+</details>
+</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="videoModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoBtn" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            
+            <div class="video-card-container">
+                <div class="video-card" data-video="1">
+                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
+                    <h3>Мішаний добуток трьох векторів</h3>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <div id="videoPlayerModal1" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoPlayerBtn1" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-player-container">
+                <iframe id="youtubePlayer1" width="100%" src="https://www.youtube.com/embed/8bxdcR9m34Y" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    
+
+    <div id="questionsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="questionsTitle">
+        <div class="modal-header">
+            <button class="close-btn" id="closeQuestionsBtn" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front">
+    <span>1. Що називають мішаним добутком трьох векторів?</span>
+</div>
+<div class="card-back">
+    <span>
+        Мішаним добутком трьох векторів \(\vec{a}, \vec{b}, \vec{c}\) називається число, яке дорівнює скалярному добутку векторного добутку \(\vec{a} \times \vec{b}\) на вектор \(\vec{c}\):  
+        <span class="vector-type">\[(\vec{a}, \vec{b}, \vec{c}) = (\vec{a} \times \vec{b}) \cdot \vec{c}\]</span>
+    </span>
+</div>
+
+                </div>
+            </div>
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front">
+    <span>2. Як виразити мішаний добуток через модулі векторів і кут між ними?</span>
+</div>
+<div class="card-back">
+    <span>
+        Мішаний добуток можна подати через модулі векторів і кут між ними:  
+        <span class="vector-type">\[(\vec{a}, \vec{b}, \vec{c}) = |\vec{a} \times \vec{b}| \cdot |\vec{c}| \cdot \cos\psi\]</span>
+    </span>
+</div>
+                </div>
+            </div>
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front">
+    <span>3. Який геометричний зміст мішаного добутку трьох векторів?</span>
+</div>
+<div class="card-back">
+    <span>
+        Модуль мішаного добутку дорівнює об’єму паралелепіпеда, побудованого на векторах \(\vec{a}, \vec{b}, \vec{c}\):  
+        <span class="vector-type">\[V = |(\vec{a}, \vec{b}, \vec{c})|\]</span>
+    </span>
+</div>
+                </div>
+            </div>
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front">
+    <span>4. Коли мішаний добуток трьох векторів дорівнює нулю?</span>
+</div>
+<div class="card-back">
+    <span>
+        Мішаний добуток дорівнює нулю, коли вектори компланарні або два з них колінеарні:  
+        <span class="vector-type">\[(\vec{a}, \vec{b}, \vec{c}) = 0\]</span>
+    </span>
+</div>
+                </div>
+            </div>
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front">
+    <span>5. Як записати мішаний добуток через визначник третього порядку?</span>
+</div>
+<div class="card-back">
+    <span>
+        Мішаний добуток трьох векторів дорівнює визначнику:  
+        <span class="vector-type">\[(\vec{a}, \vec{b}, \vec{c}) = 
+        \begin{vmatrix}
+        a_x & a_y & a_z \\
+        b_x & b_y & b_z \\
+        c_x & c_y & c_z
+        \end{vmatrix}\]</span>
+    </span>
+</div>
+                </div>
+            </div>
+             <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front">
+    <span>6. Як змінюється мішаний добуток при перестановці векторів?</span>
+</div>
+<div class="card-back">
+    <span>
+        При циклічній перестановці векторів мішаний добуток не змінюється:  
+        <span class="vector-type">\[(\vec{a}, \vec{b}, \vec{c}) = (\vec{b}, \vec{c}, \vec{a}) = (\vec{c}, \vec{a}, \vec{b})\]</span><br>
+        При перестановці двох векторів знак змінюється на протилежний:  
+        <span class="vector-type">\[(\vec{a}, \vec{b}, \vec{c}) = -(\vec{b}, \vec{a}, \vec{c})\]</span>
+    </span>
+</div>
+                </div>
+            </div>
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front">
+    <span>7. Як знайти об’єм тетраедра, побудованого на векторах \(\vec{a}, \vec{b}, \vec{c}\)?</span>
+</div>
+<div class="card-back">
+    <span>
+        Об’єм тетраедра дорівнює одній шостій модуля мішаного добутку:  
+        <span class="vector-type">\[V_{\text{тетраедра}} = \frac{1}{6} |(\vec{a}, \vec{b}, \vec{c})|\]</span>
+    </span>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   <div id="trainerModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="questionNumber">
+    <div class="modal-header">
+        <button class="close-btn" id="closeTrainerBtn" aria-label="Закрити">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="trainer-container" id="trainerContent">
+            <div class="question-circle">
+                <h3 id="questionNumber">Питання 1</h3>
+            </div>
+            <p id="questionText" class="math-notation-centered"></p>
+            <div class="options-container" id="optionsContainer"></div>
+            <button id="submitAnswer" disabled>Підтвердити</button>
+            <div id="feedback" class="feedback"></div>
+            <div id="completionBlock" class="completion-message hidden">
+                <div class="completion-emoji"></div>
+                <h2>Тренування завершено!</h2>
+                <p>Молодець!</p>
+                <button id="resetTrainerBtn">Спробувати ще раз</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="modalOverlay"></div>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.body.classList.add('loaded');
+
+    const elements = {
+        openTheoryBtn: document.getElementById('openTheoryBtn'),
+        openVideoBtn: document.getElementById('openVideoBtn'),
+        openQuestionsBtn: document.getElementById('openQuestionsBtn'),
+        openTrainerBtn: document.getElementById('openTrainerBtn'),
+        theoryModal: document.getElementById('theoryModal'),
+        videoModal: document.getElementById('videoModal'),
+        questionsModal: document.getElementById('questionsModal'),
+        trainerModal: document.getElementById('trainerModal'),
+        closeTheoryBtn: document.getElementById('closeTheoryBtn'),
+        closeVideoBtn: document.getElementById('closeVideoBtn'),
+        closeQuestionsBtn: document.getElementById('closeQuestionsBtn'),
+        closeTrainerBtn: document.getElementById('closeTrainerBtn'),
+        closeVideoPlayerBtn1: document.getElementById('closeVideoPlayerBtn1'),
+        videoPlayerModal1: document.getElementById('videoPlayerModal1'),
+        modalOverlay: document.getElementById('modalOverlay'),
+        questionNumber: document.getElementById('questionNumber'),
+        questionText: document.getElementById('questionText'),
+        optionsContainer: document.getElementById('optionsContainer'),
+        feedback: document.getElementById('feedback'),
+        completionBlock: document.getElementById('completionBlock'),
+        resetTrainerBtn: document.getElementById('resetTrainerBtn'),
+        submitAnswer: document.getElementById('submitAnswer'),
+        youtubePlayer1: document.getElementById('youtubePlayer1'),
+        trainerContainer: document.getElementById('trainerContent')
+    };
+
+    for (const [key, value] of Object.entries(elements)) {
+        if (!value) {
+            console.error(`Елемент ${key} не знайдено`);
+        }
+    }
+
+    const criticalElements = ['openTheoryBtn', 'openVideoBtn', 'openQuestionsBtn', 'openTrainerBtn', 'modalOverlay'];
+    const missingCriticalElements = criticalElements.filter(key => !elements[key]);
+    if (missingCriticalElements.length > 0) {
+        console.error('Критичні елементи не знайдено:', missingCriticalElements);
+        return;
+    }
+
+    const originalVideoSrc = 'https://www.youtube.com/embed/8bxdcR9m34Y';
+
+      function toggleModal(modal, show) {
+        if (!modal || !elements.modalOverlay) {
+            console.error('Модальне вікно або overlay не знайдено');
+            return;
+        }
+        modal.style.display = show ? 'flex' : 'none';
+        elements.modalOverlay.style.display = show ? 'block' : 'none';
+        document.body.style.overflow = show ? 'hidden' : 'auto';
+        if (show && window.MathJax && MathJax.typesetPromise) {
+            MathJax.typesetPromise([modal]).then(() => {
+                console.log(`MathJax типізація завершена для ${modal.id}`);
+            }).catch(err => console.error('Помилка MathJax:', err));
+        }
+    }
+
+    function stopVideo() {
+        if (elements.youtubePlayer1) {
+            elements.youtubePlayer1.src = '';
+            console.log('Відео зупинено');
+        }
+    }
+
+    function playVideo() {
+        if (elements.youtubePlayer1) {
+            elements.youtubePlayer1.src = originalVideoSrc + '?autoplay=1&controls=1';
+            console.log('Відео запущено');
+        }
+    }
+
+    elements.openTheoryBtn?.addEventListener('click', () => toggleModal(elements.theoryModal, true));
+    elements.openVideoBtn?.addEventListener('click', () => toggleModal(elements.videoModal, true));
+    elements.openQuestionsBtn?.addEventListener('click', () => toggleModal(elements.questionsModal, true));
+    elements.openTrainerBtn?.addEventListener('click', () => {
+        toggleModal(elements.trainerModal, true);
+        initializeTrainer();
+    });
+
+    elements.closeTheoryBtn?.addEventListener('click', () => toggleModal(elements.theoryModal, false));
+    elements.closeVideoBtn?.addEventListener('click', () => toggleModal(elements.videoModal, false));
+    elements.closeQuestionsBtn?.addEventListener('click', () => toggleModal(elements.questionsModal, false));
+    elements.closeTrainerBtn?.addEventListener('click', () => toggleModal(elements.trainerModal, false));
+    elements.closeVideoPlayerBtn1?.addEventListener('click', () => {
+        stopVideo();
+        toggleModal(elements.videoPlayerModal1, false);
+        toggleModal(elements.videoModal, true);
+    });
+
+    elements.modalOverlay?.addEventListener('click', () => {
+        stopVideo();
+        toggleModal(elements.theoryModal, false);
+        toggleModal(elements.videoModal, false);
+        toggleModal(elements.questionsModal, false);
+        toggleModal(elements.trainerModal, false);
+        toggleModal(elements.videoPlayerModal1, false);
+    });
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            stopVideo();
+            toggleModal(elements.theoryModal, false);
+            toggleModal(elements.videoModal, false);
+            toggleModal(elements.questionsModal, false);
+            toggleModal(elements.trainerModal, false);
+            toggleModal(elements.videoPlayerModal1, false);
+        }
+    });
+
+    document.querySelectorAll('.video-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const videoId = card.dataset.video;
+            toggleModal(elements.videoModal, false);
+            playVideo();
+            toggleModal(elements[`videoPlayerModal${videoId}`], true);
+        });
+    });
+
+// Глобальні змінні
+let selectedOption = null;
+let correctAnswer = null;
+let currentQuestion = 1;
+let questionType = 'mixedProduct'; // 'mixedProduct', 'parallelepiped', 'coplanar', 'tetrahedron'
+let mathCache = {};
+const MAX_CACHE_SIZE = 100;
+let isFirstParallelepiped = true;
+let isFirstCoplanar = true;
+let forceCoplanar = false;
+let parallelepipedIncorrectAttempts = 0;
+let coplanarIncorrectAttempts = 0;
+let tetrahedronIncorrectAttempts = 0;
+let usedTetrahedronQuestions = [];
+
+// Список питань для тетраедра з відповідями у форматі MathJax
+const tetrahedronQuestions = [
+    {
+        text: `Знайти об’єм тетраедра з вершинами \\(A(0;0;0)\\), \\(B(2;1;0)\\), \\(C(1;0;3)\\), \\(D(0;2;1)\\).`,
+        correct: '\\frac{13}{6}',
+        options: ['13', '\\frac{13}{6}', '\\frac{13}{3}', '\\frac{3}{2}']
+    },
+    {
+        text: `Знайти об’єм тетраедра з вершинами \\(A(2;0;4)\\), \\(B(0;3;7)\\), \\(C(0;0;6)\\), \\(D(4;3;5)\\).`,
+        correct: '2',
+        options: ['\\frac{1}{6}', '12', '\\frac{1}{3}', '2']
+    },
+    {
+        text: `Знайти об’єм тетраедра з вершинами \\(A(2;1;-1)\\), \\(B(3;0;1)\\), \\(C(2;-1;3)\\), \\(D(0;-7;0)\\).`,
+        correct: '5',
+        options: ['\\frac{5}{6}', '10', '5', '30']
+    },
+    {
+        text: `Знайти об’єм тетраедра з вершинами \\(A(2;1;3)\\), \\(B(1;1;4)\\), \\(C(3;5;2)\\), \\(D(-1;0;3)\\).`,
+        correct: '2',
+        options: ['2', '12', '\\frac{2}{3}', '4']
+    },
+    {
+        text: `Знайти об’єм тетраедра з вершинами \\(A(-2;-1;0)\\), \\(B(-5;5;3)\\), \\(C(3;2;-2)\\), \\(D(4;1;2)\\).`,
+        correct: '31',
+        options: ['186', '31', '62', '30']
+    },
+    {
+        text: `Знайти об’єм тетраедра з вершинами \\(A(2;3;1)\\), \\(B(4;1;-2)\\), \\(C(-1;0;1)\\), \\(D(1;0;0)\\).`,
+        correct: '1',
+        options: ['2', '6', '\\frac{1}{6}', '1']
+    },
+    {
+        text: `Знайти об’єм тетраедра з вершинами \\(A(1;1;1)\\), \\(B(-1;0;-1)\\), \\(C(2;2;2)\\), \\(D(-2;-2;0)\\).`,
+        correct: '\\frac{1}{3}',
+        options: ['3', '\\frac{2}{3}', '\\frac{1}{3}', '1']
+    },
+    {
+        text: `Знайти об’єм тетраедра з вершинами \\(A(1;1;1)\\), \\(B(0;0;0)\\), \\(C(-1;-1;0)\\), \\(D(2;3;4)\\).`,
+        correct: '\\frac{1}{6}',
+        options: ['3', '\\frac{1}{6}', '\\frac{1}{3}', '1']
+    },
+    {
+        text: `Знайти об’єм тетраедра з вершинами \\(A(1;2;3)\\), \\(B(-1;0;2)\\), \\(C(3;0;-2)\\), \\(D(1;-2;3)\\).`,
+        correct: '8',
+        options: ['8', '\\frac{8}{3}', '48', '\\frac{9}{2}']
+    },
+    {
+        text: `Знайти об’єм тетраедра з вершинами \\(A(-2;0;1)\\), \\(B(0;1;-2)\\), \\(C(3;5;0)\\), \\(D(0;3;5)\\).`,
+        correct: '\\frac{3}{2}',
+        options: ['6', '\\frac{1}{2}', '9', '\\frac{3}{2}']
+    },
+    {
+        text: `Знайти об’єм тетраедра з вершинами \\(A(1;2;0)\\), \\(B(0;3;4)\\), \\(C(1;0;2)\\), \\(D(3;4;0)\\).`,
+        correct: '4',
+        options: ['24', '8', '4', '6']
+    },
+    {
+        text: `Знайти об’єм тетраедра з вершинами \\(A(0;-1;-1)\\), \\(B(1;1;0)\\), \\(C(0;0;1)\\), \\(D(-1;0;1)\\).`,
+        correct: '\\frac{1}{2}',
+        options: ['6', '\\frac{1}{2}', '9', '\\frac{3}{2}']
+    }
+];
+
+
+// Перевірка DOM-елементів
+function checkDOMElements() {
+    const requiredElements = ['questionNumber', 'questionText', 'optionsContainer', 'submitAnswer', 'feedback', 'completionBlock', 'resetTrainerBtn', 'openTrainerBtn', 'modalOverlay', 'trainerModal'];
+    requiredElements.forEach(key => {
+        if (!elements[key]) {
+            console.error(`Елемент ${key} не знайдено в DOM`);
+        }
+    });
+    return requiredElements.every(key => elements[key]);
+}
+
+function addToCache(key, value) {
+    if (Object.keys(mathCache).length >= MAX_CACHE_SIZE) {
+        const oldestKey = Object.keys(mathCache)[0];
+        delete mathCache[oldestKey];
+    }
+    mathCache[key] = value;
+}
+
+function generateVector(maxZeros = 2) {
+    console.time('generateVector');
+    const values = [-3, -2, -1, 1, 2, 3];
+    const vec = Array(3).fill(0).map(() => values[Math.floor(Math.random() * values.length)]);
+    const zeroCount = vec.filter(x => x === 0).length;
+    if (zeroCount > maxZeros) {
+        let zeros = 0;
+        const result = vec.map(x => {
+            if (x === 0 && zeros >= maxZeros) {
+                return values[Math.floor(Math.random() * values.length)];
+            }
+            if (x === 0) zeros++;
+            return x;
+        });
+        console.timeEnd('generateVector');
+        return result;
+    }
+    console.timeEnd('generateVector');
+    return vec;
+}
+
+function generateVectors() {
+    console.time('generateVectors');
+    let vectors;
+    if (questionType === 'parallelepiped' && isFirstParallelepiped) {
+        vectors = {
+            a: [2, 1, 0],
+            b: [1, -1, 3],
+            c: [0, 4, -2]
+        };
+    } else if (questionType === 'coplanar' && isFirstCoplanar) {
+        vectors = {
+            a: [1, 2, 3],
+            b: [2, 4, 6],
+            c: [0, 1, 2]
+        };
+    } else {
+        let mixedProduct;
+        let attempts = 0;
+        const maxAttempts = 100;
+        do {
+            vectors = {
+                a: generateVector(2),
+                b: generateVector(1),
+                c: generateVector(1)
+            };
+            mixedProduct = calculateMixedProduct(vectors.a, vectors.b, vectors.c);
+            attempts++;
+
+            // Для питання 3: чергування компланарності
+            if (questionType === 'coplanar' && !isFirstCoplanar) {
+                const shouldBeCoplanar = coplanarIncorrectAttempts % 2 === 0;
+                if (shouldBeCoplanar && mixedProduct !== 0) {
+                    vectors.b = vectors.a.map(x => x * (Math.floor(Math.random() * 3) + 1));
+                    mixedProduct = calculateMixedProduct(vectors.a, vectors.b, vectors.c);
+                } else if (!shouldBeCoplanar && mixedProduct === 0) {
+                    vectors.b = generateVector(1);
+                    vectors.c = generateVector(1);
+                    mixedProduct = calculateMixedProduct(vectors.a, vectors.b, vectors.c);
+                    if (mixedProduct === 0) continue;
+                }
+            }
+
+            // Для питання 2: чергування компланарності
+            if (questionType === 'parallelepiped' && parallelepipedIncorrectAttempts > 0) {
+                const shouldBeCoplanar = parallelepipedIncorrectAttempts % 2 === 1;
+                if (shouldBeCoplanar && mixedProduct !== 0) {
+                    vectors.b = vectors.a.map(x => x * (Math.floor(Math.random() * 3) + 1));
+                    mixedProduct = calculateMixedProduct(vectors.a, vectors.b, vectors.c);
+                } else if (!shouldBeCoplanar && mixedProduct === 0) {
+                    vectors.b = generateVector(1);
+                    vectors.c = generateVector(1);
+                    mixedProduct = calculateMixedProduct(vectors.a, vectors.b, vectors.c);
+                    if (mixedProduct === 0) continue;
+                }
+            }
+
+            // Для питання 2: об’єм не має бути нулем, якщо некомпланарні
+            if (questionType === 'parallelepiped' && Math.abs(mixedProduct) === 0 && !forceCoplanar) {
+                continue;
+            }
+
+            // Для питання 1: завжди некомпланарні
+            if (questionType === 'mixedProduct' && mixedProduct === 0) {
+                continue;
+            }
+
+            if (attempts >= maxAttempts) {
+                console.warn('Досягнуто максимальну кількість спроб генерації векторів');
+                break;
+            }
+        } while (true);
+    }
+    console.timeEnd('generateVectors');
+    return vectors;
+}
+
+function calculateMixedProduct(a, b, c) {
+    return (
+        a[0] * (b[1] * c[2] - b[2] * c[1]) -
+        a[1] * (b[0] * c[2] - b[2] * c[0]) +
+        a[2] * (b[0] * c[1] - b[1] * c[0])
+    );
+}
+
+function generateTetrahedronQuestion() {
+    let availableQuestions = tetrahedronQuestions.filter((_, index) => !usedTetrahedronQuestions.includes(index));
+    if (availableQuestions.length === 0) {
+        usedTetrahedronQuestions = [];
+        availableQuestions = tetrahedronQuestions;
+    }
+    const questionIndex = Math.floor(Math.random() * availableQuestions.length);
+    const question = availableQuestions[questionIndex];
+    usedTetrahedronQuestions.push(tetrahedronQuestions.indexOf(question));
+    return question;
+}
+
+function generateOptions(correctAnswer) {
+    console.time('generateOptions');
+    let options;
+    if (questionType === 'parallelepiped' && isFirstParallelepiped) {
+        options = ['20', '22', '18', '9'];
+    } else if (questionType === 'coplanar') {
+        options = ['Так', 'Ні', 'Не можливо визначити'];
+    } else if (questionType === 'tetrahedron') {
+        options = correctAnswer.options; // Використовуємо options з питання
+    } else {
+        options = new Set([`${correctAnswer}`]);
+        let attempts = 0;
+        const maxAttempts = 100;
+        const minValue = questionType === 'parallelepiped' ? 1 : -27;
+        const maxValue = 27;
+        while (options.size < 4 && attempts < maxAttempts) {
+            const randomOption = Math.floor(Math.random() * (maxValue - minValue + 1)) + minValue;
+            if (randomOption !== correctAnswer && randomOption !== 0) {
+                options.add(`${randomOption}`);
+            }
+            attempts++;
+        }
+        if (options.size < 4) {
+            console.warn('Недостатньо унікальних варіантів, заповнюємо стандартними');
+            let i = 1;
+            while (options.size < 4) {
+                const newOption = correctAnswer + i;
+                if (newOption !== 0 && newOption >= minValue && newOption <= maxValue) {
+                    options.add(`${newOption}`);
+                }
+                i++;
+            }
+        }
+        options = Array.from(options);
+    }
+    const result = options.sort(() => Math.random() - 0.5);
+    console.timeEnd('generateOptions');
+    return { options: result, correctAnswer };
+}
+
+function displayQuestion() {
+    console.time('displayQuestionTotal');
+    if (!checkDOMElements()) {
+        console.error('Один або більше DOM-елементів відсутні, тренажер не може відобразитися');
+        return;
+    }
+
+    console.time('generateVectors');
+    let questionText;
+    if (questionType === 'tetrahedron') {
+        const question = generateTetrahedronQuestion();
+        correctAnswer = question.correct;
+        const { options: tetraOptions } = generateOptions(question); // Передаємо question
+        questionText = question.text;
+        updateOptions(tetraOptions);
+    } else {
+        const { a, b, c } = generateVectors();
+        if (questionType === 'mixedProduct') {
+            correctAnswer = calculateMixedProduct(a, b, c);
+        } else if (questionType === 'parallelepiped') {
+            correctAnswer = Math.abs(calculateMixedProduct(a, b, c));
+        } else if (questionType === 'coplanar') {
+            correctAnswer = calculateMixedProduct(a, b, c) === 0 ? 'Так' : 'Ні';
+        }
+        const { options: vecOptions } = generateOptions(correctAnswer);
+        questionText = questionType === 'mixedProduct' ?
+            `Обчислити мішаний добуток \\(\\vec{a} = (${a[0]}; ${a[1]}; ${a[2]})\\), \\(\\vec{b} = (${b[0]}; ${b[1]}; ${b[2]})\\), \\(\\vec{c} = (${c[0]}; ${c[1]}; ${c[2]})\\).` :
+            questionType === 'parallelepiped' ?
+            `Знайти об’єм паралелепіпеда, побудованого на векторах \\(\\vec{a} = (${a[0]}; ${a[1]}; ${a[2]})\\), \\(\\vec{b} = (${b[0]}; ${b[1]}; ${b[2]})\\), \\(\\vec{c} = (${c[0]}; ${c[1]}; ${c[2]})\\).` :
+            `Чи є вектори \\(\\vec{a} = (${a[0]}; ${a[1]}; ${a[2]})\\), \\(\\vec{b} = (${b[0]}; ${b[1]}; ${b[2]})\\), \\(\\vec{c} = (${c[0]}; ${c[1]}; ${c[2]})\\) компланарними?`;
+        updateOptions(vecOptions);
+    }
+    console.timeEnd('generateVectors');
+
+    const cacheKey = `${questionType}|${questionText}`;
+    elements.questionNumber.textContent = `Питання ${currentQuestion}`;
+
+    console.log('questionType:', questionType, 'currentQuestion:', currentQuestion);
+    console.log('questionText:', questionText);
+    console.log('correctAnswer:', correctAnswer);
+
+    elements.questionText.innerHTML = '';
+
+    if (mathCache[cacheKey]) {
+        console.log('Використано кеш для MathJax');
+        elements.questionText.innerHTML = mathCache[cacheKey];
+        console.timeEnd('displayQuestionTotal');
+        if (window.MathJax && MathJax.typesetPromise) {
+            console.time('MathJaxRender');
+            MathJax.typesetPromise([elements.questionText])
+                .then(() => console.log('MathJax успішно відрендерив кеш'))
+                .catch(err => console.error('MathJax error (cache):', err));
+            console.timeEnd('MathJaxRender');
+        }
+        return;
+    }
+
+    elements.questionText.innerHTML = questionText;
+    console.time('MathJaxRender');
+    if (window.MathJax && MathJax.typesetPromise) {
+        try {
+            MathJax.typesetPromise([elements.questionText])
+                .then(() => {
+                    console.log('MathJax успішно відрендерив формулу');
+                    addToCache(cacheKey, elements.questionText.innerHTML);
+                    console.timeEnd('MathJaxRender');
+                    console.timeEnd('displayQuestionTotal');
+                })
+                .catch(err => {
+                    console.error('MathJax error:', err);
+                    elements.questionText.textContent = questionText.replace(/\\\(/g, '').replace(/\\\)/g, '');
+                    console.timeEnd('MathJaxRender');
+                    console.timeEnd('displayQuestionTotal');
+                });
+        } catch (err) {
+            console.error('MathJax error (try-catch):', err);
+            elements.questionText.textContent = questionText.replace(/\\\(/g, '').replace(/\\\)/g, '');
+            console.timeEnd('MathJaxRender');
+            console.timeEnd('displayQuestionTotal');
+        }
+    } else {
+        console.warn('MathJax не завантажено, відображаємо сирий текст');
+        elements.questionText.textContent = questionText.replace(/\\\(/g, '').replace(/\\\)/g, '');
+        console.timeEnd('MathJaxRender');
+        console.timeEnd('displayQuestionTotal');
+    }
+}
+
+function updateOptions(options) {
+    console.time('updateOptions');
+    elements.optionsContainer.innerHTML = '';
+    options.forEach(opt => {
+        const div = document.createElement('div');
+        div.className = 'option';
+        div.dataset.option = opt;
+        div.innerHTML = questionType === 'coplanar' ? opt : `\\(${opt}\\)`; // Рендеримо через MathJax
+        elements.optionsContainer.appendChild(div);
+        if (questionType !== 'coplanar' && window.MathJax && MathJax.typesetPromise) {
+            MathJax.typesetPromise([div]).catch(err => console.error('MathJax error (option):', err));
+        }
+    });
+    console.timeEnd('updateOptions');
+}
+
+function selectOption(element) {
+    elements.optionsContainer.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+    element.classList.add('selected');
+    selectedOption = element.dataset.option;
+    elements.submitAnswer.disabled = false;
+}
+
+function showFeedback(isCorrect) {
+    console.time('showFeedback');
+    elements.feedback.innerHTML = isCorrect ? '✓ Правильно! Молодець!' : '✗ Неправильно. Спробуй ще раз!';
+    elements.feedback.className = `feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'} show`;
+
+    console.log('isCorrect:', isCorrect, 'questionType:', questionType, 'currentQuestion:', currentQuestion);
+
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            elements.feedback.classList.remove('show');
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    elements.feedback.innerHTML = '';
+                    if (isCorrect) {
+                        if (questionType === 'mixedProduct') {
+                            questionType = 'parallelepiped';
+                            currentQuestion = 2;
+                            isFirstParallelepiped = true;
+                            parallelepipedIncorrectAttempts = 0;
+                            forceCoplanar = false;
+                            displayQuestion();
+                        } else if (questionType === 'parallelepiped') {
+                            questionType = 'coplanar';
+                            currentQuestion = 3;
+                            isFirstCoplanar = true;
+                            coplanarIncorrectAttempts = 0;
+                            displayQuestion();
+                        } else if (questionType === 'coplanar') {
+                            questionType = 'tetrahedron';
+                            currentQuestion = 4;
+                            tetrahedronIncorrectAttempts = 0;
+                            usedTetrahedronQuestions = [];
+                            displayQuestion();
+                        } else if (questionType === 'tetrahedron') {
+                            completeTrainer();
+                        }
+                    } else {
+                        if (questionType === 'parallelepiped') {
+                            isFirstParallelepiped = false;
+                            parallelepipedIncorrectAttempts++;
+                            forceCoplanar = parallelepipedIncorrectAttempts % 2 === 1;
+                        } else if (questionType === 'coplanar') {
+                            isFirstCoplanar = false;
+                            coplanarIncorrectAttempts++;
+                        } else if (questionType === 'tetrahedron') {
+                            tetrahedronIncorrectAttempts++;
+                        }
+                        displayQuestion();
+                        selectedOption = null;
+                        elements.submitAnswer.disabled = true;
+                        elements.optionsContainer.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+                    }
+                    console.timeEnd('showFeedback');
+                }, 200);
+            });
+        }, 800);
+    });
+}
+
+function completeTrainer() {
+    console.log('completeTrainer called');
+    elements.optionsContainer.style.display = 'none';
+    elements.submitAnswer.style.display = 'none';
+    elements.questionText.style.display = 'none';
+    elements.questionNumber.parentElement.style.display = 'none';
+    elements.completionBlock.style.display = 'block';
+    elements.completionBlock.classList.remove('hidden');
+    elements.resetTrainerBtn.focus();
+}
+
+function initializeTrainer() {
+    if (!checkDOMElements()) {
+        console.error('Не всі DOM-елементи знайдено, ініціалізація зупинена');
+        return;
+    }
+    selectedOption = null;
+    correctAnswer = null;
+    currentQuestion = 1;
+    questionType = 'mixedProduct';
+    isFirstParallelepiped = true;
+    isFirstCoplanar = true;
+    forceCoplanar = false;
+    parallelepipedIncorrectAttempts = 0;
+    coplanarIncorrectAttempts = 0;
+    tetrahedronIncorrectAttempts = 0;
+    usedTetrahedronQuestions = [];
+    elements.submitAnswer.disabled = true;
+    elements.completionBlock.style.display = 'none';
+    elements.completionBlock.classList.add('hidden');
+    elements.optionsContainer.style.display = 'flex';
+    elements.submitAnswer.style.display = 'block';
+    elements.questionText.style.display = 'block';
+    elements.questionNumber.parentElement.style.display = 'flex';
+    toggleModal(elements.trainerModal, true);
+    displayQuestion();
+}
+
+// Обробники подій
+elements.openTrainerBtn?.addEventListener('click', () => {
+    toggleModal(elements.trainerModal, true);
+    initializeTrainer();
+});
+
+elements.closeTrainerBtn?.addEventListener('click', () => {
+    toggleModal(elements.trainerModal, false);
+});
+
+elements.modalOverlay?.addEventListener('click', () => {
+    toggleModal(elements.trainerModal, false);
+});
+
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+        toggleModal(elements.trainerModal, false);
+    }
+});
+
+elements.optionsContainer.addEventListener('click', (e) => {
+    const option = e.target.closest('.option');
+    if (option) {
+        selectOption(option);
+    }
+});
+
+elements.submitAnswer?.addEventListener('click', () => {
+    console.log('selectedOption:', selectedOption, 'correctAnswer:', correctAnswer);
+    const isCorrect = questionType === 'coplanar' || questionType === 'tetrahedron' ? selectedOption === correctAnswer : parseFloat(selectedOption) === correctAnswer;
+    showFeedback(isCorrect);
+});
+
+elements.resetTrainerBtn?.addEventListener('click', () => {
+    console.log('resetTrainer called');
+    toggleModal(elements.trainerModal, true);
+    initializeTrainer();
+});
+
+// Автоматична ініціалізація для тестування
+document.addEventListener('DOMContentLoaded', () => {
+    if (checkDOMElements()) {
+        initializeTrainer();
+    } else {
+        console.error('Не всі DOM-елементи знайдено при завантаженні сторінки');
+    }
+});
+});
+</script>
+</body>
+</html>
