@@ -2420,7 +2420,7 @@ function generateQuestion4() {
         if (!selectedOption) return;
         const selectedIndex = parseInt(selectedOption.dataset.index);
                                           if (selectedIndex === currentQuestion.correctIndex) {
-                showFeedback('Правильно! Молодець!', true);
+                showFeedback('✓ Правильно! Молодець!', true);
                 submitAnswer.disabled = true;
 
                 setTimeout(() => {
@@ -2454,7 +2454,7 @@ function generateQuestion4() {
                 }, 1500);
 
             } else {
-                showFeedback('Неправильно. Спробуй ще раз!', false);
+                showFeedback('✗ Неправильно. Спробуй ще раз!', false);
                 setTimeout(() => {
                     if (currentQuestionType === 1) {
                         currentQuestion = generateCrossProductQuestion();
@@ -2596,4 +2596,5 @@ function generateQuestion4() {
     </script>
 </body>
 </html>
+
 
