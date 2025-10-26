@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Змістовий модуль 6. Елементи інтегрального числення та диференціальних рівнянь</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom, #1A3C34 0%, #FF6B6B 50%, #FFE8D6 100%);
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: #333;
+        }
+
+        header {
+            background-color: #1A3C34;
+            color: #FFE8D6;
+            text-align: center;
+            padding: 30px 20px;
+            font-size: 28px;
+            font-weight: bold;
+            border-bottom: 4px solid #FF6B6B;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: rgba(255, 245, 230, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .intro {
+            font-size: 20px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: #1A3C34;
+            text-align: justify;
+        }
+
+        ul.objectives {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 30px;
+            font-size: 18px;
+            font-style: italic;
+        }
+
+        ul.objectives li {
+            position: relative;
+            padding-left: 40px;
+            margin-bottom: 14px;
+            line-height: 1.5;
+            text-align: justify;
+        }
+
+        ul.objectives li::before {
+            content: "👉";
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 22px;
+            color: #C9184A;
+        }
+
+        .topics a {
+            display: block;
+            background-color: #FF6B6B;
+            color: #1A3C34;
+            text-decoration: none;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-align: justify;
+        }
+
+        .topics a:hover {
+            background-color: #FFE8D6;
+            color: #1A3C34;
+            transform: translateX(5px);
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .nav-button {
+            display: flex;
+            align-items: center;
+            background-color: #1A3C34;
+            color: #FFE8D6;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-button:hover {
+            background-color: #FF6B6B;
+            color: #1A3C34;
+            transform: scale(1.05);
+        }
+
+        .nav-button svg {
+            margin-right: 8px;
+            fill: currentColor;
+        }
+
+        @media (max-width: 600px) {
+            header {
+                font-size: 24px;
+                padding: 20px 10px;
+            }
+
+            .intro {
+                font-size: 18px;
+            }
+
+            ul.objectives li {
+                font-size: 16px;
+                padding-left: 35px;
+            }
+
+            .topics a {
+                font-size: 16px;
+                padding: 12px 15px;
+            }
+
+            .nav-button {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        Змістовий модуль 6. Елементи інтегрального числення та диференціальних рівнянь
+    </header>
+
+    <main>
+        <div class="intro">У цьому змістовому модулі ви:</div>
+        <ul class="objectives">
+            <li>ознайомитеся з поняттям невизначеного інтегралу, його властивостями та методами знаходження;</li>
+            <li>вивчите визначений інтеграл, способи його застосування та практичне значення;</li>
+            <li>засвоїте основи роботи з диференціальними рівняннями, їхні методи розв’язання.</li>
+        </ul>
+
+        <div class="topics">
+            <a href="{{ url_for('tema15') }}">Тема 15. Невизначений інтеграл.</a>
+            <a href="{{ url_for('tema16') }}">Тема 16. Визначений інтеграл та його застосування.</a>
+            <a href="{{ url_for('tema17') }}">Тема 17. Диференціальні рівняння.</a>
+        </div>
+
+        <div class="navigation-buttons">
+            <a class="nav-button" href="{{ url_for('zmist') }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                    <path d="M15 18l-6-6 6-6"/>
+                </svg>
+                До структури курсу
+            </a>
+
+            <a class="nav-button" href="{{ url_for('home') }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                </svg>
+                На головну
+            </a>
+        </div>
+    </main>
+</body>
+</html>

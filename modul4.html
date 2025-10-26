@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Змістовий модуль 4. Елементи аналітичної геометрії</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom, #1A3C5A 0%, #4ECDC4 50%, #FFD166 100%);
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: #333;
+        }
+
+        header {
+            background-color: #1A3C5A;
+            color: #FFD166;
+            text-align: center;
+            padding: 30px 20px;
+            font-size: 28px;
+            font-weight: bold;
+            border-bottom: 4px solid #4ECDC4;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: rgba(255, 245, 230, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .intro {
+            font-size: 20px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: #1A3C5A;
+            text-align: justify;
+        }
+
+        ul.objectives {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 30px;
+            font-size: 18px;
+            font-style: italic;
+        }
+
+        ul.objectives li {
+            position: relative;
+            padding-left: 40px;
+            margin-bottom: 14px;
+            line-height: 1.5;
+            text-align: justify;
+        }
+
+        ul.objectives li::before {
+            content: "👉";
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 22px;
+            color: #D35400;
+        }
+
+        .topics a {
+            display: block;
+            background-color: #4ECDC4;
+            color: #1A3C5A;
+            text-decoration: none;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-align: justify;
+        }
+
+        .topics a:hover {
+            background-color: #FFD166;
+            color: #1A3C5A;
+            transform: translateX(5px);
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .nav-button {
+            display: flex;
+            align-items: center;
+            background-color: #1A3C5A;
+            color: #FFD166;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-button:hover {
+            background-color: #4ECDC4;
+            color: #1A3C5A;
+            transform: scale(1.05);
+        }
+
+        .nav-button svg {
+            margin-right: 8px;
+            fill: currentColor;
+        }
+
+        @media (max-width: 600px) {
+            header {
+                font-size: 24px;
+                padding: 20px 10px;
+            }
+
+            .intro {
+                font-size: 18px;
+            }
+
+            ul.objectives li {
+                font-size: 16px;
+                padding-left: 35px;
+            }
+
+            .topics a {
+                font-size: 16px;
+                padding: 12px 15px;
+            }
+
+            .nav-button {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        Змістовий модуль 4. Елементи аналітичної геометрії
+    </header>
+
+    <main>
+        <div class="intro">У цьому змістовому модулі ви:</div>
+        <ul class="objectives">
+            <li>ознайомитеся з властивостями, характеристиками та взаємним розташуванням прямих на площині;</li>
+            <li>опануєте методи аналізу еліпсів, гіпербол і парабол, а також їх рівнянь та геометричних властивостей;</li>
+            <li>розглянете способи визначення прямих і площин у тривимірному просторі, досліджуючи їх взаємне розташування та алгебраїчне представлення.</li>
+        </ul>
+
+        <div class="topics">
+            <a href="{{ url_for('tema9') }}">Тема 9. Пряма на площині.</a>
+            <a href="{{ url_for('tema10') }}">Тема 10. Криві другого порядку на площині.</a>
+            <a href="{{ url_for('tema11') }}">Тема 11. Площина та пряма у просторі.</a>
+        </div>
+
+        <div class="navigation-buttons">
+            <a class="nav-button" href="{{ url_for('zmist') }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                    <path d="M15 18l-6-6 6-6"/>
+                </svg>
+                До структури курсу
+            </a>
+
+            <a class="nav-button" href="{{ url_for('home') }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                </svg>
+                На головну
+            </a>
+        </div>
+    </main>
+</body>
+</html>

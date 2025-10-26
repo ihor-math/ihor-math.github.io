@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Тема 11: Площина та пряма у просторі</title>
+  <style>
+    body {
+      background: linear-gradient(135deg, #022C22, #EC4899);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #F1F5F9;
+      overflow-x: hidden;
+    }
+
+    .header-box {
+      background: linear-gradient(90deg, #022C22, #14532D);
+      color: #F1F5F9;
+      padding: 30px 20px;
+      text-align: center;
+      font-size: 26px;
+      font-weight: 700;
+      border-bottom: 4px solid #10B981;
+      border-radius: 0 0 20px 20px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+      user-select: none;
+      position: relative;
+      z-index: 10;
+    }
+
+    .header-box::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 4px;
+      background: #10B981;
+      border-radius: 2px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 20px;
+      background: rgba(2, 44, 34, 0.85);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .plan-title {
+      font-size: 28px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 30px;
+      color: #10B981;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+      user-select: none;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+    }
+
+    .card {
+      border-radius: 16px;
+      padding: 25px 20px;
+      color: #F1F5F9;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      user-select: none;
+      height: 150px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      touch-action: manipulation;
+      overflow: hidden;
+      background: linear-gradient(135deg, var(--card-start), var(--card-end));
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.15), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .card:hover::before,
+    .card:active::before {
+      opacity: 1;
+    }
+
+    .card a {
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 10;
+    }
+
+    .card-number {
+      font-size: 26px;
+      font-weight: bold;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: #FBBF24;
+      transition: color 0.3s ease;
+    }
+
+    .icon-box {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s ease, transform 0.3s ease;
+      background: var(--icon-bg);
+    }
+
+    /* Унікальні кольори та іконки для кожної картки */
+    .card:nth-child(1) { 
+      --card-start: #14532D; 
+      --card-end: #10B981; 
+      --icon-bg: #6EE7B7; 
+    }
+    .card:nth-child(2) { 
+      --card-start: #7E22CE; 
+      --card-end: #C084FC; 
+      --icon-bg: #D8B4FE; 
+    }
+    .card:nth-child(3) { 
+      --card-start: #9D174D; 
+      --card-end: #EC4899; 
+      --icon-bg: #F9A8D4; 
+    }
+    .card:nth-child(4) { 
+      --card-start: #1E3A8A; 
+      --card-end: #3B82F6; 
+      --icon-bg: #93C5FD; 
+    }
+    .card:nth-child(5) { 
+      --card-start: #7C2D12; 
+      --card-end: #F59E0B; 
+      --icon-bg: #FCD34D; 
+    }
+    .card:nth-child(6) { 
+      --card-start: #0F172A; 
+      --card-end: #64748B; 
+      --icon-bg: #CBD5E1; 
+    }
+    .card:nth-child(7) { 
+      --card-start: #6B21A8; 
+      --card-end: #A78BFA; 
+      --icon-bg: #DDD6FE; 
+    }
+    .card:nth-child(8) { 
+      --card-start: #1F2937; 
+      --card-end: #4B5563; 
+      --icon-bg: #9CA3AF; 
+    }
+    .card:nth-child(9) { 
+      --card-start: #7F1D1D; 
+      --card-end: #F87171; 
+      --icon-bg: #FCA5A5; 
+    }
+    .card:nth-child(10) { 
+      --card-start: #064E3B; 
+      --card-end: #34D399; 
+      --icon-bg: #6EE7B7; 
+    }
+    .card:nth-child(11) { 
+      --card-start: #3F3F46; 
+      --card-end: #71717A; 
+      --icon-bg: #A1A1AA; 
+    }
+    .card:nth-child(12) { 
+      --card-start: #6D28D9; 
+      --card-end: #A855F7; 
+      --icon-bg: #D8B4FE; 
+    }
+    .card:nth-child(13) { 
+      --card-start: #991B1B; 
+      --card-end: #EF4444; 
+      --icon-bg: #FCA5A5; 
+    }
+    .card:nth-child(14) { 
+      --card-start: #1E40AF; 
+      --card-end: #60A5FA; 
+      --icon-bg: #93C5FD; 
+    }
+    .card:nth-child(15) { 
+      --card-start: #78350F; 
+      --card-end: #F59E0B; 
+      --icon-bg: #FCD34D; 
+    }
+
+    .icon-svg {
+      width: 22px;
+      height: 22px;
+      fill: #FBBF24;
+      transition: fill 0.3s ease;
+    }
+
+    .card:hover .icon-box,
+    .card:active .icon-box {
+      background: #FBBF24;
+      transform: rotate(45deg);
+    }
+
+    .card:hover .icon-svg,
+    .card:active .icon-svg {
+      fill: #022C22;
+      transform: rotate(-45deg);
+    }
+
+    .card:hover .card-number,
+    .card:active .card-number {
+      color: #F1F5F9;
+    }
+
+    .card h3 {
+      font-size: 20px;
+      margin: 0;
+      font-weight: 600;
+      user-select: none;
+      color: #F1F5F9;
+      transition: color 0.3s ease;
+      text-decoration: none;
+      line-height: 1.2;
+    }
+
+    .card:hover h3,
+    .card:active h3 {
+      color: #FBBF24;
+    }
+
+    .card-content {
+      margin-top: 20px;
+      font-size: 16px;
+      color: #F1F5F9;
+      text-align: left;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+    }
+
+    .navigation-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin: 40px auto;
+      max-width: 1000px;
+      padding: 0 20px;
+    }
+
+    .nav-button {
+      display: flex;
+      align-items: center;
+      background: linear-gradient(90deg, #022C22, #14532D);
+      color: #FBBF24;
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .nav-button:hover {
+      background: linear-gradient(90deg, #14532D, #10B981);
+      color: #F1F5F9;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .nav-button svg {
+      margin-right: 8px;
+      fill: currentColor;
+      width: 20px;
+      height: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 20px auto;
+        width: 90%;
+      }
+      .cards {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      .card {
+        padding: 15px;
+        height: 120px;
+      }
+      .header-box {
+        font-size: 22px;
+        padding: 25px 15px;
+      }
+      .plan-title {
+        font-size: 22px;
+        margin-bottom: 20px;
+      }
+      .card h3 {
+        font-size: 18px;
+      }
+      .card-number {
+        font-size: 22px;
+      }
+      .nav-button {
+        font-size: 16px;
+        padding: 10px 20px;
+      }
+      .navigation-buttons {
+        margin: 20px auto;
+        gap: 15px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .container {
+        margin: 10px auto;
+        padding: 15px;
+      }
+      .header-box {
+        font-size: 20px;
+        padding: 20px 10px;
+      }
+      .plan-title {
+        font-size: 20px;
+        margin-bottom: 15px;
+      }
+      .card {
+        padding: 12px;
+        height: 100px;
+      }
+      .card h3 {
+        font-size: 16px;
+      }
+      .card-number {
+        font-size: 20px;
+      }
+      .icon-box {
+        width: 32px;
+        height: 32px;
+      }
+      .icon-svg {
+        width: 18px;
+        height: 18px;
+      }
+      .nav-button {
+        font-size: 14px;
+        padding: 8px 16px;
+      }
+      .navigation-buttons {
+        margin: 15px auto;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header-box">
+    Тема 11. Площина та пряма у просторі
+  </div>
+
+  <div class="container">
+    <div class="plan-title">План вивчення:</div>
+    <div class="cards">
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p52') }}" aria-label="Перейти до Загальне рівняння площини та його дослідження">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <rect x="4" y="4" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </div>
+            52
+          </div>
+          <h3>Загальне рівняння площини та його дослідження</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
+
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p53') }}" aria-label="Перейти до Рівняння площини, що проходить через три точки">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <rect x="4" y="4" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </div>
+            53
+          </div>
+          <h3>Рівняння площини, що проходить через три точки</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
+
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p54') }}" aria-label="Перейти до Рівняння площини у відрізках на осях">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <rect x="4" y="4" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </div>
+            54
+          </div>
+          <h3>Рівняння площини у відрізках на осях</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
+
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p55') }}" aria-label="Перейти до Кут між двома площинами. Умови паралельності і перпендикулярності двох площин">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <path d="M4 4L12 8L20 4M4 20L12 16L20 20" fill="none" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </div>
+            55
+          </div>
+          <h3>Кут між двома площинами. Умови паралельності і перпендикулярності двох площин</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
+
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p56') }}" aria-label="Перейти до Відстань від точки до площини">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <rect x="4" y="4" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"/>
+                <circle cx="12" cy="12" r="2" fill="currentColor"/>
+              </svg>
+            </div>
+            56
+          </div>
+          <h3>Відстань від точки до площини</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
+
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p57') }}" aria-label="Перейти до Загальне рівняння прямої">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <line x1="4" y1="12" x2="20" y2="12" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </div>
+            57
+          </div>
+          <h3>Загальне рівняння прямої</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
+
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p58') }}" aria-label="Перейти до Канонічне рівняння прямої">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <line x1="4" y1="12" x2="20" y2="12" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </div>
+            58
+          </div>
+          <h3>Канонічне рівняння прямої</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
+
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p59') }}" aria-label="Перейти до Параметричне рівняння прямої">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <line x1="4" y1="12" x2="20" y2="12" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </div>
+            59
+          </div>
+          <h3>Параметричне рівняння прямої</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
+
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p60') }}" aria-label="Перейти до Рівняння прямої, що проходить через дві точки">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <line x1="4" y1="12" x2="20" y2="12" stroke="currentColor" stroke-width="2"/>
+                <circle cx="8" cy="12" r="2" fill="currentColor"/>
+                <circle cx="16" cy="12" r="2" fill="currentColor"/>
+              </svg>
+            </div>
+            60
+          </div>
+          <h3>Рівняння прямої, що проходить через дві точки</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
+
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p61') }}" aria-label="Перейти до Кут між прямими">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <path d="M4 12L12 8L20 12M12 8L12 16" fill="none" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </div>
+            61
+          </div>
+          <h3>Кут між прямими</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
+
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p62') }}" aria-label="Перейти до Відстань від точки до прямої">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <line x1="4" y1="12" x2="20" y2="12" stroke="currentColor" stroke-width="2"/>
+                <circle cx="12" cy="8" r="2" fill="currentColor"/>
+              </svg>
+            </div>
+            62
+          </div>
+          <h3>Відстань від точки до прямої</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
+
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p63') }}" aria-label="Перейти до Умови паралельності та перпендикулярності прямих">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <line x1="4" y1="8" x2="20" y2="8" stroke="currentColor" stroke-width="2"/>
+                <line x1="4" y1="16" x2="20" y2="16" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </div>
+            63
+          </div>
+          <h3>Умови паралельності та перпендикулярності прямих</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
+
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p64') }}" aria-label="Перейти до Мимобіжні прямі. Умова належності двох прямих одній площині">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <line x1="4" y1="8" x2="20" y2="16" stroke="currentColor" stroke-width="2"/>
+                <line x1="4" y1="16" x2="20" y2="8" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </div>
+            64
+          </div>
+          <h3>Мимобіжні прямі. Умова належності двох прямих одній площині</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
+
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p65') }}" aria-label="Перейти до Кут між прямою і площиною">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <rect x="4" y="4" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"/>
+                <line x1="12" y1="8" x2="12" y2="16" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </div>
+            65
+          </div>
+          <h3>Кут між прямою і площиною</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
+
+      <div class="card" tabindex="0">
+        <a href="{{ url_for('p66') }}" aria-label="Перейти до Умови паралельності та перпендикулярності прямої і площини">
+          <div class="card-number">
+            <div class="icon-box">
+              <svg class="icon-svg" viewBox="0 0 24 24">
+                <rect x="4" y="4" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"/>
+                <line x1="12" y1="8" x2="12" y2="16" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </div>
+            66
+          </div>
+          <h3>Умови паралельності та перпендикулярності прямої і площини</h3>
+          <div class="card-content"></div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="navigation-buttons">
+    <a class="nav-button" href="{{ url_for('modul4') }}">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+      До змістового модуля 4
+    </a>
+
+    <a class="nav-button" href="{{ url_for('home') }}">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+      </svg>
+      На головну
+    </a>
+  </div>
+</body>
+</html>
