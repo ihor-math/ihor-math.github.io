@@ -1,0 +1,2272 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>40. Рівняння прямої з кутовим коефіцієнтом</title>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    console.log("MathJax is loaded and ready!");
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" onerror="console.error('Failed to load MathJax')"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Roboto:wght@400;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        *, *:before, *:after {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6, #60a5fa);
+            font-family: 'Roboto', sans-serif;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: start;
+            min-height: 100vh;
+        }
+        body.loaded {
+            visibility: visible;
+            opacity: 1;
+        }
+        .title-box {
+            margin-top: 60px;
+            padding: 20px 40px;
+            background: #082567;
+            border-radius: 15px;
+            box-shadow: 0 6px 16px rgba(255, 140, 0, 0.3);
+            max-width: 90%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .title-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        .title-box h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            font-family: 'Merriweather', serif;
+            position: relative;
+            z-index: 1;
+        }
+        .section-container {
+            margin-top: 80px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .section {
+            width: 260px;
+            height: 200px;
+            background: #163375;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            color: #ffffff;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(138, 43, 226, 0.2);
+        }
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(138, 43, 226, 0.1), transparent);
+            transition: left 0.5s;
+        }
+        .section:hover::before {
+            left: 100%;
+        }
+        .section:hover {
+            transform: scale(1.05) translateY(-5px);
+            box-shadow: 0 8px 20px rgba(138, 43, 226, 0.25);
+            background: linear-gradient(45deg, #6a5acd, #9370db);
+            border-color: rgba(138, 43, 226, 0.4);
+        }
+        .section img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 15px;
+            object-fit: cover;
+            border-radius: 8px;
+            filter: brightness(1.2);
+        }
+        .section:hover img {
+            filter: drop-shadow(0 0 10px rgba(138, 43, 226, 0.5));
+        }
+        .section h2 {
+            font-size: 20px;
+            margin: 0;
+            font-family: 'Merriweather', serif;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 5%;
+            left: 5%;
+            width: 90%;
+            height: 90%;
+            background: linear-gradient(135deg, #4b0082, #8a2be2);
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(138, 43, 226, 0.2);
+            z-index: 1001;
+            overflow: hidden;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            border: 1px solid rgba(138, 43, 226, 0.1);
+        }
+        #modalOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(44, 62, 80, 0.8);
+            z-index: 999;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            padding: 20px;
+            flex-grow: 1;
+            background: #4b0082;
+            border-radius: 10px;
+            margin: 10px;
+            color: #ffffff;
+            width: calc(100% - 20px);
+            overflow-y: auto;
+            display: block;
+            max-height: calc(100% - 60px);
+        }
+        .modal-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .modal-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .modal-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #6a5acd, #9370db);
+            border-radius: 3px;
+        }
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #483d8b, #7b68ee);
+        }
+        .modal-header {
+            background: linear-gradient(0deg, #4b0082, #8a2be2);
+            padding: 8px 12px;
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1002;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            border-bottom: 1px solid rgba(138, 43, 226, 0.2);
+        }
+        #trainerModal .modal-header {
+            background: linear-gradient(0deg, #6a5acd, #9370db);
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+        .close-btn {
+            background: linear-gradient(135deg, #6a5acd, #9370db);
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Roboto', sans-serif;
+            z-index: 1003;
+            box-shadow: 0 2px 8px rgba(138, 43, 226, 0.3);
+        }
+        .close-btn:hover {
+            background: linear-gradient(135deg, #483d8b, #7b68ee);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(138, 43, 226, 0.4);
+        }
+        #trainerModal .close-btn {
+            background: linear-gradient(135deg, #ff4500, #ff8c00);
+        }
+        #trainerModal .close-btn:hover {
+            background: linear-gradient(135deg, #e43a00, #e67700);
+        }
+        details {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 6px;
+            background: #4b0082;
+            cursor: pointer;
+            border: 1px solid rgba(138, 43, 226, 0.2);
+        }
+        details p {
+            padding: 0 15px 10px;
+            color: #ecf0f1;
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+        .math-notation {
+            font-style: italic;
+            color: #f1c40f;
+            display: inline !important;
+            font-size: 1.0em;
+        }
+        #questionsModal .math-notation-centered {
+            display: none !important;
+        }
+        .highlight-term {
+            color: #c8f288;
+            font-weight: bold;
+        }
+        .formula-line {
+            display: inline-block;
+            white-space: nowrap;
+        }
+        .question-block {
+            margin: 15px 0;
+            padding: 10px;
+            background: linear-gradient(135deg, #4b0082, #8a2be2);
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            cursor: pointer;
+            border: 1px solid rgba(138, 43, 226, 0.2);
+        }
+        .question-block summary {
+            font-size: 16px;
+            background: linear-gradient(135deg, #6a5acd, #9370db);
+            color: #ffffff;
+        }
+        .question-block details summary {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+        .question-block details p {
+            color: #ecf0f1;
+            background: #4b0082;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 3px solid #27ae60;
+        }
+        #questionsModal mjx-container {
+            display: inline !important;
+            vertical-align: middle !important;
+            font-size: clamp(17px, 3vw, 19px) !important;
+            line-height: 1.4 !important;
+            color: #ffff00 !important;
+            background: none !important;
+            font-style: italic !important;
+            margin: 0 2px !important;
+            padding: 0 !important;
+        }
+        .trainer-container {
+            width: 90%;
+            max-width: 800px;
+            padding: 3vw 4vw;
+            text-align: center;
+            background: linear-gradient(135deg, #4b0082, #8a2be2);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(138, 43, 226, 0.2);
+            transition: all 0.3s ease;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100%;
+            border: 1px solid rgba(138, 43, 226, 0.2);
+            overflow: visible;
+        }
+        .question-circle {
+            width: clamp(80px, 15vw, 120px);
+            height: clamp(80px, 15vw, 120px);
+            margin: 0 auto 3vw;
+            background: linear-gradient(135deg, #6a5acd, #9370db);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(138, 43, 226, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .question-circle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        .question-circle:hover::before {
+            left: 100%;
+        }
+        .question-circle h3 {
+            color: #ffffff;
+            font-family: 'Lora', serif;
+            font-size: clamp(16px, 2.5vw, 20px);
+            margin: 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 1;
+        }
+        .cube-formula, .vector-formula {
+            color: #f1c40f;
+            display: inline-block;
+            font-size: clamp(15px, 2.5vw, 17px);
+        }
+        #completionBlock.modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        #completionBlock .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 90%;
+        }
+        .completion-emoji {
+            width: clamp(80px, 15vw, 120px);
+            height: clamp(80px, 15vw, 120px);
+            margin: 0 auto 3vw;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(138, 43, 226, 0.3);
+            border: 2px dashed #f1c40f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+        .completion-emoji::after {
+            content: '🎉';
+            font-size: clamp(40px, 8vw, 60px);
+            color: #f1c40f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
+        }
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2vw;
+            justify-content: center;
+            margin-bottom: 3vw;
+            width: 100%;
+        }
+        .option {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5vw 3vw;
+            border: 1.5px solid #6a5acd;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #4b0082, #8a2be2);
+            cursor: pointer;
+            font-size: clamp(15px, 3.5vw, 18px);
+            min-height: 45px;
+            min-width: 90px;
+            max-width: 45%;
+            text-align: center;
+            font-family: 'Lora', serif;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+            box-sizing: border-box;
+            touch-action: manipulation;
+            pointer-events: auto !important;
+            user-select: none;
+            transition: all 0.3s ease;
+            color: #ecf0f1;
+        }
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(138, 43, 226, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        .option:hover::before {
+            left: 100%;
+        }
+        .option:hover {
+            background: linear-gradient(135deg, #6a5acd, #9370db);
+            transform: scale(1.03);
+            border-color: #f1c40f;
+            box-shadow: 0 4px 12px rgba(138, 43, 226, 0.3);
+        }
+        .option.selected {
+            background: linear-gradient(135deg, #27ae60, #2ecc71) !important;
+            color: #ffffff !important;
+            border: 2px solid #f1c40f !important;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
+        }
+        .option:focus {
+            outline: 2px solid #f1c40f;
+            outline-offset: 2px;
+        }
+        .option {
+            min-height: 50px !important;
+            padding: 12px 20px !important;
+        }
+        mjx-container, mjx-container * {
+            pointer-events: none !important;
+            user-select: none !important;
+        }
+            .option mjx-container, .option mjx-container * {
+    pointer-events: auto !important;
+}
+        mjx-frac {
+            font-size: 1.2em !important;
+            padding: 2px !important;
+        }
+        mjx-num, mjx-den {
+            padding: 2px !important;
+        }
+        button {
+            background: linear-gradient(135deg, #6a5acd, #9370db);
+            color: #ffffff;
+            border: none;
+            border-radius: 25px;
+            padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 24px);
+            font-size: clamp(16px, 3vw, 18px);
+            font-family: 'Lora', serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(138, 43, 226, 0.3);
+        }
+        button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #483d8b, #7b68ee);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(138, 43, 226, 0.4);
+        }
+        button:disabled {
+            background: #7f8c8d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .result {
+            margin-top: 3vw;
+            font-size: clamp(16px, 2.5vw, 18px);
+            font-family: 'Lora', serif;
+            color: #ffffff;
+        }
+        .completion-message {
+            font-family: 'Lora', serif;
+            font-weight: 700;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            border: 2.5px solid #27ae60;
+            border-radius: 15px;
+            padding: clamp(12px, 3vw, 18px);
+            box-shadow: 0 6px 12px rgba(46, 204, 113, 0.3);
+            margin: 2vw auto;
+            max-width: 90%;
+            position: relative;
+            overflow: hidden;
+        }
+        .completion-message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 1s;
+            animation: completionShine 2s infinite;
+        }
+        @keyframes completionShine {
+            0% { left: -100%; }
+            50% { left: 100%; }
+            100% { left: 100%; }
+        }
+        .completion-message h2 {
+            font-size: clamp(22px, 4.5vw, 30px);
+            margin: 0 0 1vw;
+            color: #ff7e00;
+            text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
+        }
+        .completion-message p {
+            font-size: clamp(18px, 3.5vw, 22px);
+            margin: 0;
+            color: #ffffff;
+        }
+        .math-notation-centered {
+            display: block;
+            text-align: center;
+            width: 100%;
+            font-size: clamp(18px, 3vw, 20px);
+            margin: 10px 0;
+            line-height: 1.6;
+            font-family: 'Roboto', sans-serif;
+        }
+        mjx-container.math-notation-centered {
+            display: inline-block !important;
+            text-align: center !important;
+            vertical-align: middle !important;
+            white-space: nowrap !important;
+            line-height: 1.4 !important;
+            font-size: clamp(18px, 3vw, 20px) !important;
+            color: #ffff00 !important;
+            background: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        mjx-container.math-notation-centered * {
+            color: #f1c40f !important;
+            font-style: italic !important;
+        }
+        #trainerModal .math-notation-centered {
+            font-size: clamp(16px, 3vw, 18px);
+            color: #ffffff;
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.5;
+            text-align: center;
+            margin: 5px 0;
+            display: block;
+        }
+        #trainerModal .options-container mjx-container {
+            display: inline !important;
+            vertical-align: middle !important;
+            font-size: clamp(17px, 3vw, 19px) !important;
+            color: #ffff00 !important;
+            background: none !important;
+            font-style: italic !important;
+            margin: 0 2px !important;
+            padding: 0 !important;
+        }
+        .feedback {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: clamp(24px, 5.8vw, 30px);
+    font-family: 'Lora', serif;
+    padding: 20px 30px;
+    border-radius: 10px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    z-index: 1001; /* Переконайтеся, що z-index достатньо високий */
+    opacity: 0;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    text-align: center;
+    border: 2px solid transparent;
+    max-width: 90vw;
+    word-wrap: break-word;
+}
+        .feedback.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1.05);
+        }
+        .correct-feedback {
+            color: #ffffff;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            border: 2px solid #27ae60;
+            box-shadow: 0 0 20px rgba(46, 204, 113, 0.5);
+        }
+        .incorrect-feedback {
+            color: #ffffff;
+            background: linear-gradient(135deg, #ff4500, #ff8c00);
+            border: 2px solid #ff4500;
+            box-shadow: 0 0 20px rgba(255, 69, 0, 0.5);
+        }
+        .navigation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px auto;
+            max-width: 1000px;
+        }
+        .nav-button {
+            display: flex;
+            align-items: center;
+            background: #082567;
+            color: #ffff00;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(138, 43, 226, 0.3);
+        }
+        .nav-button:hover {
+            background: linear-gradient(135deg, #6a5acd, #9370db);
+            color: #ffffff;
+            transform: scale(1.03);
+            box-shadow: 0 4px 12px rgba(138, 43, 226, 0.3);
+        }
+        .nav-button svg {
+            margin-right: 8px;
+            fill: currentColor;
+            transition: fill 0.3s ease;
+        }
+        .question-card {
+            perspective: 1000px;
+            margin: 20px auto;
+            max-width: 964px;
+            width: 100%;
+            min-height: 150px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            cursor: pointer;
+        }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            min-height: 150px;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            cursor: inherit;
+        }
+        .question-card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            min-height: 150px;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            cursor: inherit;
+            border: 1px solid rgba(138, 43, 226, 0.2);
+        }
+        .card-front {
+            background: #3a3a3a;
+            color: #ffffff;
+        }
+        .card-back {
+            background: #393e1e;
+            color: #ecf0f1;
+            transform: rotateY(180deg);
+            text-align: justify;
+            padding: 20px;
+            overflow: auto;
+            white-space: normal;
+        }
+        .card-front span, .card-back span {
+            font-family: 'Lora', serif;
+            font-size: clamp(17px, 3vw, 19px);
+            line-height: 1.4;
+            display: inline;
+            color: inherit;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .card-back span {
+            text-align: justify;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .theory-content h2 {
+            color: #f1c40f;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
+            margin-bottom: 20px;
+            font-family: 'Merriweather', serif;
+        }
+        .theory-content h3 {
+            color: #ffff00;
+            border-bottom: 2px solid #6a5acd;
+            padding-bottom: 5px;
+            margin-top: 25px;
+        }
+        .theory-content p, .theory-content li {
+            color: #ecf0f1;
+            font-size: clamp(18px, 3vw, 20px);
+            line-height: 1.7;
+        }
+        .example {
+            font-size: 1.1rem;
+            color: #ff8c00;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #ff8c00;
+            margin: 15px 0;
+        }
+        .solution {
+            color: #27ae60;
+            font-weight: bold;
+            text-align: center;
+            display: block;
+            padding: 10px;
+            border-radius: 6px;
+            border: 2px solid #27ae60;
+            margin: 15px 0;
+        }
+        .note {
+            color: #ff8c00;
+            font-weight: bold;
+        }
+        .note-text {
+            font-style: italic;
+            color: #bdc3c7;
+            text-align: justify;
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #ff8c00;
+            margin: 10px 0;
+        }
+        .theory-content p:not(.math-notation-centered),
+        .theory-content li {
+            text-align: justify;
+        }
+        .vector-type {
+            font-style: italic;
+            color: #f1c40f;
+        }
+        .main-types {
+            font-weight: bold;
+            color: #6a5acd;
+        }
+        ol {
+            color: #ecf0f1;
+        }
+        ol li::marker {
+            color: #f1c40f;
+        }
+        mjx-container {
+            color: #f1c40f !important;
+            background: none !important;
+            font-style: italic !important;
+        }
+        .theory-content mjx-container {
+            color: #ffff00 !important;
+            background: none !important;
+        }
+        .modal-content::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        .modal-content::-webkit-scrollbar-track {
+            background: #4b0082;
+            border-radius: 10px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
+        }
+        .modal-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #6a5acd, #9370db);
+            border-radius: 10px;
+            border: 2px solid #4b0082;
+        }
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #483d8b, #7b68ee);
+        }
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #4b0082;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #6a5acd, #9370db);
+            border-radius: 10px;
+            border: 2px solid #4b0082;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #483d8b, #7b68ee);
+        }
+        .modal-content {
+            scrollbar-color: #6a5acd #4b0082;
+            scrollbar-width: thin;
+        }
+        .glow-title {
+            text-align: center;
+            color: #ffffff;
+            font-family: 'Merriweather', serif;
+            font-size: clamp(20px, 3vw, 24px);
+            margin: 10px 0;
+            text-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+            background: linear-gradient(135deg, #6a5acd, #9370db);
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: block;
+        }
+        .video-card {
+            width: 350px;
+            height: 250px;
+            background: #734a12;
+            border-radius: 15px;
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 10px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            color: #d1e231;
+        }
+        .video-card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+        }
+        .video-card img {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 8px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+        .video-card h3 {
+            font-size: clamp(16px, 2.5vw, 18px);
+            font-weight: 600;
+            margin: 0;
+        }
+        .video-player-container {
+            width: 80vw;
+            max-width: 960px;
+            aspect-ratio: 16 / 9;
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .video-player-container iframe {
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            display: block;
+            border: none;
+        }
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        @media (max-width: 768px) {
+            .close-btn {
+                font-size: 16px;
+                padding: 6px 12px;
+                border-radius: 8px;
+            }
+            .theory-content p, .theory-content li {
+                font-size: clamp(18px, 3vw, 20px);
+            }
+            .theory-content mjx-container {
+                font-size: clamp(16px, 3vw, 18px) !important;
+            }
+            .theory-content h2, .theory-content h3 {
+                font-size: clamp(20px, 3vw, 24px);
+            }
+            .question-block summary {
+                font-size: clamp(18px, 3vw, 20px);
+            }
+            .question-block details p {
+                font-size: clamp(18px, 3vw, 20px);
+            }
+            #questionsModal mjx-container {
+                font-size: 20px !important;
+            }
+            #submitAnswer {
+                font-size: clamp(16px, 3.5vw, 18px);
+                padding: clamp(12px, 3vw, 14px) clamp(24px, 5vw, 28px);
+            }
+            .title-box {
+                margin-top: 40px;
+                padding: 15px 20px;
+            }
+            .title-box h1 {
+                font-size: 24px;
+            }
+            .section-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            .section {
+                width: 80%;
+                height: 180px;
+            }
+            .modal {
+                top: 2%;
+                left: 2%;
+                width: 96%;
+                height: 96%;
+            }
+            .modal-header {
+                padding: 5px 8px;
+            }
+            .modal-content {
+                max-height: calc(100% - 50px);
+            }
+            .question-card {
+                min-height: 180px;
+            }
+            .card-front, .card-back {
+                font-size: clamp(15px, 3vw, 17px);
+                padding: 12px;
+                line-height: 1.4;
+            }
+            .card-front span, .card-back span {
+                font-size: clamp(15px, 3vw, 17px);
+                line-height: 1.4;
+            }
+            #questionsModal mjx-container {
+                font-size: clamp(16px, 3vw, 18px) !important;
+            }
+            .trainer-container {
+                width: 95%;
+                padding: 4vw;
+            }
+            .question-circle, .completion-emoji {
+                width: 25vw;
+                height: 25vw;
+                min-width: 80px;
+                min-height: 80px;
+            }
+            .question-circle h3 {
+                font-size: clamp(14px, 3vw, 16px);
+            }
+            .completion-emoji::after {
+                font-size: clamp(30px, 7vw, 40px);
+            }
+            .options-container {
+                gap: 1.5vw;
+                flex-direction: column;
+                align-items: center;
+            }
+            .option {
+                font-size: clamp(14px, 4vw, 16px);
+                padding: 10px !important;
+                min-height: 60px !important;
+                min-width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                overflow: hidden;
+            }
+            .option mjx-container {
+                font-size: clamp(13px, 4vw, 15px) !important;
+                width: 100% !important;
+                text-align: center;
+                overflow: hidden;
+            }
+            button {
+                padding: 3vw 5vw;
+                font-size: clamp(12px, 3vw, 14px);
+            }
+            .feedback {
+                font-size: clamp(24px, 5.8vw, 32px);
+                padding: clamp(12px, 3.5vw, 18px) clamp(18px, 5vw, 25px);
+                max-width: 95vw;
+                word-wrap: break-word;
+            }
+            .completion-message {
+                padding: clamp(10px, 3vw, 15px);
+            }
+            .completion-message h2 {
+                font-size: clamp(20px, 4vw, 26px);
+            }
+            .completion-message p {
+                font-size: clamp(16px, 3vw, 20px);
+            }
+            .navigation-buttons {
+                margin: 20px auto;
+                gap: 15px;
+            }
+            .nav-button {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+            .math-notation-centered {
+                font-size: clamp(16px, 2.5vw, 18px);
+            }
+            mjx-container.math-notation-centered {
+                font-size: clamp(16px, 2.5vw, 18px) !important;
+            }
+            .video-card-container {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            .video-card {
+                width: 260px;
+                height: 160px;
+                margin: 5px;
+            }
+            .video-card img {
+                width: 40px;
+                height: 40px;
+                margin-bottom: 6px;
+            }
+            .video-player-container {
+                width: 80vw;
+                max-width: 600px;
+                aspect-ratio: 16 / 9;
+            }
+            .video-card h3 {
+                font-size: clamp(14px, 2.5vw, 16px);
+            }
+        }
+        @media (max-width: 480px) {
+            .close-btn {
+                font-size: 14px;
+                padding: 5px 10px;
+                border-radius: 6px;
+            }
+            .theory-content p, .theory-content li {
+                font-size: clamp(16px, 3vw, 18px);
+            }
+            .theory-content mjx-container {
+                font-size: clamp(16px, 3vw, 18px) !important;
+            }
+            .theory-content h2, .theory-content h3 {
+                font-size: clamp(20px, 3vw, 24px);
+            }
+            .question-block summary {
+                font-size: clamp(17px, 3.2vw, 19px);
+            }
+            .question-block details p {
+                font-size: clamp(16px, 3vw, 18px);
+            }
+            #questionsModal mjx-container {
+                font-size: 20px !important;
+            }
+            #submitAnswer {
+                font-size: clamp(14px, 3.5vw, 16px);
+                padding: clamp(10px, 3vw, 12px) clamp(20px, 5vw, 24px);
+            }
+            .title-box {
+                margin-top: 20px;
+                padding: 10px 15px;
+            }
+            .title-box h1 {
+                font-size: 20px;
+            }
+            .section {
+                width: 90%;
+                height: 150px;
+            }
+            .section img {
+                width: 50px;
+                height: 50px;
+            }
+            .section h2 {
+                font-size: 18px;
+            }
+            .modal-header {
+                padding: 4px 6px;
+            }
+            .modal-content {
+                max-height: calc(100% - 40px);
+            }
+            .question-card {
+                min-height: 200px;
+            }
+            .card-front, .card-back {
+                font-size: clamp(14px, 3vw, 16px);
+                padding: 10px;
+                line-height: 1.3;
+            }
+            .card-front span, .card-back span {
+                font-size: clamp(14px, 3vw, 16px);
+                line-height: 1.3;
+            }
+            #questionsModal mjx-container {
+                font-size: clamp(14px, 3vw, 16px) !important;
+            }
+            .card-inner {
+                min-height: 200px;
+            }
+            .trainer-container {
+                padding: 5vw;
+            }
+            .question-circle, .completion-emoji {
+                width: 25vw;
+                height: 25vw;
+                min-width: 60px;
+                min-height: 60px;
+            }
+            .completion-emoji::after {
+                font-size: clamp(25px, 6vw, 35px);
+            }
+            .option {
+                font-size: 16px !important;
+                padding: 10px !important;
+                min-height: 60px !important;
+                min-width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                overflow: hidden;
+            }
+            .option mjx-container {
+                font-size: clamp(13px, 4vw, 15px) !important;
+                width: 100% !important;
+                text-align: center;
+                overflow: hidden;
+            }
+            .feedback {
+                font-size: clamp(22px, 5.2vw, 28px);
+                padding: clamp(10px, 3vw, 15px) clamp(15px, 4.5vw, 20px);
+                max-width: 95vw;
+                word-wrap: break-word;
+            }
+            .completion-message {
+                padding: clamp(10px, 3vw, 15px);
+            }
+            .completion-message h2 {
+                font-size: clamp(18px, 3.5vw, 22px);
+            }
+            .completion-message p {
+                font-size: clamp(14px, 3vw, 18px);
+            }
+            .navigation-buttons {
+                margin: 15px auto;
+                gap: 10px;
+            }
+            .nav-button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+            .math-notation-centered {
+                font-size: clamp(14px, 2.5vw, 16px);
+                line-height: 1.2;
+            }
+            mjx-container.math-notation-centered {
+                font-size: clamp(14px, 2.5vw, 16px) !important;
+                line-height: 1.2 !important;
+            }
+            mjx-container {
+                font-size: 13px !important;
+            }
+            .video-card-container {
+                gap: 10px;
+                padding: 10px;
+            }
+            .video-card {
+                width: 90%;
+                max-width: 260px;
+                height: 140px;
+                margin: 5px;
+            }
+            .video-card img {
+                width: 30px;
+                height: 30px;
+                margin-bottom: 5px;
+            }
+            .video-card h3 {
+                font-size: clamp(12px, 2.5vw, 14px);
+            }
+            .video-player-container {
+                width: 80vw;
+                max-width: 400px;
+                aspect-ratio: 16 / 9;
+            }
+            #trainerModal .math-notation-centered,
+            #questionsModal mjx-container {
+                font-size: clamp(18px, 4vw, 22px) !important;
+            }
+        }
+        @media (max-width: 600px) {
+            #trainerModal .math-notation-centered,
+            #questionsModal mjx-container {
+                font-size: clamp(18px, 4vw, 22px) !important;
+            }
+            #trainerModal .options-container mjx-container {
+                font-size: clamp(18px, 4vw, 20px) !important;
+            }
+        }
+        @media (max-width: 768px) {
+            #trainerModal .math-notation-centered,
+            #trainerModal mjx-container,
+            #questionsModal mjx-container {
+                font-size: 5vw !important;
+                line-height: 1.4 !important;
+            }
+            #trainerModal .options-container mjx-container {
+                font-size: 4.5vw !important;
+            }
+            mjx-frac {
+                font-size: 1.3em !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="title-box">
+        <h1>40. Рівняння прямої з кутовим коефіцієнтом</h1>
+    </div>
+
+    <div class="section-container">
+        <div class="section" id="openTheoryBtn">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Книга" loading="lazy">
+            <h2>Теоретичні відомості</h2>
+        </div>
+        <div class="section" id="openVideoBtn">
+            <img src="https://img.icons8.com/fluency/96/video.png" alt="Відео" loading="lazy">
+            <h2>Відеоматеріали</h2>
+        </div>
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Картки" loading="lazy">
+            <h2>Питання і відповіді</h2>
+        </div>
+        <div class="section" id="openTrainerBtn">
+            <img src="https://img.icons8.com/fluency/96/flash-on.png" alt="Тренажер" loading="lazy">
+            <h2>Тренажер</h2>
+        </div>
+    </div>
+
+    <div class="navigation-buttons">
+        <a class="nav-button" href="{{ url_for('tema8') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            До теми 8
+        </a>
+        <a class="nav-button" href="{{ url_for('home') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            На головну
+        </a>
+    </div>
+
+    <div id="theoryModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="theoryTitle">
+        <div class="modal-header">
+            <button class="close-btn" id="closeTheoryBtn" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+    <div class="theory-content">
+        <h2>Рівняння прямої з кутовим коефіцієнтом</h2>
+        <p>Нехай на площині з прямокутною системою координат задано пряму <span class="math-notation">\( l \)</span>, яка перетинає вісь <span class="math-notation">\( Oy \)</span> у точці <span class="math-notation">\( B(0; b) \)</span> та утворює з віссю <span class="math-notation">\( Ox \)</span> кут <span class="math-notation">\( \alpha \)</span> (рис. 9.1).</p>
+<img src="/static/figure9.1.jpg" alt="Пряма з кутовим коефіцєнтом" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+           <p>Виберемо на прямій <span class="math-notation">\( l \)</span> довільну точку <span class="math-notation">\( M(x, y) \)</span> і проведемо через точку <span class="math-notation">\( B \)</span> вісь <span class="math-notation">\( Bx' \)</span>, яка є паралельною та співнапрямленою з віссю <span class="math-notation">\( Ox \)</span>. Оскільки осі <span class="math-notation">\( Ox \)</span> та <span class="math-notation">\( Bx' \)</span> паралельні, кут між прямою <span class="math-notation">\( l \)</span> і віссю <span class="math-notation">\( Bx' \)</span> також дорівнює <span class="math-notation">\( \alpha \)</span>.</p>
+        <p>Розглянемо прямокутний трикутник <span class="math-notation">\( \triangle BAM \)</span>, де катети: <span class="math-notation">\( BA = x \)</span> (проєкція відрізка <span class="math-notation">\( BM \)</span> на вісь <span class="math-notation">\( Ox \)</span>), <span class="math-notation">\( MA = y - b \)</span> (проєкція відрізка <span class="math-notation">\( BM \)</span> на вісь <span class="math-notation">\( Oy \)</span>). За визначенням тангенса гострого кута у прямокутному трикутнику, який є відношенням протилежного катета до прилеглого, отримуємо:</p>
+       <p class="math-notation-centered">\[ \mathrm{tg}\,\alpha = \frac{MA}{BA} \implies \mathrm{tg}\,\alpha = \frac{y - b}{x} \]</p>
+        <p>Тоді рівняння прямої набуває вигляду:</p>
+<p class="math-notation-centered">\[ y = (\mathrm{tg}\,\alpha) \cdot x + b \]</p>
+<p>Позначимо:</p>
+<p class="math-notation-centered">\[ \mathrm{tg}\,\alpha = k \quad (9.1) \]</p>
+        <p>Отже, рівняння прямої можна записати у вигляді:</p>
+        <p class="math-notation-centered">\[ y = kx + b \quad (9.2) \]</p>
+        <p>Це рівняння задовольняють усі точки <span class="math-notation">\( M(x, y) \)</span>, 
+що лежать на прямій <span class="math-notation">\( l \)</span>. 
+Число <span class="math-notation">\( \mathrm{tg}\,\alpha = k \)</span> 
+називається <span class="highlight-term">кутовим коефіцієнтом</span> прямої.</p>
+ <p>Рівняння (9.2) є рівнянням прямої з кутовим коефіцієнтом <span class="math-notation">\( k \)</span> і початковою ординатою <span class="math-notation">\( b \)</span>.</p>
+
+        <h3>Властивості кутового коефіцієнта</h3>
+        <ul>
+    <li>Якщо <span class="math-notation">\( k = \mathrm{tg}\,\alpha > 0 \)</span>, то кут <span class="math-notation">\( \alpha \)</span> – гострий.</li>
+    <li>Якщо <span class="math-notation">\( k = \mathrm{tg}\,\alpha < 0 \)</span>, то кут <span class="math-notation">\( \alpha \)</span> – тупий.</li>
+</ul>
+
+
+        <h3>Окремі випадки</h3>
+        <ol>
+            <li>Якщо пряма проходить через початок координат, то <span class="math-notation">\( b = 0 \)</span>, і рівняння має вигляд:</li>
+            <p class="math-notation-centered">\[ y = kx \]</p>
+            <li>Якщо пряма паралельна осі <span class="math-notation">\( Ox \)</span>, то <span class="math-notation">\( \alpha = 0 \)</span>, а отже:</li>
+            <p class="math-notation-centered">\[ y = b \]</p>
+            <li>Якщо пряма паралельна осі <span class="math-notation">\( Oy \)</span>, то <span class="math-notation">\( \alpha = 90^\circ \)</span>, і кутовий коефіцієнт <span class="math-notation">\( k \)</span> не існує. У цьому випадку рівняння прямої записується як:</li>
+            <p class="math-notation-centered">\[ x = a \]</p>
+            <p>де <span class="math-notation">\( a \)</span> – абсциса точки перетину прямої з віссю <span class="math-notation">\( Ox \)</span>.</p>
+        </ol>
+
+        <h3>Приклад 9.1</h3>
+        <div class="example">Пряма нахилена до осі <span class="math-notation">\( Ox \)</span> під кутом <span class="math-notation">\( 30^\circ \)</span> і має початкову ординату, що дорівнює <span class="math-notation">\( -3 \)</span>. Скласти рівняння прямої.</div>
+        <p>За умовою задачі: 
+    <span class="math-notation">\( k = \mathrm{tg}\,30^\circ = \frac{1}{\sqrt{3}} \)</span>, 
+    <span class="math-notation">\( b = -3 \)</span>. 
+    Підставимо ці значення у рівняння прямої з кутовим коефіцієнтом (9.2):
+</p>
+ <p class="math-notation-centered">\[ y = \frac{1}{\sqrt{3}} x - 3 \]</p>
+        <p class="solution">Відповідь: <span class="math-notation">\( y = \frac{1}{\sqrt{3}} x - 3 \)</span>.</p>
+
+        <h3>Приклад 9.2</h3>
+        <div class="example">Скласти рівняння прямої, яка проходить через початок координат і утворює з додатним напрямком осі <span class="math-notation">\( Ox \)</span> кут <span class="math-notation">\( 60^\circ \)</span>.</div>
+        <p>Рівняння прямої, що проходить через початок координат, має вигляд:</p>
+        <p class="math-notation-centered">\[ y = kx \]</p>
+        <p>За умовою задачі: 
+    <span class="math-notation">\( k = \mathrm{tg}\,60^\circ = \sqrt{3} \)</span>. 
+    Підставимо знайдене значення <span class="math-notation">\( k \)</span> у рівняння прямої:
+</p>
+ <p class="math-notation-centered">\[ y = \sqrt{3} x \]</p>
+        <p class="solution">Відповідь: <span class="math-notation">\( y = \sqrt{3} x \)</span>.</p>
+
+        <h3>Рівняння жмутка прямих</h3>
+        <p>Сукупність усіх прямих, які проходять через певну точку <span class="math-notation">\( M_0(x_0; y_0) \)</span> (рис. 9.2), називається <span class="highlight-term">жмутком прямих</span> із центром у точці <span class="math-notation">\( M_0 \)</span>.</p>
+<img src="/static/figure9.2.jpg" alt="Жмуток прямих" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+           <p>Нехай задано пряму, яка проходить через точку <span class="math-notation">\( M_0(x_0; y_0) \)</span> та має кутовий коефіцієнт <span class="math-notation">\( k \)</span>. Рівняння цієї прямої можна записати у вигляді рівняння з кутовим коефіцієнтом:</p>
+        <p class="math-notation-centered">\[ y = kx + b \]</p>
+        <p>Знайдемо значення <span class="math-notation">\( b \)</span>, враховуючи, що пряма проходить через точку <span class="math-notation">\( M_0(x_0; y_0) \)</span>. Для цього підставимо координати точки <span class="math-notation">\( M_0 \)</span> у рівняння прямої:</p>
+        <p class="math-notation-centered">\[ y_0 = k x_0 + b \implies b = y_0 - k x_0 \]</p>
+        <p>Підставимо знайдене значення <span class="math-notation">\( b \)</span> у рівняння <span class="math-notation">\( y = kx + b \)</span>:</p>
+        <p class="math-notation-centered">\[ y = kx + y_0 - k x_0 \]</p>
+        <p>Тобто:</p>
+        <p class="math-notation-centered">\[ y - y_0 = k (x - x_0) \quad (9.3) \]</p>
+        <p>де <span class="math-notation">\( k \)</span> – кутовий коефіцієнт (довільний параметр). Рівняння (9.3) для різних значень <span class="math-notation">\( k \)</span> називають рівнянням жмутка прямих із центром у точці <span class="math-notation">\( M_0(x_0; y_0) \)</span>. Це також є рівнянням прямої, яка проходить через задану точку й має певний кутовий коефіцієнт <span class="math-notation">\( k \)</span>.</p>
+
+        <h3>Приклад 9.3</h3>
+        <div class="example">Знайти рівняння жмутка прямих, які проходять через точку <span class="math-notation">\( M_0(-2; 7) \)</span>.</div>
+        <p>Відомо, що рівняння жмутка прямих із центром у точці <span class="math-notation">\( M_0(x_0; y_0) \)</span> має вигляд:</p>
+        <p class="math-notation-centered">\[ y - y_0 = k (x - x_0) \]</p>
+        <p>де <span class="math-notation">\( k \)</span> – кутовий коефіцієнт (довільний параметр). Підставляємо <span class="math-notation">\( x_0 = -2 \)</span>, <span class="math-notation">\( y_0 = 7 \)</span> у формулу:</p>
+        <p class="math-notation-centered">\[ y - 7 = k (x - (-2)) \]</p>
+        <p>Спростимо вираз:</p>
+        <p class="math-notation-centered">\[ y - 7 = k (x + 2) \]</p>
+        <p>Отже, рівняння жмутка прямих, які проходять через точку <span class="math-notation">\( M_0(-2; 7) \)</span>, має вигляд:</p>
+        <p class="math-notation-centered">\[ y - 7 = k (x + 2) \]</p>
+        <p class="solution">Відповідь: <span class="math-notation">\( y - 7 = k (x + 2) \)</span>, де <span class="math-notation">\( k \)</span> – довільний множник.</p>
+
+        <h3>Приклад 9.4</h3>
+        <div class="example">Скласти рівняння прямої з кутовим коефіцієнтом <span class="math-notation">\( k = -3 \)</span>, якщо відомо, що точка <span class="math-notation">\( A(1; -2) \)</span> належить цій прямій.</div>
+        <p>Рівняння прямої, яка проходить через задану точку <span class="math-notation">\( A(x_0; y_0) \)</span> і має кутовий коефіцієнт <span class="math-notation">\( k \)</span>, має вигляд:</p>
+        <p class="math-notation-centered">\[ y - y_0 = k (x - x_0) \]</p>
+        <p>Підставляємо <span class="math-notation">\( x_0 = 1 \)</span>, <span class="math-notation">\( y_0 = -2 \)</span>, <span class="math-notation">\( k = -3 \)</span> у формулу:</p>
+        <p class="math-notation-centered">\[ y - (-2) = -3 (x - 1) \]</p>
+        <p>Спростимо рівняння:</p>
+        <p class="math-notation-centered">\[ y + 2 = -3x + 3 \]</p>
+        <p class="math-notation-centered">\[ y = -3x + 3 - 2 \]</p>
+        <p class="math-notation-centered">\[ y = -3x + 1 \]</p>
+        <p class="solution">Відповідь: <span class="math-notation">\( y = -3x + 1 \)</span>.</p>
+
+        <h3>Приклад 9.5</h3>
+        <div class="example">Скласти рівняння прямої, яка проходить через точку <span class="math-notation">\( (-1; -4) \)</span> і утворює з віссю <span class="math-notation">\( Ox \)</span> кут <span class="math-notation">\( 135^\circ \)</span>.</div>
+        <p><strong>Спосіб 1.</strong> Щоб скласти рівняння прямої у вигляді 
+    <span class="math-notation">\( y = kx + b \)</span>, необхідно знайти коефіцієнти 
+    <span class="math-notation">\( k \)</span> і <span class="math-notation">\( b \)</span>. 
+    Знаходимо кутовий коефіцієнт:
+</p>
+<p class="math-notation-centered">
+    \[ k = \mathrm{tg}\,135^\circ = \mathrm{tg}\,(180^\circ - 45^\circ) = -\mathrm{tg}\,45^\circ = -1 \]
+</p>
+<p>Знаходимо <span class="math-notation">\( b \)</span>. Підставляємо координати точки <span class="math-notation">\( (-1; -4) \)</span> і знайдене значення <span class="math-notation">\( k \)</span> у рівняння:</p>
+        <p class="math-notation-centered">\[ -4 = -1 \cdot (-1) + b \implies -4 = 1 + b \implies b = -5 \]</p>
+        <p>Отже, рівняння прямої:</p>
+        <p class="math-notation-centered">\[ y = -x - 5 \]</p>
+        <p><strong>Спосіб 2.</strong> Рівняння прямої можна скласти за формулою:</p>
+        <p class="math-notation-centered">\[ y - y_0 = k (x - x_0) \]</p>
+        <p>де <span class="math-notation">\( (x_0, y_0) = (-1; -4) \)</span> 
+і <span class="math-notation">\( k = \mathrm{tg}\,135^\circ = -1 \)</span>. 
+Підставляємо значення у формулу:</p>
+<p class="math-notation-centered">\[ y - (-4) = -1 \cdot (x - (-1)) \]</p>
+        <p class="math-notation-centered">\[ y + 4 = - (x + 1) \]</p>
+        <p class="math-notation-centered">\[ y + 4 = -x - 1 \]</p>
+        <p class="math-notation-centered">\[ y = -x - 5 \]</p>
+        <p class="solution">Відповідь: <span class="math-notation">\( y = -x - 5 \)</span>.</p>
+    </div>
+</div>
+    </div>
+
+    <div id="videoModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoBtn" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+           
+            <div class="video-card-container">
+                <div class="video-card" data-video="1">
+                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
+                    <h3>Рівняння прямої з кутовим коефіцієнтом</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="videoPlayerModal1" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoPlayerBtn1" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-player-container">
+                <iframe id="youtubePlayer1" width="100%" src="https://www.youtube.com/embed/ZsYQOCzSpMM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+   <div id="questionsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="questionsTitle">
+    <div class="modal-header">
+        <button class="close-btn" id="closeQuestionsBtn" aria-label="Закрити">× Закрити</button>
+    </div>
+    <div class="modal-content">
+
+        <!-- Картка 1 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>1. Що означає кут \(\alpha\), який утворює пряма з віссю \(Ox\)?</span>
+                </div>
+                <div class="card-back">
+                    <span>Це кут між прямою і віссю \(Ox\) на координатній площині.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Картка 2 -->
+<div class="question-card" onclick="this.classList.toggle('flipped')">
+    <div class="card-inner">
+        <div class="card-front">
+            <span>2. Як знайти <span class="math-notation">\( \mathrm{tg} \, \alpha \)</span> для прямої через точки <span class="math-notation">\( B(0; b) \)</span> та <span class="math-notation">\( M(x; y) \)</span>?</span>
+        </div>
+        <div class="card-back">
+            <span><span class="math-notation">\( \mathrm{tg} \, \alpha = \frac{y - b}{x} \)</span>, де <span class="math-notation">\( MA = y - b \)</span>, <span class="math-notation">\( BA = x \)</span>.</span>
+        </div>
+    </div>
+</div>
+
+
+        <!-- Картка 3 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>3. Яке рівняння прямої через точку \(B(0; b)\) з кутовим коефіцієнтом \(k\)?</span>
+                </div>
+                <div class="card-back">
+    <span><span class="math-notation">\( y = kx + b \)</span>, де <span class="math-notation">\( k = \mathrm{tg} \, \alpha \)</span>.</span>
+</div>
+
+            </div>
+        </div>
+
+        <!-- Картка 4 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>4. Що називається кутовим коефіцієнтом прямої?</span>
+                </div>
+                <div class="card-back">
+    <span>Число <span class="math-notation">\( k = \mathrm{tg} \, \alpha \)</span>, яке характеризує нахил прямої.</span>
+</div>
+
+            </div>
+        </div>
+
+        <!-- Картка 5 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>5. Які властивості кутового коефіцієнта \(k\)?</span>
+                </div>
+                <div class="card-back">
+                    <span>\(k > 0 \Rightarrow \alpha\) гострий; \(k < 0 \Rightarrow \alpha\) тупий.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Картка 6 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>6. Яке рівняння прямої, якщо вона проходить через початок координат?</span>
+                </div>
+                <div class="card-back">
+                    <span>\(y = kx\) (\(b = 0\)).</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Картка 7 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>7. Яке рівняння прямої, якщо вона паралельна осі \(Ox\)?</span>
+                </div>
+                <div class="card-back">
+                    <span>\(y = b\) (\(\alpha = 0\)), де \(b\) – ордината точки перетину з віссю \(Oy\).</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Картка 8 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>8. Яке рівняння прямої, якщо вона паралельна осі \(Oy\)?</span>
+                </div>
+                <div class="card-back">
+                    <span>\(x = a\), де \(a\) – абсциса точки перетину з віссю \(Ox\).</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Картка 9 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>9. Що таке жмуток прямих?</span>
+                </div>
+                <div class="card-back">
+                    <span>Сукупність усіх прямих, що проходять через одну точку \(M_0(x_0; y_0)\).</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Картка 10 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>10. Як знайти \(b\) у рівнянні прямої через точку \(M_0(x_0; y_0)\) з кутовим коефіцієнтом \(k\)?</span>
+                </div>
+                <div class="card-back">
+                    <span>\(b = y_0 - kx_0\).</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Картка 11 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>11. Яке рівняння прямої через точку \(M_0(x_0; y_0)\) з кутовим коефіцієнтом \(k\)?</span>
+                </div>
+                <div class="card-back">
+                    <span>\(y - y_0 = k(x - x_0)\).</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Картка 12 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>12. Що описує рівняння \(y - y_0 = k(x - x_0)\) при різних значеннях \(k\)?</span>
+                </div>
+                <div class="card-back">
+                    <span>Рівняння жмутка прямих із центром у точці \(M_0(x_0; y_0)\).</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+    <div id="trainerModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="trainerTitle">
+        <div class="modal-header">
+            <button class="close-btn" id="closeTrainerBtn" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="trainer-container" id="trainerContent">
+                <div class="question-circle">
+                    <h3 id="questionNumber"></h3>
+                </div>
+                <p id="questionText" class="math-notation-centered"></p>
+                <div class="options-container" id="optionsContainer"></div>
+                <button id="submitAnswer" disabled>Підтвердити</button>
+                <div id="feedback" class="feedback"></div>
+                <div id="completionBlock" class="completion-message hidden">
+                    <div class="completion-emoji"></div>
+                    <h2>Тренування завершено!</h2>
+                    <p>Молодець!</p>
+                    <button id="resetTrainerBtn">Спробувати ще раз</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalOverlay"></div>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    console.log('DOM завантажено');
+    document.body.classList.add('loaded');
+
+    const elements = {
+        openTheoryBtn: document.getElementById('openTheoryBtn'),
+        openVideoBtn: document.getElementById('openVideoBtn'),
+        openQuestionsBtn: document.getElementById('openQuestionsBtn'),
+        openTrainerBtn: document.getElementById('openTrainerBtn'),
+        theoryModal: document.getElementById('theoryModal'),
+        videoModal: document.getElementById('videoModal'),
+        questionsModal: document.getElementById('questionsModal'),
+        trainerModal: document.getElementById('trainerModal'),
+        closeTheoryBtn: document.getElementById('closeTheoryBtn'),
+        closeVideoBtn: document.getElementById('closeVideoBtn'),
+        closeQuestionsBtn: document.getElementById('closeQuestionsBtn'),
+        closeTrainerBtn: document.getElementById('closeTrainerBtn'),
+        closeVideoPlayerBtn1: document.getElementById('closeVideoPlayerBtn1'),
+        videoPlayerModal1: document.getElementById('videoPlayerModal1'),
+        modalOverlay: document.getElementById('modalOverlay'),
+        questionNumber: document.getElementById('questionNumber'),
+        questionText: document.getElementById('questionText'),
+        optionsContainer: document.getElementById('optionsContainer'),
+        feedback: document.getElementById('feedback'),
+        completionBlock: document.getElementById('completionBlock'),
+        resetTrainerBtn: document.getElementById('resetTrainerBtn'),
+        submitAnswer: document.getElementById('submitAnswer'),
+        youtubePlayer1: document.getElementById('youtubePlayer1'),
+        trainerContainer: document.getElementById('trainerContent')
+    };
+
+    // Перевірка наявності елементів
+    for (const [key, value] of Object.entries(elements)) {
+        if (!value) {
+            console.error(`Елемент ${key} не знайдено`);
+        }
+    }
+
+    // Зупиняємо виконання, якщо критичні елементи відсутні
+    const criticalElements = ['openTrainerBtn', 'trainerModal', 'modalOverlay', 'questionText', 'questionNumber', 'optionsContainer', 'submitAnswer'];
+    const missingCriticalElements = criticalElements.filter(key => !elements[key]);
+    if (missingCriticalElements.length > 0) {
+        console.error('Критичні елементи не знайдено:', missingCriticalElements);
+        document.body.innerHTML = '<h1>Помилка: відсутні критичні елементи. Перевірте HTML.</h1>';
+        return;
+    }
+
+    let players = {};
+    const playerIds = {
+        'youtubePlayer1': 'ZsYQOCzSpMM'
+    };
+
+    const playerSrcs = {
+        'youtubePlayer1': elements.youtubePlayer1 ? elements.youtubePlayer1.src : ''
+    };
+
+    function loadYouTubeAPI() {
+        if (!window.YT) {
+            const tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            const firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            tag.onload = () => console.log('YouTube API завантажено');
+            tag.onerror = () => console.error('Помилка завантаження YouTube API');
+        } else {
+            window.onYouTubeIframeAPIReady();
+        }
+    }
+
+    window.onYouTubeIframeAPIReady = function () {
+        Object.keys(playerIds).forEach(playerId => {
+            const element = elements[playerId];
+            if (element) {
+                players[playerId] = new YT.Player(playerId, {
+                    videoId: playerIds[playerId],
+                    playerVars: {
+                        'autoplay': 0,
+                        'controls': 1,
+                        'rel': 0,
+                        'showinfo': 0,
+                        'enablejsapi': 1
+                    },
+                    events: {
+                        'onReady': function (event) {
+                            console.log(`YouTube плеєр ${playerId} готовий`);
+                        },
+                        'onError': function (error) {
+                            console.error(`Помилка YouTube плеєра ${playerId}:`, error);
+                        }
+                    }
+                });
+            }
+        });
+    };
+    loadYouTubeAPI();
+
+    function stopAllVideos() {
+        Object.keys(players).forEach(playerId => {
+            const player = players[playerId];
+            const element = elements[playerId];
+            if (player && typeof player.stopVideo === 'function') {
+                try {
+                    player.stopVideo();
+                    console.log(`Зупинено відео через API: ${playerId}`);
+                } catch (e) {
+                    console.error(`Помилка при зупинці відео ${playerId}:`, e);
+                }
+            }
+            if (element) {
+                element.src = '';
+                console.log(`Очищено src для ${playerId}`);
+                const parent = element.parentNode;
+                const newIframe = document.createElement('iframe');
+                newIframe.id = playerId;
+                newIframe.className = element.className;
+                newIframe.setAttribute('data-src', playerSrcs[playerId]);
+                newIframe.setAttribute('frameborder', '0');
+                newIframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+                newIframe.setAttribute('allowfullscreen', '');
+                parent.replaceChild(newIframe, element);
+                elements[playerId] = newIframe;
+                console.log(`Замінено iframe для ${playerId}`);
+                players[playerId] = new YT.Player(playerId, {
+                    videoId: playerIds[playerId],
+                    playerVars: {
+                        'autoplay': 0,
+                        'controls': 1,
+                        'rel': 0,
+                        'showinfo': 0,
+                        'enablejsapi': 1
+                    },
+                    events: {
+                        'onReady': function (event) {
+                            console.log(`YouTube плеєр ${playerId} переініціалізовано`);
+                        },
+                        'onError': function (error) {
+                            console.error(`Помилка YouTube плеєра ${playerId}:`, error);
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    function toggleModal(modal, show) {
+        if (!modal || !elements.modalOverlay) {
+            console.error('Модальне вікно або overlay не знайдено:', { modal: modal?.id, overlay: !!elements.modalOverlay });
+            return;
+        }
+        console.log(`Перемикаємо ${modal.id}: display=${show ? 'flex' : 'none'}`);
+        modal.style.display = show ? 'flex' : 'none';
+        elements.modalOverlay.style.display = show ? 'block' : 'none';
+        document.body.style.overflow = show ? 'hidden' : 'auto';
+        if (show) {
+            const closeBtn = modal.querySelector('.close-btn');
+            if (closeBtn) closeBtn.focus();
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise([modal]).then(() => {
+                    console.log(`MathJax типізація завершена для ${modal.id}`);
+                }).catch(err => console.error('Помилка MathJax:', err));
+            }
+        }
+    }
+
+    function openVideoPlayerModal(videoModal, playerId) {
+        stopAllVideos();
+        toggleModal(elements.videoModal, false);
+        toggleModal(videoModal, true);
+        const element = elements[playerId];
+        if (element && !element.src) {
+            element.src = playerSrcs[playerId];
+            console.log(`Відновлено src для ${playerId}: ${playerSrcs[playerId]}`);
+        }
+        if (players[playerId] && typeof players[playerId].loadVideoById === 'function') {
+            try {
+                players[playerId].loadVideoById(playerIds[playerId]);
+                console.log(`Завантаження відео: ${playerId} з videoId ${playerIds[playerId]}`);
+            } catch (e) {
+                console.error(`Помилка при завантаженні відео ${playerId}:`, e);
+            }
+        }
+    }
+
+    elements.openTheoryBtn?.addEventListener('click', () => {
+        console.log('Відкриваємо теорію');
+        toggleModal(elements.theoryModal, true);
+    });
+    elements.openVideoBtn?.addEventListener('click', () => {
+        console.log('Відкриваємо відео');
+        toggleModal(elements.videoModal, true);
+    });
+    elements.openQuestionsBtn?.addEventListener('click', () => {
+        console.log('Відкриваємо питання');
+        toggleModal(elements.questionsModal, true);
+    });
+    elements.openTrainerBtn?.addEventListener('click', () => {
+        console.log('Відкриваємо тренажер');
+        toggleModal(elements.trainerModal, true);
+        initializeQuestions();
+    });
+
+    elements.closeTheoryBtn?.addEventListener('click', () => {
+        console.log('Закриваємо теорію');
+        toggleModal(elements.theoryModal, false);
+    });
+    elements.closeVideoBtn?.addEventListener('click', () => {
+        console.log('Закриваємо відео');
+        toggleModal(elements.videoModal, false);
+    });
+    elements.closeQuestionsBtn?.addEventListener('click', () => {
+        console.log('Закриваємо питання');
+        toggleModal(elements.questionsModal, false);
+    });
+    elements.closeTrainerBtn?.addEventListener('click', () => {
+        console.log('Закриваємо тренажер');
+        toggleModal(elements.trainerModal, false);
+    });
+
+    elements.closeVideoPlayerBtn1?.addEventListener('click', () => {
+        console.log('Закриваємо відеоплеєр 1');
+        stopAllVideos();
+        toggleModal(elements.videoPlayerModal1, false);
+        toggleModal(elements.videoModal, true);
+    });
+
+    elements.modalOverlay?.addEventListener('click', () => {
+        console.log('Закриваємо через overlay');
+        stopAllVideos();
+        toggleModal(elements.theoryModal, false);
+        toggleModal(elements.videoModal, false);
+        toggleModal(elements.questionsModal, false);
+        toggleModal(elements.trainerModal, false);
+        toggleModal(elements.videoPlayerModal1, false);
+    });
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            console.log('Закриваємо через Escape');
+            stopAllVideos();
+            toggleModal(elements.theoryModal, false);
+            toggleModal(elements.videoModal, false);
+            toggleModal(elements.questionsModal, false);
+            toggleModal(elements.trainerModal, false);
+            toggleModal(elements.videoPlayerModal1, false);
+        }
+    });
+
+    document.querySelectorAll('.video-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const videoId = card.dataset.video;
+            console.log('Натиснуто відеокарточку, відкриваємо відеоплеєр:', videoId);
+            const videoModal = elements[`videoPlayerModal${videoId}`];
+            const playerId = `youtubePlayer${videoId}`;
+            if (videoModal) {
+                openVideoPlayerModal(videoModal, playerId);
+            } else {
+                console.error('Модальне вікно для videoId не знайдено:', videoId);
+            }
+        });
+    });
+
+    Object.keys(playerSrcs).forEach(playerId => {
+        const element = elements[playerId];
+        if (element && playerSrcs[playerId]) {
+            element.setAttribute('data-src', playerSrcs[playerId]);
+        }
+    });
+
+let questions = [];
+let currentQuestionIndex = 0;
+let selectedOption = null;
+
+function getRandomInt(min, max, exclude = []) {
+    let num;
+    do {
+        num = Math.floor(Math.random() * (max - min + 1)) + min;
+    } while (exclude.includes(num));
+    return num;
+}
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+function generateLineEquationQuestion(questionType = 'slope1') {
+    let questionText, options, correct;
+
+    if (questionType === 'slope1') {
+        // Question 1: Slope of y = kx ± b
+        let k, b;
+        do {
+            k = getRandomInt(-9, 9, [0]); // k from [-9, -1] ∪ [1, 9]
+            b = getRandomInt(-9, 9, [0, k, -k]); // b from [-9, -1] ∪ [1, 9], exclude k and -k
+        } while (Math.abs(k) === Math.abs(b)); // Ensure |k| ≠ |b|
+        const kAbsDisplay = Math.abs(k);
+        const bAbsDisplay = Math.abs(b);
+        let kTerm = k === 1 ? 'x' : k === -1 ? '-x' : `${k >= 0 ? '' : '-'}${kAbsDisplay}x`;
+        const bSign = b >= 0 ? '+' : '-';
+        questionText = `Знайдіть кутовий коефіцієнт прямої \\[ y = ${kTerm} ${bSign} ${bAbsDisplay} \\]`;
+        options = [
+            `\\(${k}\\)`,
+            `\\(${-k}\\)`,
+            `\\(${b}\\)`,
+            `\\(${-b}\\)`
+        ];
+        correct = `\\(${k}\\)`; // Correct answer is slope k
+    } else if (questionType === 'slope2') {
+    // Question 2: Slope of y = b ± kx
+    let k, b;
+    do {
+        k = getRandomInt(-9, 9, [0]);
+        b = getRandomInt(-9, 9, [0, k, -k]);
+    } while (Math.abs(k) === Math.abs(b));
+    const kAbsDisplay = Math.abs(k);
+    const bAbsDisplay = Math.abs(b);
+    let kTerm = k === 1 ? 'x' : k === -1 ? 'x' : `${kAbsDisplay}x`; // Завжди без знаку в kTerm
+    const operator = k >= 0 ? '+' : '-'; // Знак для k
+    questionText = `Знайдіть кутовий коефіцієнт прямої \\[ y = ${b >= 0 ? '' : '-'}${bAbsDisplay} ${operator} ${kTerm} \\]`;
+    options = [
+        `\\(${k}\\)`,
+        `\\(${-k}\\)`,
+        `\\(${b}\\)`,
+        `\\(${-b}\\)`
+    ];
+    correct = `\\(${k}\\)`; // Correct answer is slope k
+} else if (questionType === 'yIntercept') {
+    // Question 3: Y-intercept of random y = kx ± b or y = b ± kx
+    let k, b;
+    do {
+        k = getRandomInt(-9, 9, [0]);
+        b = getRandomInt(-9, 9, [0, k, -k]);
+    } while (Math.abs(k) === Math.abs(b));
+    const kAbsDisplay = Math.abs(k);
+    const bAbsDisplay = Math.abs(b);
+    const useFirstForm = Math.random() < 0.5;
+    if (useFirstForm) {
+        let kTerm = k === 1 ? 'x' : k === -1 ? '-x' : `${k >= 0 ? '' : '-'}${kAbsDisplay}x`;
+        const bSign = b >= 0 ? '+' : '-';
+        questionText = `Обчисліть початкову ординату прямої \\[ y = ${kTerm} ${bSign} ${bAbsDisplay} \\]`;
+    } else {
+        let kTerm = k === 1 ? 'x' : k === -1 ? 'x' : `${kAbsDisplay}x`; // Без знаку в kTerm
+        const operator = k >= 0 ? '+' : '-'; // Знак для k
+        questionText = `Обчисліть початкову ординату прямої \\[ y = ${b >= 0 ? '' : '-'}${bAbsDisplay} ${operator} ${kTerm} \\]`;
+    }
+    options = [
+        `\\(${k}\\)`,
+        `\\(${-k}\\)`,
+        `\\(${b}\\)`,
+        `\\(${-b}\\)`
+    ];
+    correct = `\\(${b}\\)`; // Correct answer is y-intercept b
+} else if (questionType === 'slopeAngle') {
+        // Question 4: Slope for random angle
+        const angles = [0, 30, 45, 60, 120, 135, 150];
+        const angle = angles[Math.floor(Math.random() * angles.length)];
+        const tanValues = {
+            0: '\\(0\\)',
+            30: '\\(\\frac{1}{\\sqrt{3}}\\)',
+            45: '\\(1\\)',
+            60: '\\(\\sqrt{3}\\)',
+            120: '\\(-\\sqrt{3}\\)',
+            135: '\\(-1\\)',
+            150: '\\(-\\frac{1}{\\sqrt{3}}\\)'
+        };
+        const optionValues = {
+            0: ['\\(0\\)', '\\(1\\)', '\\(-1\\)', '\\(\\sqrt{3}\\)'],
+            30: ['\\(\\frac{1}{\\sqrt{3}}\\)', '\\(-\\frac{1}{\\sqrt{3}}\\)', '\\(1\\)', '\\(-1\\)'],
+            45: ['\\(1\\)', '\\(-1\\)', '\\(\\sqrt{3}\\)', '\\(-\\sqrt{3}\\)'],
+            60: ['\\(\\sqrt{3}\\)', '\\(-\\sqrt{3}\\)', '\\(1\\)', '\\(-1\\)'],
+            120: ['\\(-\\sqrt{3}\\)', '\\(\\sqrt{3}\\)', '\\(1\\)', '\\(-1\\)'],
+            135: ['\\(-1\\)', '\\(1\\)', '\\(\\sqrt{3}\\)', '\\(-\\sqrt{3}\\)'],
+            150: ['\\(-\\frac{1}{\\sqrt{3}}\\)', '\\(\\frac{1}{\\sqrt{3}}\\)', '\\(1\\)', '\\(-1\\)']
+        };
+        questionText = `Знайдіть кутовий коефіцієнт прямої, якщо вона утворює з додатним напрямом осі абсцис кут \\(${angle}^\\circ\\)`;
+        options = optionValues[angle];
+        correct = tanValues[angle];
+    } else if (questionType === 'lineEquation') {
+        // Question 5: Line through random point with random slope
+        let x1, y1, k, b;
+        do {
+            x1 = getRandomInt(-5, 5, [0]); // x1 from [-5, -1] ∪ [1, 5]
+            y1 = getRandomInt(-5, 5, [0]); // y1 from [-5, -1] ∪ [1, 5]
+            k = getRandomInt(-5, 5, [0]); // k from [-5, -1] ∪ [1, 5]
+            b = y1 - k * x1; // y = kx + b => b = y1 - k*x1
+        } while (b === 0 || Math.abs(k) === Math.abs(b)); // Ensure b ≠ 0 and |k| ≠ |b|
+        const bAbsDisplay = Math.abs(b);
+        const bSign = b >= 0 ? '+' : '-';
+        const kAbsDisplay = Math.abs(k);
+        const kTerm = k === 1 ? 'x' : k === -1 ? '-x' : `${k >= 0 ? '' : '-'}${kAbsDisplay}x`;
+        questionText = `Складіть рівняння прямої, що проходить через точку \\((${x1}; ${y1})\\) і кутовий коефіцієнт якої дорівнює \\(${k}\\)`;
+        // Generate incorrect options by varying k or b
+        let wrongB1, wrongB2, wrongK;
+        do {
+            wrongB1 = b + getRandomInt(-3, 3, [0, b]);
+        } while (wrongB1 === 0 || Math.abs(wrongB1) === Math.abs(k));
+        do {
+            wrongB2 = b + getRandomInt(-3, 3, [0, b, wrongB1]);
+        } while (wrongB2 === 0 || Math.abs(wrongB2) === Math.abs(k));
+        do {
+            wrongK = getRandomInt(-5, 5, [0, k]);
+        } while (Math.abs(wrongK) === Math.abs(b));
+        const wrongKTerm = wrongK === 1 ? 'x' : wrongK === -1 ? '-x' : `${wrongK >= 0 ? '' : '-'}${Math.abs(wrongK)}x`;
+        const wrongB1Sign = wrongB1 >= 0 ? '+' : '-';
+        const wrongB2Sign = wrongB2 >= 0 ? '+' : '-';
+        const correctOption = `\\(y = ${kTerm} ${bSign} ${bAbsDisplay}\\)`;
+        options = [
+            correctOption,
+            `\\(y = ${kTerm} ${wrongB1Sign} ${Math.abs(wrongB1)}\\)`,
+            `\\(y = ${wrongKTerm} ${bSign} ${bAbsDisplay}\\)`,
+            `\\(y = ${kTerm} ${wrongB2Sign} ${Math.abs(wrongB2)}\\)`
+        ];
+        correct = correctOption; // Ensure exact match with the option
+        console.log('Question 5 options:', options);
+        console.log('Question 5 correct:', correct);
+    }
+
+    // Shuffle options
+    shuffleArray(options);
+
+    return {
+        question: questionText,
+        options: options,
+        correct: correct
+    };
+}
+
+function initializeQuestions() {
+    console.log('Ініціалізація питань для тренажера');
+    questions = [
+        generateLineEquationQuestion('slope1'),
+        generateLineEquationQuestion('slope2'),
+        generateLineEquationQuestion('yIntercept'),
+        generateLineEquationQuestion('slopeAngle'),
+        generateLineEquationQuestion('lineEquation')
+    ];
+    currentQuestionIndex = 0;
+    selectedOption = null;
+    elements.completionBlock.classList.add('hidden');
+    elements.questionText.classList.remove('hidden');
+    elements.optionsContainer.classList.remove('hidden');
+    elements.submitAnswer.classList.remove('hidden');
+    elements.questionNumber.parentElement.classList.remove('hidden');
+    
+    // ВИПРАВЛЕННЯ: Завжди показуємо елемент зворотного зв'язку при ініціалізації
+    elements.feedback.classList.remove('hidden');
+    elements.feedback.classList.remove('show', 'correct-feedback', 'incorrect-feedback');
+    elements.feedback.textContent = '';
+    
+    setTimeout(() => {
+        displayQuestion();
+        if (window.MathJax && MathJax.typesetPromise) {
+            MathJax.typesetPromise([elements.trainerContainer]).then(() => {
+                console.log('MathJax типізація завершена після ініціалізації');
+            }).catch(err => console.error('Помилка MathJax:', err));
+        }
+    }, 100);
+}
+    
+function displayQuestion() {
+    if (currentQuestionIndex >= questions.length) {
+        console.log('Тренування завершено');
+        showCompletionBlock();
+        return;
+    }
+
+    const question = questions[currentQuestionIndex];
+    elements.questionNumber.textContent = `Питання ${currentQuestionIndex + 1}`;
+    elements.questionText.innerHTML = question.question;
+    elements.optionsContainer.innerHTML = '';
+
+    question.options.forEach((option, index) => {
+        const optionElement = document.createElement('div');
+        optionElement.className = 'option';
+        optionElement.innerHTML = option;
+        optionElement.dataset.index = index;
+        optionElement.dataset.value = option; // Зберігаємо оригінальний текст
+        optionElement.addEventListener('click', () => selectOption(optionElement, option, index));
+        elements.optionsContainer.appendChild(optionElement);
+    });
+
+    selectedOption = null;
+    elements.submitAnswer.disabled = true;
+    elements.submitAnswer.classList.remove('hidden');
+    elements.feedback.classList.remove('show', 'correct-feedback', 'incorrect-feedback');
+    elements.feedback.textContent = '';
+
+    if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([elements.questionText, elements.optionsContainer]).then(() => {
+            console.log('MathJax типізація завершена для питання', currentQuestionIndex + 1);
+            question.options.forEach((opt, idx) => {
+                const optionElement = elements.optionsContainer.children[idx];
+                const renderedOption = optionElement?.innerHTML;
+                const dataValue = optionElement?.dataset.value;
+                console.log(`Option ${idx}: Original: ${opt}, Rendered: ${renderedOption}, Data-value: ${dataValue}`);
+            });
+        }).catch(err => console.error('Помилка MathJax:', err));
+    }
+}
+
+function selectOption(optionElement, option, index) {
+    console.log('Selected option:', {
+        option: option,
+        elementHTML: optionElement.innerHTML,
+        datasetIndex: index,
+        dataValue: optionElement.dataset.value
+    });
+    document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+    optionElement.classList.add('selected');
+    selectedOption = optionElement.dataset.value; // Використовуємо data-value
+    elements.submitAnswer.disabled = false;
+    elements.submitAnswer.focus();
+}
+    
+function showFeedback(isCorrect) {
+    console.log('Викликаємо showFeedback, isCorrect:', isCorrect);
+    elements.feedback.textContent = isCorrect ? '✓ Правильно! Молодець!' : '✗ Неправильно. Спробуй ще раз!';
+    console.log('Встановлено текст зворотного зв’язку:', elements.feedback.textContent);
+    elements.feedback.classList.remove('correct-feedback', 'incorrect-feedback');
+    elements.feedback.classList.add('show', isCorrect ? 'correct-feedback' : 'incorrect-feedback');
+    console.log('Додано класи до feedback:', elements.feedback.className);
+    setTimeout(() => {
+        elements.feedback.classList.remove('show');
+        console.log('Приховуємо зворотний зв’язок');
+    }, 2000);
+}
+
+function showCompletionBlock() {
+    elements.completionBlock.classList.remove('hidden');
+    elements.questionText.classList.add('hidden');
+    elements.optionsContainer.classList.add('hidden');
+    elements.submitAnswer.classList.add('hidden');
+    elements.questionNumber.parentElement.classList.add('hidden');
+    
+    // ВИПРАВЛЕННЯ: Ховаємо зворотний зв'язок при завершенні
+    elements.feedback.classList.add('hidden');
+}
+
+elements.submitAnswer?.addEventListener('click', () => {
+    if (selectedOption === null) {
+        console.log('Варіант не обрано');
+        return;
+    }
+    const currentQuestion = questions[currentQuestionIndex];
+    const isCorrect = selectedOption === currentQuestion.correct;
+    console.log('Деталі порівняння:', {
+        selectedOption: selectedOption,
+        correctAnswer: currentQuestion.correct,
+        options: currentQuestion.options,
+        renderedOptions: Array.from(elements.optionsContainer.children).map(opt => ({
+            innerHTML: opt.innerHTML,
+            dataValue: opt.dataset.value
+        }))
+    });
+    showFeedback(isCorrect);
+    if (isCorrect) {
+        setTimeout(() => {
+            currentQuestionIndex++;
+            selectedOption = null;
+            displayQuestion();
+        }, 2000);
+    } else {
+        setTimeout(() => {
+            questions[currentQuestionIndex] = generateLineEquationQuestion(
+                ['slope1', 'slope2', 'yIntercept', 'slopeAngle', 'lineEquation'][currentQuestionIndex]
+            );
+            selectedOption = null;
+            displayQuestion();
+        }, 2000);
+    }
+});
+    
+elements.resetTrainerBtn?.addEventListener('click', () => {
+    console.log('Скидання тренажера');
+    elements.completionBlock.classList.add('hidden');
+    elements.questionText.classList.remove('hidden');
+    elements.optionsContainer.classList.remove('hidden');
+    elements.submitAnswer.classList.remove('hidden');
+    elements.questionNumber.parentElement.classList.remove('hidden');
+    
+    // ВИПРАВЛЕННЯ: Показуємо зворотний зв'язок при скиданні
+    elements.feedback.classList.remove('hidden');
+    elements.feedback.classList.remove('show', 'correct-feedback', 'incorrect-feedback');
+    elements.feedback.textContent = '';
+    
+    initializeQuestions();
+});
+
+document.addEventListener('click', function (e) {
+    const option = e.target.closest('.option');
+    if (option) {
+        const index = parseInt(option.dataset.index);
+        const optionText = questions[currentQuestionIndex].options[index];
+        selectOption(option, optionText, index);
+    }
+}, { passive: true });
+
+// Re-typeset MathJax when modals are opened
+[elements.theoryModal, elements.questionsModal, elements.trainerModal].forEach(modal => {
+    modal.addEventListener('transitionend', () => {
+        if (modal.style.display === 'flex' && window.MathJax && MathJax.typesetPromise) {
+            MathJax.typesetPromise([modal]).then(() => {
+                console.log(`MathJax перетипізація для ${modal.id}`);
+            }).catch(err => console.error('Помилка MathJax:', err));
+        }
+    });
+});
+
+// Ensure modals are hidden on page load
+[elements.theoryModal, elements.videoModal, elements.questionsModal, elements.trainerModal, elements.videoPlayerModal1].forEach(modal => {
+    if (modal) modal.style.display = 'none';
+});
+if (elements.modalOverlay) elements.modalOverlay.style.display = 'none';
+    });
+</script>
+</body>
+</html>
