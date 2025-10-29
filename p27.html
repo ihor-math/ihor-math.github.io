@@ -729,12 +729,12 @@
             <p>Геометрично вектор зображають як спрямований відрізок, що має певну довжину і напрям у просторі. Його кінці впорядковані: початок <span class="math-notation">\( A \)</span>,
             кінець відрізка – точка <span class="math-notation">\( B \)</span>. Такий вектор позначають
             як <span class="math-notation">\( \overrightarrow{AB} \)</span> (рис. 7.1).
+<img src="/static/figure7.1.jpg" alt="Вектор у двовимірному просторі" class="figure figure-7-1">
             Напрямок вектора відіграє ключову роль: якщо поміняти місцями початок і кінець, отримаємо
             інший вектор <span class="math-notation">\( \overrightarrow{BA} \)</span>, протилежний
             до <span class="math-notation">\( \overrightarrow{AB} \)</span>. <strong><em style="color:#ffff9e;">Наприклад,</em></strong>
 рух від входу до виходу й у зворотному напрямку – це різні дії.</p>
-            <img src="/static/figure7.1.jpg" alt="Вектор у двовимірному просторі" class="figure figure-7-1">
-            
+                        
             <p>Вектори також позначають малими латинськими літерами зі стрілкою, <strong><em style="color:#ffff9e;">наприклад,</em></strong>
  <span class="math-notation">\( \vec{a} \)</span>, де <span class="math-notation">\( \overrightarrow{AB} = \vec{a} \)</span>. Особливим є <span class="vector-type">нульовий вектор</span>. Це такий вектор, у якого початок і кінець збігаються в одній точці. Він не має визначеної величини, але напрямок може бути довільним (невизначеним). Такий вектор позначають <span class="math-notation">\( \vec{0} \)</span>.</p>
             <p>У цьому посібнику розглядаються вектори як у площині, так і в просторі, зберігаючи однакову суть викладу.</p>
@@ -749,23 +749,26 @@
             <ol>
                 <li><span class="vector-type">Довжина або модуль вектора.</span> Відстань між точками <span class="math-notation">\( A \)</span> і <span class="math-notation">\( B \)</span> називається довжиною або модулем вектора і позначається <span class="math-notation">\( |\overrightarrow{AB}| \)</span> або <span class="math-notation">\( |\vec{a}| \)</span>. Для нульового вектора <span class="math-notation">\( |\vec{0}| = 0 \)</span>. Як обчислювати довжину вектора, розглянемо трохи пізніше.</li>
                 <li><span class="vector-type">Одиничний вектор (орт).</span> Вектор, довжина якого дорівнює одиниці, називається одиничним або ортом. Якщо <span class="math-notation">\( |\vec{a^0}| = 1 \)</span>, то вектор <span class="math-notation">\( \vec{a^0} \)</span> є ортом.</li>
-                <img src="/static/figure7.2.jpg" alt="Одиничний вектор" class="figure figure-7-2">
-                                <li><span class="vector-type">Колінеарність векторів.</span> Два ненульові вектори <span class="math-notation">\( \vec{a} \)</span> і <span class="math-notation">\( \vec{b} \)</span> називаються колінеарними, якщо вони лежать на одній прямій або на паралельних прямих. Це записується як <span class="math-notation">\( \vec{a} \parallel \vec{b} \)</span> (рис. 7.3). Нульовий вектор вважається колінеарним будь-якому вектору.</li>
-                <img src="/static/figure7.3.jpg" alt="Колінеарні вектори" class="figure figure-7-3">
                
-                <li><span class="vector-type">Компланарні вектори.</span> Вектори називаються компланарними, якщо вони лежать в одній площині або в паралельних площинах (рис. 7.4). Будь-які два вектори завжди компланарні, оскільки через них можна провести єдину площину.</li>
-                <img src="/static/figure7.4.jpg" alt="Компланарні вектори" class="figure figure-7-4">
-               
+                                <li><span class="vector-type">Колінеарність векторів.</span> Два ненульові вектори <span class="math-notation">\( \vec{a} \)</span> і <span class="math-notation">\( \vec{b} \)</span> називаються колінеарними, якщо вони лежать на одній прямій або на паралельних прямих.
+            Це записується як <span class="math-notation">\( \vec{a} \parallel \vec{b} \)</span> (рис. 7.2).
+            Нульовий вектор вважається колінеарним будь-якому вектору.</li>
+             <img src="/static/figure7.2.jpg" alt="Колінеарні вектори" class="figure figure-7-2">
+                            
+                <li><span class="vector-type">Компланарні вектори.</span> Вектори називаються компланарними, якщо вони лежать в одній площині або в паралельних площинах (рис. 7.3). Будь-які два вектори завжди компланарні, оскільки через них можна провести єдину площину.</li>
+  <img src="/static/figure7.3.jpg" alt="Компланарнві вектори" class="figure figure-7-3">
+                            
                 <li><span class="vector-type">Рівні вектори.</span> Два вектори <span class="math-notation">\( \vec{a} \)</span> і <span class="math-notation">\( \vec{b} \)</span> називаються рівними (<span class="math-notation">\( \vec{a} = \vec{b} \)</span>), якщо виконуються такі умови:</li>
                 <ol>
                     <li>вони колінеарні (<span class="math-notation">\( \vec{a} \parallel \vec{b} \)</span>);</li>
                     <li>їхні модулі рівні (<span class="math-notation">\( |\vec{a}| = |\vec{b}| \)</span>);</li>
-                    <li>вони співнапрямлені (<span class="math-notation">\( \vec{a} \uparrow\uparrow \vec{b} \)</span>) (рис. 7.5).</li>
+                    <li>вони співнапрямлені (<span class="math-notation">\( \vec{a} \uparrow\uparrow \vec{b} \)</span>) (рис. 7.4).</li>
                 </ol>
+            <img src="/static/figure7.4.jpg" alt="Рівні вектори" class="figure figure-7-4">
                 <p>Наприклад, у паралелограмі <span class="math-notation">\( ABCD \)</span> (рис. 7.5) рівні вектори: <span class="math-notation">\( \overrightarrow{AB} = \overrightarrow{DC} \)</span>, <span class="math-notation">\( \overrightarrow{BC} = \overrightarrow{AD} \)</span>.</p>
-                <img src="/static/figure7.5.jpg" alt="Рівні вектори в паралелограмі" class="figure figure-7-5">
-                
-                <li><span class="vector-type">Протилежні вектори.</span> Два вектори <span class="math-notation">\( \vec{a} \)</span> і <span class="math-notation">\( \vec{b} \)</span> називаються протилежними, якщо:</li>
+                  
+                 <img src="/static/figure7.5.jpg" alt="Рівні вектори" class="figure figure-7-4">
+                <li><span class="vector-type">Співнапрямлені вектори.</span> Два вектори <span class="math-notation">\( \vec{a} \)</span> і <span class="math-notation">\( \vec{b} \)</span> називаються протилежними, якщо:</li>
                 <ol>
                     <li>їхні модулі рівні (<span class="math-notation">\( |\vec{a}| = |\vec{b}| \)</span>);</li>
                     <li>вони спрямовані у протилежні боки (<span class="math-notation">\( \vec{a} \uparrow\downarrow \vec{b} \)</span>).</li>
@@ -1214,6 +1217,7 @@ document.addEventListener('DOMContentLoaded', function () {
     </script>
 </body>
 </html>
+
 
 
 
