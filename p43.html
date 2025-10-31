@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>43. Рівняння прямої у відрізках</title>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    console.log("MathJax is loaded and ready!");
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" onerror="console.error('Failed to load MathJax')"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Roboto:wght@400;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        *, *:before, *:after { box-sizing: border-box; }
+        body {
+    margin: 0;
+    background: radial-gradient(circle at center, #0b1f1a 0%, #112d24 40%, #15372b 100%);
+    color: #f4f4f4;
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+        body.loaded { visibility: visible; opacity: 1; }
+        /* 🔹 Заголовок */
+.title-box {
+    margin-top: 60px;
+    padding: 20px 40px;
+    background: linear-gradient(135deg, #0e3023, #184b33);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    border-radius: 16px;
+    max-width: 90%;
+    text-align: center;
+}
+.title-box h1 {
+    margin: 0;
+    font-size: 28px;
+    color: #f1faee;
+    font-family: 'Merriweather', serif;
+}
+
+       /* 🔹 Картки розділів */
+.section-container {
+    margin-top: 40px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 25px;
+}
+
+.section {
+    width: 260px;
+    height: 200px;
+    background: linear-gradient(145deg, #143828, #21543d);
+    border-radius: 14px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.08);
+}
+.section:hover {
+    transform: scale(1.06);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.45);
+    background: linear-gradient(145deg, #0f2c1f, #184a35);
+}
+.section h2 {
+    font-size: 20px;
+    color: #ffffff;
+    font-family: 'Merriweather', serif;
+}
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(45, 106, 79, 0.1), transparent);
+            transition: left 0.5s;
+        }
+        
+        
+        .section img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 15px;
+            object-fit: cover;
+            border-radius: 8px;
+            filter: brightness(1.2);
+        }
+              .modal {
+            display: none;
+            position: fixed;
+            top: 5%;
+            left: 5%;
+            width: 90%;
+            height: 90%;
+            background: linear-gradient(135deg, #2d6a4f, #40916c);
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(45, 106, 79, 0.2);
+            z-index: 1001;
+            overflow: hidden;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            border: 1px solid rgba(45, 106, 79, 0.1);
+        }
+        #modalOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(45, 106, 79, 0.8);
+            z-index: 999;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            padding: 20px;
+            flex-grow: 1;
+            background: #2d6a4f;
+            border-radius: 10px;
+            margin: 10px;
+            color: #ffffff;
+            width: calc(100% - 20px);
+            overflow-y: auto;
+            display: block;
+            max-height: calc(100% - 60px);
+        }
+        .modal-content::-webkit-scrollbar { width: 6px; }
+        .modal-content::-webkit-scrollbar-track { background: transparent; }
+        .modal-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #10271e, #174033);
+            border-radius: 3px;
+        }
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #1b4332, #2d6a4f);
+        }
+        .modal-header {
+            background: linear-gradient(0deg, #2d6a4f, #40916c);
+            padding: 8px 12px;
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1002;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            border-bottom: 1px solid rgba(45, 106, 79, 0.2);
+        }
+        #trainerModal .modal-header {
+            background: linear-gradient(0deg, #1b4332, #2d6a4f);
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+        .close-btn {
+            background: linear-gradient(135deg, #1b4332, #2d6a4f);
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Roboto', sans-serif;
+            z-index: 1003;
+            box-shadow: 0 2px 8px rgba(27, 67, 50, 0.3);
+        }
+        .close-btn:hover {
+            background: linear-gradient(135deg, #1b4332, #2d6a4f);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(27, 67, 50, 0.4);
+        }
+        #trainerModal .close-btn {
+            background: linear-gradient(135deg, #e63946, #c1121f);
+        }
+        #trainerModal .close-btn:hover {
+            background: linear-gradient(135deg, #c1121f, #780000);
+        }
+        details {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 6px;
+            background: #40916c;
+            cursor: pointer;
+            border: 1px solid rgba(45, 106, 79, 0.2);
+        }
+        details p {
+            padding: 0 15px 10px;
+            color: #ecf0f1;
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+        .math-notation {
+            font-style: italic;
+            color: #d8f3dc;
+            display: inline !important;
+        }
+        #questionsModal .math-notation-centered { display: none !important; }
+        .highlight-term {
+            color: #95d5b2;
+            font-weight: bold;
+        }
+        .formula-line { display: inline-block; white-space: nowrap; }
+        .question-block {
+            margin: 15px 0;
+            padding: 10px;
+            background: linear-gradient(135deg, #2d6a4f, #40916c);
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            cursor: pointer;
+            border: 1px solid rgba(45, 106, 79, 0.2);
+        }
+        .question-block summary { font-size: 16px; background: linear-gradient(135deg, #1b4332, #2d6a4f); color: #ffffff; }
+        .question-block details summary { background: linear-gradient(135deg, #2a9d8f, #2a9d8f); }
+        .question-block details p { color: #ecf0f1; background: #2d6a4f; padding: 10px; border-radius: 6px; border-left: 3px solid #2a9d8f; }
+
+        /* Стилі для MathJax у флеш-картках */
+        #questionsModal mjx-container {
+            display: inline !important;
+            vertical-align: middle !important;
+            font-size: clamp(17px, 3vw, 19px) !important;
+            line-height: 1.4 !important;
+            color: #d8f3dc !important;
+            background: none !important;
+            font-style: italic !important;
+            margin: 0 2px !important;
+            padding: 0 !important;
+        }
+
+        .trainer-container {
+            width: 90%;
+            max-width: 800px;
+            padding: 3vw 4vw;
+            text-align: center;
+             background: linear-gradient(135deg, #0d261c, #1d523c);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(45, 106, 79, 0.2);
+            transition: all 0.3s ease;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100%;
+            border: 1px solid rgba(45, 106, 79, 0.2);
+        }
+        .question-circle {
+            width: clamp(80px, 15vw, 120px);
+            height: clamp(80px, 15vw, 120px);
+            margin: 0 auto 3vw;
+            background: linear-gradient(135deg, #1b4332, #2d6a4f);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(27, 67, 50, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .question-circle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        .question-circle:hover::before { left: 100%; }
+        .question-circle h3 {
+            color: #ffffff;
+            font-family: 'Lora', serif;
+            font-size: clamp(16px, 2.5vw, 20px);
+            margin: 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 1;
+        }
+        .cube-formula, .vector-formula {
+            color: #d8f3dc;
+            display: inline-block;
+            font-size: clamp(15px, 2.5vw, 17px);
+        }
+        #completionBlock.modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        #completionBlock .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 90%;
+        }
+        .completion-emoji {
+            width: clamp(80px, 15vw, 120px);
+            height: clamp(80px, 15vw, 120px);
+            margin: 0 auto 3vw;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(27, 67, 50, 0.3);
+            border: 2px dashed #d8f3dc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #2a9d8f, #2a9d8f);
+        }
+        .completion-emoji::after {
+            content: '🎉';
+            font-size: clamp(40px, 8vw, 60px);
+            color: #d8f3dc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            text-shadow: 0 0 10px rgba(216, 243, 220, 0.5);
+        }
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2vw;
+            justify-content: center;
+            margin-bottom: 3vw;
+            width: 100%;
+        }
+        .option {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5vw 3vw;
+            border: 1.5px solid #1b4332;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #40916c, #2d6a4f);
+            cursor: pointer;
+            font-size: clamp(15px, 3.5vw, 18px);
+            min-height: 45px;
+            min-width: 90px;
+            max-width: 45%;
+            text-align: center;
+            font-family: 'Lora', serif;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+            box-sizing: border-box;
+            touch-action: manipulation;
+            pointer-events: auto !important;
+            user-select: none;
+            transition: all 0.3s ease;
+            color: #ecf0f1;
+        }
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(27, 67, 50, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        .option:hover::before { left: 100%; }
+        .option:hover {
+            background: linear-gradient(135deg, #1b4332, #2d6a4f);
+            transform: scale(1.03);
+            border-color: #d8f3dc;
+            box-shadow: 0 4px 12px rgba(27, 67, 50, 0.3);
+        }
+        .option.selected {
+            background: linear-gradient(135deg, #2a9d8f, #2a9d8f) !important;
+            color: #ffffff !important;
+            border: 2px solid #d8f3dc !important;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(42, 157, 143, 0.4);
+        }
+        .option:focus {
+            outline: 2px solid #d8f3dc;
+            outline-offset: 2px;
+        }
+        .option { min-height: 50px !important; padding: 12px 20px !important; }
+        mjx-container, mjx-container * {
+            pointer-events: none !important;
+            user-select: none !important;
+        }
+        mjx-frac {
+            font-size: 1.0em !important;
+            padding: 2px !important;
+        }
+        mjx-num, mjx-den { padding: 2px !important; }
+
+        button {
+            background: linear-gradient(135deg, #1b4332, #2d6a4f);
+            color: #ffffff;
+            border: none;
+            border-radius: 25px;
+            padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 24px);
+            font-size: clamp(16px, 3vw, 18px);
+            font-family: 'Lora', serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(27, 67, 50, 0.3);
+        }
+        button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #1b4332, #2d6a4f);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(27, 67, 50, 0.4);
+        }
+        button:disabled {
+            background: #7f8c8d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .result {
+            margin-top: 3vw;
+            font-size: clamp(16px, 2.5vw, 18px);
+            font-family: 'Lora', serif;
+            color: #ffffff;
+        }
+        .completion-message {
+            font-family: 'Lora', serif;
+            font-weight: 700;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            background: linear-gradient(135deg, #2a9d8f, #2a9d8f);
+            border: 2.5px solid #2a9d8f;
+            border-radius: 15px;
+            padding: clamp(12px, 3vw, 18px);
+            box-shadow: 0 6px 12px rgba(42, 157, 143, 0.3);
+            margin: 2vw auto;
+            max-width: 90%;
+            position: relative;
+            overflow: hidden;
+        }
+        .completion-message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 1s;
+            animation: completionShine 2s infinite;
+        }
+        @keyframes completionShine {
+            0% { left: -100%; }
+            50% { left: 100%; }
+            100% { left: 100%; }
+        }
+        .completion-message h2 {
+            font-size: clamp(22px, 4.5vw, 30px);
+            margin: 0 0 1vw;
+            color: #ff7e00;
+            text-shadow: 0 0 10px rgba(216, 243, 220, 0.5);
+        }
+        .completion-message p {
+            font-size: clamp(18px, 3.5vw, 22px);
+            margin: 0;
+            color: #ffffff;
+        }
+        .math-notation-centered {
+            display: block;
+            text-align: center;
+            width: 100%;
+            font-size: clamp(18px, 3vw, 20px);
+            margin: 10px 0;
+            line-height: 1.6;
+            font-family: 'Roboto', sans-serif;
+        }
+        mjx-container.math-notation-centered {
+            display: inline-block !important;
+            text-align: center !important;
+            vertical-align: middle !important;
+            white-space: nowrap !important;
+            line-height: 1.4 !important;
+            font-size: clamp(18px, 3vw, 20px) !important;
+            color: #d8f3dc !important;
+            background: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        mjx-container.math-notation-centered * {
+            color: #d8f3dc !important;
+            font-style: italic !important;
+        }
+        #trainerModal .math-notation-centered {
+            font-size: clamp(16px, 3vw, 18px);
+            color: #ffffff;
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.5;
+            text-align: center;
+            margin: 5px 0;
+            display: block;
+        }
+        #trainerModal .options-container mjx-container {
+            display: inline !important;
+            vertical-align: middle !important;
+            font-size: clamp(14px, 3vw, 16px) !important;
+            color: yellow !important;
+            background: none !important;
+            font-style: normal !important;
+            font-weight: 500 !important;
+            margin: 0 2px !important;
+            padding: 0 !important;
+        }
+        .feedback {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(24px, 5.8vw, 30px);
+            font-family: 'Lora', serif;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+            z-index: 1001;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            text-align: center;
+            border: 2px solid transparent;
+        }
+        .feedback.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1.05);
+        }
+        .correct-feedback {
+            color: #ffffff;
+            background: linear-gradient(135deg, #2a9d8f, #2a9d8f);
+            border: 2px solid #2a9d8f;
+            box-shadow: 0 0 20px rgba(42, 157, 143, 0.5);
+        }
+        .incorrect-feedback {
+            color: #ffffff;
+            background: linear-gradient(135deg, #e63946, #c1121f);
+            border: 2px solid #e63946;
+            box-shadow: 0 0 20px rgba(231, 76, 60, 0.5);
+        }
+        .navigation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px auto;
+            max-width: 1000px;
+        }
+       .nav-button {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, #2d6a4f, #40916c);
+    color: #E6E6FA;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 16px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(27, 67, 50, 0.3);
+    font-weight: bold; /* жирний текст */
+}
+
+        .nav-button:hover {
+            background: linear-gradient(135deg, #1b4332, #2d6a4f);
+            color: #ffffff;
+            transform: scale(1.03);
+            box-shadow: 0 4px 12px rgba(27, 67, 50, 0.3);
+        }
+        .nav-button svg {
+            margin-right: 8px;
+            fill: currentColor;
+            transition: fill 0.3s ease;
+        }
+        .question-card {
+            perspective: 1000px;
+            margin: 20px auto;
+            max-width: 964px;
+            width: 100%;
+            min-height: 150px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            cursor: pointer;
+        }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            min-height: 200px;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            cursor: inherit;
+        }
+        .question-card.flipped .card-inner { transform: rotateY(180deg); }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            min-height: 200px;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            cursor: inherit;
+            border: 1px solid rgba(27, 67, 50, 0.2);
+        }
+        .card-front {
+            background: #1b4332;
+            color: #ffffff;
+        }
+        .card-back {
+            background: linear-gradient(135deg, #111827, #1f2937);
+            color: #ecf0f1;
+            transform: rotateY(180deg);
+            text-align: justify;
+            padding: 20px;
+            overflow: auto;
+            white-space: normal;
+        }
+        .card-front span, .card-back span {
+            font-family: 'Lora', serif;
+            font-size: clamp(17px, 3vw, 19px);
+            line-height: 1.4;
+            display: inline;
+            color: inherit;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .card-back span { text-align: justify; word-wrap: break-word; overflow-wrap: break-word; }
+        .hidden { display: none !important; }
+        .theory-content h2 {
+            color: #d8f3dc;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(216, 243, 220, 0.5);
+            margin-bottom: 20px;
+            font-family: 'Merriweather', serif;
+        }
+        .theory-content h3 {
+            color: #95d5b2;
+            border-bottom: 2px solid #95d5b2;
+            padding-bottom: 5px;
+            margin-top: 25px;
+        }
+        .theory-content p, .theory-content li {
+            color: #ecf0f1;
+            font-size: clamp(18px, 3vw, 20px);
+            line-height: 1.7;
+        }
+        .example {
+            font-size: 1.1rem;
+            color: #e9c46a;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #e9c46a;
+            margin: 15px 0;
+        }
+        .solution {
+            color: #2a9d8f;
+            font-weight: bold;
+            text-align: center;
+            display: block;
+            padding: 10px;
+            border-radius: 6px;
+            border: 2px solid #2a9d8f;
+            margin: 15px 0;
+        }
+        .note { color: #9b59b6; font-weight: bold; }
+        .note-text {
+            font-style: italic;
+            color: #bdc3c7;
+            text-align: justify;
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #9b59b6;
+            margin: 10px 0;
+        }
+        .theory-content p:not(.math-notation-centered), .theory-content li { text-align: justify; }
+        .vector-type { font-style: italic; color: #d8f3dc; }
+        .main-types { font-weight: bold; color: #95d5b2; }
+        ol { color: #ecf0f1; }
+        ol li::marker { color: #d8f3dc; }
+        mjx-container { color: #d8f3dc !important; background: none !important; font-style: italic !important; }
+        .theory-content mjx-container { color: #d8f3dc !important; background: none !important; }
+        .modal-content::-webkit-scrollbar { width: 12px; height: 12px; }
+        .modal-content::-webkit-scrollbar-track { background: #2d6a4f; border-radius: 10px; box-shadow: inset 0 0 5px rgba(0,0,0,0.3); }
+        .modal-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #1b4332, #2d6a4f);
+            border-radius: 10px;
+            border: 2px solid #2d6a4f;
+        }
+        .modal-content::-webkit-scrollbar-thumb:hover { background: linear-gradient(45deg, #1b4332, #2d6a4f); }
+        ::-webkit-scrollbar { width: 12px; height: 12px; }
+        ::-webkit-scrollbar-track { background: #2d6a4f; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #1b4332, #2d6a4f);
+            border-radius: 10px;
+            border: 2px solid #2d6a4f;
+        }
+        ::-webkit-scrollbar-thumb:hover { background: linear-gradient(45deg, #1b4332, #2d6a4f); }
+        .modal-content { scrollbar-color: #1b4332 #2d6a4f; scrollbar-width: thin; }
+        .glow-title {
+            text-align: center;
+            color: #ffffff;
+            font-family: 'Merriweather', serif;
+            font-size: clamp(20px, 3vw, 24px);
+            margin: 10px 0;
+            text-shadow: 0 0 10px rgba(27, 67, 50, 0.5);
+            background: linear-gradient(135deg, #1b4332, #2d6a4f);
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: block;
+        }
+        .input-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            width: 100%;
+            max-width: 300px;
+            background: rgba(45, 106, 79, 0.5);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(27, 67, 50, 0.3);
+        }
+        #answerInput {
+            padding: 8px;
+            font-size: clamp(14px, 3vw, 16px);
+            width: 100px;
+            border: 2px solid #1b4332;
+            border-radius: 6px;
+            background: #40916c;
+            color: #ecf0f1;
+            text-align: center;
+            font-family: 'Roboto', sans-serif;
+        }
+        #answerInput:focus {
+            outline: none;
+            border-color: #d8f3dc;
+            box-shadow: 0 0 8px rgba(216, 243, 220, 0.3);
+        }
+        .option.text-option {
+            font-size: clamp(14px, 3vw, 16px);
+            padding: 10px 20px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .figure-reference { color: #e9c46a; font-style: italic; font-weight: bold; }
+        .angle-notation { color: #9b59b6; font-weight: bold; }
+        .vector-relation { color: #2a9d8f; font-weight: bold; }
+        #optionsContainer {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        #submitAnswer {
+            margin-top: 20px;
+            padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 24px);
+            background: linear-gradient(135deg, #1b4332, #2d6a4f);
+            color: #ffffff;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: clamp(16px, 3vw, 18px);
+            font-family: 'Lora', serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(27, 67, 50, 0.3);
+        }
+        #submitAnswer:disabled {
+            background: #7f8c8d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        #submitAnswer:hover:not(:disabled) {
+            background: linear-gradient(135deg, #1b4332, #2d6a4f);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(27, 67, 50, 0.4);
+        }
+        
+        /* === ЖОВТІ ФОРМУЛИ У ТЕОРІЇ === */
+        .theory-content mjx-container {
+            color: yellow !important;
+            font-style: normal !important;
+            font-weight: 500;
+        }
+
+        /* === ЖОВТІ ФОРМУЛИ У ФЛЕШ-КАРТКАХ === */
+        #questionsModal mjx-container,
+        #questionsModal .vector-type mjx-container {
+            color: yellow !important;
+            font-style: normal !important;
+            font-weight: 500 !important;
+        }
+
+        /* === ЖОВТІ ФОРМУЛИ У ТРЕНАЖЕРІ (питання + відповіді) === */
+        #trainerModal mjx-container,
+        #trainerModal .math-notation-centered mjx-container,
+        #trainerModal .option mjx-container {
+            color: yellow !important;
+            font-style: normal !important;
+            font-weight: 500 !important;
+        }
+
+
+        .theory-content .highlight-term:nth-child(odd),
+        #questionsModal .highlight-term:nth-child(odd),
+        .card-back .highlight-term:nth-child(odd) {
+            color: #00ffcc !important;
+            text-shadow: 0 0 8px rgba(0, 255, 204, 0.6);
+        }
+
+        /* Відступи у картках */
+        .card-back ul, .card-back ol { margin: 10px 0; padding-left: 20px; }
+        .card-back li { margin: 4px 0; }
+
+                                          /* === АДАПТИВНИЙ КАНВАС ДЛЯ МОБІЛЬНИХ === */
+#questionText canvas {
+    width: 100% !important;
+    height: auto !important;
+    max-width: 420px;
+    margin: 12px auto !important;
+    display: block;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    background: #f8f9fa;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+        @media (max-width: 768px) {
+            .close-btn { font-size: 16px; padding: 6px 12px; border-radius: 8px; }
+            .theory-content p, .theory-content li { font-size: clamp(18px, 3vw, 20px); }
+            .theory-content mjx-container { font-size: clamp(16px, 3vw, 18px) !important; }
+            .theory-content h2, .theory-content h3 { font-size: clamp(20px, 3vw, 24px); }
+            .question-block summary { font-size: clamp(18px, 3vw, 20px); }
+            .question-block details p { font-size: clamp(18px, 3vw, 20px); }
+            #questionsModal mjx-container { font-size: 20px !important; }
+            #submitAnswer { font-size: clamp(16px, 3.5vw, 18px); padding: clamp(12px, 3vw, 14px) clamp(24px, 5vw, 28px); }
+            #answerInput { width: 80px; padding: 8px; font-size: clamp(16px, 3vw, 18px); }
+            .title-box { margin-top: 40px; padding: 15px 20px; }
+            .title-box h1 { font-size: 24px; }
+            .section-container { flex-direction: column; align-items: center; gap: 20px; }
+            .section { width: 80%; height: 180px; }
+            .modal { top: 2%; left: 2%; width: 96%; height: 96%; }
+            .modal-header { padding: 5px 8px; }
+            .modal-content { max-height: calc(100% - 50px); }
+            .question-card { min-height: 180px; }
+            .card-front, .card-back { font-size: clamp(15px, 3vw, 17px); padding: 12px; line-height: 1.4; }
+            .card-front span, .card-back span { font-size: clamp(15px, 3vw, 17px); line-height: 1.4; }
+            #questionsModal mjx-container { font-size: clamp(16px, 3vw, 18px) !important; }
+            .trainer-container { width: 95%; padding: 4vw; }
+            .question-circle, .completion-emoji { width: 25vw; height: 25vw; min-width: 80px; min-height: 80px; }
+            .question-circle h3 { font-size: clamp(14px, 3vw, 16px); }
+            .completion-emoji::after { font-size: clamp(30px, 7vw, 40px); }
+            .options-container { gap: 1.5vw; flex-direction: column; align-items: center; }
+            .option { font-size: clamp(14px, 4vw, 16px); padding: 10px !important; min-height: 60px !important; min-width: 100% !important; max-width: 100% !important; }
+            .option mjx-container { font-size: clamp(13px, 4vw, 15px) !important; }
+            button { padding: 3vw 5vw; font-size: clamp(12px, 3vw, 14px); }
+            .feedback { font-size: clamp(24px, 5.8vw, 32px); padding: clamp(12px, 3.5vw, 18px) clamp(18px, 5vw, 25px); max-width: 95vw; }
+            .completion-message { padding: clamp(10px, 3vw, 15px); }
+            .completion-message h2 { font-size: clamp(20px, 4vw, 26px); }
+            .completion-message p { font-size: clamp(16px, 3vw, 20px); }
+            .navigation-buttons { margin: 20px auto; gap: 15px; }
+            .nav-button { font-size: 16px; padding: 10px 20px; }
+            .math-notation-centered { font-size: clamp(16px, 2.5vw, 18px); }
+            mjx-container.math-notation-centered { font-size: clamp(16px, 2.5vw, 18px) !important; }
+            .input-container { flex-direction: row; align-items: center; gap: 8px; }
+           
+
+             #questionText canvas {
+        max-width: 300px;
+        border-radius: 6px;
+        margin: 10px auto !important;
+    }
+
+    /* Масштабування шрифтів у канвасі */
+    #questionText canvas {
+        font-size: 0.8em;
+    }
+        }
+            
+        @media (max-width: 480px) {
+            .close-btn { font-size: 14px; padding: 5px 10px; border-radius: 6px; }
+            .theory-content p, .theory-content li { font-size: clamp(16px, 3vw, 18px); }
+            .theory-content mjx-container { font-size: clamp(16px, 3vw, 18px) !important; }
+            .theory-content h2, .theory-content h3 { font-size: clamp(20px, 3vw, 24px); }
+            .question-block summary { font-size: clamp(17px, 3.2vw, 19px); }
+            .question-block details p { font-size: clamp(16px, 3vw, 18px); }
+            #questionsModal mjx-container { font-size: 20px !important; }
+            #submitAnswer { font-size: clamp(14px, 3.5vw, 16px); padding: clamp(10px, 3vw, 12px) clamp(20px, 5vw, 24px); }
+            #answerInput { width: 70px; padding: 6px; font-size: clamp(14px, 3vw, 16px); }
+            .title-box { margin-top: 20px; padding: 10px 15px; }
+            .title-box h1 { font-size: 20px; }
+            .section { width: 90%; height: 150px; }
+            .section img { width: 50px; height: 50px; }
+            .section h2 { font-size: 18px; }
+            .modal-header { padding: 4px 6px; }
+            .modal-content { max-height: calc(100% - 40px); }
+            .question-card { min-height: 200px; }
+            .card-front, .card-back { font-size: clamp(14px, 3vw, 16px); padding: 10px; line-height: 1.3; }
+            .card-front span, .card-back span { font-size: clamp(14px, 3vw, 16px); line-height: 1.3; }
+            #questionsModal mjx-container { font-size: clamp(14px, 3vw, 16px) !important; }
+            .card-inner { min-height: 200px; }
+            .trainer-container { padding: 5vw; }
+            .question-circle, .completion-emoji { width: 25vw; height: 25vw; min-width: 60px; min-height: 60px; }
+            .completion-emoji::after { font-size: clamp(25px, 6vw, 35px); }
+            .option { font-size: 16px !important; padding: 10px !important; min-height: 60px !important; min-width: 100% !important; max-width: 100% !important; }
+            .option mjx-container { font-size: clamp(13px, 4vw, 15px) !important; }
+            .feedback { font-size: clamp(22px, 5.2vw, 28px); padding: clamp(10px, 3vw, 15px) clamp(15px, 4.5vw, 20px); max-width: 95vw; }
+            .completion-message { padding: clamp(10px, 3vw, 15px); }
+            .completion-message h2 { font-size: clamp(18px, 3.5vw, 22px); }
+            .completion-message p { font-size: clamp(14px, 3vw, 18px); }
+            .navigation-buttons { margin: 15px auto; gap: 10px; }
+            .nav-button { font-size: 14px; padding: 8px 16px; }
+            .math-notation-centered { font-size: clamp(14px, 2.5vw, 16px); line-height: 1.2; }
+            mjx-container.math-notation-centered { font-size: clamp(14px, 2.5vw, 16px) !important; line-height: 1.2 !important; }
+            mjx-container { font-size: 13px !important; }
+            .input-container { gap: 6px; }
+          
+            .cube-formula, .vector-formula { font-size: clamp(16px, 3vw, 18px); }
+            
+             #questionText canvas {
+        max-width: 260px;
+        border-radius: 5px;
+        margin: 8px auto !important;
+    }
+
+    #questionText {
+        font-size: 14px;
+        line-height: 1.5;
+        padding: 0 8px;
+    }
+
+    .option {
+        font-size: 13px !important;
+        padding: 8px 12px !important;
+        min-height: 44px !important;
+        margin: 3px 0;
+    }
+
+    #submitAnswer {
+        padding: 10px 16px;
+        font-size: 14px;
+        min-height: 44px;
+    }
+
+    .feedback {
+        font-size: 18px;
+        padding: 12px 18px;
+        max-width: 90vw;
+    }
+        }
+                                                  /* === ФОРМУЛИ У ТРЕНАЖЕРІ — БІЛЬШІ НА МОБІЛЬНОМУ === */
+@media (max-width: 768px) {
+    /* Питання — формули більші */
+    #trainerModal .math-notation-centered,
+    #trainerModal mjx-container {
+        font-size: clamp(16px, 5vw, 18px) !important;
+        line-height: 1.5 !important;
+    }
+
+    /* Варіанти відповідей — формули ще більші */
+    #trainerModal .option mjx-container,
+    #trainerModal .options-container mjx-container {
+        font-size: clamp(16px, 4.8vw, 18px) !important;
+        line-height: 1.6 !important;
+        transform: scale(1.05);
+        transform-origin: center;
+        display: inline-block !important;
+    }
+
+    /* Дроби — чіткі, не здавлені */
+    #trainerModal mjx-frac {
+        font-size: 1.2em !important;
+        transform: scale(1.1);
+        transform-origin: center;
+        display: inline-block !important;
+        vertical-align: middle !important;
+    }
+
+    /* Текст питання — трохи менший, щоб формули виділялися */
+    #questionText {
+        font-size: clamp(15px, 3.8vw, 18px);
+        line-height: 1.6;
+        padding: 0 10px;
+    }
+
+    /* Канвас — компактний */
+    #questionText canvas {
+        max-width: 300px;
+        border-radius: 6px;
+        margin: 10px auto !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+}
+
+@media (max-width: 480px) {
+    /* Ще більші формули на маленьких екранах */
+    #trainerModal .math-notation-centered,
+    #trainerModal mjx-container {
+        font-size: clamp(16px, 4.5vw, 18px) !important;
+        line-height: 1.5 !important;
+    }
+
+    #trainerModal .option mjx-container,
+    #trainerModal .options-container mjx-container {
+        font-size: clamp(16px, 4.2vw, 18px) !important;
+        line-height: 1.6 !important;
+        transform: scale(1.1);
+    }
+
+    #trainerModal mjx-frac {
+        font-size: 1.1em !important;
+        transform: scale(1.15);
+    }
+
+    #questionText {
+        font-size: clamp(14px, 3.5vw, 17px);
+        line-height: 1.5;
+        padding: 0 8px;
+    }
+
+    #questionText canvas {
+        max-width: 260px;
+        border-radius: 5px;
+        margin: 8px auto !important;
+    }
+
+    /* Варіанти — компактні, але формули видно */
+    .option {
+        font-size: clamp(13px, 4vw, 15px) !important;
+        padding: 10px 14px !important;
+        min-height: 50px !important;
+        margin: 4px 0;
+    }
+
+    #submitAnswer {
+        padding: 10px 16px;
+        font-size: 15px;
+        min-height: 44px;
+    }
+}
+       
+    </style>
+</head>
+<body>
+    <div class="title-box">
+        <h1>43. Рівняння прямої у відрізках</h1>
+    </div>
+
+    <div class="section-container">
+        <div class="section" id="openTheoryBtn">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Книга" loading="lazy">
+            <h2>Теоретичні відомості</h2>
+        </div>
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Картки" loading="lazy">
+            <h2>Питання і відповіді</h2>
+        </div>
+        <div class="section" id="openTrainerBtn">
+            <img src="https://img.icons8.com/fluency/96/flash-on.png" alt="Тренажер" loading="lazy">
+            <h2>Тренажер</h2>
+        </div>
+    </div>
+
+    <div class="navigation-buttons">
+         <a class="nav-button" href="{{ url_for('tema9') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+           До теми 9
+        </a>
+        <a class="nav-button" href="{{ url_for('home') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            На головну
+        </a>
+    </div>
+
+   <!-- Теорія -->
+    <div id="theoryModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="theoryTitle">
+        <div class="modal-header">
+            <button class="close-btn" id="closeTheoryBtn" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="theory-content">
+    <h2>Рівняння прямої у відрізках</h2>
+
+    <p>У багатьох задачах виникає потреба скласти рівняння прямої, що проходить через дві точки, одна з яких лежить на осі Ox, а інша – на осі Oy.</p>
+    
+    <p>Нехай задано точки <span class="highlight-term">\( A(a; 0) \)</span> і <span class="highlight-term">\( B(0; b) \)</span>, причому \( a \neq 0 \), \( b \neq 0 \) (рис. 9.8).
+     <img src="/static/figure9.8.jpg" alt="Пряма у відрізках" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+   
+            Підставимо координати цих точок \( x_1 = a \), \( y_1 = 0 \), \( x_2 = 0 \), \( y_2 = b \) у загальну формулу рівняння прямої через дві точки:</p>
+    
+    <p class="math-notation-centered">
+        \[ \frac{y - y_1}{y_2 - y_1} = \frac{x - x_1}{x_2 - x_1} \]
+    </p>
+    
+    <p>Отримаємо:</p>
+    <p class="math-notation-centered">
+        \[ \frac{y - 0}{b - 0} = \frac{x - a}{0 - a} \]
+    </p>
+    <p class="math-notation-centered">
+        \[ \frac{y}{b} = \frac{x - a}{-a} \]
+    </p>
+    
+    <p>Після перетворень:</p>
+    <p class="math-notation-centered">
+        \[ -ay = b(x - a) \]
+    </p>
+    <p class="math-notation-centered">
+        \[ -ay = bx - ba \]
+    </p>
+    <p class="math-notation-centered">
+        \[ bx + ay = ba \]
+    </p>
+    
+    <p>Поділивши на \( ba \) для спрощення:</p>
+    <p class="math-notation-centered">
+        \[ \frac{x}{a} + \frac{y}{b} = 1 \]
+    </p>
+    
+    <p>Рівняння:</p>
+    <p class="math-notation-centered">
+        \[ \frac{x}{a} + \frac{y}{b} = 1, \quad (9.8) \]
+    </p>
+    
+    <p>називається <span class="highlight-term">рівнянням прямої у відрізках</span>, тому що числа \( a \) і \( b \) визначають відрізки, які пряма відтинає на осях координат Ox та Oy.</p>
+
+    <h3>Приклад 9.11</h3>
+    <div class="example">
+        Для прямої \( y = -\frac{4}{3}x - 4 \) записати її рівняння у відрізках. Обчислити площу трикутника, утвореного цією прямою і осями координат.
+    </div>
+
+    <p>Рівняння прямої \( y = -\frac{4}{3}x - 4 \) помножимо обидві частини на 3, отримаємо:</p>
+    <p class="math-notation-centered">
+        \[ 3y = -4x - 12 \quad \Rightarrow \quad 4x + 3y = -12 \]
+    </p>
+
+    <p>Тепер поділимо обидві частини рівняння на -12:</p>
+    <p class="math-notation-centered">
+        \[ \frac{4x}{-12} + \frac{3y}{-12} = 1 \]
+    </p>
+    <p class="math-notation-centered">
+        \[ -\frac{x}{3} - \frac{y}{4} = 1 \]
+    </p>
+    <p class="math-notation-centered">
+        \[ \frac{x}{-3} + \frac{y}{-4} = 1 \]
+    </p>
+
+    <p>яке є рівнянням прямої у відрізках. Це означає, що пряма перетинає вісь Ox у точці <span class="highlight-term">\( (-3; 0) \)</span> і вісь Oy у точці <span class="highlight-term">\( (0; -4) \)</span>.</p>
+
+    <p>Трикутник, утворений прямою і осями координат, є прямокутним трикутником з катетами довжиною 3 та 4 (рис. 9.9).
+    <img src="/static/figure9.9.jpg" alt="Площа" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+   
+            Тому площа цього трикутника дорівнює:</p>
+    <p class="math-notation-centered">
+        \[ S_{\triangle} = \frac{1}{2} \cdot 3 \cdot 4 = 6 \]
+    </p>
+
+    <p class="solution">Відповідь: \( S_{\triangle} = 6 \).</p>
+</div>
+</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="questionsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="questionsTitle">
+        <div class="modal-header">
+            <button class="close-btn" id="closeQuestionsBtn" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front">
+    <span>1. Що таке рівняння прямої у відрізках?</span>
+</div>
+<div class="card-back">
+    <span>
+        Рівняння прямої у відрізках має вигляд:  
+        <span class="vector-type">\[\frac{x}{a} + \frac{y}{b} = 1\]</span>
+        де \( a \) — відрізок на осі \(Ox\), \( b \) — відрізок на осі \(Oy\).
+    </span>
+</div>
+
+                </div>
+            </div>
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front">
+    <span>2. Як знайти точки перетину прямої з осями координат?</span>
+</div>
+<div class="card-back">
+    <span>
+        З рівняння прямої у відрізках  
+        <span class="vector-type">\[\frac{x}{a} + \frac{y}{b} = 1\]</span>
+        видно, що пряма перетинає:
+        <ul>
+            <li>Вісь \(Ox\) у точці \( (a, 0) \);</li>
+            <li>Вісь \(Oy\) у точці \( (0, b) \).</li>
+        </ul>
+    </span>
+</div>
+                </div>
+            </div>
+           
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front">
+    <span>3. У яких випадках рівняння прямої у відрізках не існує?</span>
+</div>
+<div class="card-back">
+    <span>
+        Рівняння прямої у відрізках не існує, якщо пряма:
+        <ul>
+            <li>Проходить через початок координат (\( a = 0 \), \( b = 0 \));</li>
+            <li>Паралельна осі \(Ox\) (\( b \to \infty \));</li>
+            <li>Паралельна осі \(Oy\) (\( a \to \infty \)).</li>
+        </ul>
+    </span>
+</div>
+                </div>
+            </div>
+                        <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front">
+    <span>4. Як побудувати пряму за рівнянням у відрізках?</span>
+</div>
+<div class="card-back">
+    <span>
+        Алгоритм побудови прямої за рівнянням  
+        <span class="vector-type">\[\frac{x}{a} + \frac{y}{b} = 1\]</span>:
+        <ol>
+            <li>Знайти точку перетину з віссю \(Ox\): \( (a, 0) \);</li>
+            <li>Знайти точку перетину з віссю \(Oy\): \( (0, b) \);</li>
+            <li>Провести пряму через ці дві точки.</li>
+        </ol>
+    </span>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   <div id="trainerModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="questionNumber">
+    <div class="modal-header">
+        <button class="close-btn" id="closeTrainerBtn" aria-label="Закрити">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="trainer-container" id="trainerContent">
+            <div class="question-circle">
+                <h3 id="questionNumber">Питання 1</h3>
+            </div>
+            <p id="questionText" class="math-notation-centered"></p>
+            <div class="options-container" id="optionsContainer"></div>
+            <button id="submitAnswer" disabled>Підтвердити</button>
+            <div id="feedback" class="feedback"></div>
+            <div id="completionBlock" class="completion-message hidden">
+                <div class="completion-emoji"></div>
+                <h2>Тренування завершено!</h2>
+                <p>Молодець!</p>
+                <button id="resetTrainerBtn">Спробувати ще раз</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="modalOverlay"></div>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.body.classList.add('loaded');
+
+    const elements = {
+        openTheoryBtn: document.getElementById('openTheoryBtn'),
+        openQuestionsBtn: document.getElementById('openQuestionsBtn'),
+        openTrainerBtn: document.getElementById('openTrainerBtn'),
+        theoryModal: document.getElementById('theoryModal'),
+        questionsModal: document.getElementById('questionsModal'),
+        trainerModal: document.getElementById('trainerModal'),
+        closeTheoryBtn: document.getElementById('closeTheoryBtn'),
+        closeQuestionsBtn: document.getElementById('closeQuestionsBtn'),
+        closeTrainerBtn: document.getElementById('closeTrainerBtn'),
+        modalOverlay: document.getElementById('modalOverlay'),
+        questionNumber: document.getElementById('questionNumber'),
+        questionText: document.getElementById('questionText'),
+        optionsContainer: document.getElementById('optionsContainer'),
+        feedback: document.getElementById('feedback'),
+        completionBlock: document.getElementById('completionBlock'),
+        resetTrainerBtn: document.getElementById('resetTrainerBtn'),
+        submitAnswer: document.getElementById('submitAnswer'),
+        trainerContainer: document.getElementById('trainerContent')
+    };
+
+    /* ---------- МОДАЛЬНІ ВІКНА ---------- */
+    function toggleModal(modal, show) {
+        if (!modal || !elements.modalOverlay) return;
+        modal.style.display = show ? 'flex' : 'none';
+        elements.modalOverlay.style.display = show ? 'block' : 'none';
+        document.body.style.overflow = show ? 'hidden' : 'auto';
+        if (show && window.MathJax && MathJax.typesetPromise) {
+            MathJax.typesetPromise([modal]).catch(() => {});
+        }
+    }
+
+    elements.openTheoryBtn?.addEventListener('click', () => toggleModal(elements.theoryModal, true));
+    elements.openQuestionsBtn?.addEventListener('click', () => toggleModal(elements.questionsModal, true));
+    elements.openTrainerBtn?.addEventListener('click', () => { toggleModal(elements.trainerModal, true); initializeTrainer(); });
+
+    elements.closeTheoryBtn?.addEventListener('click', () => toggleModal(elements.theoryModal, false));
+    elements.closeQuestionsBtn?.addEventListener('click', () => toggleModal(elements.questionsModal, false));
+    elements.closeTrainerBtn?.addEventListener('click', () => toggleModal(elements.trainerModal, false));
+
+    elements.modalOverlay?.addEventListener('click', () => {
+        toggleModal(elements.theoryModal, false);
+        toggleModal(elements.questionsModal, false);
+        toggleModal(elements.trainerModal, false);
+    });
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            toggleModal(elements.theoryModal, false);
+            toggleModal(elements.questionsModal, false);
+            toggleModal(elements.trainerModal, false);
+        }
+    });
+
+    /* ---------- ТРЕНАЖЕР ---------- */
+    let selectedOption = null;
+    let correctAnswer = null;
+    let currentQuestion = 1;
+    let questionType = 'points'; // 'points', 'equation', 'canvas', 'area', 'slope'
+    let incorrectAttempts = 0;
+    let canvasData = null;
+
+    const allowedDenoms = [-9,-8,-7,-6,-5,-4,-3,-2,-1,1,2,3,4,5,6,7,8,9];
+
+    function randomDenom() {
+        return allowedDenoms[Math.floor(Math.random() * allowedDenoms.length)];
+    }
+
+    function generateData() {
+        let a, b;
+        do { a = randomDenom(); } while (a === 0);
+        do { b = randomDenom(); } while (b === 0);
+        return { a, b };
+    }
+
+    /* ПИТАННЯ 1: Точки перетину */
+    function generatePointsQuestion() {
+        const { a, b } = generateData();
+        correctAnswer = `(${a};0) і (0;${b})`;
+
+        const wrongs = [
+            `(0;${a}) і (${b};0)`,
+            `(${b};0) і (${a};0)`,
+            `(${a};0) і (${b};0)`
+        ];
+
+        const allOpts = [correctAnswer, ...wrongs].sort(() => Math.random() - 0.5);
+        return { a, b, options: allOpts };
+    }
+
+    /* ПИТАННЯ 2: Рівняння за точками */
+    function generateEquationQuestion() {
+        const { a, b } = generateData();
+        correctAnswer = `\\frac{x}{${a}} + \\frac{y}{${b}} = 1`;
+
+        const wrongs = [
+            `\\frac{x}{${b}} + \\frac{y}{${a}} = 1`,
+            `\\frac{x}{${-a}} + \\frac{y}{${-b}} = 1`,
+            `\\frac{x}{${-b}} + \\frac{y}{${-a}} = 1`
+        ];
+
+        const allOpts = [correctAnswer, ...wrongs].sort(() => Math.random() - 0.5);
+        return { a, b, options: allOpts };
+    }
+
+    /* ПИТАННЯ 3: Рівняння за графіком */
+    function generateCanvasQuestion() {
+        const { a, b } = generateData();
+        canvasData = { a, b };
+        correctAnswer = `\\frac{x}{${a}} + \\frac{y}{${b}} = 1`;
+
+        const wrongs = [
+            `\\frac{x}{${b}} + \\frac{y}{${a}} = 1`,
+            `\\frac{x}{${-a}} + \\frac{y}{${-b}} = 1`,
+            `\\frac{x}{${-b}} + \\frac{y}{${-a}} = 1`
+        ];
+
+        const allOpts = [correctAnswer, ...wrongs].sort(() => Math.random() - 0.5);
+        return { a, b, options: allOpts };
+    }
+
+    /* ПИТАННЯ 4: Площа трикутника */
+    function generateAreaQuestion() {
+        const { a, b } = generateData();
+        canvasData = { a, b };
+        const area = Math.abs(a * b) / 2;
+        correctAnswer = area % 1 === 0 ? area.toString() : area.toFixed(1).replace(/\.0$/, '');
+
+        const wrongs = new Set();
+        while (wrongs.size < 3) {
+            const fakeA = randomDenom();
+            const fakeB = randomDenom();
+            if (fakeA === 0 || fakeB === 0) continue;
+            const fakeArea = Math.abs(fakeA * fakeB) / 2;
+            const str = fakeArea % 1 === 0 ? fakeArea.toString() : fakeArea.toFixed(1).replace(/\.0$/, '');
+            if (str !== correctAnswer) wrongs.add(str);
+        }
+
+        const allOpts = [correctAnswer, ...Array.from(wrongs)].sort(() => Math.random() - 0.5);
+        return { a, b, options: allOpts };
+    }
+
+     /* ПИТАННЯ 5: Рівняння у відрізках — УСІ ЗНАКИ, без 1x, коректні дроби */
+function generateSlopeQuestion() {
+    let a, b;
+    do { a = randomDenom(); } while (a === 0);
+    do { b = randomDenom(); } while (b === 0);
+
+    let equation;
+
+    if (Math.random() < 0.5) {
+        // ТИП 1: y = kx + m → k = -b/a, m = b
+        const k = -b / a;
+        const m = b;
+
+        // --- Коефіцієнт при x ---
+        const kAbs = Math.abs(k);
+        let kStr = '';
+
+        if (kAbs === 1) {
+            kStr = k < 0 ? '-x' : 'x';
+        } else {
+            const num = Math.abs(b);
+            const den = Math.abs(a);
+            const signK = k < 0 ? '-' : '';
+            kStr = `${signK}\\frac{${num}}{${den}}x`;
+        }
+
+        // --- Вільний член ---
+        const signM = m >= 0 ? '+' : '-';
+        const absM = Math.abs(m);
+
+        equation = `y = ${kStr} ${signM} ${absM}`;
+
+    } else {
+        // ТИП 2: y = bx + 2b
+        const coeffX = b < 0 ? `-${Math.abs(b)}x` : `${b}x`;
+        const freeTerm = (2 * b) >= 0 ? `+ ${2 * b}` : `- ${Math.abs(2 * b)}`;
+        equation = `y = ${coeffX} ${freeTerm}`;
+    }
+
+    // Правильна відповідь
+    correctAnswer = `\\frac{x}{${a}} + \\frac{y}{${b}} = 1`;
+
+    // Хибні відповіді
+    const wrongs = [
+        `\\frac{x}{${b}} + \\frac{y}{${a}} = 1`,
+        `\\frac{x}{${-a}} + \\frac{y}{${-b}} = 1`,
+        `\\frac{x}{${a}} - \\frac{y}{${b}} = 1`
+    ];
+
+    const allOpts = [correctAnswer, ...wrongs].sort(() => Math.random() - 0.5);
+    return { equation, a, b, options: allOpts };
+}
+    
+    /* КАНВАС */
+    function drawCanvas(a, b) {
+        const canvas = document.createElement('canvas');
+        canvas.width = 420;
+        canvas.height = 420;
+        canvas.style.background = '#f0f0f0';
+        canvas.style.border = '1px solid #ccc';
+        canvas.style.borderRadius = '8px';
+        canvas.style.margin = '15px auto';
+        canvas.style.display = 'block';
+
+        const ctx = canvas.getContext('2d');
+        const cellSize = 20;
+        const originX = 10 * cellSize;
+        const originY = 10 * cellSize;
+
+        // Сітка
+        ctx.strokeStyle = '#ccc';
+        ctx.lineWidth = 0.5;
+        for (let i = 0; i <= 20; i++) {
+            ctx.beginPath();
+            ctx.moveTo(i * cellSize, 0);
+            ctx.lineTo(i * cellSize, 420);
+            ctx.moveTo(0, i * cellSize);
+            ctx.lineTo(420, i * cellSize);
+            ctx.stroke();
+        }
+
+        // Осі
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, originY);
+        ctx.lineTo(420, originY);
+        ctx.moveTo(originX, 0);
+        ctx.lineTo(originX, 420);
+        ctx.stroke();
+
+        // Стрілки
+        ctx.fillStyle = '#000';
+        ctx.beginPath();
+        ctx.moveTo(420, originY);
+        ctx.lineTo(415, originY - 5);
+        ctx.lineTo(415, originY + 5);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(originX, 0);
+        ctx.lineTo(originX - 5, 5);
+        ctx.lineTo(originX + 5, 5);
+        ctx.closePath();
+        ctx.fill();
+
+        // Підписи
+        ctx.font = '14px Roboto';
+        ctx.fillText('Ox', 395, originY - 8);
+        ctx.fillText('Oy', originX + 8, 15);
+        ctx.fillText('O', originX - 15, originY + 15);
+
+        // Цифри
+        ctx.font = '12px Roboto';
+        for (let i = -10; i <= 10; i++) {
+            if (i !== 0) {
+                const x = originX + i * cellSize;
+                const y = originY - i * cellSize;
+                ctx.fillText(i, x - 5, originY + 20);
+                ctx.fillText(i, originX - 25, y + 5);
+            }
+        }
+
+        // Пряма
+        const xInt = { x: originX + a * cellSize, y: originY };
+        const yInt = { x: originX, y: originY - b * cellSize };
+        const dx = xInt.x - yInt.x;
+        const dy = xInt.y - yInt.y;
+        if (dx === 0 || dy === 0) return canvas;
+
+        const slope = dy / dx;
+        const points = [];
+
+        const leftY = yInt.y + slope * (0 - yInt.x);
+        if (leftY >= 0 && leftY <= 420) points.push({ x: 0, y: leftY });
+
+        const rightY = yInt.y + slope * (420 - yInt.x);
+        if (rightY >= 0 && rightY <= 420) points.push({ x: 420, y: rightY });
+
+        const topX = yInt.x + (0 - yInt.y) / slope;
+        if (topX >= 0 && topX <= 420) points.push({ x: topX, y: 0 });
+
+        const bottomX = yInt.x + (420 - yInt.y) / slope;
+        if (bottomX >= 0 && bottomX <= 420) points.push({ x: bottomX, y: 420 });
+
+        if (points.length < 2) return canvas;
+
+        points.sort((p1, p2) => {
+            const d1 = (p1.x - 210)**2 + (p1.y - 210)**2;
+            const d2 = (p2.x - 210)**2 + (p2.y - 210)**2;
+            return d2 - d1;
+        });
+
+        const p1 = points[0];
+        const p2 = points[1];
+
+        ctx.strokeStyle = '#e63946';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.stroke();
+
+        return canvas;
+    }
+
+    function displayQuestion() {
+        let data;
+
+        const oldCanvas = elements.questionText.querySelector('canvas');
+        if (oldCanvas) oldCanvas.remove();
+
+        if (questionType === 'points') {
+            data = generatePointsQuestion();
+            elements.questionText.innerHTML = 
+                `Знайдіть точки перетину прямої \\(\\frac{x}{${data.a}} + \\frac{y}{${data.b}} = 1\\) з осями координат.`;
+        } else if (questionType === 'equation') {
+            data = generateEquationQuestion();
+            elements.questionText.innerHTML = 
+                `Знайдіть рівняння прямої, яка перетинає вісь \\(Ox\\) у точці \\((${data.a};0)\\), а вісь \\(Oy\\) у точці \\((0;${data.b})\\).`;
+        } else if (questionType === 'canvas') {
+            data = generateCanvasQuestion();
+            elements.questionText.innerHTML = 
+                `По побудованій прямій вкажіть її рівняння у відрізках.`;
+            const canvas = drawCanvas(data.a, data.b);
+            elements.questionText.appendChild(canvas);
+        } else if (questionType === 'area') {
+            data = generateAreaQuestion();
+            elements.questionText.innerHTML = 
+                `Обчислити площу трикутника, утвореного цією прямою і осями координат.`;
+            const canvas = drawCanvas(data.a, data.b);
+            elements.questionText.appendChild(canvas);
+        } else if (questionType === 'slope') {
+            data = generateSlopeQuestion();
+            elements.questionText.innerHTML = 
+                `Для прямої \\(${data.equation}\\) запишіть її рівняння у відрізках.`;
+        }
+
+        elements.questionNumber.textContent = `Питання ${currentQuestion}`;
+        elements.optionsContainer.innerHTML = '';
+
+        data.options.forEach(opt => {
+            const div = document.createElement('div');
+            div.className = 'option';
+            div.dataset.option = opt;
+            div.innerHTML = questionType === 'area' ? opt : `\\(${opt}\\)`; // без MathJax для чисел
+            elements.optionsContainer.appendChild(div);
+        });
+
+        if (window.MathJax && MathJax.typesetPromise && questionType !== 'area') {
+            MathJax.typesetPromise([elements.questionText, elements.optionsContainer]).catch(() => {});
+        }
+
+        selectedOption = null;
+        elements.submitAnswer.disabled = true;
+        elements.optionsContainer.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+    }
+
+    function selectOption(el) {
+        elements.optionsContainer.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+        el.classList.add('selected');
+        selectedOption = el.dataset.option;
+        elements.submitAnswer.disabled = false;
+    }
+
+    function showFeedback(correct) {
+        elements.feedback.innerHTML = correct
+            ? '✓ Правильно! Молодець!'
+            : '✗ Неправильно. Спробуй ще раз!';
+        elements.feedback.className = `feedback ${correct ? 'correct-feedback' : 'incorrect-feedback'} show`;
+
+        setTimeout(() => {
+            elements.feedback.classList.remove('show');
+            setTimeout(() => {
+                elements.feedback.innerHTML = '';
+                if (correct) {
+                    if (questionType === 'points') {
+                        questionType = 'equation';
+                        currentQuestion = 2;
+                    } else if (questionType === 'equation') {
+                        questionType = 'canvas';
+                        currentQuestion = 3;
+                    } else if (questionType === 'canvas') {
+                        questionType = 'area';
+                        currentQuestion = 4;
+                    } else if (questionType === 'area') {
+                        questionType = 'slope';
+                        currentQuestion = 5;
+                    } else {
+                        // Завершення
+                        elements.optionsContainer.style.display = 'none';
+                        elements.submitAnswer.style.display = 'none';
+                        elements.questionText.style.display = 'none';
+                        elements.questionNumber.parentElement.style.display = 'none';
+                        elements.completionBlock.style.display = 'block';
+                        elements.completionBlock.classList.remove('hidden');
+                        elements.resetTrainerBtn.focus();
+                    }
+                    displayQuestion();
+                } else {
+                    incorrectAttempts++;
+                    displayQuestion();
+                }
+            }, 200);
+        }, 800);
+    }
+
+    function initializeTrainer() {
+        selectedOption = null;
+        correctAnswer = null;
+        currentQuestion = 1;
+        questionType = 'points';
+        incorrectAttempts = 0;
+        canvasData = null;
+        elements.submitAnswer.disabled = true;
+        elements.completionBlock.style.display = 'none';
+        elements.completionBlock.classList.add('hidden');
+        elements.optionsContainer.style.display = 'flex';
+        elements.submitAnswer.style.display = 'block';
+        elements.questionText.style.display = 'block';
+        elements.questionNumber.parentElement.style.display = 'flex';
+        displayQuestion();
+    }
+
+    /* ПОДІЇ */
+    elements.optionsContainer.addEventListener('click', e => {
+        const opt = e.target.closest('.option');
+        if (opt) selectOption(opt);
+    });
+
+    elements.submitAnswer.addEventListener('click', () => {
+        const ok = selectedOption === correctAnswer;
+        showFeedback(ok);
+    });
+
+    elements.resetTrainerBtn.addEventListener('click', () => {
+        toggleModal(elements.trainerModal, true);
+        initializeTrainer();
+    });
+});
+</script>
+</body>
+</html>
