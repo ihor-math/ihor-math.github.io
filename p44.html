@@ -1,0 +1,2567 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>44. Загальне рівняння прямої та його окремі випадки</title>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    console.log("MathJax is loaded and ready!");
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" onerror="console.error('Failed to load MathJax')"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Roboto:wght@400;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        *, *:before, *:after {
+            box-sizing: border-box;
+        }
+        body {
+        margin: 0;
+        background: linear-gradient(135deg, #1a2f1a, #2d4a2d, #3d5a3d);
+        font-family: 'Roboto', sans-serif;
+        color: #F3F4F6;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 100vh;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    body.loaded {
+        visibility: visible;
+        opacity: 1;
+    }
+
+        .title-box {
+            margin-top: 60px;
+            padding: 20px 40px;
+            background: #2d4a2d;
+            border-radius: 15px;
+            box-shadow: 0 6px 16px rgba(139, 195, 74, 0.3);
+            max-width: 90%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+         /* === ЗАГОЛОВОК === */
+    .title-box {
+        margin-top: clamp(40px, 8vw, 60px);
+        padding: clamp(15px, 3vw, 20px) clamp(30px, 6vw, 40px);
+        background: #2d4a2d;
+        border-radius: 15px;
+        box-shadow: 0 6px 16px rgba(139, 195, 74, 0.3);
+        max-width: 90%;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .title-box::before {
+        content: '';
+        position: absolute;
+        top: -50%; left: -50%;
+        width: 200%; height: 200%;
+        background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+        transform: rotate(45deg);
+        animation: shine 3s infinite;
+    }
+
+    @keyframes shine {
+        0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+        100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+    }
+
+    .title-box h1 {
+        margin: 0;
+        font-size: clamp(20px, 5vw, 24px);
+        color: #ffffff;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        font-family: 'Merriweather', serif;
+        position: relative;
+        z-index: 1;
+    }
+
+        /* === СЕКЦІЇ === */
+    .section-container {
+        margin-top: clamp(60px, 10vw, 80px);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+        padding: 0 10px;
+    }
+
+    .section {
+        width: clamp(240px, 45vw, 260px);
+        height: clamp(160px, 30vw, 200px);
+        background: linear-gradient(45deg, #2d4a2d, #3d5a3d);
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 15px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        color: #ffffff;
+        text-decoration: none;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(139, 195, 74, 0.2);
+    }
+
+    .section::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(139, 195, 74, 0.1), transparent);
+        transition: left 0.5s;
+    }
+
+    .section:hover::before { left: 100%; }
+    .section:hover {
+        transform: scale(1.05) translateY(-5px);
+        box-shadow: 0 8px 20px rgba(139, 195, 74, 0.25);
+        background: linear-gradient(45deg, #8bc34a, #689f38);
+        border-color: rgba(139, 195, 74, 0.4);
+    }
+
+    .section img {
+        width: clamp(50px, 10vw, 60px);
+        height: clamp(50px, 10vw, 60px);
+        margin-bottom: 12px;
+        object-fit: cover;
+        border-radius: 8px;
+        filter: brightness(1.2);
+    }
+
+    .section:hover img { filter: drop-shadow(0 0 10px rgba(139, 195, 74, 0.5)); }
+
+    .section h2 {
+        font-size: clamp(17px, 3.5vw, 20px);
+        margin: 0;
+        font-family: 'Merriweather', serif;
+        color: #ffffff;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    }
+        /* === МОДАЛЬНІ ВІКНА === */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 2%; left: 2%;
+        width: 96%; height: 96%;
+        background: linear-gradient(135deg, #2d4a2d, #3d5a3d);
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(139, 195, 74, 0.2);
+        z-index: 1001;
+        overflow: hidden;
+        flex-direction: column;
+        border: 1px solid rgba(139, 195, 74, 0.1);
+    }
+
+    #modalOverlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(26, 26, 61, 0.8);
+        z-index: 999;
+        backdrop-filter: blur(5px);
+    }
+
+    #modalOverlay:not(.hidden) { display: block; }
+
+    .modal-content {
+        padding: 20px;
+        flex-grow: 1;
+        background: #2d4a2d;
+        border-radius: 10px;
+        margin: 10px;
+        color: #ffffff;
+        width: calc(100% - 20px);
+        overflow-y: auto;
+        max-height: calc(100% - 60px);
+    }
+
+    .modal-content::-webkit-scrollbar { width: 6px; }
+    .modal-content::-webkit-scrollbar-track { background: transparent; }
+    .modal-content::-webkit-scrollbar-thumb {
+        background: linear-gradient(45deg, #8bc34a, #689f38);
+        border-radius: 3px;
+    }
+    .modal-content::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(45deg, #689f38, #558b2f);
+    }
+
+    .modal-header {
+        background: linear-gradient(0deg, #2d4a2d, #3d5a3d);
+        padding: 8px 12px;
+        display: flex;
+        justify-content: flex-end;
+        width: 100%;
+        flex-shrink: 0;
+        position: sticky;
+        top: 0;
+        z-index: 1002;
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+        border-bottom: 1px solid rgba(139, 195, 74, 0.2);
+    }
+
+    #trainerModal .modal-header {
+        background: linear-gradient(0deg, #8bc34a, #689f38);
+    }
+
+    .close-btn {
+        background: linear-gradient(135deg, #8bc34a, #689f38);
+        color: #ffffff;
+        border: none;
+        border-radius: 6px;
+        padding: 6px 16px;
+        font-size: clamp(14px, 3vw, 16px);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: 'Roboto', sans-serif;
+        box-shadow: 0 2px 8px rgba(139, 195, 74, 0.3);
+    }
+
+    .close-btn:hover {
+        background: linear-gradient(135deg, #689f38, #558b2f);
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(139, 195, 74, 0.4);
+    }
+
+    #trainerModal .close-btn {
+        background: linear-gradient(135deg, #689f38, #558b2f);
+    }
+
+    #trainerModal .close-btn:hover {
+        background: linear-gradient(135deg, #558b2f, #33691e);
+    }
+        details {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 6px;
+            background: #3d5a3d;
+            cursor: pointer;
+            border: 1px solid rgba(139, 195, 74, 0.2);
+        }
+        details p {
+            padding: 0 15px 10px;
+            color: #e8ecef;
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+        .math-notation {
+            font-style: italic;
+            color: #ffd700;
+            display: inline !important;
+        }
+        .highlight-term {
+            color: #ffc0cb;
+            font-weight: normal;
+        }
+        .formula-line {
+            display: inline-block;
+            white-space: nowrap;
+        }
+        .question-block {
+            margin: 15px 0;
+            padding: 10px;
+            background: linear-gradient(135deg, #2d4a2d, #3d5a3d);
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            cursor: pointer;
+            border: 1px solid rgba(139, 195, 74, 0.2);
+        }
+        .question-block summary {
+            font-size: 16px;
+            background: linear-gradient(135deg, #8bc34a, #689f38);
+            color: #ffffff;
+        }
+        .question-block details summary {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+        .question-block details p {
+            color: #e8ecef;
+            background: #2d4a2d;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 3px solid #27ae60;
+        }
+        #questionsModal mjx-container {
+            display: inline !important;
+            vertical-align: middle !important;
+            font-size: clamp(17px, 3vw, 19px) !important;
+            line-height: 1.4 !important;
+            color: #ffd700 !important;
+            background: none !important;
+            font-style: italic !important;
+            margin: 0 2px !important;
+            padding: 0 !important;
+        }
+        .trainer-container {
+            width: 90%;
+            max-width: 800px;
+            padding: 3vw 4vw;
+            text-align: center;
+            background: linear-gradient(135deg, #2d4a2d, #3d5a3d);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(139, 195, 74, 0.2);
+            transition: all 0.3s ease;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100%;
+            border: 1px solid rgba(139, 195, 74, 0.2);
+        }
+        .question-circle {
+            width: clamp(80px, 15vw, 120px);
+            height: clamp(80px, 15vw, 120px);
+            margin: 0 auto 3vw;
+            background: linear-gradient(135deg, #8bc34a, #689f38);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(139, 195, 74, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .question-circle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        .question-circle:hover::before {
+            left: 100%;
+        }
+        .question-circle h3 {
+            color: #ffffff;
+            font-family: 'Lora', serif;
+            font-size: clamp(16px, 2.5vw, 20px);
+            margin: 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 1;
+        }
+        .cube-formula, .vector-formula {
+            color: #ffd700;
+            display: inline-block;
+            font-size: clamp(15px, 2.5vw, 17px);
+        }
+        #completionBlock.modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        #completionBlock .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 90%;
+        }
+        /* === СТИЛІ ДЛЯ МЕДАЛІ З ТРИЗУБОМ === */
+.completion-emoji {
+    position: relative;
+    display: inline-block;
+    width: clamp(56px, 12vw, 96px);
+    height: clamp(56px, 12vw, 96px);
+    vertical-align: middle;
+    margin: 0 auto 3vw;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1c2526, #2e3a3b);
+    border: 3px dashed #ffd700;
+    box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+    overflow: hidden;
+    animation: medalAppear 0.8s ease-out;
+}
+
+.completion-emoji::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><filter id='s' x='-50%' y='-50%' width='200%' height='200%'><feDropShadow dx='0' dy='2' stdDeviation='2' flood-color='%23000000' flood-opacity='0.25'/></filter></defs><rect x='30' y='0' width='60' height='40' rx='4' fill='%23007ACC'/><rect x='30' y='20' width='60' height='20' rx='4' fill='%23FFD700'/><g transform='translate(60,70)'><polygon points='0,-26 6,-6 26,-6 9,6 15,26 0,14 -15,26 -9,6 -26,-6 -6,-6' fill='%23FFD700' filter='url(%23s)'/></g></svg>");
+    background-size: 75%;
+    background-repeat: no-repeat;
+    background-position: center 60%; /* ← ЗМІЩЕНО НИЖЧЕ */
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+    animation: medalBounce 1.2s ease-out 0.3s both;
+}
+
+/* Анімація появи кола */
+@keyframes medalAppear {
+    0% {
+        transform: scale(0.3) rotate(-180deg);
+        opacity: 0;
+    }
+    60% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Анімація медалі — падає і блимає */
+@keyframes medalBounce {
+    0% {
+        transform: translateY(-120px) rotate(-30deg) scale(0.4);
+        opacity: 0;
+    }
+    60% {
+        transform: translateY(15px) rotate(10deg) scale(1.15);
+        opacity: 1;
+    }
+    80% {
+        transform: translateY(-8px) rotate(-5deg) scale(1.05);
+    }
+    100% {
+        transform: translateY(0) rotate(0) scale(1);
+    }
+}
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2vw;
+            justify-content: center;
+            margin-bottom: 3vw;
+            width: 100%;
+        }
+        .option {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5vw 3vw;
+            border: 1.5px solid #8bc34a;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #3d5a3d, #2d4a2d);
+            cursor: pointer;
+            font-size: clamp(15px, 3.5vw, 18px);
+            min-height: 45px;
+            min-width: 90px;
+            max-width: 45%;
+            text-align: center;
+            font-family: 'Lora', serif;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+            box-sizing: border-box;
+            touch-action: manipulation;
+            pointer-events: auto !important;
+            user-select: none;
+            transition: all 0.3s ease;
+            color: #e8ecef;
+        }
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(139, 195, 74, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        .option:hover::before {
+            left: 100%;
+        }
+        .option:hover {
+            background: linear-gradient(135deg, #8bc34a, #689f38);
+            transform: scale(1.03);
+            border-color: #ffd700;
+            box-shadow: 0 4px 12px rgba(139, 195, 74, 0.3);
+        }
+        .option.selected {
+            background: linear-gradient(135deg, #27ae60, #2ecc71) !important;
+            color: #ffffff !important;
+            border: 2px solid #ffd700 !important;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
+        }
+        .option:focus {
+            outline: 2px solid #ffd700;
+            outline-offset: 2px;
+        }
+        .option {
+            min-height: 50px !important;
+            padding: 12px 20px !important;
+        }
+        mjx-container, mjx-container * {
+            pointer-events: none !important;
+            user-select: none !important;
+        }
+        mjx-frac {
+            font-size: 1.2em !important;
+            padding: 2px !important;
+        }
+        mjx-num, mjx-den {
+            padding: 2px !important;
+        }
+        button {
+            background: linear-gradient(135deg, #8bc34a, #689f38);
+            color: #ffffff;
+            border: none;
+            border-radius: 25px;
+            padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 24px);
+            font-size: clamp(16px, 3vw, 18px);
+            font-family: 'Lora', serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(139, 195, 74, 0.3);
+        }
+        button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #689f38, #558b2f);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(139, 195, 74, 0.4);
+        }
+        button:disabled {
+            background: #7f8c8d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .result {
+            margin-top: 3vw;
+            font-size: clamp(16px, 2.5vw, 18px);
+            font-family: 'Lora', serif;
+            color: #ffffff;
+        }
+        .completion-message {
+            font-family: 'Lora', serif;
+            font-weight: 700;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            border: 2.5px solid #27ae60;
+            border-radius: 15px;
+            padding: clamp(12px, 3vw, 18px);
+            box-shadow: 0 6px 12px rgba(46, 204, 113, 0.3);
+            margin: 2vw auto;
+            max-width: 90%;
+            position: relative;
+            overflow: hidden;
+        }
+        .completion-message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 1s;
+            animation: completionShine 2s infinite;
+        }
+        @keyframes completionShine {
+            0% { left: -100%; }
+            50% { left: 100%; }
+            100% { left: 100%; }
+        }
+        .completion-message h2 {
+            font-size: clamp(22px, 4.5vw, 30px);
+            margin: 0 0 1vw;
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
+        }
+        .completion-message p {
+            font-size: clamp(18px, 3.5vw, 22px);
+            margin: 0;
+            color: #ffffff;
+        }
+        .math-notation-centered {
+            display: block;
+            text-align: center;
+            width: 100%;
+            font-size: clamp(18px, 3vw, 20px);
+            margin: 10px 0;
+            line-height: 1.6;
+            font-family: 'Roboto', sans-serif;
+        }
+        mjx-container.math-notation-centered {
+            display: inline-block !important;
+            text-align: center !important;
+            vertical-align: middle !important;
+            white-space: nowrap !important;
+            line-height: 1.4 !important;
+            font-size: clamp(18px, 3vw, 20px) !important;
+            color: #ffd700 !important;
+            background: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        mjx-container.math-notation-centered * {
+            color: #ffd700 !important;
+            font-style: italic !important;
+        }
+        #trainerModal .math-notation-centered {
+            font-size: clamp(16px, 3vw, 18px);
+            color: #ffffff;
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.5;
+            text-align: center;
+            margin: 5px 0;
+            display: block;
+        }
+        #trainerModal .options-container mjx-container {
+            display: inline !important;
+            vertical-align: middle !important;
+            font-size: clamp(14px, 3vw, 16px) !important;
+            color: #ffd700 !important;
+            background: none !important;
+            font-style: italic !important;
+            margin: 0 2px !important;
+            padding: 0 !important;
+        }
+        .feedback {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(24px, 5.8vw, 30px);
+            font-family: 'Lora', serif;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+            z-index: 1001;
+            opacity: 0;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            text-align: center;
+            border: 2px solid transparent;
+        }
+        .feedback.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1.05);
+        }
+        .correct-feedback {
+            color: #ffffff;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            border: 2px solid #27ae60;
+            box-shadow: 0 0 20px rgba(46, 204, 113, 0.5);
+        }
+        .incorrect-feedback {
+            color: #ffffff;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            border: 2px solid #e74c3c;
+            box-shadow: 0 0 20px rgba(231, 76, 60, 0.5);
+        }
+        .navigation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px auto;
+            max-width: 1000px;
+        }
+        .nav-button {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #2d4a2d, #3d5a3d);
+            color: #ffd700;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(139, 195, 74, 0.3);
+        }
+        .nav-button:hover {
+            background: linear-gradient(135deg, #8bc34a, #689f38);
+            color: #ffffff;
+            transform: scale(1.03);
+            box-shadow: 0 4px 12px rgba(139, 195, 74, 0.3);
+        }
+        .nav-button svg {
+            margin-right: 8px;
+            fill: currentColor;
+            transition: fill 0.3s ease;
+        }
+        .question-card {
+            perspective: 1000px;
+            margin: 20px auto;
+            max-width: 1000px;
+            width: 100%;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            cursor: pointer;
+        }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            min-height: 200px;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            cursor: inherit;
+        }
+        .question-card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            cursor: inherit;
+            border: 1px solid rgba(139, 195, 74, 0.2);
+        }
+        .card-front {
+            min-height: 200px;
+            background: #1a3c66;
+            color: #ffffff;
+        }
+        .card-back {
+            transform: rotateY(180deg);
+            height: auto;
+            min-height: 200px;
+            overflow-y: auto;
+            max-height: 600px;
+            background: #2d4a2d;
+            color: #e8ecef;
+        }
+        .card-front span, .card-back span {
+            font-family: 'Lora', serif;
+            font-size: clamp(18px, 3vw, 20px);
+            line-height: 1.5;
+            color: inherit;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .card-back span {
+            text-align: justify;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            padding: 15px;
+        }
+        .card-back mjx-container {
+            margin: 15px 0;
+            display: block;
+            text-align: center;
+            font-size: clamp(18px, 3vw, 20px) !important;
+            color: #ffd700 !important;
+        }
+        .math-notation-centered {
+            display: block !important;
+            text-align: center !important;
+            width: 100%;
+            font-size: clamp(18px, 3vw, 20px);
+            margin: 15px 0;
+            line-height: 1.6;
+            font-family: 'Lora', serif;
+            color: #e8ecef;
+        }
+        .card-back .math-notation-centered {
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .card-back .math-notation-centered mjx-container {
+            display: inline-block !important;
+            text-align: center !important;
+            vertical-align: middle !important;
+            font-size: clamp(18px, 3vw, 20px) !important;
+            color: #ffd700 !important;
+            margin: 0 auto;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .theory-content h2 {
+            color: #ffd700;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
+            margin-bottom: 20px;
+            font-family: 'Merriweather', serif;
+            font-size: 22px;
+        }
+        .theory-content h3 {
+            color: #ffa500;
+            border-bottom: 2px solid #ffa500;
+            padding-bottom: 5px;
+            margin-top: 25px;
+            font-size: 22px;
+        }
+        .theory-content p, .theory-content li {
+            color: #e8ecef;
+            font-size: clamp(18px, 3vw, 20px);
+            line-height: 1.7;
+        }
+        .example {
+            font-size: 1.1rem;
+            color: #ff8c00;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #ff8c00;
+            margin: 15px 0;
+        }
+        .solution {
+            color: #27ae60;
+            font-weight: bold;
+            text-align: center;
+            display: block;
+            padding: 10px;
+            border-radius: 6px;
+            border: 2px solid #27ae60;
+            margin: 15px 0;
+        }
+        .note {
+            color: #53ec53;
+            font-weight: bold;
+        }
+        .note-text {
+            font-style: italic;
+            color: #bdc3c7;
+            text-align: justify;
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #53ec53;
+            margin: 10px 0;
+        }
+        .theory-content p:not(.math-notation-centered),
+        .theory-content li {
+            text-align: justify;
+        }
+        .vector-type {
+            font-style: italic;
+            color: #ffd700;
+        }
+        .main-types {
+            font-weight: bold;
+            color: #8bc34a;
+        }
+        ol {
+            color: #e8ecef;
+        }
+        ol li::marker {
+            color: #ffd700;
+        }
+        mjx-container {
+            color: #ffd700 !important;
+            background: none !important;
+            font-style: italic !important;
+        }
+        .theory-content mjx-container {
+            color: #ffd700 !important;
+            background: none !important;
+        }
+        .modal-content::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        .modal-content::-webkit-scrollbar-track {
+            background: #2d4a2d;
+            border-radius: 10px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
+        }
+        .modal-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #8bc34a, #689f38);
+            border-radius: 10px;
+            border: 2px solid #2d4a2d;
+        }
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #689f38, #558b2f);
+        }
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #2d4a2d;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #8bc34a, #689f38);
+            border-radius: 10px;
+            border: 2px solid #2d4a2d;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #689f38, #558b2f);
+        }
+        .modal-content {
+            scrollbar-color: #8bc34a #2d4a2d;
+            scrollbar-width: thin;
+        }
+        .glow-title {
+            text-align: center;
+            color: #ffffff;
+            font-family: 'Merriweather', serif;
+            font-size: clamp(20px, 3vw, 24px);
+            margin: 10px 0;
+            text-shadow: 0 0 10px rgba(139, 195, 74, 0.5);
+            background: linear-gradient(135deg, #8bc34a, #689f38);
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: block;
+        }
+        .input-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            width: 100%;
+            max-width: 300px;
+            background: rgba(26, 26, 61, 0.5);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(139, 195, 74, 0.3);
+        }
+        #answerInput {
+            padding: 8px;
+            font-size: clamp(14px, 3vw, 16px);
+            width: 100px;
+            border: 2px solid #8bc34a;
+            border-radius: 6px;
+            background: #3d5a3d;
+            color: #e8ecef;
+            text-align: center;
+            font-family: 'Roboto', sans-serif;
+        }
+        #answerInput:focus {
+            outline: none;
+            border-color: #ffd700;
+            box-shadow: 0 0 8px rgba(241, 196, 15, 0.3);
+        }
+        .option.text-option {
+            font-size: clamp(14px, 3vw, 16px);
+            padding: 10px 20px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .figure-reference {
+            color: #ff8c00;
+            font-style: italic;
+            font-weight: bold;
+        }
+        .angle-notation {
+            color: #9b59b6;
+            font-weight: bold;
+        }
+        .vector-relation {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        #vectorCanvas {
+            display: block;
+            margin: 20px auto;
+            border: 1px solid rgba(139, 195, 74, 0.2);
+            background: #2d4a2d;
+            border-radius: 8px;
+            width: 400px;
+            height: 300px;
+        }
+        #optionsContainer {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        #submitAnswer {
+            margin-top: 20px;
+            padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 24px);
+            background: linear-gradient(135deg, #8bc34a, #689f38);
+            color: #ffffff;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: clamp(16px, 3vw, 18px);
+            font-family: 'Lora', serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(139, 195, 74, 0.3);
+        }
+        #submitAnswer:disabled {
+            background: #7f8c8d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        #submitAnswer:hover:not(:disabled) {
+            background: linear-gradient(135deg, #689f38, #558b2f);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(139, 195, 74, 0.4);
+        }
+        summary {
+            font-weight: 600;
+            padding: 14px 18px;
+            background: linear-gradient(135deg, #4a752c, #6b8e23, #8bc34a);
+            color: #fff7ed;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+            transition: all 0.35s ease;
+            box-shadow: 0 6px 14px rgba(139, 195, 74, 0.4), inset 0 0 8px rgba(255, 255, 255, 0.15);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            text-shadow: 0 0 6px rgba(255, 255, 255, 0.2);
+        }
+        summary::-webkit-details-marker {
+            display: none;
+        }
+        summary::after {
+            content: " ▼";
+            font-size: 0.9rem;
+            transition: transform 0.3s ease;
+            color: #ffedd5;
+        }
+        details[open] summary::after {
+            transform: rotate(-180deg);
+        }
+        summary:hover {
+            background: linear-gradient(135deg, #5a823c, #7a9e33, #9bcc5a);
+            color: #fff;
+            box-shadow: 0 0 18px rgba(155, 204, 90, 0.7), inset 0 0 10px rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        summary:active {
+            transform: scale(0.98);
+            box-shadow: 0 0 8px rgba(155, 204, 90, 0.6) inset;
+        }
+        .example .MJX-TeXAtom-OP, .example .MathJax {
+            font-size: 120%;
+        }
+        .video-card {
+            width: 350px;
+            height: 250px;
+            background: #4a6b99;
+            border-radius: 15px;
+            border: 1px solid rgba(139, 195, 74, 0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 10px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            color: #e8ecef;
+        }
+        .video-card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+        }
+        .video-card img {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 8px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+        .video-card h3 {
+            font-size: clamp(16px, 2.5vw, 18px);
+            font-weight: 600;
+            margin: 0;
+        }
+        .video-player-container {
+            width: 80vw;
+            max-width: 960px;
+            aspect-ratio: 16 / 9;
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .video-player-container iframe {
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            display: block;
+            border: none;
+        }
+        .option mjx-container {
+            display: inline-block !important;
+            vertical-align: middle !important;
+            font-size: clamp(14px, 3vw, 16px) !important;
+            color: #ffd700 !important;
+            background: none !important;
+            font-style: italic !important;
+            margin: 0 auto !important;
+            padding: 0 !important;
+            text-align: center !important;
+        }
+        #completionBlock {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        #completionBlock .modal-content {
+            background: #1c2526;
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            padding: 20px;
+            width: 90%;
+            max-width: 500px;
+            min-height: 200px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        #completionBlock .completion-message {
+            color: #ffd700;
+            font-size: 1.2rem;
+        }
+        #completionBlock .completion-emoji {
+            font-size: 3rem;
+        }
+        #completionBlock button#restartTrainer {
+            background: #ffd700;
+            color: #1c2526;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+        #completionBlock button#restartTrainer:hover {
+            background: #e6c200;
+        }
+        #completionBlock .modal-header {
+            background: linear-gradient(0deg, #27ae60, #2ecc71);
+            padding: 8px 12px;
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1002;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            border-bottom: 1px solid rgba(139, 195, 74, 0.2);
+        }
+        #completionBlock, #trainerModal, #modalOverlay {
+            transition: opacity 0.2s ease;
+            opacity: 1;
+        }
+        #completionBlock.hidden, #trainerModal.hidden, #modalOverlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .card-back {
+            overflow-x: auto;
+            padding: 15px;
+        }
+        .card-back span {
+            padding: 10px;
+            text-align: left;
+            word-break: break-word;
+            hyphens: auto;
+        }
+        .card-back mjx-container {
+            margin: 10px auto;
+            display: inline-block !important;
+            max-width: 100%;
+            overflow-wrap: break-word;
+        }
+             /* === АДАПТИВНИЙ КАНВАС У ТРЕНАЖЕРІ === */
+#questionCanvas {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    max-width: 420px !important;
+    margin: 15px auto !important;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    background: #f0f0f0 !important;
+    image-rendering: crisp-edges;
+    box-sizing: border-box !important;
+}
+            #questionText {
+    width: 100%;
+    padding: 0 10px !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+#questionText > * {
+    max-width: 100% !important;
+    overflow: visible !important;
+}
+
+        
+      @media (max-width: 768px) {
+            .close-btn { font-size: 16px; padding: 6px 12px; border-radius: 8px; }
+            .theory-content p, .theory-content li { font-size: clamp(18px, 3vw, 20px); }
+            .theory-content mjx-container { font-size: clamp(16px, 3vw, 18px) !important; }
+            .theory-content h2, .theory-content h3 { font-size: clamp(18px, 2.5vw, 20px); }
+            .question-block summary { font-size: clamp(18px, 3vw, 20px); }
+            .question-block details p { font-size: clamp(18px, 3vw, 20px); }
+            #questionsModal mjx-container { font-size: 20px !important; }
+            #submitAnswer { font-size: clamp(16px, 3.5vw, 18px); padding: clamp(12px, 3vw, 14px) clamp(24px, 5vw, 28px); }
+            #answerInput { width: 80px; padding: 8px; font-size: clamp(16px, 3vw, 18px); }
+            .title-box { margin-top: 40px; padding: 15px 20px; }
+            .title-box h1 { font-size: 24px; }
+            .section-container { flex-direction: column; align-items: center; gap: 20px; }
+            .section { width: 80%; height: 180px; }
+            .modal { top: 2%; left: 2%; width: 96%; height: 96%; }
+            .modal-header { padding: 5px 8px; }
+            .modal-content { max-height: calc(100% - 50px); }
+            .question-card { min-height: 180px; }
+            .card-front, .card-back { font-size: clamp(15px, 3vw, 17px); padding: 12px; line-height: 1.4; }
+            .card-front span, .card-back span { font-size: clamp(15px, 3vw, 17px); line-height: 1.4; }
+            #questionsModal mjx-container { font-size: clamp(16px, 3vw, 18px) !important; }
+            .trainer-container { width: 95%; padding: 4vw; }
+            .question-circle, .completion-emoji { width: 25vw; height: 25vw; min-width: 80px; min-height: 80px; }
+            .question-circle h3 { font-size: clamp(14px, 3vw, 16px); }
+            .completion-emoji::after { font-size: clamp(30px, 7vw, 40px); }
+            .options-container { gap: 1.5vw; flex-direction: column; align-items: center; }
+            .option { font-size: clamp(14px, 4vw, 16px); padding: 10px !important; min-height: 60px !important; min-width: 100% !important; max-width: 100% !important; }
+            .option mjx-container { font-size: clamp(13px, 4vw, 15px) !important; }
+            button { padding: 3vw 5vw; font-size: clamp(12px, 3vw, 14px); }
+            .feedback { font-size: clamp(24px, 5.8vw, 32px); padding: clamp(12px, 3.5vw, 18px) clamp(18px, 5vw, 25px); max-width: 95vw; }
+            .completion-message { padding: clamp(10px, 3vw, 15px); }
+            .completion-message h2 { font-size: clamp(20px, 4vw, 26px); }
+            .completion-message p { font-size: clamp(16px, 3vw, 20px); }
+            .navigation-buttons { margin: 20px auto; gap: 15px; }
+            .nav-button { font-size: 16px; padding: 10px 20px; }
+            .math-notation-centered { font-size: clamp(16px, 2.5vw, 18px); }
+            mjx-container.math-notation-centered { font-size: clamp(16px, 2.5vw, 18px) !important; }
+            .input-container { flex-direction: row; align-items: center; gap: 8px; }
+                        #questionText canvas {
+        max-width: 300px;
+        border-radius: 6px;
+        margin: 10px auto !important;
+    }
+ }
+                       
+        @media (max-width: 480px) {
+            .close-btn { font-size: 14px; padding: 5px 10px; border-radius: 6px; }
+            .theory-content p, .theory-content li { font-size: clamp(16px, 3vw, 18px); }
+            .theory-content mjx-container { font-size: clamp(16px, 3vw, 18px) !important; }
+            .theory-content h2, .theory-content h3 { font-size: clamp(16px, 2.5vw, 18px); }
+            .question-block summary { font-size: clamp(17px, 3.2vw, 19px); }
+            .question-block details p { font-size: clamp(16px, 3vw, 18px); }
+            #questionsModal mjx-container { font-size: 20px !important; }
+            #submitAnswer { font-size: clamp(14px, 3.5vw, 16px); padding: clamp(10px, 3vw, 12px) clamp(20px, 5vw, 24px); }
+            #answerInput { width: 70px; padding: 6px; font-size: clamp(14px, 3vw, 16px); }
+            .title-box { margin-top: 20px; padding: 10px 15px; }
+            .title-box h1 { font-size: 20px; }
+            .section { width: 90%; height: 150px; }
+            .section img { width: 50px; height: 50px; }
+            .section h2 { font-size: 18px; }
+            .modal-header { padding: 4px 6px; }
+            .modal-content { max-height: calc(100% - 40px); }
+            .question-card { min-height: 200px; }
+            .card-front, .card-back { font-size: clamp(14px, 3vw, 16px); padding: 10px; line-height: 1.3; }
+            .card-front span, .card-back span { font-size: clamp(14px, 3vw, 16px); line-height: 1.3; }
+            #questionsModal mjx-container { font-size: clamp(13px, 3vw, 14px) !important; }
+            .card-inner { min-height: 200px; }
+            .trainer-container { padding: 5vw; }
+            .question-circle, .completion-emoji { width: 25vw; height: 25vw; min-width: 60px; min-height: 60px; }
+            .completion-emoji::after { font-size: clamp(25px, 6vw, 35px); }
+            .option { font-size: 16px !important; padding: 10px !important; min-height: 60px !important; min-width: 100% !important; max-width: 100% !important; }
+            .option mjx-container { font-size: clamp(13px, 4vw, 15px) !important; }
+            .feedback { font-size: clamp(22px, 5.2vw, 28px); padding: clamp(10px, 3vw, 15px) clamp(15px, 4.5vw, 20px); max-width: 95vw; }
+            .completion-message { padding: clamp(10px, 3vw, 15px); }
+            .completion-message h2 { font-size: clamp(18px, 3.5vw, 22px); }
+            .completion-message p { font-size: clamp(14px, 3vw, 18px); }
+            .navigation-buttons { margin: 15px auto; gap: 10px; }
+            .nav-button { font-size: 14px; padding: 8px 16px; }
+            .math-notation-centered { font-size: clamp(14px, 2.5vw, 16px); line-height: 1.0; }
+            mjx-container.math-notation-centered { font-size: clamp(14px, 2.5vw, 16px) !important; line-height: 1.0 !important; }
+            mjx-container { font-size: 14px !important; }
+            .input-container { gap: 6px; }
+          
+            .cube-formula, .vector-formula { font-size: clamp(16px, 3vw, 18px); }
+            
+             #questionCanvas {
+        max-width: 300px !important;
+    }
+            summary {
+           
+            font-size: 0.9rem;
+            
+        }
+            #questionText {
+        font-size: 14px;
+        line-height: 1.5;
+        padding: 0 8px;
+    }
+
+    .option {
+        font-size: 13px !important;
+        padding: 8px 12px !important;
+        min-height: 44px !important;
+        margin: 3px 0;
+    }
+
+    #submitAnswer {
+        padding: 10px 16px;
+        font-size: 14px;
+        min-height: 44px;
+    }
+
+    .feedback {
+        font-size: 22px;
+        padding: 12px 18px;
+        max-width: 90vw;
+    }
+        }
+                                                  /* === ФОРМУЛИ У ТРЕНАЖЕРІ — БІЛЬШІ НА МОБІЛЬНОМУ === */
+@media (max-width: 768px) {
+    /* Питання — формули більші */
+    #trainerModal .math-notation-centered,
+    #trainerModal mjx-container {
+        font-size: clamp(16px, 5vw, 18px) !important;
+        line-height: 1.5 !important;
+    }
+
+    /* Варіанти відповідей — формули ще більші */
+    #trainerModal .option mjx-container,
+    #trainerModal .options-container mjx-container {
+        font-size: clamp(16px, 4.8vw, 18px) !important;
+        line-height: 1.6 !important;
+        transform: scale(1.05);
+        transform-origin: center;
+        display: inline-block !important;
+    }
+
+    /* Дроби — чіткі, не здавлені */
+    #trainerModal mjx-frac {
+        font-size: 1.2em !important;
+        transform: scale(1.1);
+        transform-origin: center;
+        display: inline-block !important;
+        vertical-align: middle !important;
+    }
+
+    /* Текст питання — трохи менший, щоб формули виділялися */
+    #questionText {
+        font-size: clamp(15px, 3.8vw, 18px);
+        line-height: 1.6;
+        padding: 0 10px;
+    }
+
+    /* Канвас — компактний */
+    #questionText canvas {
+        max-width: 300px;
+        border-radius: 6px;
+        margin: 10px auto !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+}
+
+@media (max-width: 480px) {
+    /* Ще більші формули на маленьких екранах */
+    #trainerModal .math-notation-centered,
+    #trainerModal mjx-container {
+        font-size: clamp(16px, 4.5vw, 18px) !important;
+        line-height: 1.5 !important;
+    }
+
+    #trainerModal .option mjx-container,
+    #trainerModal .options-container mjx-container {
+        font-size: clamp(16px, 4.2vw, 18px) !important;
+        line-height: 1.6 !important;
+        transform: scale(1.1);
+    }
+
+    #trainerModal mjx-frac {
+        font-size: 1.1em !important;
+        transform: scale(1.15);
+    }
+
+    /* Варіанти — компактні, але формули видно */
+    .option {
+        font-size: clamp(13px, 4vw, 15px) !important;
+        padding: 10px 14px !important;
+        min-height: 50px !important;
+        margin: 4px 0;
+    }
+
+    #submitAnswer {
+        padding: 10px 16px;
+        font-size: 15px;
+        min-height: 44px;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="title-box">
+        <h1>44. Загальне рівняння прямої та його окремі випадки</h1>
+    </div>
+
+    <div class="section-container">
+        <div class="section" id="openTheoryBtn">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Книга" loading="lazy">
+            <h2>Теоретичні відомості</h2>
+        </div>
+        <div class="section" id="openVideoBtn">
+            <img src="https://img.icons8.com/fluency/96/video.png" alt="Відео" loading="lazy">
+            <h2>Відеоматеріали</h2>
+        </div>
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Картки" loading="lazy">
+            <h2>Питання і відповіді</h2>
+        </div>
+        <div class="section" id="openTrainerBtn">
+            <img src="https://img.icons8.com/fluency/96/flash-on.png" alt="Тренажер" loading="lazy">
+            <h2>Тренажер</h2>
+        </div>
+    </div>
+
+    <div class="navigation-buttons">
+        <a class="nav-button" href="{{ url_for('tema9') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            До теми 9
+        </a>
+         <a class="nav-button" href="{{ url_for('home') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            На головну
+        </a>
+    </div>
+
+    <div id="theoryModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="theoryTitle">
+        <div class="modal-header">
+            <button class="close-btn" id="closeTheoryBtn" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="theory-content">
+               <details>
+    <summary>Загальне рівняння прямої</summary>
+    <div>
+        <h3>Рівняння прямої, що проходить через точку \( M_0(x_0; y_0) \) і перпендикулярна до ненульового вектора \( \vec{n} = (A; B) \)</h3>
+        <p>Нехай точка \( M(x; y) \) — довільна точка на прямій \( l \), яка перпендикулярна до вектора \( \vec{n} = (A; B) \) і проходить через точку \( M_0(x_0; y_0) \) (рис. 9.10).</p>
+ <img src="/static/figure9.10.jpg" alt="Пряма і нормаль" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+           <p>Точка \( M \) лежить на прямій \( l \), якщо вектор \( \overrightarrow{M_0 M} = (x - x_0; y - y_0) \) перпендикулярний до вектора \( \vec{n} \). Умова перпендикулярності виконується тоді й тільки тоді, коли їхній скалярний добуток дорівнює нулю:</p>
+        <p class="math-notation-centered">\[ A(x - x_0) + B(y - y_0) = 0. \quad (9.9) \]</p>
+        <p>Розкриємо дужки та спростимо рівняння:</p>
+        <p class="math-notation-centered">
+  \[ Ax - A x_0 + By - B y_0 = 0 ,\]</p>
+        <p class="math-notation-centered">
+  \[ Ax + By - A x_0 - B y_0 = 0 .\]
+</p>
+        <p>Тепер рівняння можна записати в загальному вигляді:</p>
+        <p class="math-notation-centered">\[ Ax + By + C = 0, \quad (9.10) \]</p>
+        <p>де \( C = -A x_0 - B y_0 \).</p>
+        <p>Таким чином, рівняння (9.10) є загальним рівнянням прямої, що проходить через точку \( M_0(x_0; y_0) \) і перпендикулярна до вектора \( \vec{n} = (A; B) \).</p>
+        <ul>
+            <li>Вектор \( \vec{n} = (A; B) \) називається <strong style="color: #AFEEEE;">нормальним вектором</strong> прямої;</li>
+<li>Вектор \( \vec{s} = (-B; A) \) є <strong style="color: #AFEEEE;">напрямним вектором</strong>, що задає напрямок прямої.</li>
+
+        </ul>
+        <p>Наприклад, рівняння прямої \( 8x - 3y + 5 = 0 \), де \( A = 8 \), \( B = -3 \), \( C = 5 \). Це загальне рівняння прямої, де \( \vec{n} = (8; -3) \) — нормальний вектор, \( \vec{s} = (3; 8) \) — напрямний вектор.</p>
+
+        <h3>Перехід від загального рівняння до рівняння з кутовим коефіцієнтом</h3>
+        <p>Загальне рівняння прямої має вигляд:</p>
+        <p class="math-notation-centered">\[ Ax + By + C = 0. \]</p>
+        <p>Якщо \( B \neq 0 \), це рівняння можна переписати у вигляді рівняння прямої з кутовим коефіцієнтом:</p>
+        <p class="math-notation-centered">\[ y = -\frac{A}{B} x - \frac{C}{B}. \quad (9.11) \]</p>
+        <p>Це рівняння є рівнянням прямої з кутовим коефіцієнтом \( k \), де</p>
+        <p class="math-notation-centered">\[ k = -\frac{A}{B}. \quad (9.12) \]</p>
+
+        <h3>Приклад 9.12</h3>
+        <p>Пряму задано загальним рівнянням \( 5x - 4y + 20 = 0 \).</p>
+        <ol>
+            <li>Записати рівняння з кутовим коефіцієнтом, знайти кутовий коефіцієнт та нормальний вектор прямої.</li>
+            <li>Перетворити в рівняння у відрізках на осях та побудувати цю пряму. Обчислити площу трикутника, утвореного цією прямою і осями координат.</li>
+        </ol>
+        <p style="text-align: center; color: orange;"><strong>Розв’язання:</strong></p>
+        <ol>
+            <li>Перетворимо рівняння до вигляду з кутовим коефіцієнтом. Виділимо \( y \):</li>
+        </ol>
+        <p class="math-notation-centered">\[ 5x - 4y + 20 = 0 \implies -4y = -5x - 20. \]</p>
+        <p>Поділимо обидві частини на \( -4 \):</p>
+        <p class="math-notation-centered">\[ y = \frac{5}{4} x + 5. \]</p>
+        <p>Отже, рівняння прямої з кутовим коефіцієнтом:</p>
+        <p class="math-notation-centered">\[ y = 1{,}25x + 5. \]</p>
+        <p>Кутовий коефіцієнт \( k = 1{,}25 \).</p>
+        <p>Нормальний вектор прямої: \( \vec{n} = (5; -4) \).</p>
+        <ol start="2">
+            <li>Перетворимо загальне рівняння у відрізках:</li>
+        </ol>
+        <p class="math-notation-centered">\[ \frac{x}{a} + \frac{y}{b} = 1. \]</p>
+        <p>Запишемо:</p>
+        <p class="math-notation-centered">\[ 5x - 4y = -20. \]</p>
+        <p>Поділимо на \( -20 \):</p>
+        <p class="math-notation-centered">\[ \frac{5x}{-20} + \frac{-4y}{-20} = 1,\]</p>
+<p class="math-notation-centered">\[ \frac{x}{-4} + \frac{y}{5} = 1.\]</p>
+      
+        <p>Отже, \( a = -4 \), \( b = 5 \). Точка перетину з віссю \( Ox \): \( A(-4; 0) \), з віссю \( Oy \): \( B(0; 5) \).</p>
+        <p>Пряма, проведена через ці точки, зображена на рисунку 9.11.</p>
+         <img src="/static/figure9.11.jpg" alt="Трикутник" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+           <p><strong>Обчислення площі трикутника.</strong> Трикутник — прямокутний з катетами \( |a| = 4 \) і \( |b| = 5 \).</p>
+        <p class="math-notation-centered">\[ S_{\triangle} = \frac{1}{2} \cdot |a| \cdot |b| = \frac{1}{2} \cdot 4 \cdot 5 = 10. \]</p>
+        <p><strong>Відповідь:</strong></p>
+        <ol>
+            <li>\( y = 1{,}25x + 5 \), \( k = 1{,}25 \), \( \vec{n} = (5; -4) \).</li>
+            <li>\( \frac{x}{-4} + \frac{y}{5} = 1 \), рис. 9.11, \( S_{\triangle} = 10 \).</li>
+        </ol>
+    </div>
+</details>
+                
+               <details>
+    <summary>Окремі випадки загального рівняння прямої</summary>
+    <div>
+        <h3>Окремі випадки загального рівняння прямої</h3>
+        
+        <ol>
+            <li><strong>Якщо \( A = 0 \):</strong><br>
+                Загальне рівняння прямої набуває вигляду:<br>
+                <p class="math-notation-centered">\[ By + C = 0 \quad \text{або} \quad y = -\frac{C}{B}. \]</p>
+                Усі точки цієї прямої мають однакову ординату \( y = -\frac{C}{B} \), тому пряма <strong>паралельна осі \( Ox \)</strong>.<br>
+                <strong>Наприклад:</strong><br>
+                \( 2y - 8 = 0 \implies y = 4 \). Пряма паралельна осі \( Ox \) та перетинає вісь \( Oy \) у точці \( (0; 4) \) (рис. 9.12).<br>
+                 <img src="/static/figure9.12.jpg" alt="Пряма паралельна" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+                   \( 3y + 9 = 0 \implies y = -3 \). Пряма паралельна осі \( Ox \) та перетинає вісь \( Oy \) у точці \( (0; -3) \) (рис. 9.13).
+                               </li>
+                               <img src="/static/figure9.13.jpg" alt="Пряма також паралельна" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+            <li><strong>Якщо \( B = 0 \):</strong><br>
+                Загальне рівняння прямої набуває вигляду:<br>
+                <p class="math-notation-centered">\[ Ax + C = 0 \quad \text{або} \quad x = -\frac{C}{A}. \]</p>
+                Усі точки цієї прямої мають однакову абсцису \( x = -\frac{C}{A} \), тому пряма <strong>паралельна осі \( Oy \)</strong>.<br>
+                <strong>Наприклад:</strong><br>
+                \( 2x + 4 = 0 \implies x = -2 \). Пряма паралельна осі \( Oy \) та перетинає вісь \( Ox \) у точці \( (-2; 0) \) (рис. 9.14).<br>
+                <img src="/static/figure9.14.jpg" alt="Пряма паралельна_2" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+                \( 5x + 15 = 0 \implies x = -3 \). Пряма паралельна осі \( Oy \) та перетинає вісь \( Ox \) у точці \( (-3; 0) \) (рис. 9.15).
+            </li>
+            <img src="/static/figure9.15.jpg" alt="Пряма паралельна_3" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+
+            <li><strong>Якщо \( C = 0 \):</strong><br>
+                Загальне рівняння прямої набуває вигляду:<br>
+                <p class="math-notation-centered">\[ Ax + By = 0. \]</p>
+                Оскільки рівняння задовольняє точку \( O(0; 0) \), то <strong>пряма проходить через початок координат</strong>.<br>
+                <strong>Наприклад:</strong><br>
+                \( y = 2x \) та \( y = -2x \). Обидві прямі проходять через початок координат \( O(0; 0) \) (рис. 9.16).
+            </li>
+            
+<img src="/static/figure9.16.jpg" alt="Прямі" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+
+            <li><strong>Якщо \( A = 0 \) і \( C = 0 \):</strong><br>
+                Загальне рівняння набуває вигляду:<br>
+                <p class="math-notation-centered">\[ By = 0 \quad \text{або} \quad y = 0. \]</p>
+                Пряма паралельна осі \( Ox \) і проходить через початок координат. Вона <strong>збігається з віссю \( Ox \)</strong> (рис. 9.17).
+            </li>
+<img src="/static/figure9.17.jpg" alt="Пряма на осі х" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+
+            <li><strong>Якщо \( B = 0 \) і \( C = 0 \):</strong><br>
+                Загальне рівняння набуває вигляду:<br>
+                <p class="math-notation-centered">\[ Ax = 0 \quad \text{або} \quad x = 0. \]</p>
+                Пряма паралельна осі \( Oy \) і проходить через початок координат. Вона <strong>збігається з віссю \( Oy \)</strong> (рис. 9.18).
+            </li>
+<img src="/static/figure9.18.jpg" alt="Пряма на осі у" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+
+            <li><strong>Якщо \( A \neq 0 \), \( B \neq 0 \) і \( C \neq 0 \):</strong><br>
+                Пряма <strong>не паралельна осям \( Ox \) чи \( Oy \) і не проходить через початок координат</strong> (рис. 9.19).
+            </li>
+        </ol>
+<img src="/static/figure9.19.jpg" alt="Пряма похила" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+
+        <h3>Приклад 9.13</h3>
+        <p>Як розміщено прямі:<br>
+            а) \( x - y = 0 \); б) \( x + y = 0 \); в) \( 3x - 12 = 0 \); г) \( 5y + 20 = 0 \); д) \( 3x + 4y = 0 \).<br>
+            Побудувати ці прямі.</p>
+        <p style="text-align: center; color: orange;"><strong>Розв’язання:</strong></p>
+        <ul>
+            <li>а) \( x - y = 0 \): Пряма проходить через початок координат, оскільки немає вільного члена. Всі її точки задовольняють умову \( x = y \), тобто вона є <strong>бісектрисою І та ІІІ координатних чвертей</strong> (рис. 9.20).</li>
+<img src="/static/figure9.20.jpg" alt="Пряма похила_2" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+
+            <li>б) \( x + y = 0 \): Пряма також проходить через початок координат. Виконується умова \( x = -y \), що відповідає <strong>бісектрисі ІІ та IV координатних чвертей</strong> (рис. 9.21).</li>
+<img src="/static/figure9.21.jpg" alt="Пряма похила_3" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+
+            <li>в) \( 3x - 12 = 0 \): Переписуємо як \( x = 4 \). Це <strong>вертикальна пряма</strong>, паралельна осі \( Oy \), яка проходить через точку \( (4; 0) \) (рис. 9.22).</li>
+<img src="/static/figure9.22.jpg" alt="Пряма похила_4" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+
+           <li>г) \( 5y + 20 = 0 \): Переписуємо як \( y = -4 \). Це <strong>горизонтальна пряма</strong>, паралельна осі \( Ox \), яка проходить через точку \( (0; -4) \) (рис. 9.23).</li>
+<img src="/static/figure9.23.jpg" alt="Пряма паралельна_4" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+            <li>д) \( 3x + 4y = 0 \): Пряма проходить через початок координат. Переписуємо у вигляді \( y = -\frac{3}{4}x \).<br>
+                Для побудови візьмемо ще одну точку, наприклад, якщо \( x = 4 \), тоді \( y = -3 \). Проведемо пряму через початок координат \( O(0; 0) \) і через точку \( (4; -3) \) (рис. 9.24).</li>
+        </ul>
+<img src="/static/figure9.24.jpg" alt="Пряма похила_5" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+
+        <h3>Приклад 9.14</h3>
+        <p>Скласти рівняння висоти \( AD \) трикутника \( ABC \), якщо дано його вершини: \( A(-5; 3) \), \( B(3; 7) \), \( C(4; -1) \).</p>
+        <p style="text-align: center; color: orange;"><strong>Розв’язання:</strong></p>
+        <p>Оскільки \( AD \) є висотою у трикутнику \( ABC \) (рис. 9.25), пряма, що містить висоту, <strong>перпендикулярна до сторони \( BC \)</strong>.</p>
+        <p>Проведемо на стороні \( BC \) вектор \( \overrightarrow{BC} \). Координати вектора \( \overrightarrow{BC} \) визначаються як:</p>
+        <p class="math-notation-centered">\[ \overrightarrow{BC} = (4 - 3; -1 - 7) = (1; -8). \]</p>
+<img src="/static/figure9.25.jpg" alt="Трикутник_2" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+
+        <p>Отже, <strong>нормальний вектор</strong> до прямої \( AD \) є:<br>
+            \( \vec{n} = \overrightarrow{BC} = (1; -8) \).</p>
+        <p>Рівняння прямої \( AD \), яка проходить через точку \( A(-5; 3) \) та має нормальний вектор \( \vec{n} \), запишемо у вигляді (формула 9.9):</p>
+        <p class="math-notation-centered">\[ A(x - x_0) + B(y - y_0) = 0, \]</p>
+        <p>де \( (x_0, y_0) = (-5; 3) \), а \( A \) і \( B \) — координати нормального вектора \( (1; -8) \). Підставляємо ці значення:</p>
+        <p class="math-notation-centered">
+            \[ 1 \cdot (x - (-5)) + (-8) \cdot (y - 3) = 0, \]<br>
+            \[ x + 5 - 8y + 24 = 0, \]<br>
+            \[ x - 8y + 29 = 0. \]
+        </p>
+        <p class="solution"><strong>Відповідь:</strong> \( x - 8y + 29 = 0 \).</p>
+    </div>
+</details>
+            </div>
+        </div>
+    </div>
+
+    <div id="videoModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="videoTitle">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoBtn" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-card-container">
+                <div class="video-card" data-video-url="https://www.youtube.com/embed/sTUytBoJOqw" aria-label="Загальне рівняння прямої та його окремі випадки">
+                    <img src="https://img.icons8.com/fluency/48/play.png" alt="Відео" loading="lazy">
+                    <h3>Загальне рівняння прямої та його окремі випадки</h3>
+                </div>
+            </div>
+            <div class="video-player-container" id="videoPlayer" style="display: none;">
+                <iframe src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div id="questionsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="questionsTitle">
+        <div class="modal-header">
+            <button class="close-btn" id="closeQuestionsBtn" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <!-- Питання 1 -->
+            <div class="question-card" id="card1">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <span>1. Який вигляд має загальне рівняння прямої на площині?</span>
+                    </div>
+                    <div class="card-back">
+                        <span>Загальне рівняння прямої на площині має вигляд: <span class="math-notation">\( Ax + By + C = 0 \)</span>, де <span class="math-notation">\( A \)</span>, <span class="math-notation">\( B \)</span> і <span class="math-notation">\( C \)</span> — деякі дійсні числа, причому <span class="math-notation">\( A \)</span> і <span class="math-notation">\( B \)</span> не дорівнюють нулю одночасно.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Питання 2 -->
+            <div class="question-card" id="card2">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <span>2. Який вигляд має рівняння прямої, якщо <span class="math-notation">\( A = 0 \)?</span></span>
+                    </div>
+                    <div class="card-back">
+                        <span>Якщо <span class="math-notation">\( A = 0 \)</span>, то рівняння набуває вигляду <span class="math-notation">\( By + C = 0 \)</span> або <span class="math-notation">\( y = -\frac{C}{B} \)</span>. Це рівняння прямої, паралельної осі <span class="math-notation">\( Ox \)</span>.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Питання 3 -->
+            <div class="question-card" id="card3">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <span>3. Який вигляд має рівняння прямої, якщо <span class="math-notation">\( B = 0 \)?</span></span>
+                    </div>
+                    <div class="card-back">
+                        <span>Якщо <span class="math-notation">\( B = 0 \)</span>, то рівняння набуває вигляду <span class="math-notation">\( Ax + C = 0 \)</span> або <span class="math-notation">\( x = -\frac{C}{A} \)</span>. Це рівняння прямої, паралельної осі <span class="math-notation">\( Oy \)</span>.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Питання 4 -->
+            <div class="question-card" id="card4">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <span>4. Який вигляд має рівняння прямої, якщо <span class="math-notation">\( C = 0 \)?</span></span>
+                    </div>
+                    <div class="card-back">
+                        <span>Якщо <span class="math-notation">\( C = 0 \)</span>, то рівняння набуває вигляду <span class="math-notation">\( Ax + By = 0 \)</span>. Це рівняння прямої, яка проходить через початок координат.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Питання 5 -->
+            <div class="question-card" id="card5">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <span>5. Як знайти кутовий коефіцієнт прямої з загального рівняння?</span>
+                    </div>
+                    <div class="card-back">
+                        <span>Якщо <span class="math-notation">\( B \neq 0 \)</span>, то загальне рівняння прямої можна переписати у вигляді <span class="math-notation">\( y = -\frac{A}{B}x - \frac{C}{B} \)</span>. Тоді кутовий коефіцієнт <span class="math-notation">\( k = -\frac{A}{B} \)</span>.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="trainerModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="trainerTitle">
+        <div class="modal-header">
+            <button class="close-btn" id="closeTrainerBtn" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="trainer-container" id="trainerContainer">
+                <div class="question-circle">
+                    <h3>Питання <span id="currentQuestionNumber">1</span></h3>
+                </div>
+                <div id="questionText" class="math-notation-centered"></div>
+                <div id="optionsContainer" class="options-container"></div>
+                <div class="input-container">
+                    <button id="submitAnswer" disabled aria-label="Перевірити відповідь">Перевірити</button>
+                </div>
+                <div id="result" class="result"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalOverlay" class="hidden"></div>
+
+   <div id="completionBlock" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="completionTitle">
+    <div class="modal-header">
+        <button class="close-btn" id="closeCompletionBtn" aria-label="Закрити">×</button>
+    </div>
+    <div class="modal-content completion-modal">
+        <div class="completion-emoji"></div>
+        <div class="completion-message">
+            <h2 id="completionTitle">МІСІЯ ВИКОНАНА!</h2>
+            <p>Солдате, ти — <strong>гордість України!</strong></p>
+            <p class="glory">СЛАВА УКРАЇНІ!</p>
+            <button id="resetTrainerBtn" class="reset-btn">Повернутися на полігон!</button>
+        </div>
+    </div>
+</div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.body.classList.add('loaded');
+
+        const openTheoryBtn = document.getElementById('openTheoryBtn');
+        const openVideoBtn = document.getElementById('openVideoBtn');
+        const openQuestionsBtn = document.getElementById('openQuestionsBtn');
+        const openTrainerBtn = document.getElementById('openTrainerBtn');
+        const theoryModal = document.getElementById('theoryModal');
+        const videoModal = document.getElementById('videoModal');
+        const questionsModal = document.getElementById('questionsModal');
+        const trainerModal = document.getElementById('trainerModal');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const closeTheoryBtn = document.getElementById('closeTheoryBtn');
+        const closeVideoBtn = document.getElementById('closeVideoBtn');
+        const closeQuestionsBtn = document.getElementById('closeQuestionsBtn');
+        const closeTrainerBtn = document.getElementById('closeTrainerBtn');
+        const closeCompletionBtn = document.getElementById('closeCompletionBtn');
+        const trainerContainer = document.getElementById('trainerContainer');
+        const questionText = document.getElementById('questionText');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const submitAnswer = document.getElementById('submitAnswer');
+        const result = document.getElementById('result');
+        const currentQuestionNumber = document.getElementById('currentQuestionNumber');
+        const completionBlock = document.getElementById('completionBlock');
+        const resetTrainerBtn = document.getElementById('resetTrainerBtn'); // Кнопка "Повернутися на полігон"
+
+        // === ПИТАННЯ 1: Нормальний вектор ===
+       function generateQuestion1() {
+    const getRandomCoeff = () => {
+        const sign = Math.random() < 0.5 ? -1 : 1;
+        const abs = Math.floor(Math.random() * 9) + 1;
+        return sign * abs;
+    };
+
+    let A = getRandomCoeff();
+    let B = getRandomCoeff();
+    const C = getRandomCoeff();
+
+    // Форматування термів: 1x → "x", -1x → "-x"
+    const formatTerm = (coeff, variable) => {
+        if (coeff === 1)  return ` ${variable}`;
+        if (coeff === -1) return ` -${variable}`;
+        return coeff > 0 ? ` +${coeff}${variable}` : ` ${coeff}${variable}`;
+    };
+
+    // Рівняння: Ax + By + C = 0
+    let equation = '';
+    equation += (A === 1) ? 'x' : (A === -1) ? '-x' : `${A}x`;
+    equation += (B === 1) ? ' + y' : (B === -1) ? ' - y' : formatTerm(B, 'y');
+    equation += (C > 0) ? ` + ${C}` : (C < 0) ? ` ${C}` : '';
+    equation += ' = 0';
+
+    const correct = `\\(\\vec{n} = (${A}; ${B})\\)`;
+
+    // === Генерація 3 хибних варіантів ===
+    const wrong = new Set();
+
+    // 1) Поміняти місцями
+    wrong.add(`\\(\\vec{n} = (${B}; ${A})\\)`);
+
+    // 2) Змінити знак одного з коефіцієнтів
+    wrong.add(`\\(\\vec{n} = (${A}; ${-B})\\)`);
+    wrong.add(`\\(\\vec{n} = (${-A}; ${B})\\)`);
+
+    // Якщо A === B (наприклад, обидва 5 або обидва -3) → (B;A) = (A;B) → дублювання
+    // Тому в такому випадку замінюємо варіант "поміняти місцями" на (1;1) або (-1;-1)
+    if (A === B) {
+        const unit = A > 0 ? 1 : -1;
+        // Видаляємо варіант (B;A), бо він = correct
+        wrong.delete(`\\(\\vec{n} = (${B}; ${A})\\)`);
+        // Додаємо (1;1) або (-1;-1)
+        wrong.add(`\\(\\vec{n} = (${unit}; ${unit})\\)`);
+    }
+
+    // Якщо випадково згенерувалось менше 3 — додаємо ще один випадковий
+    while (wrong.size < 3) {
+        const fakeA = getRandomCoeff();
+        const fakeB = getRandomCoeff();
+        const fake = `\\(\\vec{n} = (${fakeA}; ${fakeB})\\)`;
+        if (fake !== correct && !wrong.has(fake)) {
+            wrong.add(fake);
+        }
+    }
+
+    const options = [correct, ...Array.from(wrong)].sort(() => Math.random() - 0.5);
+
+    return {
+        text: `Для рівняння прямої \\(${equation}\\) вкажіть координати нормального вектора \\(\\vec{n}\\).`,
+        options,
+        correct,
+        equation,
+        A,
+        B
+    };
+}
+   // === ПИТАННЯ 2: Перетворення y = kx + b → Ax + By + C = 0 (фінальна версія) ===
+function generateQuestion2() {
+    // --- 1) Генерація дробового k = ±(numerator/denominator), який не скорочується ---
+    let numerator, denominator;
+    do {
+        numerator = Math.floor(Math.random() * 9) + 1;   // 1..9
+        denominator = Math.floor(Math.random() * 8) + 2; // 2..9
+    } while (numerator % denominator === 0 || numerator === denominator);
+
+    // знак k
+    const kSign = Math.random() < 0.5 ? -1 : 1;
+    const signedNumerator = numerator * kSign;
+
+    // --- 2) b у діапазоні -10..-1 або 1..10 ---
+    const b = (Math.floor(Math.random() * 10) + 1) * (Math.random() < 0.5 ? -1 : 1);
+
+    // --- 3) Форматування k у LaTeX ---
+    const absNum = Math.abs(signedNumerator);
+    const kLatex = (signedNumerator < 0)
+        ? `-\\frac{${absNum}}{${denominator}}`
+        : `\\frac{${absNum}}{${denominator}}`;
+
+    const bStr = b >= 0 ? `+${b}` : `${b}`;
+    const slopeEquation = `y = ${kLatex}x ${bStr}`;
+
+    // --- 4) Перетворення у загальне рівняння ---
+    let A = signedNumerator;   // p
+    let B = -denominator;      // -q
+    let C = b * denominator;   // b*q
+
+    // 🔹 нормалізуємо знак, щоб A > 0
+    if (A < 0) {
+        A = -A; B = -B; C = -C;
+    }
+
+    // --- 5) Функція форматування без "1x" і "-1y" ---
+    function term(coef, variable) {
+        if (coef === 1) return `+${variable}`;
+        if (coef === -1) return `-${variable}`;
+        return `${coef >= 0 ? '+' : ''}${coef}${variable}`;
+    }
+
+    function formatEquation(A, B, C) {
+        let str = '';
+        // перший член — без "+"
+        str += (A === 1) ? `x` : (A === -1 ? `-x` : `${A}x`);
+        str += term(B, 'y');
+        str += `${C >= 0 ? '+' : ''}${C}`;
+        return `\\(${str} = 0\\)`;
+    }
+
+    const correct = formatEquation(A, B, C);
+
+    // --- 6) Генерація 3 хибних варіантів ---
+    const wrong = new Set();
+
+    // хибний 1 — знак при B
+    wrong.add(formatEquation(A, -B, C));
+
+    // хибний 2 — знак при C
+    wrong.add(formatEquation(A, B, -C));
+
+    // хибний 3 — переплутані коефіцієнти
+    const swappedA = Math.abs(B);
+    const swappedB = -Math.abs(A);
+    wrong.add(formatEquation(swappedA, swappedB, C));
+
+    // запасний варіант
+    while (wrong.size < 3) {
+        const fakeC = C + (Math.floor(Math.random() * 11) - 5);
+        const fake = formatEquation(A, B, fakeC);
+        if (fake !== correct) wrong.add(fake);
+    }
+
+    // --- 7) Перемішування ---
+    const options = [correct, ...Array.from(wrong)];
+    for (let i = options.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [options[i], options[j]] = [options[j], options[i]];
+    }
+
+    return {
+        text: `Вкажіть загальне рівняння прямої, яка задана рівнянням із кутовим коефіцієнтом:<br>\\(${slopeEquation}\\).`,
+        options,
+        correct,
+        meta: { A, B, C, numerator: signedNumerator, denominator, b }
+    };
+}
+// === ПИТАННЯ 3: Рівняння прямої за відрізками на осях (з нормалізацією знаків) ===
+function generateQuestion3() {
+    // Генеруємо a, b ≠ 0, від -9 до 9
+    const getNonZero = () => {
+        const sign = Math.random() < 0.5 ? -1 : 1;
+        return sign * (Math.floor(Math.random() * 9) + 1);
+    };
+
+    let a, b;
+    do {
+        a = getNonZero();
+        b = getNonZero();
+    } while (a === 0 || b === 0 || a === b); // уникаємо нуля і однакових
+
+    // Точки перетину
+    const pointA = `(${a}; 0)`;
+    const pointB = `(0; ${b})`;
+
+    // Загальне рівняння: bx + ay - ab = 0
+    let A = b;           
+    let B = a;           
+    let C = -a * b;      
+
+    // --- Нормалізація знаків ---
+    // Якщо A < 0, множимо всі на -1
+    if (A < 0) {
+        A *= -1;
+        B *= -1;
+        C *= -1;
+    }
+    // Якщо A = 0, але B < 0, множимо на -1
+    if (A === 0 && B < 0) {
+        B *= -1;
+        C *= -1;
+    }
+
+    // --- Форматування рівняння ---
+    const formatEq = (coefX, coefY, constTerm) => {
+        let eq = '';
+
+        // Коефіцієнт при x
+        if (coefX === 1) eq += 'x';
+        else if (coefX === -1) eq += '-x';
+        else eq += `${coefX}x`;
+
+        // Коефіцієнт при y
+        if (coefY > 0) {
+            eq += coefY === 1 ? ' + y' : ` + ${coefY}y`;
+        } else if (coefY < 0) {
+            eq += coefY === -1 ? ' - y' : ` - ${Math.abs(coefY)}y`;
+        }
+
+        // Вільний член
+        if (constTerm > 0) eq += ` + ${constTerm}`;
+        else if (constTerm < 0) eq += ` - ${Math.abs(constTerm)}`;
+
+        eq += ' = 0';
+        return `\\(${eq}\\)`;
+    };
+
+    const correct = formatEq(A, B, C);
+
+    // === 3 хибні відповіді ===
+    const wrong = new Set();
+    wrong.add(formatEq(B, A, C));    // поміняти місцями x і y
+    wrong.add(formatEq(A, B, -C));   // змінити знак вільного члена
+    wrong.add(formatEq(A, -B, C));   // змінити знак B
+
+    while (wrong.size < 3) {
+        const fakeC = C + (Math.floor(Math.random() * 10) - 5);
+        const fake = formatEq(A, B, fakeC);
+        if (fake !== correct && !wrong.has(fake)) wrong.add(fake);
+    }
+
+    const options = [correct, ...Array.from(wrong)].sort(() => Math.random() - 0.5);
+
+    return {
+        text: `Пряма перетинає осі в точках \\(A${pointA}\\) і \\(B${pointB}\\).<br>Вкажіть її загальне рівняння.`,
+        options,
+        correct,
+        a,
+        b,
+        A,
+        B,
+        C
+    };
+}
+// === ПИТАННЯ 4: Загальне рівняння → у відрізках на осях (цілі) ===
+function generateQuestion4() {
+    const getNonZero = () => {
+        const sign = Math.random() < 0.5 ? -1 : 1;
+        return sign * (Math.floor(Math.random() * 9) + 1); // -9..-1 або 1..9
+    };
+
+    let A, B, C, a, b;
+
+    // Генеруємо цілі a, b ≠0
+    do {
+        a = getNonZero();
+        b = getNonZero();
+        A = -1;       // Просто формула: C = -A*a = a
+        B = -1;       // Аналогічно, B = -1
+        C = -A * a;   // C = a
+    } while (a === 0 || b === 0);
+
+    // Точки перетину
+    const pointA = `(${a};0)`;
+    const pointB = `(0;${b})`;
+
+    // Загальне рівняння: -b*x + a*y = a*b → приклад: -6x + 8y - 12 = 0
+    // Загальне правило: bx + ay - ab = 0
+    const eqA = b;
+    const eqB = a;
+    const eqC = -a * b;
+
+    // --- Форматування загального рівняння ---
+    const formatEq = (coefX, coefY, constTerm) => {
+        let eq = '';
+        eq += coefX === 1 ? 'x' : coefX === -1 ? '-x' : `${coefX}x`;
+        eq += coefY > 0 ? (coefY === 1 ? ' + y' : ` + ${coefY}y`) : (coefY === -1 ? ' - y' : ` - ${Math.abs(coefY)}y`);
+        eq += constTerm > 0 ? ` + ${constTerm}` : constTerm < 0 ? ` - ${Math.abs(constTerm)}` : '';
+        eq += ' = 0';
+        return `\\(${eq}\\)`;
+    };
+
+    const generalEq = formatEq(eqA, eqB, eqC);
+
+    // --- Рівняння у відрізках (цілі) ---
+   const correct = `\\(\\frac{x}{${a}} + \\frac{y}{${b}} = 1\\)`;
+
+
+    // === 3 хибні відповіді ===
+    const wrong = new Set();
+    wrong.add(`\\(\\frac{x}{${-a}} + \\frac{y}{${b}} = 1\\)`);
+wrong.add(`\\(\\frac{x}{${a}} + \\frac{y}{${-b}} = 1\\)`);
+wrong.add(`\\(\\frac{x}{${-a}} + \\frac{y}{${-b}} = 1\\)`);
+
+
+    const options = [correct, ...Array.from(wrong)].sort(() => Math.random() - 0.5);
+
+    return {
+        text: `Укажіть рівняння прямої у відрізках на осях, що відповідає прямій, заданій загальним рівнянням:<br>${generalEq}.`,
+        options,
+        correct,
+        A: eqA,
+        B: eqB,
+        C: eqC,
+        a,
+        b
+    };
+}
+
+       /* КАНВАС */
+    function drawCanvas(a, b) {
+        const canvas = document.createElement('canvas');
+        canvas.width = 420;
+        canvas.height = 420;
+        canvas.style.background = '#f0f0f0';
+        canvas.style.border = '1px solid #ccc';
+        canvas.style.borderRadius = '8px';
+        canvas.style.margin = '15px auto';
+        canvas.style.display = 'block';
+
+        const ctx = canvas.getContext('2d');
+        const cellSize = 20;
+        const originX = 10 * cellSize;
+        const originY = 10 * cellSize;
+
+        // Сітка
+        ctx.strokeStyle = '#ccc';
+        ctx.lineWidth = 0.5;
+        for (let i = 0; i <= 20; i++) {
+            ctx.beginPath();
+            ctx.moveTo(i * cellSize, 0);
+            ctx.lineTo(i * cellSize, 420);
+            ctx.moveTo(0, i * cellSize);
+            ctx.lineTo(420, i * cellSize);
+            ctx.stroke();
+        }
+
+        // Осі
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, originY);
+        ctx.lineTo(420, originY);
+        ctx.moveTo(originX, 0);
+        ctx.lineTo(originX, 420);
+        ctx.stroke();
+
+        // Стрілки
+        ctx.fillStyle = '#000';
+        ctx.beginPath();
+        ctx.moveTo(420, originY);
+        ctx.lineTo(415, originY - 5);
+        ctx.lineTo(415, originY + 5);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(originX, 0);
+        ctx.lineTo(originX - 5, 5);
+        ctx.lineTo(originX + 5, 5);
+        ctx.closePath();
+        ctx.fill();
+
+        // Підписи
+        ctx.font = '14px Roboto';
+        ctx.fillText('Ox', 395, originY - 8);
+        ctx.fillText('Oy', originX + 8, 15);
+        ctx.fillText('O', originX - 15, originY + 15);
+
+        // Цифри
+        ctx.font = '12px Roboto';
+        for (let i = -10; i <= 10; i++) {
+            if (i !== 0) {
+                const x = originX + i * cellSize;
+                const y = originY - i * cellSize;
+                ctx.fillText(i, x - 5, originY + 20);
+                ctx.fillText(i, originX - 25, y + 5);
+            }
+        }
+
+        // Пряма
+        const xInt = { x: originX + a * cellSize, y: originY };
+        const yInt = { x: originX, y: originY - b * cellSize };
+        const dx = xInt.x - yInt.x;
+        const dy = xInt.y - yInt.y;
+        if (dx === 0 || dy === 0) return canvas;
+
+        const slope = dy / dx;
+        const points = [];
+
+        const leftY = yInt.y + slope * (0 - yInt.x);
+        if (leftY >= 0 && leftY <= 420) points.push({ x: 0, y: leftY });
+
+        const rightY = yInt.y + slope * (420 - yInt.x);
+        if (rightY >= 0 && rightY <= 420) points.push({ x: 420, y: rightY });
+
+        const topX = yInt.x + (0 - yInt.y) / slope;
+        if (topX >= 0 && topX <= 420) points.push({ x: topX, y: 0 });
+
+        const bottomX = yInt.x + (420 - yInt.y) / slope;
+        if (bottomX >= 0 && bottomX <= 420) points.push({ x: bottomX, y: 420 });
+
+        if (points.length < 2) return canvas;
+
+        points.sort((p1, p2) => {
+            const d1 = (p1.x - 210)**2 + (p1.y - 210)**2;
+            const d2 = (p2.x - 210)**2 + (p2.y - 210)**2;
+            return d2 - d1;
+        });
+
+        const p1 = points[0];
+        const p2 = points[1];
+
+        ctx.strokeStyle = '#e63946';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.stroke();
+
+        return canvas;
+    }
+
+
+// === ПИТАННЯ 5: Рівняння по рисунку ===
+function generateQuestion5() {
+    const getNonZero = (min = 1, max = 8) => {
+        const sign = Math.random() < 0.5 ? -1 : 1;
+        return sign * (Math.floor(Math.random() * (max - min + 1)) + min);
+    };
+
+    let a, b;
+    do {
+        a = getNonZero();
+        b = getNonZero();
+    } while (a === 0 || b === 0 || Math.abs(a) > 8 || Math.abs(b) > 8);
+
+    // === Генеруємо канвас ===
+    const canvas = drawCanvas(a, b);
+
+    // === Рівняння ===
+    const A = b;
+    const B = a;
+    const C = -a * b;
+
+    // --- Форматування рівняння з "x" та "y" без 1 перед змінними ---
+    const formatEq = (Ax, By, C) => {
+        let eq = '';
+
+        // Коефіцієнт при x
+        if (Ax === 1) eq += 'x';
+        else if (Ax === -1) eq += '-x';
+        else eq += `${Ax}x`;
+
+        // Коефіцієнт при y
+        if (By === 1) eq += ' + y';
+        else if (By === -1) eq += ' - y';
+        else if (By > 0) eq += ` + ${By}y`;
+        else if (By < 0) eq += ` - ${Math.abs(By)}y`;
+
+        // Вільний член
+        if (C > 0) eq += ` + ${C}`;
+        else if (C < 0) eq += ` - ${Math.abs(C)}`;
+
+        eq += ' = 0';
+        return `\\(${eq}\\)`;
+    };
+
+    const correct = formatEq(A, B, C);
+
+    // === 3 хибні відповіді ===
+    const wrong = new Set();
+    wrong.add(formatEq(B, A, C));   // поміняли місцями x та y
+    wrong.add(formatEq(A, B, -C));  // зміна знаку вільного члена
+    wrong.add(formatEq(A, -B, C));  // зміна знаку при y
+
+    // Запасні варіанти, якщо дублікати
+    while (wrong.size < 3) {
+        const fakeC = C + (Math.floor(Math.random() * 10) - 5);
+        const fake = formatEq(A, B, fakeC);
+        if (fake !== correct && !wrong.has(fake)) wrong.add(fake);
+    }
+
+    const options = [correct, ...Array.from(wrong)].sort(() => Math.random() - 0.5);
+
+    return {
+        text: `На рисунку зображено пряму.<br>Вкажіть її загальне рівняння у вигляді \\(Ax + By + C = 0\\).`,
+        options,
+        correct,
+        canvas, // для візуалізації
+        a, b,
+        A, B, C
+    };
+}
+
+        let currentQuestion = generateQuestion1();
+        let currentQuestionType = 1;
+
+        function openModal(modal) {
+            modal.style.display = 'flex';
+            modalOverlay.style.display = 'block';
+            modalOverlay.classList.remove('hidden');
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            modal.focus();
+        }
+
+        function closeModal(modal) {
+            modal.style.display = 'none';
+            modalOverlay.style.display = 'none';
+            modalOverlay.classList.add('hidden');
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function resetVideoModal() {
+            const iframe = videoModal.querySelector('iframe');
+            const videoPlayerContainer = videoModal.querySelector('.video-player-container');
+            const videoCardContainer = videoModal.querySelector('.video-card-container');
+            iframe.src = '';
+            videoPlayerContainer.style.display = 'none';
+            videoCardContainer.style.display = 'flex';
+        }
+
+        openVideoBtn.addEventListener('click', () => {
+            resetVideoModal();
+            openModal(videoModal);
+        });
+
+        closeVideoBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const videoPlayerContainer = videoModal.querySelector('.video-player-container');
+            if (window.getComputedStyle(videoPlayerContainer).display !== 'none') {
+                resetVideoModal();
+            } else {
+                closeModal(videoModal);
+            }
+        });
+
+        function showFeedback(message, isCorrect) {
+            const feedback = document.createElement('div');
+            feedback.className = `feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'} show`;
+            feedback.textContent = message;
+            document.body.appendChild(feedback);
+            setTimeout(() => {
+                feedback.classList.remove('show');
+                setTimeout(() => feedback.remove(), 500);
+            }, 1500);
+        }
+
+        function loadQuestion() {
+    currentQuestionNumber.textContent = currentQuestionType;
+    questionText.innerHTML = currentQuestion.text;
+    optionsContainer.innerHTML = '';
+
+    // === ОЧИЩАЄМО КАНВАС ===
+    const existingCanvas = document.getElementById('questionCanvas');
+    if (existingCanvas) {
+        existingCanvas.remove();
+    }
+
+    // === ДОДАЄМО КАНВАС ПІСЛЯ ТЕКСТУ ПИТАННЯ ===
+    if (currentQuestion.canvas) {
+        const canvasWrapper = document.createElement('div');
+        canvasWrapper.style.textAlign = 'center';
+        canvasWrapper.style.margin = '20px 0';
+
+        const canvas = currentQuestion.canvas;
+        canvas.id = 'questionCanvas'; // для видалення
+        canvasWrapper.appendChild(canvas);
+
+        // Вставляємо ПІСЛЯ questionText, але ПЕРЕД optionsContainer
+        questionText.parentNode.insertBefore(canvasWrapper, optionsContainer);
+    }
+
+    // === ВАРІАНТИ ВІДПОВІДІ ===
+    const shuffledOptions = [...currentQuestion.options].sort(() => Math.random() - 0.5);
+    currentQuestion.correctIndex = shuffledOptions.findIndex(opt => opt === currentQuestion.correct);
+
+    shuffledOptions.forEach((option, i) => {
+        const optionElement = document.createElement('div');
+        optionElement.className = 'option';
+        optionElement.innerHTML = option;
+        optionElement.dataset.index = i;
+        optionElement.addEventListener('click', () => {
+            optionsContainer.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+            optionElement.classList.add('selected');
+            submitAnswer.disabled = false;
+        });
+        optionsContainer.appendChild(optionElement);
+    });
+
+    submitAnswer.disabled = true;
+    result.textContent = '';
+
+    // === MathJax ===
+    if (typeof MathJax !== 'undefined') {
+        MathJax.typesetPromise([questionText, optionsContainer]).catch(() => {});
+    }
+}
+       function checkAnswer() {
+    const selectedOption = optionsContainer.querySelector('.option.selected');
+    if (!selectedOption) return;
+
+    const selectedIndex = parseInt(selectedOption.dataset.index);
+
+    // Забороняємо повторні кліки
+    optionsContainer.querySelectorAll('.option').forEach(opt => {
+        opt.style.pointerEvents = 'none';
+    });
+
+    if (selectedIndex === currentQuestion.correctIndex) {
+        // ПРАВИЛЬНА
+        selectedOption.classList.add('correct');
+        showFeedback('Ціль уражена!', true);
+
+        setTimeout(() => {
+            if (currentQuestionType === 5) {
+                closeModal(trainerModal);
+                trainerContainer.classList.add('hidden');
+                openModal(completionBlock);
+            } else {
+                currentQuestionType++;
+                if (currentQuestionType === 2) currentQuestion = generateQuestion2();
+                else if (currentQuestionType === 3) currentQuestion = generateQuestion3();
+                else if (currentQuestionType === 4) currentQuestion = generateQuestion4();
+                else if (currentQuestionType === 5) currentQuestion = generateQuestion5();
+                loadQuestion();
+            }
+        }, 1500);
+    } else {
+        // ХИБНА
+        selectedOption.classList.add('incorrect');
+        showFeedback('Промах! Спробуй ще!', false);
+
+        // Підсвічуємо правильну
+        optionsContainer.querySelectorAll('.option').forEach((opt, i) => {
+            if (i === currentQuestion.correctIndex) {
+                opt.classList.add('correct');
+            }
+        });
+
+        setTimeout(() => {
+            // Перезавантажуємо те саме питання
+            if (currentQuestionType === 1) currentQuestion = generateQuestion1();
+            else if (currentQuestionType === 2) currentQuestion = generateQuestion2();
+            else if (currentQuestionType === 3) currentQuestion = generateQuestion3();
+            else if (currentQuestionType === 4) currentQuestion = generateQuestion4();
+            else if (currentQuestionType === 5) currentQuestion = generateQuestion5();
+            loadQuestion();
+        }, 2000);
+    }
+}
+
+        // === ПОВЕРНУТИСЯ НА ПОЛІГОН ===
+       function resetTrainer() {
+    currentQuestionType = 1;
+    currentQuestion = generateQuestion1();
+
+    // Закриваємо completionBlock
+    closeModal(completionBlock);
+
+    // Відкриваємо тренажер
+    openModal(trainerModal);
+    trainerContainer.classList.remove('hidden');
+
+    // Очищаємо канвас
+    const oldCanvas = document.getElementById('questionCanvas');
+    if (oldCanvas) oldCanvas.remove();
+
+    loadQuestion();
+}
+
+        // === КНОПКИ ===
+        openTheoryBtn.addEventListener('click', () => openModal(theoryModal));
+        openQuestionsBtn.addEventListener('click', () => openModal(questionsModal));
+        openTrainerBtn.addEventListener('click', () => {
+    openModal(trainerModal);
+    // Прокрутимо модальне вікно вгору
+    const modalContent = trainerModal.querySelector('.modal-content');
+    if (modalContent) {
+        modalContent.scrollTop = 0;
+    }
+    loadQuestion();
+});
+          
+
+        closeTheoryBtn.addEventListener('click', () => closeModal(theoryModal));
+        closeQuestionsBtn.addEventListener('click', () => closeModal(questionsModal));
+        closeTrainerBtn.addEventListener('click', () => closeModal(trainerModal));
+        closeCompletionBtn.addEventListener('click', () => resetTrainer());
+
+        // КНОПКА "Повернутися на полігон"
+        resetTrainerBtn.addEventListener('click', resetTrainer);
+
+        modalOverlay.addEventListener('click', () => {
+            closeModal(theoryModal);
+            closeModal(videoModal);
+            closeModal(questionsModal);
+            closeModal(trainerModal);
+            closeModal(completionBlock);
+        });
+
+        // Додаємо обробники кліків для флеш-карток
+        document.querySelectorAll('.question-card').forEach(card => {
+            card.addEventListener('click', function() {
+                console.log('Картка клікнута');
+                // Перемикаємо клас 'flipped' для обертання
+                this.classList.toggle('flipped');
+            });
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                if (videoModal.style.display === 'flex') {
+                    const videoPlayerContainer = videoModal.querySelector('.video-player-container');
+                    if (window.getComputedStyle(videoPlayerContainer).display !== 'none') {
+                        resetVideoModal();
+                    } else {
+                        closeModal(videoModal);
+                    }
+                } else if (completionBlock.style.display === 'flex') {
+                    resetTrainer();
+                } else {
+                    closeModal(theoryModal);
+                    closeModal(questionsModal);
+                    closeModal(trainerModal);
+                }
+            }
+            if (trainerModal.style.display === 'flex' && event.key === 'Enter' && !submitAnswer.disabled) {
+                checkAnswer();
+            }
+        });
+
+        submitAnswer.addEventListener('click', checkAnswer);
+
+        // Відео картки
+        document.querySelectorAll('.video-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const videoUrl = card.getAttribute('data-video-url');
+                const iframe = videoModal.querySelector('iframe');
+                iframe.src = videoUrl;
+                videoModal.querySelector('.video-card-container').style.display = 'none';
+                videoModal.querySelector('.video-player-container').style.display = 'flex';
+            });
+        });
+    });
+</script>
+</body>
+</html>
+
