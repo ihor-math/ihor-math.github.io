@@ -2030,7 +2030,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-            let selectedOption = null;
+          let selectedOption = null;
     let correctLatex = null;
     let currentQuestion = 1;
 
@@ -2360,83 +2360,87 @@ function generateWrongCanonical() {
     return Array.from(wrongs);
 }
 
-   function formatSlopeEquation(x0, y0, vx, vy) {
-    if (vx === 0 || vy === 0) return null;
+  function formatSlopeEquation(x0, y0, vx, vy) {
+    if (vx === 0) return null; // Вертикальна пряма - не має кутового коефіцієнта
 
-    // Обчислюємо кутовий коефіцієнт k = vy/vx
-    const gcd = (a, b) => b ? gcd(b, a % b) : Math.abs(a);
-    const g = gcd(vy, vx);
-    let kNum = vy / g;
-    let kDen = vx / g;
-
-    // Забезпечуємо, щоб знаменник був додатнім
-    if (kDen < 0) {
-        kNum = -kNum;
-        kDen = -kDen;
-    }
-
-    // Обчислюємо b = y0 - k*x0 як дріб
-    // b = y0 - (vy/vx) * x0 = (y0*vx - vy*x0) / vx
-    let bNum = y0 * vx - vy * x0;
-    let bDen = vx;
-
-    // Спрощуємо дріб b
-    const bg = gcd(bNum, bDen);
-    bNum = bNum / bg;
-    bDen = bDen / bg;
-
-    // Забезпечуємо, щоб знаменник був додатнім
-    if (bDen < 0) {
-        bNum = -bNum;
-        bDen = -bDen;
-    }
+    // Кутовий коефіцієнт k = vy/vx
+    const k = vy / vx;
+    
+    // Обчислюємо b = y0 - k*x0
+    const b = y0 - k * x0;
 
     // Форматуємо k
     let kStr = '';
-    if (kNum === 0) {
+    if (k === 0) {
         kStr = '';
-    } else if (kDen === 1) {
-        if (kNum === 1) kStr = '';
-        else if (kNum === -1) kStr = '-';
-        else kStr = `${kNum}`;
+    } else if (Math.abs(k) === 1) {
+        kStr = k === 1 ? '' : '-';
     } else {
-        kStr = `\\frac{${kNum}}{${kDen}}`;
+        // Спрощуємо дріб для k
+        const gcdK = (a, b) => b ? gcdK(b, a % b) : Math.abs(a);
+        const gcdValK = gcdK(Math.abs(vy), Math.abs(vx));
+        let kNum = vy / gcdValK;
+        let kDen = vx / gcdValK;
+        
+        if (kDen < 0) {
+            kNum = -kNum;
+            kDen = -kDen;
+        }
+        
+        if (kDen === 1) {
+            kStr = `${kNum}`;
+        } else {
+            kStr = `\\frac{${kNum}}{${kDen}}`;
+        }
     }
 
     // Форматуємо b
     let bStr = '';
-    if (bNum !== 0) {
-        if (bDen === 1) {
-            if (bNum > 0) {
-                bStr = `+ ${bNum}`;
+    if (b !== 0) {
+        // Спрощуємо дріб для b
+        const gcdB = (a, b) => b ? gcdB(b, a % b) : Math.abs(a);
+        const bNum = y0 * vx - vy * x0;
+        const bDen = vx;
+        const gcdValB = gcdB(Math.abs(bNum), Math.abs(bDen));
+        let simplifiedBNum = bNum / gcdValB;
+        let simplifiedBDen = bDen / gcdValB;
+        
+        if (simplifiedBDen < 0) {
+            simplifiedBNum = -simplifiedBNum;
+            simplifiedBDen = -simplifiedBDen;
+        }
+        
+        if (simplifiedBDen === 1) {
+            if (simplifiedBNum > 0) {
+                bStr = `+ ${simplifiedBNum}`;
             } else {
-                bStr = `- ${Math.abs(bNum)}`;
+                bStr = `- ${Math.abs(simplifiedBNum)}`;
             }
         } else {
-            if (bNum > 0) {
-                bStr = `+ \\frac{${bNum}}{${bDen}}`;
+            if (simplifiedBNum > 0) {
+                bStr = `+ \\frac{${simplifiedBNum}}{${simplifiedBDen}}`;
             } else {
-                bStr = `- \\frac{${Math.abs(bNum)}}{${bDen}}`;
+                bStr = `- \\frac{${Math.abs(simplifiedBNum)}}{${simplifiedBDen}}`;
             }
         }
     }
 
     // Складаємо рівняння
-    if (kStr === '' && bStr === '') return 'y = 0';
-    if (kStr === '') {
-        // Тільки b
+    if (k === 0) {
+        // Горизонтальна пряма
+        if (b === 0) return 'y = 0';
         const cleanB = bStr.startsWith('+ ') ? bStr.substring(2) : bStr;
         return `y = ${cleanB}`;
     }
-    if (bStr === '') {
-        // Тільки k
+    
+    if (b === 0) {
+        // Пряма через початок координат
         return `y = ${kStr}x`;
     }
     
-    // k та b
+    // Загальний випадок
     return `y = ${kStr}x ${bStr}`;
 }
-    
 function getCorrectSlope() {
     return formatSlopeEquation(slopeX0, slopeY0, slopeVx, slopeVy);
 }
@@ -2445,7 +2449,11 @@ function generateWrongSlope() {
     const wrongs = new Set();
     const correct = getCorrectSlope();
 
-    while (wrongs.size < 3) {
+    let attempts = 0;
+    const MAX_ATTEMPTS = 100;
+
+    while (wrongs.size < 3 && attempts < MAX_ATTEMPTS) {
+        attempts++;
         const type = Math.floor(Math.random() * 6);
         let x0 = slopeX0, y0 = slopeY0, vx = slopeVx, vy = slopeVy;
 
@@ -2499,28 +2507,43 @@ function getCorrectParametricFromCanonical() {
     return `\\begin{cases} x = ${xEq} \\\\ y = ${yEq} \\end{cases}`;
 }
 
-    function generateWrongParametricFromCanonical() {
+   // Можна розширити варіанти помилок:
+function generateWrongParametricFromCanonical() {
     const wrongs = new Set();
     const correct = getCorrectParametricFromCanonical();
 
     while (wrongs.size < 3) {
-        const type = Math.floor(Math.random() * 4);
+        const type = Math.floor(Math.random() * 6); // розширити до 6 типів
         let x0 = canToParamX0, y0 = canToParamY0;
         let vx = canToParamVx, vy = canToParamVy;
 
-        if (type === 0) {
-            x0 += (Math.random() > 0.5 ? 1 : -1);
-            y0 += (Math.random() > 0.5 ? 1 : -1);
-        } else if (type === 1) {
-            vx += (Math.random() > 0.5 ? 1 : -1);
-            vy += (Math.random() > 0.5 ? 1 : -1);
-            if (vx === 0 || vy === 0) continue;
-        } else if (type === 2) {
-            [x0, y0, vx, vy] = [canToParamY0, canToParamX0, canToParamVy, canToParamVx];
-            if (vx === 0 || vy === 0) continue;
-        } else {
-            vx = -vx; vy = -vy;
+        switch (type) {
+            case 0: // зсув точки
+                x0 += (Math.random() > 0.5 ? 1 : -1);
+                y0 += (Math.random() > 0.5 ? 1 : -1);
+                break;
+            case 1: // зміна вектора
+                vx += (Math.random() > 0.5 ? 1 : -1);
+                vy += (Math.random() > 0.5 ? 1 : -1);
+                break;
+            case 2: // переплутані координати
+                [x0, y0, vx, vy] = [canToParamY0, canToParamX0, canToParamVy, canToParamVx];
+                break;
+            case 3: // інверсія вектора
+                vx = -vx; vy = -vy;
+                break;
+            case 4: // тільки x компоненти
+                x0 += (Math.random() > 0.5 ? 1 : -1);
+                vx += (Math.random() > 0.5 ? 1 : -1);
+                break;
+            case 5: // тільки y компоненти
+                y0 += (Math.random() > 0.5 ? 1 : -1);
+                vy += (Math.random() > 0.5 ? 1 : -1);
+                break;
         }
+
+        // Перевірка коректності вектора
+        if (vx === 0 || vy === 0) continue;
 
         const xEq = formatParametric(x0, vx);
         const yEq = formatParametric(y0, vy);
@@ -2730,6 +2753,7 @@ function getCorrectParametricFromCanonical() {
 </script>
 </body>
 </html>
+
 
 
 
