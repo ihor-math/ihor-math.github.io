@@ -1359,9 +1359,10 @@
             <div id="feedback" class="feedback"></div>
             <div id="completionBlock" class="completion-message hidden">
                 <div class="completion-emoji"></div>
-                <h2>Тренування завершено!</h2>
-                <p>Молодець!</p>
-                <button id="resetTrainerBtn">Спробувати ще раз</button>
+               <h2>МІСІЯ ВИКОНАНА!</h2>
+    <p>Солдате, ти — гордість України!</p>
+    <p><strong>СЛАВА УКРАЇНІ!</strong></p>
+    <button id="resetTrainerBtn">Повернутися на полігон!</button>
             </div>
         </div>
     </div>
@@ -1742,8 +1743,8 @@ function generateSlopeQuestion() {
 
     function showFeedback(correct) {
         elements.feedback.innerHTML = correct
-            ? '✓ Правильно! Молодець!'
-            : '✗ Неправильно. Спробуй ще раз!';
+            ? '✓ Ціль уражена!'
+            : '✗ Промах! Спробуй ще!';
         elements.feedback.className = `feedback ${correct ? 'correct-feedback' : 'incorrect-feedback'} show`;
 
         setTimeout(() => {
@@ -1818,5 +1819,6 @@ function generateSlopeQuestion() {
 </script>
 </body>
 </html>
+
 
 
