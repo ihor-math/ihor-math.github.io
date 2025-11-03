@@ -420,10 +420,27 @@
     content: '';
     position: absolute;
     inset: 0;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><filter id='s' x='-50%' y='-50%' width='200%' height='200%'><feDropShadow dx='0' dy='2' stdDeviation='2' flood-color='%23000000' flood-opacity='0.25'/></filter></defs><rect x='30' y='0' width='60' height='40' rx='4' fill='%23007ACC'/><rect x='30' y='20' width='60' height='20' rx='4' fill='%23FFD700'/><g transform='translate(60,70)'><polygon points='0,-26 6,-6 26,-6 9,6 15,26 0,14 -15,26 -9,6 -26,-6 -6,-6' fill='%23FFD700' filter='url(%23s)'/></g></svg>");
+    background-image: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'>\
+<defs>\
+<radialGradient id='goldShine' cx='40%' cy='35%' r='70%'>\
+<stop offset='0%' stop-color='%23fff59d'/>\
+<stop offset='40%' stop-color='%23ffeb3b'/>\
+<stop offset='100%' stop-color='%23f9a825'/>\
+</radialGradient>\
+<filter id='s' x='-50%' y='-50%' width='200%' height='200%'>\
+<feDropShadow dx='0' dy='2' stdDeviation='3' flood-color='%23000000' flood-opacity='0.4'/>\
+</filter>\
+</defs>\
+<rect x='30' y='0' width='60' height='40' rx='4' fill='%23007ACC'/>\
+<rect x='30' y='20' width='60' height='20' rx='4' fill='%23FFD700'/>\
+<g transform='translate(60,70)'>\
+<polygon points='0,-26 6,-6 26,-6 9,6 15,26 0,14 -15,26 -9,6 -26,-6 -6,-6' fill='url(%23goldShine)' filter='url(%23s)'/>\
+</g>\
+</svg>");
     background-size: 75%;
     background-repeat: no-repeat;
-    background-position: center 60%; /* ← ЗМІЩЕНО НИЖЧЕ */
+    background-position: center 60%;
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
     animation: medalBounce 1.2s ease-out 0.3s both;
 }
@@ -1774,7 +1791,7 @@
 
    <div id="completionBlock" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="completionTitle">
     <div class="modal-header">
-        <button class="close-btn" id="closeCompletionBtn" aria-label="Закрити">×</button>
+        <button class="close-btn" id="closeCompletionBtn" aria-label="Закрити">× Закрити</button>
     </div>
     <div class="modal-content completion-modal">
         <div class="completion-emoji"></div>
@@ -2564,6 +2581,7 @@ function generateQuestion5() {
 </script>
 </body>
 </html>
+
 
 
 
