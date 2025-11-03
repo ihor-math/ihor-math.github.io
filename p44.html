@@ -2445,7 +2445,7 @@ function generateQuestion5() {
     if (selectedIndex === currentQuestion.correctIndex) {
         // ПРАВИЛЬНА
         selectedOption.classList.add('correct');
-        showFeedback('Ціль уражена!', true);
+        showFeedback('✓ Ціль уражена!', true);
 
         setTimeout(() => {
             if (currentQuestionType === 5) {
@@ -2464,7 +2464,7 @@ function generateQuestion5() {
     } else {
         // ХИБНА
         selectedOption.classList.add('incorrect');
-        showFeedback('Промах! Спробуй ще!', false);
+        showFeedback('✗ Промах! Спробуй ще!', false);
 
         // Підсвічуємо правильну
         optionsContainer.querySelectorAll('.option').forEach((opt, i) => {
@@ -2581,6 +2581,7 @@ function generateQuestion5() {
 </script>
 </body>
 </html>
+
 
 
 
