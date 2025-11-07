@@ -1,0 +1,2443 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>46. Умови паралельності та перпендикулярності</title>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    console.log("MathJax is loaded and ready!");
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" onerror="console.error('Failed to load MathJax')"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Roboto:wght@400;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        *, *:before, *:after {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            background: linear-gradient(135deg, #0d1b2a, #1b263b, #415a77); /* Темно-синій для авіаційної теми */
+            font-family: 'Roboto', sans-serif;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: start;
+            min-height: 100vh;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        body.loaded {
+            visibility: visible;
+            opacity: 1;
+        }
+        .title-box {
+            margin-top: 60px;
+            padding: 20px 40px;
+            background: #778da9; /* Сіро-блакитний для військової теми */
+            border-radius: 15px;
+            box-shadow: 0 6px 16px rgba(119, 141, 169, 0.3);
+            max-width: 90%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .title-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        .title-box h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            font-family: 'Merriweather', serif;
+            position: relative;
+            z-index: 1;
+        }
+        .section-container {
+            margin-top: 80px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .section {
+            width: 260px;
+            height: 200px;
+            background: linear-gradient(45deg, #1b263b, #415a77); /* Авіаційні кольори */
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            color: #ffffff;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(119, 141, 169, 0.2);
+        }
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(119, 141, 169, 0.1), transparent);
+            transition: left 0.5s;
+        }
+        .section:hover::before {
+            left: 100%;
+        }
+        .section:hover {
+            transform: scale(1.05) translateY(-5px);
+            box-shadow: 0 8px 20px rgba(119, 141, 169, 0.25);
+            background: linear-gradient(45deg, #0d1b2a, #778da9);
+            border-color: rgba(119, 141, 169, 0.4);
+        }
+        .section img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 15px;
+            object-fit: cover;
+            border-radius: 8px;
+            filter: brightness(1.2);
+        }
+        .section:hover img {
+            filter: drop-shadow(0 0 10px rgba(119, 141, 169, 0.5));
+        }
+        .section h2 {
+            font-size: 20px;
+            margin: 0;
+            font-family: 'Merriweather', serif;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 5%;
+            left: 5%;
+            width: 90%;
+            height: 90%;
+            background: linear-gradient(135deg, #1b263b, #415a77);
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(119, 141, 169, 0.2);
+            z-index: 1001;
+            overflow: hidden;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            border: 1px solid rgba(119, 141, 169, 0.1);
+        }
+        #modalOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(13, 27, 42, 0.8);
+            z-index: 999;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            padding: 20px;
+            flex-grow: 1;
+            background: #1b263b;
+            border-radius: 10px;
+            margin: 10px;
+            color: #ffffff;
+            width: calc(100% - 20px);
+            overflow-y: auto;
+            display: block;
+            max-height: calc(100% - 60px);
+        }
+        .modal-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .modal-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .modal-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #0d1b2a, #778da9);
+            border-radius: 3px;
+        }
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #0d1b2a, #778da9);
+        }
+        .modal-header {
+            background: linear-gradient(0deg, #1b263b, #415a77);
+            padding: 8px 12px;
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1002;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            border-bottom: 1px solid rgba(119, 141, 169, 0.2);
+        }
+        #trainerModal .modal-header {
+            background: linear-gradient(0deg, #0d1b2a, #778da9);
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+        .close-btn {
+            background: linear-gradient(135deg, #0d1b2a, #778da9);
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Roboto', sans-serif;
+            z-index: 1003;
+            box-shadow: 0 2px 8px rgba(119, 141, 169, 0.3);
+        }
+        .close-btn:hover {
+            background: linear-gradient(135deg, #0d1b2a, #778da9);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(119, 141, 169, 0.4);
+        }
+        #trainerModal .close-btn {
+            background: linear-gradient(135deg, #e63946, #c1121f);
+        }
+        #trainerModal .close-btn:hover {
+            background: linear-gradient(135deg, #c1121f, #780000);
+        }
+        details {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 6px;
+            background: #415a77;
+            cursor: pointer;
+            border: 1px solid rgba(119, 141, 169, 0.2);
+        }
+        
+        details p {
+            padding: 0 15px 10px;
+            color: #ecf0f1;
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+        .math-notation {
+            font-style: italic;
+            color: #90e0ef; /* Блакитний для авіації */
+            display: inline !important;
+        }
+        #questionsModal .math-notation-centered {
+            display: none !important;
+        }
+        .highlight-term {
+            color: #778da9;
+            font-weight: bold;
+        }
+        .formula-line {
+            display: inline-block;
+            white-space: nowrap;
+        }
+        .question-block {
+            margin: 15px 0;
+            padding: 10px;
+            background: linear-gradient(135deg, #1b263b, #415a77);
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            cursor: pointer;
+            border: 1px solid rgba(119, 141, 169, 0.2);
+        }
+        .question-block summary {
+            font-size: 16px;
+            background: linear-gradient(135deg, #0d1b2a, #778da9);
+            color: #ffffff;
+        }
+        .question-block details summary {
+            background: linear-gradient(135deg, #00b4d8, #00b4d8); /* Блакитний акцент */
+        }
+        .question-block details p {
+            color: #ecf0f1;
+            background: #1b263b;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 3px solid #00b4d8;
+        }
+        
+/* Стилі для MathJax у флеш-картках */
+#questionsModal mjx-container {
+    display: inline !important;
+    vertical-align: middle !important;
+    font-size: clamp(17px, 3vw, 19px) !important;
+    line-height: 1.4 !important;
+    color: #90e0ef !important;
+    background: none !important;
+    font-style: italic !important;
+    margin: 0 2px !important;
+    padding: 0 !important;
+}
+
+        .trainer-container {
+            width: 90%;
+            max-width: 800px;
+            padding: 3vw 4vw;
+            text-align: center;
+            background: linear-gradient(135deg, #1b263b, #415a77);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(119, 141, 169, 0.2);
+            transition: all 0.3s ease;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100%;
+            border: 1px solid rgba(119, 141, 169, 0.2);
+        }
+        .question-circle {
+            width: clamp(80px, 15vw, 120px);
+            height: clamp(80px, 15vw, 120px);
+            margin: 0 auto 3vw;
+            background: linear-gradient(135deg, #0d1b2a, #778da9);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(119, 141, 169, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .question-circle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        .question-circle:hover::before {
+            left: 100%;
+        }
+        .question-circle h3 {
+            color: #ffffff;
+            font-family: 'Lora', serif;
+            font-size: clamp(16px, 2.5vw, 20px);
+            margin: 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 1;
+        }
+        .cube-formula, .vector-formula {
+            color: #90e0ef;
+            display: inline-block;
+            font-size: clamp(15px, 2.5vw, 17px);
+        }
+        #completionBlock.modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        #completionBlock .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 90%;
+        }
+       /* Медаль з тризубом */
+.completion-emoji {
+    position: relative;
+    display: inline-block;
+    width: clamp(56px, 12vw, 96px);
+    height: clamp(56px, 12vw, 96px);
+    vertical-align: middle;
+    margin: 0 auto 3vw;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1c2526, #2e3a3b);
+    border: 3px dashed #ffd700;
+    box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+    overflow: hidden;
+    animation: medalAppear 0.8s ease-out;
+}
+.completion-emoji::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><radialGradient id='goldShine' cx='40%' cy='35%' r='70%'><stop offset='0%' stop-color='%23fff59d'/><stop offset='40%' stop-color='%23ffeb3b'/><stop offset='100%' stop-color='%23f9a825'/></radialGradient><filter id='s' x='-50%' y='-50%' width='200%' height='200%'><feDropShadow dx='0' dy='2' stdDeviation='3' flood-color='%23000000' flood-opacity='0.4'/></filter></defs><rect x='30' y='0' width='60' height='40' rx='4' fill='%23007ACC'/><rect x='30' y='20' width='60' height='20' rx='4' fill='%23FFD700'/><g transform='translate(60,70)'><polygon points='0,-26 6,-6 26,-6 9,6 15,26 0,14 -15,26 -9,6 -26,-6 -6,-6' fill='url(%23goldShine)' filter='url(%23s)'/></g></svg>");
+    background-size: 75%;
+    background-repeat: no-repeat;
+    background-position: center 60%;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+    animation: medalBounce 1.2s ease-out 0.3s both;
+}
+@keyframes medalAppear {
+    0% { transform: scale(0.3) rotate(-180deg); opacity: 0; }
+    60% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+}
+@keyframes medalBounce {
+    0% { transform: translateY(-120px) rotate(-30deg) scale(0.4); opacity: 0; }
+    60% { transform: translateY(15px) rotate(10deg) scale(1.15); opacity: 1; }
+    80% { transform: translateY(-8px) rotate(-5deg) scale(1.05); }
+    100% { transform: translateY(0) rotate(0) scale(1); }
+}
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2vw;
+            justify-content: center;
+            margin-bottom: 3vw;
+            width: 100%;
+        }
+        .option {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5vw 3vw;
+            border: 1.5px solid #0d1b2a;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #415a77, #1b263b);
+            cursor: pointer;
+            font-size: clamp(15px, 3.5vw, 18px);
+            min-height: 45px;
+            min-width: 90px;
+            max-width: 45%;
+            text-align: center;
+            font-family: 'Lora', serif;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+            box-sizing: border-box;
+            touch-action: manipulation;
+            pointer-events: auto !important;
+            user-select: none;
+            transition: all 0.3s ease;
+            color: #ecf0f1;
+        }
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(119, 141, 169, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        .option:hover::before {
+            left: 100%;
+        }
+        .option:hover {
+            background: linear-gradient(135deg, #0d1b2a, #778da9);
+            transform: scale(1.03);
+            border-color: #90e0ef;
+            box-shadow: 0 4px 12px rgba(119, 141, 169, 0.3);
+        }
+        .option.selected {
+            background: linear-gradient(135deg, #00b4d8, #00b4d8) !important;
+            color: #ffffff !important;
+            border: 2px solid #90e0ef !important;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 180, 216, 0.4);
+        }
+        .option:focus {
+            outline: 2px solid #90e0ef;
+            outline-offset: 2px;
+        }
+        .option {
+            min-height: 50px !important;
+            padding: 12px 20px !important;
+        }
+        mjx-container, mjx-container * {
+            pointer-events: none !important;
+            user-select: none !important;
+        }
+        mjx-frac {
+            font-size: 1.0em !important;
+            padding: 2px !important;
+        }
+        mjx-num, mjx-den {
+            padding: 2px !important;
+        }
+        button {
+            background: linear-gradient(135deg, #0d1b2a, #778da9);
+            color: #ffffff;
+            border: none;
+            border-radius: 25px;
+            padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 24px);
+            font-size: clamp(16px, 3vw, 18px);
+            font-family: 'Lora', serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(119, 141, 169, 0.3);
+        }
+        button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #0d1b2a, #778da9);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(119, 141, 169, 0.4);
+        }
+        button:disabled {
+            background: #7f8c8d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .result {
+            margin-top: 3vw;
+            font-size: clamp(16px, 2.5vw, 18px);
+            font-family: 'Lora', serif;
+            color: #ffffff;
+        }
+        .completion-message {
+            font-family: 'Lora', serif;
+            font-weight: 700;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            background: linear-gradient(135deg, #00b4d8, #00b4d8);
+            border: 2.5px solid #00b4d8;
+            border-radius: 15px;
+            padding: clamp(12px, 3vw, 18px);
+            box-shadow: 0 6px 12px rgba(0, 180, 216, 0.3);
+            margin: 2vw auto;
+            max-width: 90%;
+            position: relative;
+            overflow: hidden;
+        }
+        .completion-message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 1s;
+            animation: completionShine 2s infinite;
+        }
+        @keyframes completionShine {
+            0% { left: -100%; }
+            50% { left: 100%; }
+            100% { left: 100%; }
+        }
+        .completion-message h2 {
+            font-size: clamp(22px, 4.5vw, 30px);
+            margin: 0 0 1vw;
+            color: #ff7e00;
+            text-shadow: 0 0 10px rgba(144, 224, 239, 0.5);
+        }
+        .completion-message p {
+            font-size: clamp(18px, 3.5vw, 22px);
+            margin: 0;
+            color: #ffffff;
+        }
+        .math-notation-centered {
+            display: block;
+            text-align: center;
+            width: 100%;
+            font-size: clamp(18px, 3vw, 20px);
+            margin: 10px 0;
+            line-height: 1.6;
+            font-family: 'Roboto', sans-serif;
+        }
+        mjx-container.math-notation-centered {
+            display: inline-block !important;
+            text-align: center !important;
+            vertical-align: middle !important;
+            white-space: nowrap !important;
+            line-height: 1.4 !important;
+            font-size: clamp(18px, 3vw, 20px) !important;
+            color: #90e0ef !important;
+            background: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        mjx-container.math-notation-centered * {
+            color: #90e0ef !important;
+            font-style: italic !important;
+        }
+        #trainerModal .math-notation-centered {
+            font-size: clamp(16px, 3vw, 18px);
+            color: #ffffff;
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.5;
+            text-align: center;
+            margin: 5px 0;
+            display: block;
+        }
+        #trainerModal .options-container mjx-container {
+            display: inline !important;
+            vertical-align: middle !important;
+            font-size: clamp(14px, 3vw, 16px) !important;
+            color: #90e0ef !important;
+            background: none !important;
+            font-style: italic !important;
+            margin: 0 2px !important;
+            padding: 0 !important;
+        }
+        .feedback {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(24px, 5.8vw, 30px);
+            font-family: 'Lora', serif;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+            z-index: 1001;
+            opacity: 0;
+           transition: opacity 0.3s ease;
+            text-align: center;
+            border: 2px solid transparent;
+        }
+        .feedback.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1.05);
+        }
+        .correct-feedback {
+            color: #ffffff;
+            background: linear-gradient(135deg, #00b4d8, #00b4d8);
+            border: 2px solid #00b4d8;
+            box-shadow: 0 0 20px rgba(0, 180, 216, 0.5);
+        }
+        .incorrect-feedback {
+            color: #ffffff;
+            background: linear-gradient(135deg, #e63946, #c1121f);
+            border: 2px solid #e63946;
+            box-shadow: 0 0 20px rgba(231, 76, 60, 0.5);
+        }
+        .navigation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px auto;
+            max-width: 1000px;
+        }
+        .nav-button {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #1b263b, #415a77);
+            color: #90e0ef;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(119, 141, 169, 0.3);
+        }
+        .nav-button:hover {
+            background: linear-gradient(135deg, #0d1b2a, #778da9);
+            color: #ffffff;
+            transform: scale(1.03);
+            box-shadow: 0 4px 12px rgba(119, 141, 169, 0.3);
+        }
+        .nav-button svg {
+            margin-right: 8px;
+            fill: currentColor;
+            transition: fill 0.3s ease;
+        }
+        .question-card {
+            perspective: 1000px;
+            margin: 20px auto;
+            max-width: 964px;
+            width: 100%;
+            min-height: 150px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            cursor: pointer;
+        }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            min-height: 200px;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            cursor: inherit;
+        }
+        .question-card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            min-height: 200px;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            cursor: inherit;
+            border: 1px solid rgba(119, 141, 169, 0.2);
+        }
+        .card-front {
+            background: #0d1b2a;
+            color: #ffffff;
+        }
+        .card-back {
+            background: linear-gradient(135deg, #111827, #1f2937);
+            color: #ecf0f1;
+            transform: rotateY(180deg);
+            text-align: justify;
+            padding: 20px;
+            overflow: auto;
+            white-space: normal;
+        }
+        
+/* Оновлені стилі для span у флеш-картках */
+.card-front span, .card-back span {
+    font-family: 'Lora', serif;
+    font-size: clamp(17px, 3vw, 19px);
+    line-height: 1.4;
+    display: inline;
+    color: inherit;
+    text-align: center;
+    vertical-align: middle;
+}
+
+        .card-back span {
+            text-align: justify;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .theory-content h2 {
+            color: #90e0ef;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(144, 224, 239, 0.5);
+            margin-bottom: 20px;
+            font-family: 'Merriweather', serif;
+        }
+        .theory-content h3 {
+            color: #ffa07a;
+            border-bottom: 2px solid #778da9;
+            padding-bottom: 5px;
+            margin-top: 25px;
+        }
+        .theory-content p, .theory-content li {
+            color: #ecf0f1;
+            font-size: clamp(18px, 3vw, 20px);
+            line-height: 1.7;
+        }
+        .example {
+            font-size: 1.1rem;
+            color: #e9c46a;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #e9c46a;
+            margin: 15px 0;
+        }
+        .solution {
+            color: #00b4d8;
+            font-weight: bold;
+            text-align: center;
+            display: block;
+            padding: 10px;
+            border-radius: 6px;
+            border: 2px solid #00b4d8;
+            margin: 15px 0;
+        }
+        .note {
+            color: #9b59b6;
+            font-weight: bold;
+        }
+        .note-text {
+            font-style: italic;
+            color: #bdc3c7;
+            text-align: justify;
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #9b59b6;
+            margin: 10px 0;
+        }
+        .theory-content p:not(.math-notation-centered),
+        .theory-content li {
+            text-align: justify;
+        }
+        .vector-type {
+            font-style: italic;
+            color: #90e0ef;
+        }
+        .main-types {
+            font-weight: bold;
+            color: #778da9;
+        }
+        ol {
+            color: #ecf0f1;
+        }
+        ol li::marker {
+            color: #90e0ef;
+        }
+        mjx-container {
+            color: #90e0ef !important;
+            background: none !important;
+            font-style: italic !important;
+        }
+        .theory-content mjx-container {
+            color: #90e0ef !important;
+            background: none !important;
+        }
+        .modal-content::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        .modal-content::-webkit-scrollbar-track {
+            background: #1b263b;
+            border-radius: 10px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
+        }
+        .modal-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #0d1b2a, #778da9);
+            border-radius: 10px;
+            border: 2px solid #1b263b;
+        }
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #0d1b2a, #778da9);
+        }
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1b263b;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #0d1b2a, #778da9);
+            border-radius: 10px;
+            border: 2px solid #1b263b;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #0d1b2a, #778da9);
+        }
+        .modal-content {
+            scrollbar-color: #0d1b2a #1b263b;
+            scrollbar-width: thin;
+        }
+        .glow-title {
+            text-align: center;
+            color: #ffffff;
+            font-family: 'Merriweather', serif;
+            font-size: clamp(20px, 3vw, 24px);
+            margin: 10px 0;
+            text-shadow: 0 0 10px rgba(119, 141, 169, 0.5);
+            background: linear-gradient(135deg, #0d1b2a, #778da9);
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: block;
+        }
+        .input-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            width: 100%;
+            max-width: 300px;
+            background: rgba(13, 27, 42, 0.5);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(119, 141, 169, 0.3);
+        }
+        #answerInput {
+            padding: 8px;
+            font-size: clamp(14px, 3vw, 16px);
+            width: 100px;
+            border: 2px solid #0d1b2a;
+            border-radius: 6px;
+            background: #415a77;
+            color: #ecf0f1;
+            text-align: center;
+            font-family: 'Roboto', sans-serif;
+        }
+        #answerInput:focus {
+            outline: none;
+            border-color: #90e0ef;
+            box-shadow: 0 0 8px rgba(144, 224, 239, 0.3);
+        }
+        .option.text-option {
+            font-size: clamp(14px, 3vw, 16px);
+            padding: 10px 20px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .figure-reference {
+            color: #e9c46a;
+            font-style: italic;
+            font-weight: bold;
+        }
+        .angle-notation {
+            color: #9b59b6;
+            font-weight: bold;
+        }
+        .vector-relation {
+            color: #00b4d8;
+            font-weight: bold;
+        }
+        
+        #optionsContainer {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        #submitAnswer {
+            margin-top: 20px;
+            padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 24px);
+            background: linear-gradient(135deg, #0d1b2a, #778da9);
+            color: #ffffff;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: clamp(16px, 3vw, 18px);
+            font-family: 'Lora', serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(119, 141, 169, 0.3);
+        }
+        #submitAnswer:disabled {
+            background: #7f8c8d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        #submitAnswer:hover:not(:disabled) {
+            background: linear-gradient(135deg, #0d1b2a, #778da9);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(119, 141, 169, 0.4);
+        }
+            summary {
+    font-weight: bold;
+    padding: 12px 16px;
+    background: #0d1b2a;
+    border-radius: 8px;
+    color: #ffffff;
+    font-family: 'Merriweather', serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+    list-style: none;
+}
+
+summary::-webkit-details-marker {
+    display: none;
+}
+
+summary::after {
+    content: " ▼";
+    font-size: 0.9rem;
+    transition: transform 0.3s ease;
+}
+
+details[open] summary::after {
+    transform: rotate(-180deg);
+}
+    .example .MJX-TeXAtom-OP, .example .MathJax {
+    font-size: 120%;
+}
+.video-card {
+            width: 350px;
+            height: 250px;
+            background: #778da9;
+            border-radius: 15px;
+            border: 1px solid rgba(144, 224, 239, 0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 10px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            color: #e8e8e8;
+        }
+        .video-card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+        }
+        .video-card img {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 8px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+        .video-card h3 {
+            font-size: clamp(16px, 2.5vw, 18px);
+            font-weight: 600;
+            margin: 0;
+        }
+        .video-player-container {
+            width: 80vw;
+            max-width: 960px;
+            aspect-ratio: 16 / 9;
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .video-player-container iframe {
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            display: block;
+            border: none;
+        }
+            
+
+        @media (max-width: 768px) {
+            .close-btn {
+                font-size: 16px;
+                padding: 6px 12px;
+                border-radius: 8px;
+            }
+            .theory-content p, .theory-content li {
+                font-size: clamp(18px, 3vw, 20px);
+            }
+            .theory-content mjx-container {
+                font-size: clamp(16px, 3vw, 18px) !important;
+            }
+            .theory-content h2, .theory-content h3 {
+                font-size: clamp(20px, 3vw, 24px);
+            }
+            .question-block summary {
+                font-size: clamp(18px, 3vw, 20px);
+            }
+            .question-block details p {
+                font-size: clamp(18px, 3vw, 20px);
+            }
+            #questionsModal mjx-container {
+                font-size: 20px !important;
+            }
+            #submitAnswer {
+                font-size: clamp(16px, 3.5vw, 18px);
+                padding: clamp(12px, 3vw, 14px) clamp(24px, 5vw, 28px);
+            }
+            #answerInput {
+                width: 80px;
+                padding: 8px;
+                font-size: clamp(16px, 3vw, 18px);
+            }
+            .title-box {
+                margin-top: 40px;
+                padding: 15px 20px;
+            }
+            .title-box h1 {
+                font-size: 24px;
+            }
+            .section-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            .section {
+                width: 80%;
+                height: 180px;
+            }
+            .modal {
+                top: 2%;
+                left: 2%;
+                width: 96%;
+                height: 96%;
+            }
+            .modal-header {
+                padding: 5px 8px;
+            }
+            .modal-content {
+                max-height: calc(100% - 50px);
+            }
+            .question-card {
+                min-height: 180px;
+            }
+            .card-front, .card-back {
+                font-size: clamp(15px, 3vw, 17px);
+                padding: 12px;
+                line-height: 1.4;
+            }
+            .card-front span, .card-back span {
+                font-size: clamp(15px, 3vw, 17px);
+                line-height: 1.4;
+            }
+            #questionsModal mjx-container {
+                font-size: clamp(16px, 3vw, 18px) !important;
+            }
+            .trainer-container {
+                width: 95%;
+                padding: 4vw;
+            }
+            .question-circle, .completion-emoji {
+                width: 25vw;
+                height: 25vw;
+                min-width: 80px;
+                min-height: 80px;
+            }
+            .question-circle h3 {
+                font-size: clamp(14px, 3vw, 16px);
+            }
+            .completion-emoji::after {
+                font-size: clamp(30px, 7vw, 40px);
+            }
+            .options-container {
+                gap: 1.5vw;
+                flex-direction: column;
+                align-items: center;
+            }
+            .option {
+                font-size: clamp(14px, 4vw, 16px);
+                padding: 10px !important;
+                min-height: 60px !important;
+                min-width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                overflow: hidden;
+            }
+            .option mjx-container {
+                font-size: clamp(13px, 4vw, 15px) !important;
+                width: 100% !important;
+                text-align: center;
+                overflow: hidden;
+            }
+            button {
+                padding: 3vw 5vw;
+                font-size: clamp(12px, 3vw, 14px);
+            }
+            .feedback {
+                font-size: clamp(24px, 5.8vw, 32px);
+                padding: clamp(12px, 3.5vw, 18px) clamp(18px, 5vw, 25px);
+                max-width: 95vw;
+                word-wrap: break-word;
+            }
+            .completion-message {
+                padding: clamp(10px, 3vw, 15px);
+            }
+            .completion-message h2 {
+                font-size: clamp(20px, 4vw, 26px);
+            }
+            .completion-message p {
+                font-size: clamp(16px, 3vw, 20px);
+            }
+            .navigation-buttons {
+                margin: 20px auto;
+                gap: 15px;
+            }
+            .nav-button {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+            .math-notation-centered {
+                font-size: clamp(16px, 2.5vw, 18px);
+            }
+            mjx-container.math-notation-centered {
+                font-size: clamp(16px, 2.5vw, 18px) !important;
+            }
+            .input-container {
+                flex-direction: row;
+                align-items: center;
+                gap: 8px;
+            }
+            
+            #trainerModal .options-container mjx-container {
+                font-size: clamp(16px, 3.2vw, 18px) !important;
+            }
+             .video-card-container {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            .video-card {
+                width: 260px;
+                height: 160px;
+                margin: 5px;
+            }
+            .video-card img {
+                width: 40px;
+                height: 40px;
+                margin-bottom: 6px;
+            }
+            .video-player-container {
+                width: 80vw;
+                max-width: 600px;
+                aspect-ratio: 16 / 9;
+            }
+            .video-card h3 {
+                font-size: clamp(14px, 2.5vw, 16px);
+            }
+             summary {
+   
+    font-size: 0.9rem;
+    
+}
+                    }
+        @media (max-width: 480px) {
+            .close-btn {
+                font-size: 14px;
+                padding: 5px 10px;
+                border-radius: 6px;
+            }
+            .theory-content p, .theory-content li {
+                font-size: clamp(16px, 3vw, 18px);
+            }
+            .theory-content mjx-container {
+                font-size: clamp(16px, 3vw, 18px) !important;
+            }
+            .theory-content h2, .theory-content h3 {
+                font-size: clamp(18px, 2.8vw, 20px);
+            }
+            .question-block summary {
+                font-size: clamp(17px, 3.2vw, 19px);
+            }
+            .question-block details p {
+                font-size: clamp(16px, 3vw, 18px);
+            }
+            #questionsModal mjx-container {
+                font-size: 20px !important;
+            }
+            #submitAnswer {
+                font-size: clamp(14px, 3.5vw, 16px);
+                padding: clamp(10px, 3vw, 12px) clamp(20px, 5vw, 24px);
+            }
+            #answerInput {
+                width: 70px;
+                padding: 6px;
+                font-size: clamp(14px, 3vw, 16px);
+            }
+            .title-box {
+                margin-top: 20px;
+                padding: 10px 15px;
+            }
+            .title-box h1 {
+                font-size: 20px;
+            }
+            .section {
+                width: 90%;
+                height: 150px;
+            }
+            .section img {
+                width: 50px;
+                height: 50px;
+            }
+            .section h2 {
+                font-size: 18px;
+            }
+            .modal-header {
+                padding: 4px 6px;
+            }
+            .modal-content {
+                max-height: calc(100% - 40px);
+            }
+            .question-card {
+                min-height: 200px;
+            }
+            .card-front, .card-back {
+                font-size: clamp(14px, 3vw, 16px);
+                padding: 10px;
+                line-height: 1.3;
+            }
+            .card-front span, .card-back span {
+                font-size: clamp(14px, 3vw, 16px);
+                line-height: 1.3;
+            }
+            #questionsModal mjx-container {
+                font-size: clamp(14px, 3vw, 16px) !important;
+            }
+            .card-inner {
+                min-height: 200px;
+            }
+            .trainer-container {
+                padding: 5vw;
+            }
+            .question-circle, .completion-emoji {
+                width: 25vw;
+                height: 25vw;
+                min-width: 60px;
+                min-height: 60px;
+            }
+            .completion-emoji::after {
+                font-size: clamp(25px, 6vw, 35px);
+            }
+            .option {
+                font-size: 16px !important;
+                padding: 10px !important;
+                min-height: 60px !important;
+                min-width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                overflow: hidden;
+            }
+            .option mjx-container {
+                font-size: clamp(13px, 4vw, 15px) !important;
+                width: 100% !important;
+                text-align: center;
+                overflow: hidden;
+            }
+            .feedback {
+                font-size: clamp(22px, 5.2vw, 28px);
+                padding: clamp(10px, 3vw, 15px) clamp(15px, 4.5vw, 20px);
+                max-width: 95vw;
+            }
+            .completion-message {
+                padding: clamp(10px, 3vw, 15px);
+            }
+            .completion-message h2 {
+                font-size: clamp(18px, 3.5vw, 22px);
+            }
+            .completion-message p {
+                font-size: clamp(14px, 3vw, 18px);
+            }
+            .navigation-buttons {
+                margin: 15px auto;
+                gap: 10px;
+            }
+            .nav-button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+            .math-notation-centered {
+                font-size: clamp(14px, 2.5vw, 16px);
+                line-height: 1.2;
+            }
+            mjx-container.math-notation-centered {
+                font-size: clamp(14px, 2.5vw, 16px) !important;
+                line-height: 1.2 !important;
+            }
+            mjx-container {
+                font-size: 13px !important;
+            }
+           
+            .input-container {
+                gap: 6px;
+            }
+                   
+            #trainerModal .options-container mjx-container {
+                font-size: clamp(14px, 3vw, 16px) !important;
+            }
+            .cube-formula, .vector-formula {
+                font-size: clamp(16px, 3vw, 18px);
+            }
+            .video-card-container {
+                gap: 10px;
+                padding: 10px;
+            }
+            .video-card {
+                width: 90%;
+                max-width: 260px;
+                height: 140px;
+                margin: 5px;
+            }
+            .video-card img {
+                width: 30px;
+                height: 30px;
+                margin-bottom: 5px;
+            }
+            .video-card h3 {
+                font-size: clamp(12px, 2.5vw, 14px);
+            }
+            .video-player-container {
+                width: 80vw;
+                max-width: 400px;
+                aspect-ratio: 16 / 9;
+            }
+            #trainerModal .math-notation-centered,
+            #questionsModal mjx-container {
+                font-size: clamp(18px, 4vw, 22px) !important;
+            }
+            
+        }
+        @media (max-width: 600px) {
+            #trainerModal .math-notation-centered,
+            #questionsModal mjx-container {
+                font-size: clamp(18px, 4vw, 22px) !important;
+            }
+            #trainerModal .options-container mjx-container {
+                font-size: clamp(18px, 4vw, 20px) !important;
+            }
+
+   }
+            /* Для мобільних пристроїв */
+@media (max-width: 768px) {
+    #trainerModal .math-notation-centered,
+    #trainerModal mjx-container,
+    #questionsModal mjx-container {
+        font-size: 5vw !important;
+        line-height: 1.4 !important;
+    }
+
+    #trainerModal .options-container mjx-container {
+        font-size: 4.5vw !important;
+    }
+
+   }
+            /* Зменшення дробів на мобільних пристроях */
+@media (max-width: 768px) {
+    mjx-frac {
+        font-size: 1.1em !important;
+        transform: scale(1.1);
+        transform-origin: center;
+        display: inline-block !important;
+        vertical-align: middle !important;
+    }
+
+    mjx-frac > mjx-num,
+    mjx-frac > mjx-den {
+        padding: 1px 0 !important;
+    }
+
+    mjx-frac > mjx-box {
+        margin: 0 1px !important;
+    }
+
+    #trainerModal .option mjx-frac,
+    .options-container mjx-frac {
+        font-size: 1.1em !important;
+        transform: scale(0.9);
+    }
+}
+
+@media (max-width: 480px) {
+    mjx-frac {
+        font-size: 0.9em !important;
+        transform: scale(0.9);
+    }
+
+    #trainerModal .option mjx-frac,
+    .options-container mjx-frac {
+        font-size: 1.0em !important;
+        transform: scale(0.9);
+    }
+}
+
+    </style>
+
+</head>
+<body>
+    <div class="title-box">
+        <h1>46. Умови паралельності та перпендикулярності</h1>
+    </div>
+
+    <div class="section-container">
+        <div class="section" id="openTheoryBtn">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Книга" loading="lazy">
+            <h2>Теоретичні відомості</h2>
+        </div>
+        <div class="section" id="openVideoBtn">
+            <img src="https://img.icons8.com/fluency/96/video.png" alt="Відео" loading="lazy">
+            <h2>Відеоматеріали</h2>
+        </div>
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Картки" loading="lazy">
+            <h2>Питання і відповіді</h2>
+        </div>
+        <div class="section" id="openTrainerBtn">
+            <img src="https://img.icons8.com/fluency/96/flash-on.png" alt="Тренажер" loading="lazy">
+            <h2>Тренажер</h2>
+        </div>
+    </div>
+
+    <div class="navigation-buttons">
+       <a class="nav-button" href="{{ url_for('tema9') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            До теми 9
+        </a>
+        <a class="nav-button" href="{{ url_for('home') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            На головну
+        </a>
+    </div>
+
+   <!-- Теорія -->
+    <div id="theoryModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="theoryTitle">
+        <div class="modal-header">
+            <button class="close-btn" id="closeTheoryBtn" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="theory-content">
+ <!-- Вкладка 1 — Умови паралельності прямих -->
+<details class="accordion-item">
+    <summary class="accordion-summary">
+        Умови паралельності прямих
+        <span class="accordion-icon"></span>
+    </summary>
+    <div class="accordion-content">
+
+        <h3>1) Прямі, задані рівняннями з кутовими коефіцієнтами</h3>
+        <p>Нехай прямі \( l_1 \) та \( l_2 \) задані рівняннями:</p>
+        <p class="math-notation-centered">
+            \[ l_1: \quad y = k_1 x + b_1, \]
+            \[ l_2: \quad y = k_2 x + b_2 \]
+        </p>
+        <p>Прямі паралельні, якщо кут між ними дорівнює \( 0^\circ \), тобто \( \mathrm{tg}\,\varphi = 0 \). Це можливо лише коли:</p>
+        <p class="math-notation-centered solution">
+            \[ k_1 = k_2 \quad (9.16) \]
+        </p>
+        <p><strong>Висновок:</strong> дві прямі з кутовими коефіцієнтами паралельні тоді і тільки тоді, коли їхні кутові коефіцієнти рівні.</p>
+
+        <h3>2) Прямі, задані загальними рівняннями</h3>
+        <p>Нехай прямі задані рівняннями:</p>
+        <p class="math-notation-centered">
+            \[ l_1: \quad A_1 x + B_1 y + C_1 = 0,\]
+            \[ l_2: \quad A_2 x + B_2 y + C_2 = 0 \]
+        </p>
+        <p>Нормальні вектори цих прямих:</p>
+        <p class="math-notation-centered">
+            \[ \vec{n_1} = (A_1; B_1), \quad \vec{n_2} = (A_2; B_2) \]
+        </p>
+        <p>Прямі паралельні, якщо нормальні вектори <strong>колінеарні</strong>:</p>
+        <p class="math-notation-centered solution">
+            \[ \frac{A_1}{A_2} = \frac{B_1}{B_2} \quad \text{або} \quad 
+            \begin{vmatrix}
+            A_1 & B_1 \\
+            A_2 & B_2
+            \end{vmatrix} = 0 \quad (9.17) \]
+        </p>
+        <p><strong>Висновок:</strong> дві прямі, задані загальними рівняннями, паралельні, якщо їхні нормальні вектори пропорційні.</p>
+
+        <div class="example">
+            Перевірте паралельність прямих:<br>
+            \( 2x - 3y + 5 = 0 \) та \( 4x - 6y - 7 = 0 \)
+        </div>
+      <p>
+  Нормальні вектори: \( \vec{n_1}(2; -3) \), \( \vec{n_2}(4; -6) \).<br>
+  Прямі паралельні, якщо коефіцієнти пропорційні: 
+  \( \dfrac{A_1}{A_2} = \dfrac{B_1}{B_2} \).<br>
+  Підставимо: \( \dfrac{2}{4} = \dfrac{-3}{-6} = \dfrac{1}{2} \) → <strong>прямі паралельні!</strong><br>
+  Або, що еквівалентно, 
+  \( \begin{vmatrix}
+  A_1 & B_1 \\
+  A_2 & B_2
+  \end{vmatrix} = 0 \).<br>
+  \( 2 \cdot (-6) - 4 \cdot (-3) = -12 + 12 = 0 \) → <strong>умова виконується.</strong>
+</p>
+<p class="solution">Відповідь: Так, прямі паралельні.</p>
+
+    </div>
+</details>
+
+<!-- Вкладка 2 — Умови перпендикулярності прямих -->
+<details class="accordion-item">
+    <summary class="accordion-summary">
+        Умови перпендикулярності прямих
+        <span class="accordion-icon"></span>
+    </summary>
+    <div class="accordion-content">
+
+        <h3>1) Прямі, задані рівняннями з кутовими коефіцієнтами</h3>
+        <p>Нехай прямі \( l_1 \) та \( l_2 \) задані рівняннями:</p>
+        <p class="math-notation-centered">
+            \[ l_1: \quad y = k_1 x + b_1, \]
+            \[ l_2: \quad y = k_2 x + b_2 \]
+        </p>
+        <p>Прямі перпендикулярні, якщо кут між ними \( \varphi = 90^\circ \) (\( \varphi = \pi/2 \)).<br>
+           Тангенс кута між прямими:</p>
+        <p class="math-notation-centered">
+            \[ \mathrm{tg}\,\varphi = \left| \frac{k_2 - k_1}{1 + k_1 k_2} \right| \]
+        </p>
+        <p>При \( \varphi = 90^\circ \) знаменник має дорівнювати нулю:
+        \[ 1 + k_1 k_2 = 0. \]</p>
+    <p> Звідси:</p>
+   <p class="math-notation-centered solution"> \[ k_1 k_2 = -1 \quad \text{або} \quad k_1 = -\frac{1}{k_2}. \quad (9.18) \]
+</p>
+
+
+        <p><strong>Висновок:</strong> дві прямі перпендикулярні ⇔ добуток їхніх кутових коефіцієнтів дорівнює <strong>-1</strong>.</p>
+
+        <h3>2) Прямі, задані загальними рівняннями</h3>
+        <p>Нехай прямі задані рівняннями:</p>
+        <p class="math-notation-centered">
+            \[ l_1: \quad A_1 x + B_1 y + C_1 = 0, \]
+            \[ l_2: \quad A_2 x + B_2 y + C_2 = 0 \]
+        </p>
+        <p>Нормальні вектори:</p>
+        <p class="math-notation-centered">
+            \[ \vec{n_1} = (A_1; B_1), \quad \vec{n_2} = (A_2; B_2) \]
+        </p>
+        <p>Прямі перпендикулярні ⇔ їхні нормальні вектори теж перпендикулярні ⇔ скалярний добуток дорівнює нулю:</p>
+        <p class="math-notation-centered solution">
+            \[ A_1 A_2 + B_1 B_2 = 0 \quad (9.19) \]
+        </p>
+        <p><strong>Висновок:</strong> дві прямі перпендикулярні, якщо скалярний добуток їхніх нормальних векторів дорівнює нулю.</p>
+
+        <!-- БОЙОВИЙ ПРИКЛАД -->
+        <div class="example">
+            Перевірте перпендикулярність прямих:<br>
+            \( 3x - 4y + 7 = 0 \) та \( 8x + 6y - 5 = 0 \)
+        </div>
+        <p>Нормальні вектори: \( \vec{n_1}(3; -4) \), \( \vec{n_2}(8; 6) \).<br>
+           Скалярний добуток: \( 3\cdot8 + (-4)\cdot6 = 24 - 24 = 0 \)<br>
+           → <strong>прямі перпендикулярні!</strong></p>
+        <p class="solution">Відповідь: Так, прямі перпендикулярні.</p>
+
+        <!-- Додатковий приклад з кутовими коефіцієнтами -->
+        <div class="example">
+            Чи перпендикулярні прямі \( y = 2x - 1 \) та \( y = -\frac{1}{2}x + 3 \)?
+        </div>
+        <p>\( k_1 = 2 \), \( k_2 = -\frac{1}{2} \)<br>
+           \( k_1 k_2 = 2 \cdot \left(-\frac{1}{2}\right) = -1 \) → <strong>перпендикулярні!</strong></p>
+        <p class="solution">Відповідь: Так.</p>
+
+    </div>
+</details>
+
+<!-- Вкладка 3 — Розв’язання прикладів -->
+<details class="accordion-item">
+    <summary class="accordion-summary">
+       Приклади
+        <span class="accordion-icon"></span>
+    </summary>
+    <div class="accordion-content">
+
+        <h3>Приклад 9.17</h3>
+        <p><strong>Знайти рівняння прямої, що паралельна прямій \( 3x + 2y - 8 = 0 \) і проходить через точку \( (4; -3) \).</strong></p>
+
+        <div class="example">
+            Дано: \( 3x + 2y - 8 = 0 \)<br>
+            Точка: \( (4; -3) \)
+        </div>
+
+        <p>Перетворимо дану пряму до вигляду з кутовим коефіцієнтом:</p>
+        <p class="math-notation-centered">
+            \[ 2y = -3x + 8 \quad \Rightarrow \quad y = -\frac{3}{2}x + 4 \]
+        </p>
+        <p>Отже, кутовий коефіцієнт даної прямої: \( k = -\frac{3}{2} \).</p>
+
+        <p>Оскільки шукана пряма паралельна даній, їхні кутові коефіцієнти мають бути однаковими. Таким чином, для шуканої прямої:</p>
+        <p class="math-notation-centered solution">
+            \[ k = -\frac{3}{2} \]
+        </p>
+
+        <p>Складемо рівняння прямої, що проходить через точку \( (4; -3) \).</p>
+        <p class="math-notation-centered">
+            \[ y - (-3) = -\frac{3}{2}(x - 4) \]
+            \[ y + 3 = -\frac{3}{2}x + 6 \]
+            \[ y = -\frac{3}{2}x + 3 \]
+        </p>
+
+        <p>Приведемо до загального вигляду (помножимо на 2):</p>
+        <p class="math-notation-centered">
+            \[ 3x + 2y - 6 = 0 \]
+        </p>
+
+        <p class="solution">
+            Відповідь: \( \boxed{3x + 2y - 6 = 0} \)
+        </p>
+
+        <hr style="margin: 30px 0; border: 1px solid #778da9;">
+
+        <h3>Приклад 9.18</h3>
+        <p><strong>Знайти рівняння прямої, що перпендикулярна прямій \( y = -\frac{1}{3}x - 3 \) і проходить через точку \( (3; -2) \).</strong></p>
+
+        <div class="example">
+            Дано: \( y = -\frac{1}{3}x - 3 \)<br>
+            Точка: \( (3; -2) \)
+        </div>
+
+        <p>Кутовий коефіцієнт даної прямої: \( k_2 = -\frac{1}{3} \).</p>
+
+        <p>Умова перпендикулярності:</p>
+     <p class="math-notation-centered solution">
+    \( k_1 \cdot k_2 = -1 \), 
+    \( k_1 \cdot \left(-\frac{1}{3}\right) = -1 \), 
+    \( k_1 = 3. \)
+</p>
+        <p>Рівняння шуканої прямої через точку \( (3; -2) \):</p>
+        <p class="math-notation-centered">
+            \[ y - (-2) = 3(x - 3) \]
+            \[ y + 2 = 3x - 9 \]
+            \[ y = 3x - 11 \]
+        </p>
+
+        <p class="solution">
+            Відповідь: \( \boxed{y = 3x - 11} \)
+        </p>
+
+        <div style="margin-top: 30px; padding: 15px; background: linear-gradient(135deg, #0d1b2a, #415a77); border-left: 4px solid #00b4d8; border-radius: 8px;">
+            <p style="margin:0; color: #90e0ef; font-weight: bold;">
+                Пам’ятай, солдате:<br>
+                • Паралельні → \( k_1 = k_2 \)<br>
+                • Перпендикулярні → \( k_1 \cdot k_2 = -1 \)
+            </p>
+        </div>
+
+    </div>
+</details>
+</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="videoModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoBtn" aria-label="Закрити">× Закрити</button>
+        </div>
+
+        <div class="modal-content">
+                        <div class="video-card-container">
+
+             
+               <!-- 1 -->
+                <div class="video-card" data-video="1">
+                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=228B22" alt="Відеокамера">
+                    <h3>Паралельні та перпендикулярні прямі на графіку</h3>
+                </div>
+                <!-- 2 -->
+                <div class="video-card" data-video="2">
+                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=228B22" alt="Відеокамера">
+                    <h3>Рівняння паралельних прямих</h3>
+                </div>
+                <!-- 3 -->
+                <div class="video-card" data-video="3">
+                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=228B22" alt="Відеокамера">
+                    <h3>Рівняння паралельних прямих (Частина 2)</h3>
+                </div>
+                <!-- 4 -->
+                <div class="video-card" data-video="4">
+                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=228B22" alt="Відеокамера">
+                    <h3>Рівняння паралельних прямих (Частина 3)</h3>
+                </div>
+                <!-- 5 -->
+                <div class="video-card" data-video="5">
+                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=228B22" alt="Відеокамера">
+                    <h3>Рівняння перпендикулярних прямих</h3>
+                </div>
+                <!-- 6 -->
+                <div class="video-card" data-video="6">
+                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=228B22" alt="Відеокамера">
+                    <h3>Рівняння перпендикулярних прямих за точкою</h3>
+                </div>
+                <!-- 7 -->
+                <div class="video-card" data-video="7">
+                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=228B22" alt="Відеокамера">
+                    <h3>Рівняння перпендикулярних прямих за точкою (Частина 2)</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   <!-- ПЛЕЄРИ (7 штук) -->
+    <!-- 1 -->
+    <div id="videoPlayerModal1" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoPlayerBtn1" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-player-container">
+                <iframe id="youtubePlayer1" src="" frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+    <!-- 2 -->
+    <div id="videoPlayerModal2" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoPlayerBtn2" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-player-container">
+                <iframe id="youtubePlayer2" src="" frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+    <!-- 3 -->
+    <div id="videoPlayerModal3" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoPlayerBtn3" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-player-container">
+                <iframe id="youtubePlayer3" src="" frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+    <!-- 4 -->
+    <div id="videoPlayerModal4" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoPlayerBtn4" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-player-container">
+                <iframe id="youtubePlayer4" src="" frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+    <!-- 5 -->
+    <div id="videoPlayerModal5" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoPlayerBtn5" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-player-container">
+                <iframe id="youtubePlayer5" src="" frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+    <!-- 6 -->
+    <div id="videoPlayerModal6" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoPlayerBtn6" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-player-container">
+                <iframe id="youtubePlayer6" src="" frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+    <!-- 7 -->
+    <div id="videoPlayerModal7" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoPlayerBtn7" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-player-container">
+                <iframe id="youtubePlayer7" src="" frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+
+<!-- МОДАЛКА: Питання і відповіді -->
+<div id="questionsModal" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeQuestionsBtn">× Закрити</button>
+    </div>
+    <div class="modal-content">
+
+        <div style="text-align:center; margin-top:30px; color:#778da9;">
+            Клікай на картку — перевертай відповідь!
+        </div>
+            
+        <div class="section-container" style="flex-direction:column; gap:25px; margin-top:20px;">
+          <!-- КАРТКА 1 -->
+<div class="question-card">
+  <div class="card-inner">
+    <div class="card-front">
+      <span>Умова паралельності прямих з кутовими коефіцієнтами</span>
+    </div>
+    <div class="card-back">
+      <span> Прямі паралельні, якщо \(k_1 = k_2 \)</span>
+    </div>
+  </div>
+</div>
+
+<!-- КАРТКА 2 -->
+<div class="question-card">
+  <div class="card-inner">
+    <div class="card-front">
+      <span>Умова перпендикулярності (кутові коефіцієнти)</span>
+    </div>
+    <div class="card-back">
+      <span>\( k_1 \cdot k_2 = -1 \)</span>
+    </div>
+  </div>
+</div>
+
+<!-- КАРТКА 3 -->
+<div class="question-card">
+  <div class="card-inner">
+    <div class="card-front">
+      <span>Паралельність у загальному рівнянні</span>
+    </div>
+    <div class="card-back">
+      <span>
+  \( \dfrac{A_1}{A_2} = \dfrac{B_1}{B_2} \)
+  або
+  \( \begin{vmatrix} A_1 & B_1 \\ A_2 & B_2 \end{vmatrix} = 0 \)
+</span>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- КАРТКА 4 -->
+<div class="question-card">
+  <div class="card-inner">
+    <div class="card-front">
+      <span>Перпендикулярність у загальному рівнянні</span>
+    </div>
+    <div class="card-back">
+      <span>\( A_1 A_2 + B_1 B_2 = 0 \)</span>
+    </div>
+  </div>
+</div>
+
+           
+        </div>
+     
+    </div>
+</div>
+
+
+            
+   <div id="trainerModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="questionNumber">
+    <div class="modal-header">
+        <button class="close-btn" id="closeTrainerBtn" aria-label="Закрити">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="trainer-container" id="trainerContent">
+            <div class="question-circle">
+                <h3 id="questionNumber">Питання 1</h3>
+            </div>
+            <p id="questionText" class="math-notation-centered"></p>
+            <div class="options-container" id="optionsContainer"></div>
+            <button id="submitAnswer" disabled>Підтвердити</button>
+            <div id="feedback" class="feedback"></div>
+            <div id="completionBlock" class="completion-message hidden">
+               <div class="completion-emoji"></div>
+    <h2>МІСІЯ ВИКОНАНА!</h2>
+    <p>Солдате, ти — гордість України!</p>
+    <p><strong>СЛАВА УКРАЇНІ!</strong></p>
+    <button id="resetTrainerBtn">Повернутися на полігон!</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="modalOverlay"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.body.classList.add('loaded');
+
+    // ССИЛКИ НА ВІДЕО
+    const videoLinks = {
+        1: "https://www.youtube.com/embed/Xl_MRDBpoGA",
+        2: "https://www.youtube.com/embed/uD9vouGZJoc",
+        3: "https://www.youtube.com/embed/f-oYvTzlatE",
+        4: "https://www.youtube.com/embed/0Tn6RThIMQQ",
+        5: "https://www.youtube.com/embed/YoLD2oMb88c",
+        6: "https://www.youtube.com/embed/Lg7A_u4eeq0",
+        7: "https://www.youtube.com/embed/AWWH861k3L4"
+    };
+
+    // ВСІ ЕЛЕМЕНТИ
+    const elements = {
+        openTheoryBtn: document.getElementById('openTheoryBtn'),
+        openVideoBtn: document.getElementById('openVideoBtn'),
+        openQuestionsBtn: document.getElementById('openQuestionsBtn'),
+        openTrainerBtn: document.getElementById('openTrainerBtn'),
+        theoryModal: document.getElementById('theoryModal'),
+        videoModal: document.getElementById('videoModal'),
+        questionsModal: document.getElementById('questionsModal'),
+        trainerModal: document.getElementById('trainerModal'),
+        closeTheoryBtn: document.getElementById('closeTheoryBtn'),
+        closeVideoBtn: document.getElementById('closeVideoBtn'),
+        closeQuestionsBtn: document.getElementById('closeQuestionsBtn'),
+        closeTrainerBtn: document.getElementById('closeTrainerBtn'),
+        modalOverlay: document.getElementById('modalOverlay'),
+        questionNumber: document.getElementById('questionNumber'),
+        questionText: document.getElementById('questionText'),
+        optionsContainer: document.getElementById('optionsContainer'),
+        feedback: document.getElementById('feedback'),
+        completionBlock: document.getElementById('completionBlock'),
+        resetTrainerBtn: document.getElementById('resetTrainerBtn'),
+        submitAnswer: document.getElementById('submitAnswer'),
+        trainerContainer: document.getElementById('trainerContent')
+    };
+
+    // Додаємо 7 плеєрів і кнопок закриття
+    for (let i = 1; i <= 7; i++) {
+        elements[`videoPlayerModal${i}`] = document.getElementById(`videoPlayerModal${i}`);
+        elements[`closeVideoPlayerBtn${i}`] = document.getElementById(`closeVideoPlayerBtn${i}`);
+        elements[`youtubePlayer${i}`] = document.getElementById(`youtubePlayer${i}`);
+    }
+
+    // Перевірка критичних елементів
+    const critical = ['openTheoryBtn', 'openVideoBtn', 'openQuestionsBtn', 'openTrainerBtn', 'modalOverlay'];
+    const missing = critical.filter(key => !elements[key]);
+    if (missing.length > 0) {
+        console.error('Не знайдено критичні елементи:', missing);
+        return;
+    }
+
+    // УНІВЕРСАЛЬНІ ФУНКЦІЇ
+    function toggleModal(modal, show) {
+        if (!modal || !elements.modalOverlay) return;
+        modal.style.display = show ? 'flex' : 'none';
+        elements.modalOverlay.style.display = show ? 'block' : 'none';
+        document.body.style.overflow = show ? 'hidden' : 'auto';
+
+        if (show && window.MathJax && MathJax.typesetPromise) {
+            MathJax.typesetPromise([modal]).catch(err => console.error('MathJax:', err));
+        }
+    }
+
+    function stopAllVideos() {
+        for (let i = 1; i <= 7; i++) {
+            if (elements[`youtubePlayer${i}`]) {
+                elements[`youtubePlayer${i}`].src = '';
+            }
+        }
+    }
+
+    function playVideo(videoId) {
+        const player = elements[`youtubePlayer${videoId}`];
+        if (player && videoLinks[videoId]) {
+            player.src = videoLinks[videoId] + '?rel=0&modestbranding=1&enablejsapi=1';
+        }
+    }
+
+    // ВІДКРИТТЯ МОДАЛОК
+    elements.openTheoryBtn?.addEventListener('click', () => toggleModal(elements.theoryModal, true));
+    elements.openVideoBtn?.addEventListener('click', () => toggleModal(elements.videoModal, true));
+    elements.openQuestionsBtn?.addEventListener('click', () => toggleModal(elements.questionsModal, true));
+    elements.openTrainerBtn?.addEventListener('click', () => {
+        toggleModal(elements.trainerModal, true);
+        if (typeof initializeTrainer === 'function') initializeTrainer();
+    });
+
+    // ЗАКРИТТЯ МОДАЛОК
+    elements.closeTheoryBtn?.addEventListener('click', () => toggleModal(elements.theoryModal, false));
+    elements.closeVideoBtn?.addEventListener('click', () => toggleModal(elements.videoModal, false));
+    elements.closeQuestionsBtn?.addEventListener('click', () => toggleModal(elements.questionsModal, false));
+    elements.closeTrainerBtn?.addEventListener('click', () => toggleModal(elements.trainerModal, false));
+
+    // ЗАКРИТТЯ КОЖНОГО ВІДЕОПЛЕЄРА
+    for (let i = 1; i <= 7; i++) {
+        elements[`closeVideoPlayerBtn${i}`]?.addEventListener('click', () => {
+            stopAllVideos();
+            toggleModal(elements[`videoPlayerModal${i}`], false);
+            toggleModal(elements.videoModal, true); // повернення до списку
+        });
+    }
+
+    // КЛІК ПО КАРТЦІ ВІДЕО
+    document.querySelectorAll('.video-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const videoId = card.dataset.video;
+            toggleModal(elements.videoModal, false);
+            stopAllVideos();
+            playVideo(videoId);
+            toggleModal(elements[`videoPlayerModal${videoId}`], true);
+        });
+    });
+
+    // ЗАКРИТТЯ ПО ОВЕРЛЕЮ АБО ESC
+    elements.modalOverlay.addEventListener('click', () => {
+        stopAllVideos();
+        toggleModal(elements.theoryModal, false);
+        toggleModal(elements.videoModal, false);
+        toggleModal(elements.questionsModal, false);
+        toggleModal(elements.trainerModal, false);
+        for (let i = 1; i <= 7; i++) {
+            toggleModal(elements[`videoPlayerModal${i}`], false);
+        }
+    });
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            stopAllVideos();
+            toggleModal(elements.theoryModal, false);
+            toggleModal(elements.videoModal, false);
+            toggleModal(elements.questionsModal, false);
+            toggleModal(elements.trainerModal, false);
+            for (let i = 1; i <= 7; i++) {
+                toggleModal(elements[`videoPlayerModal${i}`], false);
+            }
+        }
+    });
+
+       
+    // ========= ТРЕНАЖЕР=======
+   
+    let selectedOption = null;
+let correctAnswer = null;
+let currentQuestion = 1;
+let usedTypes = [];
+let usedSlopeExamples = [];
+let usedPerpExamples = []; // ДОДАНО!
+
+
+    const optionsText = [
+        "Однакова пряма",
+        "Різні паралельні прямі",
+        "Перпендикулярні прямі",
+        "Прямі, які перетинаються, але не є перпендикулярними"
+    ];
+
+    // === ТВОЇ 16 ПРИКЛАДІВ ===
+    const slopeExamples = [
+        { eq1: "y = -\\frac{3}{2}x + 4", eq2: "y + 3 = -\\frac{3}{2}(x - 4)", answer: "Різні паралельні прямі" },
+        { eq1: "y = -x + 7", eq2: "y = x - 5", answer: "Перпендикулярні прямі" },
+        { eq1: "y - 1 = 3(x - 4)", eq2: "y = 3x - 11", answer: "Однакова пряма" },
+        { eq1: "y = -2(x + 1)", eq2: "y = 2x - 1", answer: "Прямі, які перетинаються, але не є перпендикулярними" },
+        { eq1: "y = \\frac{1}{2}x - 2", eq2: "y + x = -x + 1", answer: "Перпендикулярні прямі" },
+        { eq1: "y = \\frac{1}{2}x - 2", eq2: "y + \\frac{1}{2}x = x + 1", answer: "Різні паралельні прямі" },
+        { eq1: "y + 1 = \\frac{1}{2}x - 1", eq2: "y + \\frac{1}{2}x = x - 2", answer: "Однакова пряма" },
+        { eq1: "y = -2x - 3", eq2: "y = \\frac{1}{2}x - 3", answer: "Перпендикулярні прямі" },
+        { eq1: "y - 1 = -2x + 1", eq2: "y = 2x - 1", answer: "Прямі, які перетинаються, але не є перпендикулярними" },
+        { eq1: "y = -x + 1", eq2: "y - x = -2x + 2", answer: "Різні паралельні прямі" },
+        { eq1: "y = -(x + 1)", eq2: "y - x = 2x - 1", answer: "Прямі, які перетинаються, але не є перпендикулярними" },
+        { eq1: "y + 2 = 2x - 1", eq2: "y - x = x - 3", answer: "Однакова пряма" },
+        { eq1: "y + 2x = x + 3", eq2: "y - x = -2x + 2", answer: "Різні паралельні прямі" },
+        { eq1: "y = \\frac{4}{3}x + 1", eq2: "y = -\\frac{3}{4}x", answer: "Перпендикулярні прямі" },
+        { eq1: "y = \\frac{4}{3}x + 1", eq2: "y - \\frac{4}{3}x = 1", answer: "Однакова пряма" },
+        { eq1: "y = 2x + 3", eq2: "y + 2x = 3", answer: "Прямі, які перетинаються, але не є перпендикулярними" }
+    ];
+
+    // === ПИТАННЯ 6: 13 ПЕРПЕНДИКУЛЯРНИХ ПРИКЛАДІВ ===
+const perpExamples = [
+    { text: "Знайдіть рівняння прямої, яка перпендикулярна до \\(y = \\frac{1}{2}x + 2\\) та проходить через точку \\((1; -3)\\).", correct: "y = -2x - 1", wrongs: ["y = -2x + 3", "y = \\frac{1}{2}x - 1", "y = 2x - 5"] },
+    { text: "Знайдіть рівняння прямої, яка перпендикулярна до \\(y = -2x + 1\\) та проходить через точку \\((-2; 3)\\).", correct: "y = \\frac{1}{2}x + 4", wrongs: ["y = \\frac{1}{2}x - 1", "y = -2x + 7", "y = 2x + 4"] },
+    { text: "Знайдіть рівняння прямої, яка перпендикулярна до \\(y = -\\frac{2}{3}x - 1\\) та проходить через точку \\((2; 1)\\).", correct: "y = \\frac{3}{2}x - 2", wrongs: ["y = \\frac{3}{2}x + 1", "y = -\\frac{2}{3}x + 5", "y = \\frac{2}{3}x - 2"] },
+    { text: "Знайдіть рівняння прямої, яка перпендикулярна до \\(y = 3x - 2\\) та проходить через точку \\((3; -1)\\).", correct: "y = -\\frac{1}{3}x", wrongs: ["y = -\\frac{1}{3}x + 2", "y = 3x - 10", "y = \\frac{1}{3}x"] },
+    { text: "Знайдіть рівняння прямої, яка перпендикулярна до \\(y = 3x + 2\\) та проходить через точку \\((-6; 3)\\).", correct: "y = -\\frac{1}{3}x + 1", wrongs: ["y = -\\frac{1}{3}x - 1", "y = 3x + 21", "y = \\frac{1}{3}x + 1"] },
+    { text: "Знайдіть рівняння прямої, яка перпендикулярна до \\(y = -3x - 2\\) та проходить через точку \\((-3; 6)\\).", correct: "y = \\frac{1}{3}x + 7", wrongs: ["y = \\frac{1}{3}x + 5", "y = -3x + 15", "y = -\\frac{1}{3}x + 7"] },
+    { text: "Знайдіть рівняння прямої, яка перпендикулярна до \\(y = \\frac{1}{2}x - 3\\) та проходить через точку \\((2; -2)\\).", correct: "y = -2x + 2", wrongs: ["y = -2x - 2", "y = \\frac{1}{2}x + 2", "y = 2x + 2"] },
+    { text: "Знайдіть рівняння прямої, яка перпендикулярна до \\(y = -\\frac{1}{5}x + 5\\) та проходить через точку \\((-1; -5)\\).", correct: "y = 5x", wrongs: ["y = 5x + 3", "y = -\\frac{1}{5}x", "y = -5x"] },
+    { text: "Знайдіть рівняння прямої, яка перпендикулярна до \\(y = -x + \\frac{1}{2}\\) та проходить через точку \\((4; -3)\\).", correct: "y = x - 7", wrongs: ["y = x + 1", "y = -x - 7", "y = -x - 3"] },
+    { text: "Знайдіть рівняння прямої, яка перпендикулярна до \\(y = -x + 1\\) та проходить через точку \\((-1; -1)\\).", correct: "y = x", wrongs: ["y = x + 2", "y = -x", "y = x - 2"] },
+    { text: "Знайдіть рівняння прямої, яка перпендикулярна до \\(y = \\frac{3}{2}x - 1\\) та проходить через точку \\((6; -5)\\).", correct: "y = -\\frac{2}{3}x - 1", wrongs: ["y = -\\frac{2}{3}x + 3", "y = \\frac{3}{2}x - 1", "y = \\frac{2}{3}x - 1"] },
+    { text: "Знайдіть рівняння прямої, яка перпендикулярна до \\(y = -\\frac{3}{4}x + 1\\) та проходить через точку \\((3; 6)\\).", correct: "y = \\frac{4}{3}x + 2", wrongs: ["y = \\frac{4}{3}x - 2", "y = -\\frac{3}{4}x + 6", "y = -\\frac{4}{3}x + 2"] },
+    { text: "Знайдіть рівняння прямої, яка перпендикулярна до \\(y = 4x + 2\\) та проходить через точку \\((-4; 3)\\).", correct: "y = -\\frac{1}{4}x + 2", wrongs: ["y = -\\frac{1}{4}x - 2", "y = 4x + 19", "y = \\frac{1}{4}x + 2"] }
+];
+
+
+  // === ПИТАННЯ 5: паралельна (БЕЗ ЗНАКІВ "+-") ===
+function generateParallelTask() {
+    givenK = rand(2, 6) * (rand(0,1) ? 1 : -1);
+    givenB = rand(1, 8) * (rand(0,1) ? 1 : -1);
+    pointX = rand(1, 5) * (rand(0,1) ? 1 : -1);
+    pointY = rand(1, 5) * (rand(0,1) ? 1 : -1);
+
+    const correctB = pointY - givenK * pointX;
+
+    // УНІКАЛЬНА ФОРМУЛА ДЛЯ ПРАВИЛЬНОГО ЗНАКУ
+    const sign = correctB >= 0 ? "+" : "-";
+    correctEq = `y = ${givenK}x ${sign} ${Math.abs(correctB)}`;
+    correctAnswer = correctEq;
+}
+
+function getWrongParallelOptions() {
+    const correctB = pointY - givenK * pointX;
+    const wrongs = [];
+
+    // 1) той самий k, інший b
+    const b1 = rand(2,7)*(rand(0,1)?1:-1);
+    wrongs.push(`y = ${givenK}x ${b1 >= 0 ? "+" : "-"} ${Math.abs(b1)}`);
+
+    // 2) ще один хибний b
+    let b2;
+    do { b2 = rand(2,7)*(rand(0,1)?1:-1); } while (b2 === correctB || b2 === b1);
+    wrongs.push(`y = ${givenK}x ${b2 >= 0 ? "+" : "-"} ${Math.abs(b2)}`);
+
+    // 3) протилежний k, правильний b
+    wrongs.push(`y = ${-givenK}x ${correctB >= 0 ? "+" : "-"} ${Math.abs(correctB)}`);
+
+    return wrongs;
+}
+
+    function rand(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    let line1 = {}, line2 = {};
+
+    // === Генерація випадкових загальних рівнянь (питання 1-2) ===
+    function generateGeneral() {
+        let type;
+        do {
+            type = rand(0, 3);
+        } while (usedTypes.includes(type));
+        usedTypes.push(type);
+
+        if (type === 0) { // однакова
+            const A = rand(1,9)*(rand(0,1)?1:-1);
+            const B = rand(1,9)*(rand(0,1)?1:-1);
+            const C = rand(1,20)*(rand(0,1)?1:-1);
+            const k = rand(2,5);
+            line1 = {A, B, C};
+            line2 = {A:A*k, B:B*k, C:C*k};
+            correctAnswer = optionsText[0];
+        }
+        else if (type === 1) { // різні паралельні
+            const A = rand(1,9)*(rand(0,1)?1:-1);
+            const B = rand(1,9)*(rand(0,1)?1:-1);
+            const k = rand(2,4);
+            const C1 = rand(1,20)*(rand(0,1)?1:-1);
+            let C2;
+            do { C2 = rand(1,20)*(rand(0,1)?1:-1); } while (C1*k === C2);
+            line1 = {A, B, C:C1};
+            line2 = {A:A*k, B:B*k, C:C2};
+            correctAnswer = optionsText[1];
+        }
+        else if (type === 2) { // перпендикулярні
+            const A1 = rand(1,9)*(rand(0,1)?1:-1);
+            const B1 = rand(1,9)*(rand(0,1)?1:-1);
+            line1 = {A:A1, B:B1, C:rand(1,20)*(rand(0,1)?1:-1)};
+            line2 = {A:B1, B:-A1, C:rand(1,20)*(rand(0,1)?1:-1)};
+            correctAnswer = optionsText[2];
+        }
+        else { // перетинаються
+            let A1,B1,A2,B2,dot;
+            do {
+                A1=rand(1,9)*(rand(0,1)?1:-1);
+                B1=rand(1,9)*(rand(0,1)?1:-1);
+                A2=rand(1,9)*(rand(0,1)?1:-1);
+                B2=rand(1,9)*(rand(0,1)?1:-1);
+                dot = A1*A2 + B1*B2;
+            } while (dot===0 || A1*B2===A2*B1);
+            line1 = {A:A1, B:B1, C:rand(1,20)*(rand(0,1)?1:-1)};
+            line2 = {A:A2, B:B2, C:rand(1,20)*(rand(0,1)?1:-1)};
+            correctAnswer = optionsText[3];
+        }
+    }
+
+    function formatGeneral(l) {
+        const a = l.A===1?"":l.A===-1?"-":l.A;
+        const b = l.B===1?"":l.B===-1?"-":l.B;
+        const signB = l.B>=0?"+":"";
+        const c = Math.abs(l.C);
+        return `\\(${a}x ${signB}${b}y = ${l.C>=0?c:"-"+c}\\)`;  
+    }
+
+    // === Вибір прикладу з 16 (питання 3-4) ===
+    function getSlopeExample() {
+        if (usedSlopeExamples.length === slopeExamples.length) {
+            usedSlopeExamples = []; // скидаємо, якщо всі пройдені
+        }
+        let idx;
+        do {
+            idx = rand(0, slopeExamples.length - 1);
+        } while (usedSlopeExamples.includes(idx));
+        usedSlopeExamples.push(idx);
+        return slopeExamples[idx];
+    }
+    
+    // === ПИТАННЯ 6: вибір з 13 готових ===
+function getPerpExample() {
+    if (usedPerpExamples.length === perpExamples.length) usedPerpExamples = [];
+    let idx;
+    do { idx = rand(0, perpExamples.length - 1); }
+    while (usedPerpExamples.includes(idx));
+    usedPerpExamples.push(idx);
+    return perpExamples[idx];
+}
+
+ // === ВІДОБРАЖЕННЯ ===
+function displayQuestion() {
+    elements.optionsContainer.innerHTML = '';
+
+    if (currentQuestion <= 2) {
+        generateGeneral();
+        elements.questionText.innerHTML = `Що описують наступні два рівняння?<br><br>${formatGeneral(line1)}<br>${formatGeneral(line2)}<br>`;
+        const shuffled = [...optionsText].sort(() => Math.random() - 0.5);
+        shuffled.forEach(t => {
+            const d = document.createElement('div'); d.className = 'option'; d.textContent = t; d.dataset.answer = t;
+            elements.optionsContainer.appendChild(d);
+        });
+    }
+    else if (currentQuestion <= 4) {
+        const ex = getSlopeExample();
+        correctAnswer = ex.answer;
+        elements.questionText.innerHTML = `Що описують наступні два рівняння?<br><br>\\(${ex.eq1}\\)<br>\\(${ex.eq2}\\)<br>`;
+        const shuffled = [...optionsText].sort(() => Math.random() - 0.5);
+        shuffled.forEach(t => {
+            const d = document.createElement('div'); d.className = 'option'; d.textContent = t; d.dataset.answer = t;
+            elements.optionsContainer.appendChild(d);
+        });
+    }
+    else if (currentQuestion === 5) {
+        generateParallelTask();
+        const wrongs = getWrongParallelOptions();
+        const all = [correctEq, ...wrongs].sort(() => Math.random() - 0.5);
+        elements.questionText.innerHTML = `Знайдіть рівняння прямої, яка <strong>паралельна</strong> до<br>\\(y = ${givenK}x ${givenB >= 0 ? "+" : ""}${givenB}\\)<br>та проходить через точку \\((${pointX}; ${pointY})\\).`;
+        all.forEach(eq => {
+            const d = document.createElement('div'); d.className = 'option'; d.innerHTML = `\\(${eq}\\)`; d.dataset.answer = eq;
+            elements.optionsContainer.appendChild(d);
+        });
+    }
+    else if (currentQuestion === 6) {
+        const ex = getPerpExample();
+        correctAnswer = ex.correct;
+        const all = [ex.correct, ...ex.wrongs].sort(() => Math.random() - 0.5);
+        elements.questionText.innerHTML = ex.text;
+        all.forEach(eq => {
+            const d = document.createElement('div'); d.className = 'option'; d.innerHTML = `\\(${eq}\\)`; d.dataset.answer = ex.correct;
+            elements.optionsContainer.appendChild(d);
+        });
+    }
+
+    elements.questionNumber.textContent = `Питання ${currentQuestion}`;
+
+    if (window.MathJax?.typesetPromise) {
+        MathJax.typesetPromise([elements.questionText, elements.optionsContainer]);
+    }
+
+    selectedOption = null;
+    elements.submitAnswer.disabled = true;
+    elements.optionsContainer.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+}
+
+
+    // === ВИБІР / ПЕРЕВІРКА ===
+    function selectOption(el) {
+        elements.optionsContainer.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+        el.classList.add('selected');
+        selectedOption = el.dataset.answer;
+        elements.submitAnswer.disabled = false;
+    }
+
+    function showFeedback(isCorrect) {
+        elements.feedback.innerHTML = isCorrect ? '✓ Ціль уражена!' : '✗ Промах! Спробуй ще!';
+        elements.feedback.className = `feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'} show`;
+
+       setTimeout(() => {
+            elements.feedback.classList.remove('show');
+             setTimeout(() => {
+            elements.feedback.innerHTML = '';
+            if (isCorrect) {
+                if (currentQuestion === 6) completeTrainer();
+                else { currentQuestion++; displayQuestion(); }
+            } else displayQuestion();
+        }, 300);
+    }, 1200);
+}
+     function completeTrainer() {
+        elements.optionsContainer.style.display = 'none';
+        elements.submitAnswer.style.display = 'none';
+        elements.questionText.style.display = 'none';
+        elements.questionNumber.parentElement.style.display = 'none';
+        elements.completionBlock.classList.remove('hidden');
+        elements.completionBlock.style.display = 'block';
+    }
+
+    // === ІНІЦІАЛІЗАЦІЯ ===
+    window.initializeTrainer = function () {
+        currentQuestion = 1;
+        usedTypes = [];
+        usedSlopeExamples = [];
+        elements.completionBlock.classList.add('hidden');
+        elements.optionsContainer.style.display = 'flex';
+        elements.submitAnswer.style.display = 'block';
+        elements.questionText.style.display = 'block';
+        elements.questionNumber.parentElement.style.display = 'flex';
+        displayQuestion();
+    };
+
+    // Події
+    elements.optionsContainer.addEventListener('click', e => {
+        const opt = e.target.closest('.option');
+        if (opt) selectOption(opt);
+    });
+
+    elements.submitAnswer.addEventListener('click', () => {
+        if (!selectedOption) return;
+        showFeedback(selectedOption === correctAnswer);
+    });
+
+    elements.resetTrainerBtn.addEventListener('click', () => {
+        initializeTrainer();
+    });
+
+    
+    function toggleModal(modal, show) {
+        modal.style.display = show ? 'flex' : 'none';
+        elements.modalOverlay.style.display = show ? 'block' : 'none';
+        document.body.style.overflow = show ? 'hidden' : 'auto';
+    }
+     // === ФЛЕШ-КАРТКИ ===
+    document.querySelectorAll('.question-card').forEach(card => {
+        card.addEventListener('click', () => {
+            card.classList.toggle('flipped');
+        });
+    });
+
+    // Відкриваємо модалку з картками
+    elements.openQuestionsBtn?.addEventListener('click', () => {
+        toggleModal(elements.questionsModal, true);
+        // Повертаємо всі картки лицьовою стороною
+        document.querySelectorAll('.question-card').forEach(c => c.classList.remove('flipped'));
+    });
+
+    elements.closeQuestionsBtn?.addEventListener('click', () => {
+        toggleModal(elements.questionsModal, false);
+    });
+});
+   
+</script>
+</body>
+</html>
