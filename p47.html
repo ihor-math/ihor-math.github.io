@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>47. Відстань від точки до прямої</title>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    console.log("MathJax is loaded and ready!");
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" onerror="console.error('Failed to load MathJax')"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        *, *:before, *:after { box-sizing: border-box; }
+        body {
+            margin: 0;
+            background: radial-gradient(circle at center, #0a0a0a 0%, #1a1a1a 40%, #2b2b2b 100%);
+            color: #e0e0e0;
+            font-family: 'Roboto Condensed', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        body.loaded { visibility: visible; opacity: 1; }
+
+        /* === ЗАГОЛОВОК === */
+        .title-box {
+            margin-top: 60px;
+            padding: 20px 40px;
+            background: linear-gradient(135deg, #1c2526, #2e3a3b);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+            border-radius: 16px;
+            max-width: 90%;
+            text-align: center;
+            border: 1px solid #3e4a4b;
+        }
+        .title-box h1 {
+            margin: 0;
+            font-size: 28px;
+            color: #ff4d4d;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 8px rgba(255,77,77,0.5);
+        }
+
+        /* === КАРТКИ РОЗДІЛІВ === */
+        .section-container {
+            margin-top: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+        }
+        .section {
+            width: 260px;
+            height: 200px;
+            background: linear-gradient(145deg, #1e2a2b, #2c3e40);
+            border-radius: 14px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.45);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            border: 1px solid rgba(255,77,77,0.15);
+        }
+        .section:hover {
+            transform: scale(1.06);
+            box-shadow: 0 10px 25px rgba(255,77,77,0.25);
+            background: linear-gradient(145deg, #253435, #334c4e);
+        }
+        .section h2 {
+            font-size: 20px;
+            color: #ffffff;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .section img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 15px;
+            object-fit: cover;
+            border-radius: 8px;
+            filter: brightness(1.3) drop-shadow(0 0 6px #ff4d4d);
+        }
+
+        /* === МОДАЛЬНІ ВІКНА === */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 5%; left: 5%; width: 90%; height: 90%;
+            background: linear-gradient(135deg, #2b3a3b, #3e5c5e);
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            z-index: 1001;
+            overflow: hidden;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            border: 1px solid rgba(255,77,77,0.2);
+        }
+        #modalOverlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 999;
+            backdrop-filter: blur(6px);
+        }
+        .modal-content {
+            padding: 20px;
+            flex-grow: 1;
+            background: #2b3a3b;
+            border-radius: 10px;
+            margin: 10px;
+            color: #e0e0e0;
+            width: calc(100% - 20px);
+            overflow-y: auto;
+            display: block;
+            max-height: calc(100% - 60px);
+        }
+        .modal-content::-webkit-scrollbar { width: 6px; }
+        .modal-content::-webkit-scrollbar-track { background: transparent; }
+        .modal-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #1c2526, #2e3a3b);
+            border-radius: 3px;
+        }
+        .modal-header {
+            background: linear-gradient(0deg, #2b3a3b, #3e5c5e);
+            padding: 8px 12px;
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1002;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            border-bottom: 1px solid rgba(255,77,77,0.2);
+        }
+        .close-btn {
+            background: linear-gradient(135deg, #c1121f, #e63946);
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Orbitron', sans-serif;
+            box-shadow: 0 2px 8px rgba(193,18,31,0.4);
+        }
+        .close-btn:hover {
+            background: linear-gradient(135deg, #780000, #c1121f);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(193,18,31,0.5);
+        }
+
+        /* === ТЕОРІЯ === */
+        .theory-content h2 {
+            color: #ff4d4d;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(255,77,77,0.5);
+            margin-bottom: 20px;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .theory-content p, .theory-content li {
+            color: #e0e0e0;
+            font-size: clamp(18px, 3vw, 20px);
+            line-height: 1.7;
+            text-align: justify;
+        }
+        .example {
+            background: rgba(255,77,77,0.1);
+            font-size: 1.2rem;
+            border-left: 4px solid #ff4d4d;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 6px;
+            font-weight: bold;
+            color: #ff9999;
+        }
+        .solution {
+            background: rgba(255,77,77,0.15);
+            border: 2px solid #ff4d4d;
+            padding: 10px;
+            margin: 15px 0;
+            border-radius: 6px;
+            text-align: center;
+            color: #ff4d4d;
+            font-weight: bold;
+        }
+        .math-notation-centered {
+            display: block;
+            text-align: center;
+            font-size: clamp(18px, 3vw, 20px);
+            margin: 12px 0;
+            color: #ffff99;
+        }
+        mjx-container { color: #ffff99 !important; font-style: italic !important; }
+        mjx-container {
+    font-size: clamp(18px, 3vw, 20px) !important;
+      
+}
+         mjx-frac {
+            font-size: 1.0em !important;
+            padding: 2px !important;
+        }
+        mjx-num, mjx-den {
+            padding: 2px !important;
+        }
+        mjx-msqrt, mjx-msup, mjx-msub, mjx-munderover {
+    font-size: 1.05em !important;
+}
+      
+
+
+
+        /* === ВІДЕО === */
+        .video-card {
+            width: 350px;
+            height: 250px;
+            background: #54362a;
+            border-radius: 15px;
+            border: 1px solid rgba(144, 224, 239, 0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 10px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            color: #adff2f;
+        }
+        .video-card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+        }
+        .video-card img {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 8px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+        .video-card h3 {
+            font-size: clamp(16px, 2.5vw, 18px);
+            font-weight: 600;
+            margin: 0;
+        }
+        .video-player-container {
+            width: 80vw;
+            max-width: 960px;
+            aspect-ratio: 16 / 9;
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .video-player-container iframe {
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            display: block;
+            border: none;
+        }
+
+        /* === ПИТАННЯ === */
+        .question-card {
+            perspective: 1000px;
+            margin: 20px auto;
+            max-width: 964px;
+            width: 100%;
+            min-height: 150px;
+            cursor: pointer;
+        }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            min-height: 200px;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .question-card.flipped .card-inner { transform: rotateY(180deg); }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            min-height: 200px;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            text-align: center;
+            border: 1px solid rgba(255,77,77,0.2);
+        }
+        .card-front {
+            background: #1c2526;
+            color: #ffffff;
+        }
+        .card-back {
+            background: linear-gradient(135deg, #1a1a1a, #2b2b2b);
+            color: #e0e0e0;
+            transform: rotateY(180deg);
+            text-align: justify;
+            padding: 20px;
+        }
+        .card-front span, .card-back span {
+            font-size: clamp(17px, 3vw, 19px);
+            line-height: 1.4;
+        }
+        #questionsModal mjx-container { color: #ffff99 !important; font-style: normal !important; font-weight: 500 !important; }
+
+        /* === ТРЕНАЖЕР === */
+        .trainer-container {
+            width: 90%;
+            max-width: 800px;
+            padding: 3vw 4vw;
+            text-align: center;
+            background: linear-gradient(135deg, #1c1c1c, #2a2a2a);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(255,77,77,0.15);
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100%;
+            border: 1px solid rgba(255,77,77,0.2);
+        }
+        .question-circle {
+            width: clamp(80px, 15vw, 120px);
+            height: clamp(80px, 15vw, 120px);
+            margin: 0 auto 3vw;
+            background: linear-gradient(135deg, #c1121f, #e63946);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(193,18,31,0.4);
+        }
+        .question-circle h3 {
+            color: #ffffff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(16px, 2.5vw, 20px);
+            margin: 0;
+            text-shadow: 0 0 6px rgba(0,0,0,0.5);
+        }
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2vw;
+            justify-content: center;
+            margin-bottom: 3vw;
+            width: 100%;
+        }
+        .option {
+            padding: 1.5vw 3vw;
+            border: 1.5px solid #c1121f;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #2b3a3b, #3e5c5e);
+            cursor: pointer;
+            font-size: clamp(15px, 3.5vw, 18px);
+            min-height: 45px;
+            max-width: 45%;
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+            transition: all 0.3s ease;
+            color: #e0e0e0;
+        }
+        .option:hover {
+            background: linear-gradient(135deg, #c1121f, #e63946);
+            transform: scale(1.03);
+            border-color: #ff4d4d;
+            box-shadow: 0 4px 12px rgba(193,18,31,0.3);
+        }
+        .option.selected {
+            background: linear-gradient(135deg, #ff4d4d, #ff6666) !important;
+            color: #ffffff !important;
+            border: 2px solid #ffffff !important;
+            font-weight: bold;
+        }
+            mjx-container.math-notation-centered * {
+    color: #ffff99 !important;
+    font-style: italic !important;
+}
+
+    /* Білий текст усього тренажера */
+#trainerModal {
+  color: #ffffff;
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+}
+
+/* Формули — жовті */
+#trainerModal mjx-container {
+  color: #ffff99 !important;
+  font-style: italic !important;
+  background: none !important;
+}
+
+/* Текст питання */
+#trainerModal .question-text {
+  color: #ffffff !important;
+  font-style: normal !important;
+  text-align: center;
+  font-size: clamp(16px, 3vw, 18px);
+  line-height: 1.5;
+}
+
+/* Формули всередині тексту питання */
+#trainerModal .question-text mjx-container {
+  color: #ffff99 !important;
+}
+
+/* Варіанти відповідей */
+#trainerModal .options-container mjx-container {
+  color: #ffff99 !important;
+  font-style: italic !important;
+  background: none !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+  font-size: clamp(16px, 3vw, 18px) !important;
+}
+
+/* Центровані окремі формули */
+#trainerModal .math-notation-centered {
+  color: #ffff99 !important;
+  font-style: italic;
+  text-align: center;
+  font-size: clamp(18px, 3vw, 20px);
+  margin: 10px 0;
+}
+/* Білий текст */
+.question-text, #trainerModal, #trainerModal .options-container {
+    color: #ffffff;
+}
+
+/* Формули MathJax — жовті */
+#trainerModal mjx-container {
+    color: #ffff99 !important;
+    font-style: normal !important;
+}
+
+/* Жовті формули MathJax */
+.math-formula mjx-container {
+    color: #ffff99 !important;
+    font-style: normal !important;
+}
+
+
+        button {
+            background: linear-gradient(135deg, #c1121f, #e63946);
+            color: #ffffff;
+            border: none;
+            border-radius: 25px;
+            padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 24px);
+            font-size: clamp(16px, 3vw, 18px);
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(193,18,31,0.3);
+        }
+        button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #780000, #c1121f);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(193,18,31,0.4);
+        }
+        button:disabled { background: #555; cursor: not-allowed; }
+
+        .feedback {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(24px, 5.8vw, 30px);
+            font-family: 'Orbitron', sans-serif;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+            z-index: 1001;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            text-align: center;
+            border: 2px solid transparent;
+        }
+        .feedback.show { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+        .correct-feedback { color: #ffffff; background: linear-gradient(135deg, #2a9d8f, #2a9d8f); border-color: #2a9d8f; }
+        .incorrect-feedback { color: #ffffff; background: linear-gradient(135deg, #e63946, #c1121f); border-color: #e63946; }
+
+        /* === МЕДАЛЬ З ТРИЗУБОМ === */
+        .completion-emoji {
+            position: relative;
+            display: inline-block;
+            width: clamp(56px, 12vw, 96px);
+            height: clamp(56px, 12vw, 96px);
+            vertical-align: middle;
+            margin: 0 auto 3vw;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1c2526, #2e3a3b);
+            border: 3px dashed #ffd700;
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+            overflow: hidden;
+            animation: medalAppear 0.8s ease-out;
+        }
+        .completion-emoji::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><filter id='s' x='-50%' y='-50%' width='200%' height='200%'><feDropShadow dx='0' dy='2' stdDeviation='2' flood-color='%23000000' flood-opacity='0.25'/></filter></defs><rect x='30' y='0' width='60' height='40' rx='4' fill='%23007ACC'/><rect x='30' y='20' width='60' height='20' rx='4' fill='%23FFD700'/><g transform='translate(60,70)'><polygon points='0,-26 6,-6 26,-6 9,6 15,26 0,14 -15,26 -9,6 -26,-6 -6,-6' fill='%23FFD700' filter='url(%23s)'/></g></svg>");
+            background-size: 75%;
+            background-repeat: no-repeat;
+            background-position: center 60%;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+            animation: medalBounce 1.2s ease-out 0.3s both;
+        }
+        @keyframes medalAppear {
+            0% { transform: scale(0.3) rotate(-180deg); opacity: 0; }
+            60% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes medalBounce {
+            0% { transform: translateY(-120px) rotate(-30deg) scale(0.4); opacity: 0; }
+            60% { transform: translateY(15px) rotate(10deg) scale(1.15); opacity: 1; }
+            80% { transform: translateY(-8px) rotate(-5deg) scale(1.05); }
+            100% { transform: translateY(0) rotate(0) scale(1); }
+        }
+
+        .completion-message {
+            background: linear-gradient(135deg, #ff4d4d, #ff6666);
+            border: 2.5px solid #ffffff;
+            border-radius: 15px;
+            padding: clamp(12px, 3vw, 18px);
+            box-shadow: 0 6px 12px rgba(255,77,77,0.4);
+            margin: 2vw auto;
+            max-width: 90%;
+            text-align: center;
+        }
+        .completion-message h2 {
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        .completion-message p { color: #ffffff; }
+
+        #completionModal .modal-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+        #completionModal .completion-message {
+            text-align: center;
+            max-width: 500px;
+        }
+
+        /* === НАВІГАЦІЯ === */
+        .navigation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px auto;
+            max-width: 1000px;
+        }
+        .nav-button {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #2b3a3b, #3e5c5e);
+            color: #e0e0e0;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,77,77,0.3);
+            font-weight: bold;
+        }
+        .nav-button:hover {
+            background: linear-gradient(135deg, #c1121f, #e63946);
+            color: #ffffff;
+            transform: scale(1.03);
+            box-shadow: 0 4px 12px rgba(193,18,31,0.3);
+        }
+        .nav-button svg { margin-right: 8px; fill: currentColor; }
+            
+
+        /* === АДАПТИВНІСТЬ === */
+        @media (max-width: 768px) {
+            .title-box { margin-top: 40px; padding: 15px 20px; }
+            .title-box h1 { font-size: 24px; }
+            .section-container { flex-direction: column; align-items: center; gap: 20px; }
+            .section { width: 80%; height: 180px; }
+            .modal { top: 2%; left: 2%; width: 96%; height: 96%; }
+            .options-container { flex-direction: column; }
+            .option { max-width: 100%; }
+            .video-card-container {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            .video-card {
+                width: 260px;
+                height: 160px;
+                margin: 5px;
+            }
+            .video-card img {
+                width: 40px;
+                height: 40px;
+                margin-bottom: 6px;
+            }
+            .video-player-container {
+                width: 80vw;
+                max-width: 600px;
+                aspect-ratio: 16 / 9;
+            }
+            .video-card h3 {
+                font-size: clamp(14px, 2.5vw, 16px);
+            }
+        }
+        @media (max-width: 480px) {
+            .title-box h1 { font-size: 20px; }
+            .section { width: 90%; height: 150px; }
+            .section h2 { font-size: 16px; }
+ mjx-container {
+    font-size: clamp(14px, 2.5vw, 17px) !important;
+     }
+             .example {
+            font-size: 1.0rem;
+                   }
+             .theory-content h2 {
+            font-size: 18px !important;
+        }
+            .video-card-container {
+                gap: 10px;
+                padding: 10px;
+            }
+            .video-card {
+                width: 90%;
+                max-width: 260px;
+                height: 140px;
+                margin: 5px;
+            }
+            .video-card img {
+                width: 30px;
+                height: 30px;
+                margin-bottom: 5px;
+            }
+            .video-card h3 {
+                font-size: clamp(12px, 2.5vw, 14px);
+            }
+            .video-player-container {
+                width: 80vw;
+                max-width: 400px;
+                aspect-ratio: 16 / 9;
+            }
+         .question-circle h3 {
+           
+            font-size: clamp(13px, 2vw, 14px);
+           
+        }
+             .feedback {
+           
+            font-size: clamp(16px, 3vw, 17px);
+           
+        }
+                    }
+            
+    </style>
+</head>
+<body>
+
+    <div class="title-box">
+        <h1>47. Відстань від точки до прямої</h1>
+    </div>
+
+     <div class="section-container">
+        <div class="section" id="openTheoryBtn">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Книга" loading="lazy">
+            <h2>Теоретичні відомості</h2>
+        </div>
+        <div class="section" id="openVideoBtn">
+            <img src="https://img.icons8.com/fluency/96/video.png" alt="Відео" loading="lazy">
+            <h2>Відеоматеріали</h2>
+        </div>
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Картки" loading="lazy">
+            <h2>Питання і відповіді</h2>
+        </div>
+        <div class="section" id="openTrainerBtn">
+            <img src="https://img.icons8.com/fluency/96/flash-on.png" alt="Тренажер" loading="lazy">
+            <h2>Тренажер</h2>
+        </div>
+    </div>
+
+    <div class="navigation-buttons">
+       <a class="nav-button" href="{{ url_for('tema9') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            До теми 9
+        </a>
+        <a class="nav-button" href="{{ url_for('home') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            На головну
+        </a>
+    </div>
+
+    </div>
+
+    <!-- ТЕОРІЯ -->
+    <div id="theoryModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeTheoryBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="theory-content">
+    <h2>Відстань від точки до прямої</h2>
+    
+    <p>Нехай пряма \( l \) задана своїм загальним рівнянням:</p>
+    <p class="math-notation-centered">
+        \[ Ax + By + C = 0, \]
+    </p>
+    <p>а точка \( M_0(x_0; y_0) \) — довільна точка площини.</p>
+    
+    <p>Відстань \( d \) від точки \( M_0 \) до прямої \( l \) визначається як модуль проекції вектора \( \overrightarrow{M_1 M_0} \), де \( M_1(x_1; y_1) \) — довільна точка на прямій \( l \), на нормальний вектор \( \vec{n} = (A; B) \) прямої (рис. 9.30).</p>
+    
+    <p>Таким чином:</p>
+    <p class="math-notation-centered">
+        \[ d = |\operatorname{пр}_{\vec{n}} \overrightarrow{M_1 M_0}| = \frac{|\overrightarrow{M_1 M_0} \cdot \vec{n}|}{|\vec{n}|}. \]
+    </p>
+    
+    <p>Оскільки \( \overrightarrow{M_1 M_0} = (x_0 - x_1; y_0 - y_1) \) і \( \vec{n} = (A; B) \), то</p>
+    <p class="math-notation-centered">
+        \[ d = \frac{|(x_0 - x_1)A + (y_0 - y_1)B|}{\sqrt{A^2 + B^2}}. \]
+    </p>
+    
+    <p>Розкриваємо дужки:</p>
+    <p class="math-notation-centered">
+        \[ d = \frac{|Ax_0 + By_0 - Ax_1 - By_1|}{\sqrt{A^2 + B^2}}. \]
+    </p>
+    
+    <p>Точка \( M_1 \) лежить на прямій, тому \( Ax_1 + By_1 + C = 0 \implies C = -Ax_1 - By_1 \).</p>
+    <p>Підставляємо:</p>
+    <p class="math-notation-centered">
+        \[ d = \frac{|Ax_0 + By_0 + C|}{\sqrt{A^2 + B^2}} \quad (9.20) \]
+    </p>
+    
+    <p class="important">Формула (9.20) — відстань від точки \( M_0(x_0; y_0) \) до прямої \( Ax + By + C = 0 \).</p>
+    
+    <div class="example">
+        <strong>Приклад 9.19.</strong> Знайти відстань від точки \( M(5; 4) \) до прямої \( 4x + 3y - 12 = 0 \).
+    </div>
+    <p>Використаємо формулу (9.20):</p>
+    <p class="math-notation-centered">
+        \[ d = \frac{|4 \cdot 5 + 3 \cdot 4 - 12|}{\sqrt{4^2 + 3^2}} = \frac{|20 - 12|}{5} = \frac{8}{5} = 4. \]
+    </p>
+    <p class="solution">Відповідь: \( d = 4 \).</p>
+    
+    <div class="example">
+        <strong>Приклад 9.20.</strong> Знайти відстань між паралельними прямими \( 6x + 8y - 5 = 0 \) і \( y = -\frac{3}{4}x + \frac{15}{8} \).
+    </div>
+    <p>Візьмемо точку на другій прямій: при \( x = 0 \), \( y = \frac{15}{8} \), тобто \( M(0; \frac{15}{8}) \).</p>
+    <p class="math-notation-centered">
+        \[ d = \frac{\left|6 \cdot 0 + 8 \cdot \frac{15}{8} - 5\right|}{\sqrt{6^2 + 8^2}} = \frac{|15 - 5|}{\sqrt{100}} = \frac{10}{10} = 1. \]
+    </p>
+    <p class="solution">Відповідь: \( d = 1 \).</p>
+    
+    <div class="note">
+        <p><strong>Примітка.</strong> Відстань між паралельними прямими</p>
+        <p class="math-notation-centered">
+            \[ Ax + By + C_1 = 0 \quad \text{і} \quad Ax + By + C_2 = 0 \]
+        </p>
+        <p>обчислюється за формулою:</p>
+        <p class="math-notation-centered">
+            \[ d = \frac{|C_2 - C_1|}{\sqrt{A^2 + B^2}} \quad (9.21) \]
+        </p>
+        <p>Для прикладу 9.20: друга пряма у загальному вигляді \( 6x + 8y - 15 = 0 \), тобто \( C_1 = -5 \), \( C_2 = -15 \).</p>
+        <p class="math-notation-centered">
+            \[ d = \frac{|-15 - (-5)|}{\sqrt{36 + 64}} = \frac{10}{10} = 1. \]
+        </p>
+    </div>
+</div>
+        </div>
+    </div>
+
+    <!-- ВІДЕО -->
+<div id="videoModal" class="modal" role="dialog" aria-modal="true">
+    <div class="modal-header">
+        <button class="close-btn" id="closeVideoBtn" aria-label="Закрити">× Закрити</button>
+    </div>
+    <div class="modal-content">
+
+        <!-- КАРТКА ВІДЕО (спочатку видно) -->
+        <div class="video-card-container" id="videoList">
+            <div class="video-card" id="singleVideoCard" data-video="https://www.youtube.com/embed/-NoVCtRSPCA">
+                <img src="https://img.icons8.com/fluency/48/play.png" alt="Відео" loading="lazy">
+                <h3>Загальне рівняння прямої та його окремі випадки</h3>
+            </div>
+        </div>
+
+        <!-- ПЛЕЄР (спочатку прихований) -->
+        <div class="video-player-container" id="videoPlayer" style="display:none;">
+            <iframe id="youtubeIframe" src="" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen></iframe>
+        </div>
+
+    </div>
+</div>
+
+           
+  
+    <!-- ПИТАННЯ -->
+<div id="questionsModal" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeQuestionsBtn">× Закрити</button>
+    </div>
+    <div class="modal-content">
+
+        <!-- КАРТКА 1 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>1. Яка формула відстані від точки до прямої?</span>
+                </div>
+                <div class="card-back">
+                    <span>\[ d = \frac{|Ax_0 + By_0 + C|}{\sqrt{A^2 + B^2}} \]</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- КАРТКА 2 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>2. Як обчислити відстань між двома паралельними прямими<br>
+                    \( Ax + By + C_1 = 0 \) і \( Ax + By + C_2 = 0 \)?</span>
+                </div>
+                <div class="card-back">
+                    <span>\[ d = \frac{|C_2 - C_1|}{\sqrt{A^2 + B^2}} \]</span>
+                </div>
+            </div>
+        </div>
+<!-- КАРТКА 3 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>3. Що означає \(d=0\)?</span></div>
+                <div class="card-back"><span>Точка лежить на прямій</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- ТРЕНАЖЕР -->
+    <div id="trainerModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeTrainerBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="trainer-container">
+                <div class="question-circle">
+                    <h3 id="questionNumber">Питання 1</h3>
+                </div>
+                <p id="questionText" class="math-notation-centered"></p>
+                <div class="options-container" id="optionsContainer"></div>
+                <button id="submitAnswer" disabled>Підтвердити</button>
+                <div id="feedback" class="feedback"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ЗАВЕРШЕННЯ -->
+    <div id="completionModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeCompletionBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="completion-message">
+                <div class="completion-emoji"></div>
+                <h2>МІСІЯ ВИКОНАНА!</h2>
+                <p>Солдате, ти — гордість України!</p>
+                <p><strong>СЛАВА УКРАЇНІ!</strong></p>
+                <button id="resetTrainerBtn">Спробувати ще раз!</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalOverlay"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.body.classList.add('loaded');
+
+            const els = {
+                openTheoryBtn: document.getElementById('openTheoryBtn'),
+                openVideoBtn: document.getElementById('openVideoBtn'),
+                openQuestionsBtn: document.getElementById('openQuestionsBtn'),
+                openTrainerBtn: document.getElementById('openTrainerBtn'),
+                theoryModal: document.getElementById('theoryModal'),
+                videoModal: document.getElementById('videoModal'),
+                questionsModal: document.getElementById('questionsModal'),
+                trainerModal: document.getElementById('trainerModal'),
+                completionModal: document.getElementById('completionModal'),
+                closeTheoryBtn: document.getElementById('closeTheoryBtn'),
+                closeVideoBtn: document.getElementById('closeVideoBtn'),
+                closeQuestionsBtn: document.getElementById('closeQuestionsBtn'),
+                closeTrainerBtn: document.getElementById('closeTrainerBtn'),
+                closeCompletionBtn: document.getElementById('closeCompletionBtn'),
+                modalOverlay: document.getElementById('modalOverlay'),
+                questionText: document.getElementById('questionText'),
+                optionsContainer: document.getElementById('optionsContainer'),
+                submitAnswer: document.getElementById('submitAnswer'),
+                feedback: document.getElementById('feedback'),
+                resetTrainerBtn: document.getElementById('resetTrainerBtn')
+            };
+
+
+
+
+
+            function toggleModal(modal, show) {
+                modal.style.display = show ? 'flex' : 'none';
+                els.modalOverlay.style.display = show ? 'block' : 'none';
+                document.body.style.overflow = show ? 'hidden' : 'auto';
+                if (show && window.MathJax?.typesetPromise) {
+                    MathJax.typesetPromise([modal]).catch(() => {});
+                }
+            }
+
+            els.openTheoryBtn.addEventListener('click', () => toggleModal(els.theoryModal, true));
+            els.openVideoBtn.addEventListener('click', () => toggleModal(els.videoModal, true));
+            els.openQuestionsBtn.addEventListener('click', () => toggleModal(els.questionsModal, true));
+            els.openTrainerBtn.addEventListener('click', () => { toggleModal(els.trainerModal, true); initTrainer(); });
+
+            [els.closeTheoryBtn, els.closeVideoBtn, els.closeQuestionsBtn, els.closeTrainerBtn, els.closeCompletionBtn].forEach(btn => {
+                btn.addEventListener('click', () => toggleModal(btn.closest('.modal'), false));
+            });
+
+            els.modalOverlay.addEventListener('click', () => {
+                document.querySelectorAll('.modal').forEach(m => toggleModal(m, false));
+            });
+
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') document.querySelectorAll('.modal').forEach(m => toggleModal(m, false));
+            });
+
+                                // ТРЕНАЖЕР — ДВА ЕТАПИ: ПРАЦЮЄ НА ВСІХ ПРИСТРОЯХ!
+let selected = null;
+let correctIndex = null;
+let stage = 1; // 1 = питання 1, 2 = питання 2
+            // === БАЗА ПИТАНЬ ===
+           const questionsStage1 = [
+                {
+                    text: `Знайти відстань від точки \\(M(5;4)\\) до прямої \\(4x+3y-12=0\\).`,
+                    correct: "4",
+                    wrong: ["6{,}4", "\\frac{5}{\\sqrt{3}}", "0{,}8"]
+                },
+                {
+                    text: `Знайти відстань від точки \\(M(-1;1)\\) до прямої \\(2x-3y-10=0\\).`,
+                    correct: "\\frac{15}{\\sqrt{13}}",
+                    wrong: ["\\frac{1}{\\sqrt{13}}", "\\frac{15}{13}", "\\frac{15}{\\sqrt{5}}"]
+                },
+                {
+                    text: `Знайти відстань від точки \\(M(2;3)\\) до прямої \\(-x+4y-1=0\\).`,
+                    correct: "\\frac{9}{\\sqrt{17}}",
+                    wrong: ["\\frac{10}{\\sqrt{17}}", "\\frac{9}{17}", "\\frac{10}{17}"]
+                },
+                {
+                    text: `Знайти відстань від точки \\(M(-3;5)\\) до прямої \\(4x-3y-5=0\\).`,
+                    correct: "6{,}4",
+                    wrong: ["5{,}4", "\\frac{32}{25}", "\\frac{27}{25}"]
+                },
+                {
+                    text: `Знайти відстань від точки \\(M(-3;5)\\) до прямої \\(-3x-4y+12=0\\).`,
+                    correct: "0{,}1",
+                    wrong: ["0{,}36", "4{,}2", "1{,}8"]
+                },
+                {
+                    text: `Знайти відстань від точки \\(M(-2;4)\\) до прямої \\(6x+8y=0\\).`,
+                    correct: "2",
+                    wrong: ["0{,}2", "1", "\\frac{20}{\\sqrt{14}}"]
+                },
+                {
+                    text: `Знайти відстань від точки \\(M(0;-5)\\) до прямої \\(5x-12y+5=0\\).`,
+                    correct: "5",
+                    wrong: ["2{,}6", "\\frac{60}{13}", "\\frac{20}{\\sqrt{3}}"]
+                },
+                {
+                    text: `Знайти відстань від точки \\(M(2;4)\\) до прямої \\(-15x+8y+15=0\\).`,
+                    correct: "1",
+                    wrong: ["\\frac{1}{17}", "5", "\\frac{2}{17}"]
+                },
+                {
+                    text: `Знайти відстань від точки \\(M(10;1)\\) до прямої \\(7x-24y-21=0\\).`,
+                    correct: "1",
+                    wrong: ["\\frac{1}{25}", "\\frac{46}{25}", "7"]
+                },
+                {
+                    text: `Знайти відстань від точки \\(M(2;-3)\\) до прямої \\(12x-5y=0\\).`,
+                    correct: "3",
+                    wrong: ["\\frac{1}{5}", "\\frac{51}{15}", "\\frac{3}{5}"]
+                },
+                {
+                    text: `Знайти відстань від точки \\(M(-1;-3)\\) до прямої \\(-9x+12y+12=0\\).`,
+                    correct: "1",
+                    wrong: ["\\frac{1}{15}", "\\frac{9}{5}", "5"]
+                },
+                {
+                    text: `Знайти відстань від точки \\(M(-7;0)\\) до прямої \\(2x+y+29=0\\).`,
+                    correct: "\\frac{15}{\\sqrt{5}}",
+                    wrong: ["\\frac{14}{\\sqrt{5}}", "3", "2{,}8"]
+                },
+                {
+                    text: `Знайти відстань від точки \\(M(-1;-2)\\) до прямої \\(-5x+12y-20=0\\).`,
+                    correct: "3",
+                    wrong: ["\\frac{19}{13}", "\\frac{39}{169}", "\\frac{19}{169}"]
+                }
+            ];
+             // === ПИТАННЯ 2 ===
+            const questionsStage2 = [
+                { text: `Знайти відстань між паралельними прямими \\(6x+8y-5=0\\) і \\(y=-\\frac{3}{4}x+\\frac{15}{8}\\).`, correct: "1", wrong: ["1{,}4", "0{,}1", "2{,}5"] },
+                { text: `Знайти відстань між паралельними прямими \\(5x-12y-26=0\\) і \\(y=\\frac{5}{12}x+\\frac{13}{6}\\).`, correct: "4", wrong: ["\\frac{13}{4}", "2", "3"] },
+                { text: `Знайти відстань між паралельними прямими \\(7x+24y-25=0\\) і \\(y=-\\frac{7}{24}x-\\frac{25}{24}\\).`, correct: "2", wrong: ["2{,}5", "1", "3"] },
+                { text: `Знайти відстань між паралельними прямими \\(3x+4y+1=0\\) і \\(y=-\\frac{3}{4}x+\\frac{7}{2}\\).`, correct: "3", wrong: ["2{,}5", "2", "4"] },
+                { text: `Знайти відстань між паралельними прямими \\(8x+15y-32=0\\) і \\(y=-\\frac{8}{15}x-\\frac{2}{15}\\).`, correct: "2", wrong: ["1", "3", "\\frac{35}{17}"] },
+                { text: `Знайти відстань між паралельними прямими \\(8x-6y-15=0\\) і \\(16x-12y-10=0\\).`, correct: "1", wrong: ["2", "3", "2{,}5"] },
+                { text: `Знайти відстань між паралельними прямими \\(-8x+6y+20=0\\) і \\(-4x+3y-10=0\\).`, correct: "4", wrong: ["2", "3", "2{,}5"] },
+                { text: `Знайти відстань між паралельними прямими \\(7x+24y-200=0\\) і \\(-14x-48y-100=0\\).`, correct: "10", wrong: ["5", "8", "12"] },
+                { text: `Знайти відстань між паралельними прямими \\(15x-8y+9=0\\) і \\(45x-24y-24=0\\).`, correct: "1", wrong: ["2", "\\frac{25}{17}", "\\frac{24}{17}"] },
+                { text: `Знайти відстань між паралельними прямими \\(24x-10y-120=0\\) і \\(-12x+5y-5=0\\).`, correct: "5", wrong: ["4", "6", "7"] }
+            ];
+
+           // === ЕТАП 3 — ВИСОТА ТРИКУТНИКА (h=) ===
+const questionsStage3 = [
+    { text: `У трикутнику \\(ABC\\) з вершинами \\(A(2;3)\\), \\(B(0;0)\\), \\(C(4;0)\\). Знайдіть висоту від вершини \\(A\\) до сторони \\(BC\\).`, correct: "3", wrong: ["2", "4", "5"] },
+    { text: `У трикутнику \\(ABC\\) з вершинами \\(A(1;2)\\), \\(B(0;0)\\), \\(C(3;0)\\). Знайдіть висоту від вершини \\(A\\) до сторони \\(BC\\).`, correct: "2", wrong: ["1", "3", "4"] },
+    { text: `У трикутнику \\(ABC\\) з вершинами \\(A(0;3)\\), \\(B(-2;0)\\), \\(C(2;0)\\). Знайдіть висоту від вершини \\(A\\) до сторони \\(BC\\).`, correct: "3", wrong: ["2", "4", "5"] },
+    { text: `У трикутнику \\(ABC\\) з вершинами \\(A(2;5)\\), \\(B(0;0)\\), \\(C(4;0)\\). Знайдіть висоту від вершини \\(A\\) до сторони \\(BC\\).`, correct: "5", wrong: ["2", "3", "4"] },
+    { text: `У трикутнику \\(ABC\\) з вершинами \\(A(3;4)\\), \\(B(0;0)\\), \\(C(6;0)\\). Знайдіть висоту від вершини \\(A\\) до сторони \\(BC\\).`, correct: "4", wrong: ["3", "5", "6"] },
+    { text: `У трикутнику \\(ABC\\) з вершинами \\(A(-7;2)\\), \\(B(0;5)\\), \\(C(0;0)\\). Знайдіть висоту від вершини \\(A\\) до сторони \\(BC\\).`, correct: "7", wrong: ["5", "2", "3{,}5"] },
+    { text: `У трикутнику \\(ABC\\) з вершинами \\(A(0;-2)\\), \\(B(1;-4)\\), \\(C(0;0)\\). Знайдіть висоту від вершини \\(B\\) до сторони \\(AC\\).`, correct: "1", wrong: ["3", "4", "2"] },
+    { text: `У трикутнику \\(ABC\\) з вершинами \\(A(0;0)\\), \\(B(0;-1)\\), \\(C(3;-5)\\). Знайдіть висоту від вершини \\(C\\) до сторони \\(AB\\).`, correct: "3", wrong: ["2", "5", "8"] },
+    { text: `У трикутнику \\(ABC\\) з вершинами \\(A(4;0)\\), \\(B(-2;5)\\), \\(C(0;0)\\). Знайдіть висоту від вершини \\(B\\) до сторони \\(AC\\).`, correct: "5", wrong: ["2", "3", "7"] },
+    { text: `У трикутнику \\(ABC\\) з вершинами \\(A(3;0)\\), \\(B(0;0)\\), \\(C(-6;1)\\). Знайдіть висоту від вершини \\(C\\) до сторони \\(AB\\).`, correct: "1", wrong: ["7", "5", "\\sqrt{37}"] },
+    { text: `У трикутнику \\(ABC\\) з вершинами \\(A(0;2)\\), \\(B(-6;2)\\), \\(C(0;0)\\). Знайдіть висоту від вершини \\(B\\) до сторони \\(AC\\).`, correct: "6", wrong: ["2", "4", "\\sqrt{40}"] }
+];
+
+            
+       // === ЕТАП 4 — ПРЯМА ПІД КУТОМ α ===
+const questionsStage4 = [
+    { text: `Пряма проходить через точку \\(P(1;2)\\) під кутом \\(\\alpha=45^\\circ\\) до осі \\(Ox\\). Знайдіть відстань від точки \\(M(3;1)\\) до цієї прямої.`, correct: "\\frac{3}{\\sqrt{2}}", wrong: ["1", "\\frac{2}{\\sqrt{2}}", "\\frac{3}{2}"] },
+    { text: `Пряма проходить через точку \\(P(\\sqrt{3};2)\\) під кутом \\(\\alpha=30^\\circ\\) до осі \\(Ox\\). Знайдіть відстань від точки \\(M(2\\sqrt{3};5)\\) до цієї прямої.`, correct: "\\sqrt{3}", wrong: ["2\\sqrt{3}", "\\frac{2}{\\sqrt{3}}", "\\frac{3}{2}"] },
+    { text: `Пряма проходить через точку \\(P(-\\sqrt{3};4)\\) під кутом \\(\\alpha=60^\\circ\\) до осі \\(Ox\\). Знайдіть відстань від точки \\(M(-\\sqrt{3};1)\\) до цієї прямої.`, correct: "1{,}5", wrong: ["4{,}5", "\\frac{9}{4}", "\\frac{3}{4}"] },
+    { text: `Пряма проходить через точку \\(P(-2;-1)\\) під кутом \\(\\alpha=45^\\circ\\) до осі \\(Ox\\). Знайдіть відстань від точки \\(M(4;-3)\\) до цієї прямої.`, correct: "4\\sqrt{2}", wrong: ["4", "\\sqrt{2}", "8\\sqrt{2}"] },
+    { text: `Пряма проходить через точку \\(P(4\\sqrt{3};-5)\\) під кутом \\(\\alpha=30^\\circ\\) до осі \\(Ox\\). Знайдіть відстань від точки \\(M(\\sqrt{3};-4)\\) до цієї прямої.`, correct: "2\\sqrt{3}", wrong: ["\\sqrt{3}", "3", "4\\sqrt{3}"] },
+    { text: `Пряма проходить через точку \\(P(-3\\sqrt{3};-1)\\) під кутом \\(\\alpha=60^\\circ\\) до осі \\(Ox\\). Знайдіть відстань від точки \\(M(2\\sqrt{3};0)\\) до цієї прямої.`, correct: "7", wrong: ["14", "1{,}5", "3{,}5"] },
+    { text: `Пряма проходить через точку \\(P(-2;3)\\) під кутом \\(\\alpha=45^\\circ\\) до осі \\(Ox\\). Знайдіть відстань від точки \\(M(7;10)\\) до цієї прямої.`, correct: "\\sqrt{2}", wrong: ["1", "4\\sqrt{2}", "2\\sqrt{2}"] },
+    { text: `Пряма проходить через точку \\(P(-\\sqrt{3};9)\\) під кутом \\(\\alpha=30^\\circ\\) до осі \\(Ox\\). Знайдіть відстань від точки \\(M(4\\sqrt{3};8)\\) до цієї прямої.`, correct: "3\\sqrt{3}", wrong: ["7\\sqrt{3}", "4{,}5", "6\\sqrt{3}"] },
+    { text: `Пряма проходить через точку \\(P(\\sqrt{3};5)\\) під кутом \\(\\alpha=60^\\circ\\) до осі \\(Ox\\). Знайдіть відстань від точки \\(M(7\\sqrt{3};3)\\) до цієї прямої.`, correct: "10", wrong: ["13", "5", "2"] },
+    { text: `Пряма проходить через точку \\(P(6;-2)\\) під кутом \\(\\alpha=45^\\circ\\) до осі \\(Ox\\). Знайдіть відстань від точки \\(M(11;-3)\\) до цієї прямої.`, correct: "3\\sqrt{2}", wrong: ["6", "1{,}5", "\\frac{3}{\\sqrt{2}}"] }
+];
+
+// ПОКАЗ ПИТАННЯ
+function displayQuestion() {
+    const list = stage === 1 ? questionsStage1 : 
+                 stage === 2 ? questionsStage2 : 
+                 stage === 3 ? questionsStage3 : questionsStage4;
+    const q = list[Math.floor(Math.random() * list.length)];
+
+    // ЗАГОЛОВОК
+    document.getElementById('questionNumber').textContent = 
+        stage === 1 ? 'Питання 1' : 
+        stage === 2 ? 'Питання 2' : 
+        stage === 3 ? 'Питання 3' : 'Питання 4';
+
+    els.questionText.style.opacity = 0;
+    els.optionsContainer.style.opacity = 0;
+    els.questionText.innerHTML = `<p class="question-text">${q.text}</p>`;
+
+    const allOptions = [q.correct, ...q.wrong].sort(() => Math.random() - 0.5);
+    correctIndex = allOptions.indexOf(q.correct);
+
+    els.optionsContainer.innerHTML = '';
+    allOptions.forEach((opt, i) => {
+        const div = document.createElement('div');
+        div.className = 'option';
+        div.dataset.value = i;
+
+        // d= для 1,2,4 | h= для 3
+        const prefix = (stage === 3) ? 'h=' : 'd=';
+        div.innerHTML = `<span class="math-formula">\\(${prefix}${opt}\\)</span>`;
+        
+        els.optionsContainer.appendChild(div);
+    });
+
+    selected = null;
+    els.submitAnswer.disabled = true;
+    document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+
+    if (window.MathJax && typeof MathJax.typesetPromise === 'function') {
+        MathJax.typesetPromise([els.questionText, els.optionsContainer]).then(() => {
+            els.questionText.style.opacity = 1;
+            els.optionsContainer.style.opacity = 1;
+        });
+    } else {
+        els.questionText.style.opacity = 1;
+        els.optionsContainer.style.opacity = 1;
+    }
+}
+
+// КЛІК
+els.optionsContainer.addEventListener('click', e => {
+    const opt = e.target.closest('.option');
+    if (!opt) return;
+    document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+    opt.classList.add('selected');
+    selected = opt.dataset.value;
+    els.submitAnswer.disabled = false;
+});
+
+// ПЕРЕВІРКА
+els.submitAnswer.addEventListener('click', () => {
+    const isCorrect = parseInt(selected) === correctIndex;
+    
+    els.feedback.textContent = isCorrect ? '✓ Ціль уражена!' : '✗ Промах! Нова ціль!';
+    els.feedback.className = `feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'} show`;
+    
+    setTimeout(() => {
+        els.feedback.classList.remove('show');
+        setTimeout(() => {
+            if (isCorrect) {
+                if (stage === 1) { stage = 2; displayQuestion(); }
+                else if (stage === 2) { stage = 3; displayQuestion(); }
+                else if (stage === 3) { stage = 4; displayQuestion(); }
+                else {
+                    toggleModal(els.trainerModal, false);
+                    toggleModal(els.completionModal, true);
+                }
+            } else {
+                displayQuestion(); // нове з того ж етапу
+            }
+        }, 300);
+    }, 1200);
+});
+
+// ПОВЕРНЕННЯ
+document.getElementById('resetTrainerBtn').textContent = 'Повернутися до полігону';
+els.resetTrainerBtn.addEventListener('click', () => {
+    stage = 1;
+    document.getElementById('questionNumber').textContent = 'Питання 1';
+    toggleModal(els.completionModal, false);
+    toggleModal(els.trainerModal, true);
+    displayQuestion();
+});
+
+// СТАРТ
+function initTrainer() {
+    stage = 1;
+    toggleModal(els.trainerModal, true);
+    displayQuestion();
+}
+
+                        // ——— ОДНЕ ВІДЕО: КЛІК → ГРАЄ, ЗАКРИТИ → ЗУПИНЯЄТЬСЯ ———
+            const videoList     = document.getElementById('videoList');
+            const videoCard     = document.getElementById('singleVideoCard');
+            const videoPlayer   = document.getElementById('videoPlayer');
+            const youtubeIframe = document.getElementById('youtubeIframe');
+
+            // Клік по картці
+           videoCard.addEventListener('click', () => {
+    // Якщо вже відкрито — нічого не робимо
+    if (videoPlayer.style.display === 'flex') return;
+
+    // Просто встановлюємо посилання БЕЗ autoplay
+    youtubeIframe.src = videoCard.dataset.video;
+
+    videoList.style.display   = 'none';
+    videoPlayer.style.display = 'flex';
+});
+
+            // Кнопка «Закрити»
+            els.closeVideoBtn.addEventListener('click', () => {
+                youtubeIframe.src = '';           // повністю зупиняємо
+                videoPlayer.style.display = 'none';
+                videoList.style.display   = 'flex';
+            });
+
+            // Якщо закриваємо через overlay або Esc
+            const resetVideo = () => {
+                if (youtubeIframe.src) {
+                    youtubeIframe.src = '';
+                    videoPlayer.style.display = 'none';
+                    videoList.style.display   = 'flex';
+                }
+            };
+            els.modalOverlay.addEventListener('click', resetVideo);
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape' && els.videoModal.style.display === 'flex') {
+                    resetVideo();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
