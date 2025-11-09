@@ -1,0 +1,2079 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>48. Коло</title>
+    <script>
+        window.MathJax = {
+            tex: {inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']]},
+            startup: {ready: () => MathJax.startup.defaultReady()}
+        };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@600;800&family=Orbitron:wght@700;900&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        *, *:before, *:after { box-sizing: border-box; }
+        body {
+            margin: 0;
+            background: radial-gradient(circle at center, #0b0e17 0%, #11131a 40%, #000000 100%);
+            color: #b0b7c9;
+            font-family: 'Roboto Condensed', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        body.loaded { visibility: visible; opacity: 1; }
+
+        /* ЗАГОЛОВОК — ХРОМ */
+        .title-box {
+            margin-top: 60px;
+            padding: 22px 50px;
+            background: linear-gradient(135deg, #1e2a38, #2c3e50);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.8), inset 0 0 20px rgba(100,150,255,0.15);
+            border-radius: 18px;
+            border: 2px solid #4a6588;
+            max-width: 90%;
+            text-align: center;
+        }
+        .title-box h1 {
+            margin: 0;
+            font-size: 32px;
+            color: #00d4ff;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 15px #00d4ff, 0 0 30px #0066ff;
+            letter-spacing: 3px;
+        }
+
+        /* КАРТКИ СЕКЦІЙ — МЕТАЛЕВІ ПЛАСТИНИ */
+        .section-container {
+            margin-top: 80px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        .section {
+            width: 260px;
+            height: 200px;
+            background: linear-gradient(145deg, #1c2533, #2d3848);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.7), inset 0 0 15px rgba(80,120,200,0.2);
+            border: 1px solid #00aaff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+        .section:hover {
+            transform: translateY(-12px) scale(1.07);
+            box-shadow: 0 8px 20px rgba(0,170,255,0.4), 0 0 30px #00aaff;
+            background: linear-gradient(145deg, #253340, #3a4f70);
+            border-color: #00ffff;
+        }
+        .section h2 {
+            font-size: 20px;
+            color: #00eeff;
+            font-family: 'Exo 2', sans-serif;
+            text-shadow: 0 0 10px #00aaff;
+        }
+        .section img {
+            width: 70px;
+            height: 70px;
+            filter: drop-shadow(0 0 12px #00aaff);
+        }
+
+        /* МОДАЛКИ — ТЕМНА СТАЛЬ */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 5%; left: 5%; width: 90%; height: 90%;
+            background: linear-gradient(135deg, #161f2e, #2c3e50);
+            border: 2px solid #00aaff;
+            border-radius: 18px;
+            box-shadow: 0 0 40px rgba(0,170,255,0.5);
+            z-index: 1001;
+            overflow: hidden;
+            flex-direction: column;
+        }
+        #modalOverlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.92);
+            backdrop-filter: blur(8px);
+            z-index: 999;
+        }
+        /* === КРАСИВА СМУЖКА ПРОКРУТКИ ДЛЯ ВСІХ БРАУЗЕРІВ === */
+.modal-content {
+    padding: 25px;
+    background: #161f2e;
+    overflow-y: auto;
+    max-height: calc(100% - 70px);
+    border-radius: 12px;
+    margin: 12px;
+    
+    /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: #2e3a3b #161f2e;
+}
+
+/* WebKit (Chrome, Edge, Safari) */
+.modal-content::-webkit-scrollbar { 
+    width: 8px; /* трошки товще — краще клікається на мобілках */
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 8px 0; /* відступи зверху/знизу, щоб не прилипала до країв */
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, 
+        #1c2526 0%, 
+        #2e3a3b 50%, 
+        #00aaff 100%); /* додав неоновий хайлайт! */
+    border-radius: 4px;
+    border: 1px solid rgba(0,170,255,0.3);
+    box-shadow: 0 0 8px rgba(0,170,255,0.4);
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #00aaff, #00ffff);
+    box-shadow: 0 0 15px rgba(0,255,255,0.8);
+}
+
+/* Коли модалка не активна — смужка тьмяніша */
+.modal-content::-webkit-scrollbar-thumb:active {
+    background: #00ffff;
+}
+    
+        .modal-header {
+            background: linear-gradient(0deg, #1e2a38, #2c3e50);
+            padding: 10px 15px;
+            border-bottom: 1px solid #00aaff;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .close-btn {
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-family: 'Exo 2', sans-serif;
+            font-weight: 800;
+            box-shadow: 0 0 15px #00aaff;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .close-btn:hover {
+            background: #00ffff;
+            box-shadow: 0 0 25px #00ffff;
+            transform: scale(1.1);
+        }
+
+        /* ТЕОРІЯ */
+        .theory-content h2 {
+            color: #00eeff;
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 15px #00aaff;
+        }
+        .example {
+            background: rgba(0,170,255,0.15);
+            border-left: 5px solid #c04000;
+            font-size: clamp(19px, 3vw, 20px);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            color: #a0eaff;
+        }
+        .solution {
+            background: rgba(0,255,255,0.15);
+            border: 2px solid #00ffff;
+            padding: 12px;
+            text-align: center;
+            color: #00ffff;
+            font-weight: bold;
+            border-radius: 8px;
+        }
+        mjx-container { color: #00ffff !important; font-style: italic !important; }
+        .math-notation-centered {
+            color: #00ffff;
+            text-align: center;
+            font-size: clamp(19px, 3vw, 22px);
+            margin: 15px 0;
+        }
+
+                        summary {
+    position: relative;
+    font-weight: 800;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #0d1b2a 0%, #1b2631 100%);
+    border-radius: 12px;
+    color: #e0f2fe;
+    font-family: 'Exo 2', sans-serif; /* міняй на свою, але Exo 2 тут як рідна */
+    font-size: 1.15rem;
+    letter-spacing: 0.8px;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.3),
+        0 0 20px rgba(0, 170, 255, 0.15);
+    cursor: pointer;
+    list-style: none;
+    overflow: hidden;
+    border: 1px solid rgba(0, 170, 255, 0.2);
+    user-select: none;
+}
+
+/* Ховаємо стандартну стрілку */
+summary::-webkit-details-marker,
+summary::marker {
+    display: none;
+}
+
+/* НЕОНОВА СТРІЛКА ЯКА ЖИВЕ СВОЇМ ЖИТТЯМ */
+summary::after {
+    content: "▼";
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #00aaff, #00ffff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: all 0.4s ease;
+    filter: drop-shadow(0 0 8px rgba(0, 255, 255, 0.6));
+}
+
+/* Поворот + підсвітка при відкритті */
+details[open] summary::after {
+    content: "▲";
+    transform: translateY(-50%) rotate(360deg);
+    filter: drop-shadow(0 0 15px rgba(0, 255, 255, 0.9));
+}
+
+/* ХОВЕР — ЦЕ ВОГОНЬ */
+summary:hover {
+    background: linear-gradient(135deg, #1b2631 0%, #2c3e50 100%);
+    border-color: #00aaff;
+    box-shadow: 
+        0 8px 25px rgba(0, 0, 0, 0.4),
+        0 0 30px rgba(0, 170, 255, 0.4);
+    transform: translateY(-2px);
+    color: #ffffff;
+}
+
+summary:hover::after {
+    transform: translateY(-50%) scale(1.3);
+    filter: drop-shadow(0 0 20px rgba(0, 255, 255, 1));
+}
+
+/* Пульсуюча неонова обводка при фокусі (для клавіатури) */
+summary:focus-visible {
+    outline: none;
+    box-shadow: 
+        0 0 0 3px rgba(0, 170, 255, 0.5),
+        0 0 40px rgba(0, 255, 255, 0.6);
+}
+
+/* Дрібний бонус — підсвітка при відкритті */
+details[open] summary {
+    border-bottom: 3px solid #00ffff;
+    border-radius: 12px 12px 0 0;
+    background: linear-gradient(135deg, #0d1b2a 0%, #16213e 100%);
+    box-shadow: 
+        0 -4px 20px rgba(0, 255, 255, 0.3),
+        0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+    /* === ОСНОВНИЙ ТЕКСТ ТЕОРІЇ — РОЗМІР, ШРИФТ, ВІДСТУПИ === */
+.theory-content p,
+.modal-content-style p,
+details p {
+    font-family: 'Exo 2', 'Segoe UI', sans-serif; /* або твоя основна */
+    font-size: 1.2rem;           /* ← ОЦЕ І Є ТВІЙ РОЗМІР! */
+    line-height: 1.85;            /* висота рядка — щоб очі не боліли */
+    color: #cdd6f4;               /* світло-блакитний, не сліпить */
+    margin: 18px 0;               /* відступи між абзацами */
+    text-align: justify;         /* або left, якщо не любиш вирівнювання */
+    hyphens: auto;                /* гарний перенос слів на мобілках */
+}
+
+        /* ВІДЕО */
+       .video-card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 28px;
+    padding: 40px 20px;
+    margin: 0 auto;
+    background: #0d1b2a;
+    border-radius: 20px;
+    border: 2px solid rgba(0,170,255,0.4);
+    box-shadow: 0 0 30px rgba(0,170,255,0.2);
+}
+
+
+
+.video-card {
+    background: #161f2e;
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    border: 2px solid #00aaff;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 16px;
+}
+
+.video-card:hover {
+    background: #1a2638;
+    border-color: #00ffff;
+    box-shadow: 0 0 30px rgba(0,255,255,0.4);
+    transform: translateY(-4px);
+}
+
+.video-card img {
+    width: 40px;
+    height: 40px;
+    margin: 0 auto;
+    filter: drop-shadow(0 0 15px #00ffff);
+}
+
+.video-card h3 {
+    color: #00ffff;
+    font-family: 'Exo 2', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0;
+    text-shadow: 0 0 10px rgba(0,255,255,0.6);
+}
+
+/* МОДАЛКА ВІДЕО — ПРОСТА І ШВИДКА */
+/* ВІДЕО — ВЕЛИКЕ, ЯК У КІНО */
+.video-player-container {
+    position: relative;
+    width: 70vw;                    /* майже на весь екран */
+    max-width: 800px;
+    margin: 0 auto;
+    height: 39.2vw;                   /* 16:9 — висота = 56% від ширини */
+    max-height: 60vh;               /* але не вище 80% екрану */
+    border-radius: 20px;
+    overflow: hidden;
+    border: 6px solid #00ffff;
+    box-shadow: 
+        0 0 70px #00ffff,
+        0 0 140px rgba(0, 170, 255, 0.6);
+    background: #000;
+}
+
+.video-player-container iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+
+.video-player-container::after:hover {
+    background: #00ffff;
+    color: #000;
+    transform: scale(1.2) rotate(90deg);
+}
+/* КНОПКА ЗАКРИТТЯ */
+.close-video {
+    position: absolute;
+    top: -12px;
+    right: -12px;
+    width: 44px;
+    height: 44px;
+    background: #000;
+    color: #00ffff;
+    border: 3px solid #00ffff;
+    border-radius: 50%;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 30px #00ffff;
+    transition: all 0.3s;
+}
+
+.close-video:hover {
+    background: #00ffff;
+    color: #000;
+    transform: rotate(90deg);
+}
+        /* ПИТАННЯ — НЕОНОВІ 3D-КАРТКИ ЯК У КІБЕРПАНКУ */
+#questionsModal .modal-content {
+    background: #0b141f;
+    padding: 30px 20px;
+    border-radius: 20px;
+    border: 2px solid rgba(0,255,255,0.3);
+    box-shadow: 0 0 50px rgba(0,255,255,0.2);
+}
+
+.question-card {
+    perspective: 1200px;
+    margin: 35px auto;
+    max-width: 960px;
+    width: 94%;
+    cursor: pointer;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 
+        0 20px 40px rgba(0,0,0,0.6),
+        0 0 60px rgba(0,255,255,0.3);
+    transition: all 0.4s ease;
+}
+
+.question-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 
+        0 30px 60px rgba(0,0,0,0.7),
+        0 0 90px rgba(0,255,255,0.6);
+}
+
+.card-inner {
+    position: relative;
+    width: 100%;
+    height: 240px;
+    transition: transform 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    transform-style: preserve-3d;
+    border-radius: 24px;
+}
+
+.question-card.flipped .card-inner {
+    transform: rotateY(180deg);
+}
+
+/* ПЕРЕДНЯ СТОРОНА — ПИТАННЯ */
+.card-front, .card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    border-radius: 24px;
+    text-align: center;
+    font-weight: 700;
+}
+
+/* ПЕРЕДНЯ — темна з неоновим акцентом */
+.card-front {
+    background: linear-gradient(135deg, #0f1b2e 0%, #1a2a3f 100%);
+    color: #00ffff;
+    border: 3px solid #00ffff;
+    box-shadow: 
+        inset 0 0 60px rgba(0,255,255,0.2),
+        0 0 40px rgba(0,255,255,0.4);
+    text-shadow: 0 0 20px #00ffff;
+}
+
+/* ЗАДНЯ — відповідь з градієнтом */
+.card-back {
+    background: linear-gradient(135deg, #1a0033 0%, #0f1b2e 100%);
+    color: #00ffaa;
+    border: 3px solid #00ffaa;
+    transform: rotateY(180deg);
+    box-shadow: 
+        inset 0 0 60px rgba(0,255,170,0.2),
+        0 0 50px rgba(0,255,170,0.5);
+    text-shadow: 0 0 15px #00ffaa;
+    text-align: center;
+    line-height: 1.6;
+}
+
+/* ТЕКСТ — чіткий і великий */
+.card-front span, .card-back span {
+    font-size: clamp(18px, 3vw, 19px);
+    font-family: 'Exo 2', 'Orbitron', sans-serif;
+    letter-spacing: 1px;
+    padding: 15px;
+}
+
+/* МАТЕМАТИКА — яскрава */
+#questionsModal mjx-container {
+    color: #00ffff !important;
+    font-weight: 700 !important;
+    text-shadow: 0 0 15px #00ffff !important;
+    font-size: 1.3em !important;
+}
+
+/* ПІДСВІТКА ПРИ ПЕРЕВЕРТАННІ */
+.question-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(0,255,255,0.1) 50%, transparent 70%);
+    border-radius: 24px;
+    opacity: 0;
+    transition: opacity 0.7s;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.question-card.flipped::before {
+    opacity: 1;
+    animation: shine 1.5s ease-in-out;
+}
+
+@keyframes shine {
+    0%, 100% { transform: translateX(-150%); }
+    50% { transform: translateX(150%); }
+}
+
+       /* ТРЕНАЖЕР — КОМПАКТНИЙ НЕОНОВИЙ ПОЛІГОН */
+#trainerModal .modal-content {
+    background: #0b141f;
+    padding: 20px 15px;
+    border-radius: 20px;
+    border: 2px solid rgba(0,255,255,0.3);
+    box-shadow: 0 0 40px rgba(0,255,255,0.15);
+}
+
+.trainer-container {
+    width: 92%;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 28px 20px;
+    background: linear-gradient(135deg, #0f1b2e 0%, #1a2a3f 100%);
+    border-radius: 18px;
+    border: 3px solid #00aaff;
+    box-shadow: 
+        0 10px 30px rgba(0,0,0,0.6),
+        inset 0 0 40px rgba(0,170,255,0.1);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 22px;
+}
+
+/* КРУЖОК З НОМЕРОМ — компактний */
+.question-circle {
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, #00ffff, #0088ff);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 30px #00ffff;
+    border: 4px solid #000;
+    animation: pulse 3s infinite;
+}
+
+.question-circle h3 {
+    color: #800000;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 900;
+    margin: 0;
+    text-shadow: 0 0 10px #fff;
+}
+
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 0 30px #00ffff; }
+    50% { box-shadow: 0 0 50px #00ffff; }
+}
+
+/* ПИТАННЯ — акуратний розмір */
+#questionText {
+    color: #00ffff;
+    font-size: clamp(1.1rem, 3vw, 1.2rem);
+    font-family: 'Exo 2', sans-serif;
+    text-shadow: 0 0 12px #00ffff;
+    line-height: 1.5;
+    margin: 0;
+    padding: 0 10px;
+}
+
+/* ВАРІАНТИ — 2 в ряд на компі, 1 на телефоні */
+.options-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    width: 100%;
+    max-width: 680px;
+    margin: 20px auto;
+}
+
+.option {
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #1a2638 0%, #2d3848 100%);
+    border: 2px solid #00aaff;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.35s ease;
+    font-size: clamp(0.9rem, 2.5vw, 1.0rem);
+    font-family: 'Exo 2', sans-serif;
+    color: #e0faff;
+    text-align: center;
+    box-shadow: 
+        inset 0 0 20px rgba(0,170,255,0.15),
+        0 6px 16px rgba(0,0,0,0.4);
+}
+
+.option:hover {
+    background: linear-gradient(135deg, #00aaff, #00ccff);
+    color: #000;
+    transform: translateY(-4px);
+    border-color: #00ffff;
+    box-shadow: 0 12px 30px rgba(0,255,255,0.4);
+}
+
+.option.selected {
+    background: linear-gradient(135deg, #00ff88, #00cc66) !important;
+    color: #000 !important;
+    border: 3px solid #ffffff !important;
+    font-weight: 800;
+    box-shadow: 0 0 40px #00ff88;
+    transform: scale(1.03);
+}
+
+/* КНОПКА — акуратна */
+#submitAnswer {
+    margin-top: 10px;
+    padding: 12px 34px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    font-family: 'Orbitron', sans-serif;
+    background: linear-gradient(135deg, #00ff88, #00cc66);
+    color: #000;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 0 30px #00ff88;
+    transition: all 0.35s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+#submitAnswer:hover:not(:disabled) {
+    transform: translateY(-3px) scale(1.08);
+    box-shadow: 0 0 50px #00ff88;
+}
+
+#submitAnswer:disabled {
+    background: #444;
+    color: #777;
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+/* ФІДБЕК — компактний, але помітний */
+.feedback {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: clamp(1.3rem, 4vw, 1.8rem);
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    padding: 18px 36px;
+    border-radius: 20px;
+    z-index: 1001;
+    opacity: 0;
+    transition: all 0.5s ease;
+    pointer-events: none;
+    border: 4px solid;
+    text-shadow: 0 0 15px #000;
+}
+
+.feedback.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.05);
+}
+
+.correct-feedback {
+    color: #000;
+    background: #00ff88;
+    border-color: #00ff88;
+    box-shadow: 0 0 70px #00ff88;
+}
+
+.incorrect-feedback {
+    color: #fff;
+    background: #ff3366;
+    border-color: #ff6666;
+    box-shadow: 0 0 70px #ff3366;
+}
+
+/* ФОРМУЛИ — чіткі */
+#trainerModal mjx-container {
+    color: #ffff00 !important;
+    font-style: normal !important;
+    font-weight: 500 !important;
+    font-size: 1.1em !important;
+    text-shadow: 0 0 10px #00ffff !important;
+}
+
+/* НА ТЕЛЕФОНІ — ідеально */
+@media (max-width: 768px) {
+    .trainer-container { padding: 24px 16px; }
+    .question-circle { width: 80px; height: 80px; }
+    .question-circle h3 { font-size: 1.2rem; }
+    .options-container { grid-template-columns: 1fr; gap: 14px; }
+    .option { padding: 16px; font-size: 1rem; }
+    #submitAnswer { padding: 14px 32px; font-size: 1.05rem; }
+    .feedback { padding: 16px 32px; font-size: 1.6rem; }
+}
+
+    /* НА ТЕЛЕФОНІ — ідеально */
+@media (max-width: 460px) {
+    .trainer-container { padding: 22px 14px; }
+    .question-circle { width: 80px; height: 80px; }
+    .question-circle h3 { font-size: 1.2rem; }
+    .options-container { grid-template-columns: 1fr; gap: 14px; }
+    .option { padding: 16px; font-size: 1rem; }
+    #submitAnswer { padding: 14px 30px; font-size: 0.9rem; }
+    .feedback { padding: 16px 32px; font-size: 1.6rem; }
+    #trainerModal mjx-container {
+        font-size: 0.9em !important;
+   }
+    #submitAnswer {
+        font-size: 0.9rem;
+    }
+ }
+         /* === МЕДАЛЬ З ТРИЗУБОМ === */
+        .completion-emoji {
+            position: relative;
+            display: inline-block;
+            width: clamp(56px, 12vw, 96px);
+            height: clamp(56px, 12vw, 96px);
+            vertical-align: middle;
+            margin: 0 auto 3vw;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1c2526, #2e3a3b);
+            border: 3px dashed #ffd700;
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+            overflow: hidden;
+            animation: medalAppear 0.8s ease-out;
+        }
+        .completion-emoji::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><filter id='s' x='-50%' y='-50%' width='200%' height='200%'><feDropShadow dx='0' dy='2' stdDeviation='2' flood-color='%23000000' flood-opacity='0.25'/></filter></defs><rect x='30' y='0' width='60' height='40' rx='4' fill='%23007ACC'/><rect x='30' y='20' width='60' height='20' rx='4' fill='%23FFD700'/><g transform='translate(60,70)'><polygon points='0,-26 6,-6 26,-6 9,6 15,26 0,14 -15,26 -9,6 -26,-6 -6,-6' fill='%23FFD700' filter='url(%23s)'/></g></svg>");
+            background-size: 75%;
+            background-repeat: no-repeat;
+            background-position: center 60%;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+            animation: medalBounce 1.2s ease-out 0.3s both;
+        }
+        @keyframes medalAppear {
+            0% { transform: scale(0.3) rotate(-180deg); opacity: 0; }
+            60% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes medalBounce {
+            0% { transform: translateY(-120px) rotate(-30deg) scale(0.4); opacity: 0; }
+            60% { transform: translateY(15px) rotate(10deg) scale(1.15); opacity: 1; }
+            80% { transform: translateY(-8px) rotate(-5deg) scale(1.05); }
+            100% { transform: translateY(0) rotate(0) scale(1); }
+        }
+
+        .completion-message {
+            background: linear-gradient(145deg, #1c2533, #2d3848);
+            border: 2.5px solid #ffffff;
+            border-radius: 15px;
+            padding: clamp(12px, 3vw, 18px);
+            box-shadow: 0 6px 12px rgba(255,77,77,0.4);
+            margin: 2vw auto;
+            max-width: 90%;
+            text-align: center;
+        }
+        .completion-message h2 {
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        .completion-message p { color: #ffffff; }
+
+        #completionModal .modal-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+        #completionModal .completion-message {
+            text-align: center;
+            max-width: 500px;
+        }
+
+
+        /* НАВІГАЦІЯ */
+        .navigation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px auto;
+            max-width: 1000px;
+        }
+        .nav-button {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #1c2533, #2d3848);
+            color: #00eeff;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid #00aaff;
+            font-weight: bold;
+        }
+        .nav-button:hover {
+            background: linear-gradient(135deg, #00aaff, #00ffff);
+            color: #000;
+            transform: scale(1.03);
+            box-shadow: 0 4px 12px rgba(0, 170, 255, 0.3);
+        }
+        .nav-button svg { margin-right: 8px; fill: currentColor; }
+
+
+ button {
+            background: linear-gradient(135deg, #c1121f, #e63946);
+            color: #ffffff;
+            border: none;
+            border-radius: 25px;
+            padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 24px);
+            font-size: clamp(16px, 3vw, 18px);
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(193,18,31,0.3);
+        }
+        button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #780000, #c1121f);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(193,18,31,0.4);
+        }
+        button:disabled { background: #555; cursor: not-allowed; }
+
+/* КНОПКИ З ФОРМУЛАМИ — ЯК У ПІДРУЧНИКУ! */
+.option .math-answer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 12px;
+    font-size: 1.1em;
+}
+
+.option .math-answer mjx-container {
+    display: inline-block !important;
+    margin: 0 !important;
+    vertical-align: middle !important;
+}
+
+/* При наведенні — формули теж світяться */
+.option:hover .math-answer mjx-container {
+    color: #000 !important;
+    text-shadow: 0 0 15px #00ffff !important;
+}
+
+/* При виборі — зелений колір */
+.option.selected .math-answer mjx-container {
+    color: #000 !important;
+    text-shadow: 0 0 20px #00ff88 !important;
+}
+                
+        @media (max-width: 768px) {
+            .title-box h1 { font-size: 26px; }
+            .section { width: 85%; height: 190px; }
+            .modal { top: 2%; left: 2%; width: 96%; height: 96%; }
+            .options-container { flex-direction: column; }
+            .option { max-width: 100%; }
+            .video-card-container {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            .video-card {
+                width: 260px;
+                height: 160px;
+                margin: 5px;
+            }
+            .video-card img {
+                width: 40px;
+                height: 40px;
+                margin-bottom: 6px;
+            }
+            .video-player-container {
+                width: 80vw;
+                max-width: 600px;
+                aspect-ratio: 16 / 9;
+            }
+            .video-card h3 {
+                font-size: clamp(14px, 2.5vw, 16px);
+            }
+            .question-card {
+        width: 96%;
+        height: 280px;
+    }
+    .card-front, .card-back {
+        padding: 20px;
+    }
+    .card-front span, .card-back span {
+        font-size: clamp(15px, 2.8vw, 18px);
+    }
+            
+        }
+        @media (max-width: 480px) {
+            .title-box h1 { font-size: 22px; }
+            .section { width: 85%; height: 150px; }
+            .section h2 { font-size: 16px; }
+              summary {
+        font-size: 0.9rem;
+   
+}
+            .theory-content p,
+.modal-content-style p,
+details p {
+   
+    font-size: 1.0rem;           /* ← ОЦЕ І Є ТВІЙ РОЗМІР! */
+   
+}
+                 .math-notation-centered {
+           
+            font-size: clamp(15px, 2.5vw, 16px);
+           
+        }
+            mjx-container {
+                font-size: clamp(14px, 2.5vw, 17px) !important;
+            }
+            .example {
+                font-size: 1.0rem;
+            }
+            .theory-content h2 {
+                font-size: 18px !important;
+            }
+            
+            .video-card-container {
+                gap: 10px;
+                padding: 10px;
+            }
+            .video-card {
+                width: 73%;
+                max-width: 260px;
+                height: 140px;
+                margin: 5px;
+            }
+            .video-card img {
+                width: 30px;
+                height: 30px;
+                margin-bottom: 5px;
+            }
+            .video-card h3 {
+                font-size: clamp(13px, 2.5vw, 14px);
+            }
+            .video-player-container {
+                width: 80vw;
+                max-width: 400px;
+                aspect-ratio: 16 / 9;
+            }
+            .question-circle h3 {
+                font-size: clamp(13px, 2vw, 14px);
+            }
+            .feedback {
+                font-size: clamp(16px, 3vw, 17px);
+            }
+             .section-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            .section {
+                width: 85%;
+                height: 170px;
+            }
+            .section img {
+                width: 50px;
+                height: 50px;
+            }
+            .section h2 {
+                font-size: 17px;
+text-align: center;  
+                            }
+            .question-card {
+        width: 96%;
+        height: 240px;
+    }
+    .card-front, .card-back {
+        padding: 20px;
+    }
+    .card-front span, .card-back span {
+        font-size: clamp(14px, 2.5vw, 15px);
+    }
+            #questionsModal mjx-container {
+       font-size: 1.0em !important;
+}
+        }
+    </style>
+</head>
+<body>
+
+    <div class="title-box">
+        <h1>48. Коло</h1>
+    </div>
+
+    <div class="section-container">
+        <div class="section" id="openTheoryBtn">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Книга" loading="lazy">
+            <h2>Теоретичні відомості</h2>
+        </div>
+        <div class="section" id="openVideoBtn">
+            <img src="https://img.icons8.com/fluency/96/video.png" alt="Відео" loading="lazy">
+            <h2>Відеоматеріали</h2>
+        </div>
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Картки" loading="lazy">
+            <h2>Питання і відповіді</h2>
+        </div>
+        <div class="section" id="openTrainerBtn">
+            <img src="https://img.icons8.com/fluency/96/flash-on.png" alt="Тренажер" loading="lazy">
+            <h2>Тренажер</h2>
+        </div>
+    </div>
+
+    <div class="navigation-buttons">
+        <a class="nav-button" href="{{ url_for('tema10') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+            До теми 10
+        </a>
+       <a class="nav-button" href="{{ url_for('home') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            На головну
+        </a>
+    </div>
+
+    <!-- ТЕОРІЯ -->
+    <div id="theoryModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeTheoryBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="theory-content">
+             <details>
+  <summary>Канонічне рівняння кола</summary>
+  <div class="modal-content-style">
+
+    <h2>Означення кола</h2>
+    <p><strong>Колом</strong> називається множина всіх точок площини, які рівновіддалені від заданої точки, що називається <strong>центром кола</strong>. Відстань від центра до кожної точки кола називається <strong>радіусом</strong>.</p>
+    
+    <p>Якщо точка \( C \) — центр кола, \( R \) — його радіус, а \( M \) — довільна точка на колі, то за означенням:</p>
+    <p class="math-notation-centered">\[ |CM| = R \]</p>
+
+    <h2 class="neon-header">Канонічне рівняння кола</h2>
+
+<p>Розглянемо декартову систему координат на площині. Нехай точка \( C(a;b) \) є центром кола радіуса \( R \), а точка \( M(x;y) \) — довільною точкою на цьому колі (рис. 10.1).
+<img src="/static/figure10.1.jpg" alt="Коло" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+               
+Відстань між точками \( M \) і \( C \) можна обчислити за формулою відстані між двома точками:</p>
+
+<p class="math-notation-centered">
+  \[ |CM| = \sqrt{(x-a)^2 + (y-b)^2} \]
+</p>
+
+<p>Згідно з означенням кола, ця відстань дорівнює радіусу:</p>
+
+<p class="math-notation-centered">
+  \[ R = \sqrt{(x-a)^2 + (y-b)^2} \]
+</p>
+
+<p>Щоб позбутися кореня, піднесемо обидві частини рівності до квадрата:</p>
+
+<p class="math-notation-centered" style="font-size:1.35em; color:#00ffff; padding:20px 0; background:rgba(0,255,255,0.05); border-radius:12px;">
+  \[ \boxed{(x-a)^2 + (y-b)^2 = R^2} \quad (10.2) \]
+</p>
+
+<p>Отримане рівняння (10.2) називається <strong>канонічним рівнянням кола</strong> або просто рівнянням кола. Воно описує коло з центром у точці \( C(a;b) \) і радіусом \( R \).</p>
+
+<p>Наприклад, розглянемо рівняння \( (x+3)^2 + (y-2)^2 = 16 \). Це рівняння можна переписати у вигляді:</p>
+
+<p class="math-notation-centered">
+  \[ (x-(-3))^2 + (y-2)^2 = 4^2 \]
+</p>
+
+<p>Отже, центр кола \( C(-3;2) \), а радіус \( R=4 \).</p>
+
+<h2 class="neon-header">Особливий випадок</h2>
+
+<p>Якщо центр кола збігається з початком координат \( C(0;0) \), рівняння кола набуває вигляду:</p>
+
+<p class="math-notation-centered" style="font-size:1.3em; color:#00eeff; padding:18px 0;">
+  \[ \boxed{x^2 + y^2 = R^2} \quad (10.3) \]
+</p>
+
+<p>Отже, рівняння (10.3) є рівнянням кола з центром у початку координат.</p>
+
+
+<div class="example">
+  <strong>Приклад 10.1.</strong> Скласти рівняння кола радіуса \( R=12 \) з центром у початку координат.
+</div>
+
+ <p>Оскільки центр кола — початок координат \( C(0;0) \), використовуємо рівняння (10.3):</p>
+  
+  <p class="math-notation-centered">\[ x^2 + y^2 = R^2 \]</p>
+  
+  <p>Підставимо \( R = 12 \):</p>
+  
+  <p class="math-notation-centered">\[ x^2 + y^2 = 12^2 \]</p>
+  
+  <p class="math-notation-centered" style="color:#00ffff; font-size:1.15em;">
+    \[ x^2 + y^2 = 144 \]
+  </p>
+  
+  <p class="final-answer">
+    <strong>Відповідь.</strong> \( x^2 + y^2 = 144 \)
+  </p>
+</div>
+
+<div class="example">
+  <strong>Приклад 10.2.</strong> Скласти рівняння кола радіуса \( R=6 \) з центром у точці \( C(1;-5) \).
+</div>
+
+<p>Для опису кола з радіусом \( R \) і центром у точці \( C(a;b) \) використовуємо канонічне рівняння (10.2):</p>
+
+  <p class="math-notation-centered">
+    \[ (x - a)^2 + (y - b)^2 = R^2 \]
+  </p>
+
+  <p>Підставимо значення \( a = 1 \), \( b = -5 \), \( R = 6 \) у формулу:</p>
+
+  <p class="math-notation-centered">
+    \[ (x - 1)^2 + (y - (-5))^2 = 6^2 \]
+  </p>
+
+  <p class="math-notation-centered" style="color:#00ffff; font-size:1.15em;">
+    \[ (x - 1)^2 + (y + 5)^2 = 36 \]
+  </p>
+
+  <p>Це і є рівняння кола радіуса \( R = 6 \) з центром у точці \( C(1;-5) \).</p>
+
+  <p class="final-answer">
+    <strong>Відповідь.</strong> \( (x-1)^2 + (y+5)^2 = 36 \)
+  </p>
+
+
+   <div class="example">
+  <strong>Приклад 10.3.</strong> Скласти рівняння кола з центром у точці \( C(-1;-1) \), яке дотикається до прямої \( AB \), де \( A(2;-1) \), \( B(-1;3) \).
+</div>
+
+<p>Спочатку знайдемо рівняння прямої \( AB \). Для цього скористаємося формулою для рівняння прямої через дві точки (9.5):</p>
+  
+  <p class="math-notation-centered">
+    \[ \frac{y - y_1}{y_2 - y_1} = \frac{x - x_1}{x_2 - x_1} \]
+  </p>
+  
+  <p>Підставимо координати точок \( A(2;-1) \) і \( B(-1;3) \):</p>
+  
+  <p class="math-notation-centered">
+    \[ \frac{y + 1}{3 + 1} = \frac{x - 2}{-1 - 2} \]
+  </p>
+  
+  <p class="math-notation-centered">
+    \[ \frac{y + 1}{4} = \frac{x - 2}{-3} \]
+  </p>
+  
+  <p>Помножимо обидві сторони на \( -12 \), щоб позбутися дробів:</p>
+  
+  <p class="math-notation-centered">
+    \[ 4(x - 2) = -3(y + 1) \]
+  </p>
+  
+  <p>Розкриємо дужки та приведемо до загального вигляду:</p>
+  
+  <p class="math-notation-centered" style="color:#00ffaa; font-weight:700;">
+    \[ 4x - 8 = -3y - 3 \quad \Rightarrow \quad 4x + 3y - 5 = 0 \]
+  </p>
+  
+  <p>Оскільки коло дотикається до прямої, радіус — це відстань від центра \( C(-1;-1) \) до прямої \( 4x + 3y - 5 = 0 \). Для цього скористаємося формулою відстані від точки  до прямої (9.20):</p>
+  
+  <p class="math-notation-centered">
+    \[ R = \frac{|Ax_0 + By_0 + C|}{\sqrt{A^2 + B^2}} \]
+  </p>
+  
+  <p>Підставимо значення \( A=4 \), \( B=3 \), \( C=-5 \), \( x_0=-1 \), \( y_0=-1 \):</p>
+  
+  <p class="math-notation-centered">
+    \[ R = \frac{|4(-1) + 3(-1) - 5|}{\sqrt{4^2 + 3^2}} = \frac{|-4 - 3 - 5|}{\sqrt{25}} = \frac{12}{5} \]
+  </p>
+  
+  <p>Тепер складемо канонічне рівняння кола (10.2) з центром \( C(-1;-1) \) і радіусом \( R = \frac{12}{5} \):</p>
+  
+  <p class="math-notation-centered" style="font-size:1.4em; color:#00ffff; padding:20px 0; background:rgba(0,255,255,0.07); border-radius:15px;">
+    \[ \boxed{(x + 1)^2 + (y + 1)^2 = \dfrac{144}{25}} \]
+  </p>
+  
+  <p class="final-answer">
+    <strong>Відповідь.</strong> \( (x+1)^2 + (y+1)^2 = \dfrac{144}{25} \)
+  </p>
+
+            </details>
+            
+            <details>
+    <summary>Рівняння кола як окремий випадок загального рівняння другого порядку</summary>
+    <div class="modal-content-style">
+
+        <h2 class="neon-header">Загальне рівняння кола</h2>
+
+        <p>Якщо в канонічному рівнянні кола</p>
+        <p class="math-notation-centered">
+            \[ (x - a)^2 + (y - b)^2 = R^2 \]
+        </p>
+        <p>розкрити дужки, перенести всі члени в ліву частину і впорядкувати за спаданням степенів змінних \( x \) та \( y \), отримуємо:</p>
+
+        <p class="math-notation-centered" style="color:#00ffff; font-size:1.15em;">
+            \[ x^2 + y^2 - 2ax - 2by + a^2 + b^2 - R^2 = 0 \]
+        </p>
+
+        <p>Помножимо на деяке число \( A \neq 0 \):</p>
+        <p class="math-notation-centered">
+            \[ Ax^2 + Ay^2 - 2Aax - 2Aby + A(a^2 + b^2 - R^2) = 0 \]
+        </p>
+
+        <p>Введемо нові коефіцієнти:</p>
+        <p class="math-notation-centered">
+            \[ C = -2Aa, \quad D = -2Ab, \quad E = A(a^2 + b^2 - R^2) \]
+        </p>
+
+        <p>Тоді рівняння набуде вигляду:</p>
+        <p class="math-notation-centered" style="font-size:1.4em; color:#00eeff; background:rgba(0,255,255,0.07); padding:22px 0; border-radius:16px;">
+            \[ \boxed{Ax^2 + Ay^2 + Cx + Dy + E = 0} \quad (10.4) \]
+        </p>
+
+        <p>Це і є <strong>загальне рівняння кола</strong> — окремий випадок загального рівняння другого порядку, коли:</p>
+        <p class="math-notation-centered" style="color:#ff00ff; font-weight:800; font-size:1.3em;">
+            \[ \boxed{A = B \neq 0} \]
+        </p>
+
+        <div class="example">
+            <strong>Приклад 10.4.</strong> Довести, що рівняння \( x^2 + y^2 - 10x + 4y + 25 = 0 \) є рівнянням кола. Знайти його центр і радіус.
+        </div>
+
+        <p>Перетворимо ліву частину, доповнивши двочлени до повних квадратів.</p>
+
+            <p>Для \( x^2 - 10x \):</p>
+            <p class="math-notation-centered">
+                \[ x^2 - 10x = (x^2 - 10x + 25) - 25 = (x-5)^2 - 25 \]
+            </p>
+
+            <p>Для \( y^2 + 4y \):</p>
+            <p class="math-notation-centered">
+                \[ y^2 + 4y = (y^2 + 4y + 4) - 4 = (y+2)^2 - 4 \]
+            </p>
+
+            <p>Підставимо назад у рівняння:</p>
+            <p class="math-notation-centered">
+                \[ (x-5)^2 - 25 + (y+2)^2 - 4 + 25 = 0 \]
+            </p>
+
+            <p class="math-notation-centered">
+                \[ (x-5)^2 + (y+2)^2 - 4 = 0 \]
+            </p>
+
+            <p class="math-notation-centered" style="font-size:1.4em; color:#00ffff; padding:20px 0;">
+                \[ \boxed{(x-5)^2 + (y+2)^2 = 4} \]
+            </p>
+
+            <p>Отже, це дійсно рівняння кола з центром у точці \( (5;-2) \) і радіусом \( R = 2 \).</p>
+
+            <p class="final-answer">
+                <strong>Відповідь.</strong> Центр \( C(5;-2) \), радіус \( R = 2 \)
+            </p>
+       
+    </div>
+</details>
+           </div> 
+        </div>
+    </div>
+
+   <div id="videoModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoBtn" aria-label="Закрити">× Закрити</button>
+        </div>
+
+        <div class="modal-content">
+                        <div class="video-card-container">
+             
+               <!-- 1 -->
+                <div class="video-card" data-video="1">
+                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=228B22" alt="Відеокамера">
+                    <h3>1. Знайомство з конічними перерізами</h3>
+                </div>
+                <!-- 2 -->
+                <div class="video-card" data-video="2">
+                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=228B22" alt="Відеокамера">
+                    <h3>2. Побудова кола за його характеристиками (застосування інструментів Geogebra)</h3>
+                </div>
+                <!-- 3 -->
+                <div class="video-card" data-video="3">
+                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=228B22" alt="Відеокамера">
+                    <h3>3. Визначення елементів кола за його графіком</h3>
+                </div>
+                <!-- 4 -->
+                <div class="video-card" data-video="4">
+                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=228B22" alt="Відеокамера">
+                    <h3>4. Визначення елементів кола з його стандартного рівняння</h3>
+                </div>
+                <!-- 5 -->
+                <div class="video-card" data-video="5">
+                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=228B22" alt="Відеокамера">
+                    <h3>5. Побудова кола за його стандартним рівнянням (застосування інструментів Geogebra)</h3>
+                </div>
+                <!-- 6 -->
+                <div class="video-card" data-video="6">
+                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=228B22" alt="Відеокамера">
+                    <h3>6. Запис стандартного рівняння кола</h3>
+                </div>
+                <!-- 7 -->
+                <div class="video-card" data-video="7">
+                    <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=228B22" alt="Відеокамера">
+                    <h3>7. Елементи кола з його розширеного рівняння</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   <!-- ПЛЕЄРИ (7 штук) -->
+    <!-- 1 -->
+    <div id="videoPlayerModal1" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoPlayerBtn1" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-player-container">
+                <iframe id="youtubePlayer1" src="" frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+    <!-- 2 -->
+    <div id="videoPlayerModal2" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoPlayerBtn2" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-player-container">
+                <iframe id="youtubePlayer2" src="" frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+    <!-- 3 -->
+    <div id="videoPlayerModal3" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoPlayerBtn3" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-player-container">
+                <iframe id="youtubePlayer3" src="" frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+    <!-- 4 -->
+    <div id="videoPlayerModal4" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoPlayerBtn4" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-player-container">
+                <iframe id="youtubePlayer4" src="" frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+    <!-- 5 -->
+    <div id="videoPlayerModal5" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoPlayerBtn5" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-player-container">
+                <iframe id="youtubePlayer5" src="" frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+    <!-- 6 -->
+    <div id="videoPlayerModal6" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoPlayerBtn6" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-player-container">
+                <iframe id="youtubePlayer6" src="" frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+    <!-- 7 -->
+    <div id="videoPlayerModal7" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoPlayerBtn7" aria-label="Закрити">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-player-container">
+                <iframe id="youtubePlayer7" src="" frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+
+<!-- ПИТАННЯ — НЕОНОВІ 3D-КАРТКИ З ІДЕАЛЬНИМИ ФОРМУЛАМИ -->
+<div id="questionsModal" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeQuestionsBtn">× Закрити</button>
+    </div>
+    <div class="modal-content" id="questionsContent">
+
+        <!-- Картка 1 -->
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front"><span>1. Що називається колом на площині?</span></div>
+                <div class="card-back"><span>Множина всіх точок площини, які рівновіддалені від заданої точки (центра кола).</span></div>
+            </div>
+        </div>
+
+        <!-- Картка 2 -->
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front"><span>2. Що таке радіус кола?</span></div>
+                <div class="card-back"><span>Відстань від центра кола до будь-якої точки на колі.</span></div>
+            </div>
+        </div>
+
+        <!-- Картка 3 -->
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front"><span>3. Як математично записується означення кола через точки \(C\) та \(M\)?</span></div>
+                <div class="card-back"><span>\(|CM| = R\), де \(C\) – центр, \(M\) – точка на колі, \(R\) – радіус.</span></div>
+            </div>
+        </div>
+
+        <!-- Картка 4 -->
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front"><span>4. Яке канонічне рівняння кола з центром \(C(a;b)\) і радіусом \(R\)?</span></div>
+                <div class="card-back"><span>\((x - a)^2 + (y - b)^2 = R^2\)</span></div>
+            </div>
+        </div>
+
+        <!-- Картка 5 -->
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front"><span>5. Як знайти центр і радіус кола \((x+3)^2 + (y-2)^2 = 16\) ?</span></div>
+                <div class="card-back"><span>Центр \(C(-3; 2)\), радіус \(R = 4\)</span></div>
+            </div>
+        </div>
+
+        <!-- Картка 6 -->
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front"><span>6. Як виглядає рівняння кола, якщо центр збігається з початком координат?</span></div>
+                <div class="card-back"><span>\(x^2 + y^2 = R^2\)</span></div>
+            </div>
+        </div>
+
+              <!-- Картка 7 -->
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front"><span>7. Які коефіцієнти в загальному рівнянні кола \(Ax^2 + Ay^2 + Cx + Dy + E = 0\) ?</span></div>
+                <div class="card-back"><span>\(C = -2Aa\); \(D = -2Ab\); \(E = Aa^2 + Ab^2 - AR^2\); \(A \neq 0\)</span></div>
+            </div>
+        </div>
+
+        <!-- Картка 8 -->
+        <div class="question-card">
+            <div class="card-inner">
+                <div class="card-front"><span>8. Яка умова, щоб рівняння другого порядку задавало саме коло?</span></div>
+                <div class="card-back"><span>Коефіцієнти при \(x^2\) та \(y^2\) однакові: \(A = B \neq 0\)</span></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+   <!-- ТРЕНАЖЕР — ТІЛЬКИ ПИТАННЯ 1, НОВЕ КОЛО КОЖНОГО РАЗУ -->
+<div id="trainerModal" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeTrainerBtn">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="trainer-container">
+            <div class="question-circle">
+                <h3 id="questionNumber">Питання 1</h3>
+            </div>
+            <p id="questionText" class="math-notation-centered"></p>
+            <div class="options-container" id="optionsContainer"></div>
+            <button id="submitAnswer" disabled>Підтвердити</button>
+            <div id="feedback" class="feedback"></div>
+        </div>
+    </div>
+</div>
+
+    <!-- ЗАВЕРШЕННЯ -->
+    <div id="completionModal" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeCompletionBtn">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="completion-message">
+            <div class="completion-emoji"></div>
+            <h2>МІСІЯ ВИКОНАНА!</h2>
+            <p>Ти — сталевий воїн геометрії!</p>
+            <p><strong>СЛАВА УКРАЇНІ!</strong></p>
+            <button id="resetTrainerBtn">Спробувати ще раз!</button>
+        </div>
+    </div>
+</div>
+
+    <div id="modalOverlay"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.body.classList.add('loaded');
+
+    // === ОТРИМУЄМО ВСІ ЕЛЕМЕНТИ ===
+    const els = {
+        trainerModal: document.getElementById('trainerModal'),
+        completionModal: document.getElementById('completionModal'),
+        questionNumber: document.getElementById('questionNumber'),
+        questionText: document.getElementById('questionText'),
+        optionsContainer: document.getElementById('optionsContainer'),
+        submitAnswer: document.getElementById('submitAnswer'),
+        feedback: document.getElementById('feedback'),
+        resetTrainerBtn: document.getElementById('resetTrainerBtn'),
+        modalOverlay: document.getElementById('modalOverlay')
+    };
+
+    // Твої 7 відео
+    const videoLinks = {
+        1: "https://www.youtube.com/embed/taUI9udj7J8",
+        2: "https://www.youtube.com/embed/hPHD2UaTIus",
+        3: "https://www.youtube.com/embed/Z5S0Vxr97f0",
+        4: "https://www.youtube.com/embed/zRzI9YyBz4k",
+        5: "https://www.youtube.com/embed/8KBXNw9npr8",
+        6: "https://www.youtube.com/embed/ttkf5qLm9wA",
+        7: "https://www.youtube.com/embed/aqbKZ6-xDrA"
+    };
+
+    // === УНІВЕРСАЛЬНА ФУНКЦІЯ ВІДКРИТТЯ/ЗАКРИТТЯ МОДАЛОК ===
+    function toggleModal(modal, show) {
+        if (!modal) return;
+        modal.style.display = show ? 'flex' : 'none';
+        document.getElementById('modalOverlay').style.display = show ? 'block' : 'none';
+        document.body.style.overflow = show ? 'hidden' : 'auto';
+        if (show && window.MathJax?.typesetPromise) {
+            MathJax.typesetPromise([modal]).catch(() => {});
+        }
+    }
+
+    // === ВІДКРИТТЯ ОСНОВНИХ КНОПОК ===
+    document.getElementById('openTheoryBtn')?.addEventListener('click', () => toggleModal(document.getElementById('theoryModal'), true));
+    document.getElementById('openVideoBtn')?.addEventListener('click', () => toggleModal(document.getElementById('videoModal'), true));
+    document.getElementById('openQuestionsBtn')?.addEventListener('click', () => toggleModal(document.getElementById('questionsModal'), true));
+    document.getElementById('openTrainerBtn')?.addEventListener('click', () => {
+        toggleModal(document.getElementById('trainerModal'), true);
+        if (typeof initTrainer === 'function') initTrainer();
+    });
+
+    // === ЗАКРИТТЯ ВСІХ МОДАЛОК ===
+    document.querySelectorAll('.close-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const modal = btn.closest('.modal');
+            toggleModal(modal, false);
+            // Зупиняємо всі iframe (відео)
+            modal.querySelectorAll('iframe').forEach(iframe => iframe.src = '');
+        });
+    });
+
+    document.getElementById('modalOverlay').addEventListener('click', () => {
+        document.querySelectorAll('.modal').forEach(m => {
+            toggleModal(m, false);
+            m.querySelectorAll('iframe').forEach(iframe => iframe.src = '');
+        });
+    });
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.modal').forEach(m => {
+                toggleModal(m, false);
+                m.querySelectorAll('iframe').forEach(iframe => iframe.src = '');
+            });
+        }
+    });
+
+    // === КЛІК ПО КАРТЦІ ВІДЕО → ВІДКРИВАЄМО ПРАВИЛЬНУ МОДАЛКУ ===
+    document.querySelectorAll('.video-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const num = card.dataset.video;
+            const playerModal = document.getElementById(`videoPlayerModal${num}`);
+            const iframe = document.getElementById(`youtubePlayer${num}`);
+
+            // Вставляємо посилання БЕЗ автоплею
+            iframe.src = videoLinks[num] + "?autoplay=0&rel=0&modestbranding=1";
+
+            // Відкриваємо модалку з відео
+            toggleModal(playerModal, true);
+        });
+    });
+
+    // === ДОДАТКОВО: закриття відео-модалок зупиняє відео ===
+    document.querySelectorAll('[id^="closeVideoPlayerBtn"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const modal = btn.closest('.modal');
+            const iframe = modal.querySelector('iframe');
+            iframe.src = ''; // зупиняємо
+            toggleModal(modal, false);
+        });
+    });
+
+
+               let selected = null;
+    let correctIndex = null;
+    let currentStage = 1; // 1, 2 або 3
+
+    // === ПИТАННЯ 1: Канонічне → центр + радіус ===
+    function generateQuestion1() {
+        let a, b, R;
+
+    // Центр не (0,0)
+    do {
+        a = Math.floor(Math.random() * 21) - 10; // -10..10
+        b = Math.floor(Math.random() * 21) - 10;
+    } while (a === 0 && b === 0);
+
+    // Радіус
+    R = Math.floor(Math.random() * 20) + 1; // 1..20
+    const R2 = R * R;
+
+    // Формуємо частини рівняння правильно
+    const xPart = a === 0 ? `x^2` : `(x${a > 0 ? '-' : '+'}${Math.abs(a)})^2`;
+    const yPart = b === 0 ? `y^2` : `(y${b > 0 ? '-' : '+'}${Math.abs(b)})^2`;
+
+    const equation = `${xPart} + ${yPart} = ${R2}`;
+
+    // Правильна відповідь
+    const correct = `C(${a};${b}), R=${R}`;
+
+    // Хибні
+    const wrong = [
+        `C(${-a};${-b}), R=${R}`,
+        `C(${a};${-b}), R=${R}`,
+        `C(${a};${b}), R=${R2}` // підміняємо радіус
+    ];
+
+    return { equation, correct, wrong };
+}
+
+
+    // === ПИТАННЯ 2: Центр + радіус → канонічне ===
+    function generateQuestion2() {
+        let a, b;
+        do {
+            a = Math.floor(Math.random() * 21) - 10;
+            b = Math.floor(Math.random() * 21) - 10;
+        } while (a === 0 && b === 0);
+
+        const R = Math.floor(Math.random() * 20) + 1;
+        const R2 = R * R;
+
+        const xPart = a === 0 ? `x^2` : `(x${a > 0 ? '-' : '+'}${Math.abs(a)})^2`;
+        const yPart = b === 0 ? `y^2` : `(y${b > 0 ? '-' : '+'}${Math.abs(b)})^2`;
+
+        const correctEquation = `${xPart} + ${yPart} = ${R2}`;
+
+        const wrong = [];
+        wrong.push(`${xPart} + ${yPart} = ${R}`); // R замість R²
+
+        const xWrong = a === 0 ? `x^2` : `(x${a > 0 ? '+' : '-'}${Math.abs(a)})^2`;
+        const yWrong = b === 0 ? `y^2` : `(y${b > 0 ? '+' : '-'}${Math.abs(b)})^2`;
+        wrong.push(`${xWrong} + ${yWrong} = ${R2}`);
+        wrong.push(`${xWrong} + ${yWrong} = ${R}`);
+
+       return {
+    question: `Визначити рівняння кола з центром \\(C(${a};${b})\\) і радіусом \\(R=${R}\\).`,
+    correct: correctEquation,
+    wrong: wrong
+};
+
+    }
+
+    // === ПИТАННЯ 3: Загальне → центр + радіус ===
+    function generateQuestion3() {
+    let a, b;
+    do {
+        a = Math.floor(Math.random() * 21) - 10;
+        b = Math.floor(Math.random() * 21) - 10;
+    } while (a === 0 && b === 0);
+
+    const R = Math.floor(Math.random() * 20) + 1;
+    const R2 = R * R;
+
+    const D = -2 * a;
+    const E = -2 * b;
+    const F = a * a + b * b - R2;
+
+    const sign = (val) => val >= 0 ? '+' : '-';
+    const abs = (val) => Math.abs(val) || '';
+
+    const equation = `x^2 + y^2 ${sign(D)} ${abs(D)}x ${sign(E)} ${abs(E)}y ${sign(F)} ${abs(F)} = 0`;
+
+    // Правильна
+    const correct = `C(${a};${b}), R=${R}`;
+
+    // Хибні
+    let wrong = [
+        `C(${-a};${b}), R=${R}`,
+        `C(${a};${-b}), R=${R}`
+    ];
+
+    // Якщо R² НЕ є ідеальним квадратом, можна написати корінь — тоді це хибна
+    let rootWrong;
+    if (Math.sqrt(R2) !== R) {
+        rootWrong = `C(${a};${b}), R=\\sqrt{${R2}}`;
+    } else {
+        // Якщо R=9 і R2=81 → замінюємо кореневу хибну на щось інше
+        rootWrong = `C(${a};${b}), R=${R+1}`;
+    }
+
+    wrong.push(rootWrong);
+
+    return { equation, correct, wrong };
+}
+
+
+       function generateQuestion4() {
+    // Сторона квадрата: 1..8
+    const s = Math.floor(Math.random() * 8) + 1;
+
+    // Вершини квадрата
+    const vertices = [
+        `(0;0)`,
+        `(${s};0)`,
+        `(${s};${s})`,
+        `(0;${s})`
+    ];
+
+    // Преобразуємо вершини у MathJax-формули
+    const vertexFormulas = vertices.map(v => `\\(${v}\\)`);
+
+    // Центр кола = середина квадрата
+    const a = s / 2;
+    const b = s / 2;
+
+    // Радіус = половина сторони
+    const R = s / 2;
+    const R2 = R*R;
+
+    // Повертаємо завдання
+    return {
+        question: `Знайти рівняння кола, вписаного в квадрат з вершинами ${vertexFormulas.join(', ')}`,
+       correct: ` (x - ${a})^2 + (y - ${b})^2 = ${R2} `,
+        wrong: [
+    ` (x - ${a})^2 + (y - ${b})^2 = ${R} `,
+    ` x^2 + y^2 = ${R2} `,
+    ` (x - ${a+1})^2 + (y - ${b+1})^2 = ${R2} `
+]
+
+    };
+}
+
+
+   // === ПИТАННЯ 5: Коло з центром і точкою — ІДЕАЛЬНІ ФОРМУЛИ! ===
+function generateQuestion5() {
+    const a = Math.floor(Math.random() * 11) - 5;  // -5..5
+    const b = Math.floor(Math.random() * 11) - 5;
+
+    let x1, y1;
+    do {
+        x1 = Math.floor(Math.random() * 11) - 5;
+        y1 = Math.floor(Math.random() * 11) - 5;
+    } while (x1 === a && y1 === b);
+
+    const R2 = (x1 - a) ** 2 + (y1 - b) ** 2;
+
+    // === ФУНКЦІЯ ДЛЯ КРАСИВОГО ВИВЕДЕННЯ (x - h) ===
+    const termX = a === 0 ? 'x' : `(x ${a < 0 ? '+' : '-'} ${Math.abs(a)})`;
+    const termY = b === 0 ? 'y' : `(y ${b < 0 ? '+' : '-'} ${Math.abs(b)})`;
+
+    const correct = `${termX}^2 + ${termY}^2 = ${R2}`;
+
+    // === НЕПРАВИЛЬНІ ВАРІАНТИ ===
+    const wrong = [];
+
+    // 1. Знак при x перевернутий
+    const wrongX = a === 0 ? 'x' : `(x ${a > 0 ? '+' : '-'} ${Math.abs(a)})`;
+    wrong.push(`${wrongX}^2 + ${termY}^2 = ${R2}`);
+
+    // 2. Неправильний радіус
+    wrong.push(`${termX}^2 + ${termY}^2 = ${Math.floor(R2 * 0.8) + 1}`);
+
+    // 3. І знак, і радіус неправильні
+    const wrongY = b === 0 ? 'y' : `(y ${b > 0 ? '+' : '-'} ${Math.abs(b)})`;
+    wrong.push(`${wrongX}^2 + ${wrongY}^2 = ${Math.floor(R2 * 0.7) + 1}`);
+
+    return {
+        question: `Знайти рівняння кола з центром \\(C(${a}; ${b})\\), що проходить через точку \\(M(${x1}; ${y1})\\)`,
+        correct,
+        wrong
+    };
+}
+        // === ПИТАННЯ 6: Відстань між центрами двох кіл ===
+    function generateQuestion6() {
+        let x1, y1, x2, y2, dx, dy, dist;
+
+        // Генеруємо два різні центри, щоб відстань була цілою і > 0
+        do {
+            x1 = Math.floor(Math.random() * 11) - 5; // -5..5
+            y1 = Math.floor(Math.random() * 11) - 5;
+            x2 = Math.floor(Math.random() * 11) - 5;
+            y2 = Math.floor(Math.random() * 11) - 5;
+
+            dx = x2 - x1;
+            dy = y2 - y1;
+            dist = Math.sqrt(dx*dx + dy*dy);
+        } while (
+            dist === 0 ||
+            !Number.isInteger(dist) ||
+            dist < 1 ||
+            dist > 10
+        );
+
+        const R1 = Math.floor(Math.random() * 8) + 2; // 2..9
+        const R2 = Math.floor(Math.random() * 8) + 2;
+
+        // Формуємо гарні рівняння кіл
+        const circle1 = term(x1) + "^2 + " + term(y1, 'y') + "^2 = " + (R1*R1);
+        const circle2 = term(x2) + "^2 + " + term(y2, 'y') + "^2 = " + (R2*R2);
+
+        function term(h, variable = 'x') {
+            if (h === 0) return variable;
+            return `(${variable} ${h < 0 ? '+' : '-'} ${Math.abs(h)})`;
+        }
+
+        return {
+            question: `
+                Знайти відстань між центрами двох кіл:<br><br>
+                \\(${circle1}\\)<br>
+                \\(${circle2}\\)
+            `,
+            correct: `${dist}`,
+            wrong: [
+                `${dist - 1}`,
+                `${dist + 1}`,
+                `${dist * 2}`,
+                `${Math.round(Math.sqrt((R1*R1) + (R2*R2)))}` // часто плутають з сумою радіусів
+            ].sort(() => Math.random() - 0.5).slice(0, 3)
+        };
+    }
+
+    // === ПОКАЗ ПИТАННЯ ===
+    // === ПОКАЗ ПИТАННЯ — ЧИСТИЙ, БЕЗ ДУБЛЮВАНЬ ===
+function displayQuestion() {
+    let q;
+
+    if (currentStage === 1) {
+        q = generateQuestion1();
+        els.questionNumber.textContent = 'Питання 1';
+        els.questionText.innerHTML = `
+            <div class="trainer-question-title">
+                Знайти координати центру та радіус кола:
+            </div>
+            <div class="trainer-equation">\\(${q.equation}\\)</div>
+        `;
+
+    } else if (currentStage === 2) {
+        q = generateQuestion2();
+        els.questionNumber.textContent = 'Питання 2';
+        els.questionText.innerHTML = `
+            <div class="trainer-question-title">
+                ${q.question}
+            </div>
+        `;
+
+    } else if (currentStage === 3) {
+        q = generateQuestion3();
+        els.questionNumber.textContent = 'Питання 3';
+        els.questionText.innerHTML = `
+            <div class="trainer-question-title">
+                Знайти координати центру та радіус кола за загальним рівнянням:
+            </div>
+            <div class="trainer-equation">\\(${q.equation}\\)</div>
+        `;
+
+    } else if (currentStage === 4) {
+        q = generateQuestion4();
+        els.questionNumber.textContent = 'Питання 4';
+        els.questionText.innerHTML = `
+            <div class="trainer-question-title">
+                ${q.question}
+            </div>
+        `;
+
+    } else if (currentStage === 5) {
+        q = generateQuestion5();
+        els.questionNumber.textContent = 'Питання 5';
+        els.questionText.innerHTML = `
+            <div class="trainer-question-title">
+                ${q.question}
+            </div>
+        `;
+
+    } else if (currentStage === 6) {
+        q = generateQuestion6();
+        els.questionNumber.textContent = 'Питання 6';
+        els.questionText.innerHTML = `
+            <div class="trainer-question-title">
+                ${q.question}
+            </div>
+        `;
+    }
+
+    // === ВАРІАНТИ ВІДПОВІДЕЙ ===
+    const allOptions = [q.correct, ...q.wrong].sort(() => Math.random() - 0.5);
+    correctIndex = allOptions.indexOf(q.correct);
+
+    els.optionsContainer.innerHTML = '';
+    allOptions.forEach((opt, i) => {
+        const div = document.createElement('div');
+        div.className = 'option';
+        div.dataset.value = i;
+        div.innerHTML = `<div class="math-answer">\\(${opt}\\)</div>`;
+        els.optionsContainer.appendChild(div);
+    });
+
+    selected = null;
+    els.submitAnswer.disabled = true;
+    document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+
+    if (window.MathJax?.typesetPromise) {
+        MathJax.typesetPromise([els.questionText, els.optionsContainer]).then(() => {
+            els.questionText.style.opacity = 1;
+            els.optionsContainer.style.opacity = 1;
+        });
+    } else {
+        els.questionText.style.opacity = 1;
+        els.optionsContainer.style.opacity = 1;
+    }
+}
+
+    // === КЛІК, ПЕРЕВІРКА, МОДАЛКИ — без змін ===
+    els.optionsContainer.addEventListener('click', e => {
+        const opt = e.target.closest('.option');
+        if (!opt) return;
+        document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        selected = opt.dataset.value;
+        els.submitAnswer.disabled = false;
+    });
+
+    els.submitAnswer.addEventListener('click', () => {
+        const isCorrect = parseInt(selected) === correctIndex;
+
+        els.feedback.textContent = isCorrect ? '✓ Ціль уражена!' : '✗ Промах! Спробуй ще!';
+        els.feedback.className = `feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'} show`;
+
+        setTimeout(() => {
+            els.feedback.classList.remove('show');
+            setTimeout(() => {
+                if (isCorrect) {
+                    if (currentStage === 6) {
+                        toggleModal(els.trainerModal, false);
+                        toggleModal(els.completionModal, true);
+                    } else {
+                        currentStage++;
+                        displayQuestion();
+                    }
+                } else {
+                    displayQuestion();
+                }
+            }, 300);
+        }, 1500);
+    });
+
+    els.resetTrainerBtn.addEventListener('click', () => {
+        currentStage = 1;
+        toggleModal(els.completionModal, false);
+        toggleModal(els.trainerModal, true);
+        displayQuestion();
+    });
+
+    function toggleModal(modal, show) {
+        modal.style.display = show ? 'flex' : 'none';
+        els.modalOverlay.style.display = show ? 'block' : 'none';
+        document.body.style.overflow = show ? 'hidden' : 'auto';
+    }
+
+    window.initTrainer = function () {
+        currentStage = 1;
+        toggleModal(els.trainerModal, true);
+        displayQuestion();
+    };
+
+    els.modalOverlay.addEventListener('click', () => document.querySelectorAll('.modal').forEach(m => toggleModal(m, false)));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.modal').forEach(m => toggleModal(m, false)); });
+});
+</script>
+
+            <script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Переворот карток + перемальовка формул
+    document.querySelectorAll('.question-card').forEach(card => {
+        card.addEventListener('click', function () {
+            this.classList.toggle('flipped');
+            setTimeout(() => {
+                if (window.MathJax?.typesetPromise) {
+                    MathJax.typesetPromise([this]);
+                }
+            }, 200);
+        });
+    });
+
+    // При відкритті модалки — формули одразу гарні
+    document.getElementById('openQuestionsBtn')?.addEventListener('click', () => {
+        setTimeout(() => {
+            if (window.MathJax?.typesetPromise) {
+                MathJax.typesetPromise([document.getElementById('questionsContent')]);
+            }
+        }, 400);
+    });
+});
+</script>
+</body>
+</html>
