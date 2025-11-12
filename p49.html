@@ -1,0 +1,2795 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>49. Еліпс</title>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    console.log("MathJax is loaded and ready!");
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" onerror="console.error('Failed to load MathJax')"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        *, *:before, *:after { box-sizing: border-box; }
+        body {
+            margin: 0;
+            background: radial-gradient(circle at center, #0a0a0a 0%, #1a1a1a 40%, #2b2b2b 100%);
+            color: #e0e0e0;
+            font-family: 'Roboto Condensed', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            /* Виправлення 1: Фіксований фон, що не блимає */
+            background-attachment: fixed;
+        }
+        body.loaded { visibility: visible; opacity: 1; }
+
+
+
+        /* === ЗАГОЛОВОК === */
+        .title-box {
+            margin-top: 60px;
+            padding: 20px 40px;
+            background: linear-gradient(135deg, #2a2f33, #3a4147);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+            border-radius: 16px;
+            max-width: 90%;
+            text-align: center;
+            border: 1px solid #5a6975;
+        }
+        .title-box h1 {
+            margin: 0;
+            font-size: 28px;
+            color: #4a9de9;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 8px rgba(74, 157, 233, 0.5);
+        }
+
+        /* === КАРТКИ РОЗДІЛІВ === */
+        .section-container {
+            margin-top: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+        }
+        .section {
+            width: 260px;
+            height: 200px;
+            background: linear-gradient(145deg, #2a2f33, #3a4147);
+            border-radius: 14px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.45);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            border: 1px solid rgba(74, 157, 233, 0.3);
+        }
+        .section:hover {
+            transform: scale(1.06);
+            box-shadow: 0 10px 25px rgba(74, 157, 233, 0.3);
+            background: linear-gradient(145deg, #32383e, #424a52);
+        }
+        .section h2 {
+            font-size: 20px;
+            color: #ffffff;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .section img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 15px;
+            object-fit: cover;
+            border-radius: 8px;
+            filter: brightness(1.3) drop-shadow(0 0 6px #4a9de9);
+        }
+
+        /* === МОДАЛЬНІ ВІКНА === */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 5%; left: 5%; width: 90%; height: 90%;
+            background: linear-gradient(135deg, #2a2f33, #3a4147);
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            z-index: 1001;
+            overflow: hidden;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            border: 1px solid rgba(74, 157, 233, 0.3);
+        }
+        #modalOverlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 999;
+            backdrop-filter: blur(6px);
+        }
+       .modal-content {
+    padding: 20px;
+    flex-grow: 1;
+    background: #2a2f33;
+    border-radius: 10px;
+    margin: 10px;
+    color: #e0e0e0;
+    width: calc(100% - 20px);
+    
+    /* ВИПРАВЛЕННЯ: Дозволяємо вертикальну прокрутку */
+    overflow-y: auto;
+    overflow-x: hidden;
+    
+    /* Важливо для мобільних пристроїв */
+    -webkit-overflow-scrolling: touch;
+    
+    display: block;
+    max-height: calc(100% - 60px);
+}
+
+/* Поліпшення прокрутки для мобільних пристроїв */
+.modal {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+}
+
+.theory-content {
+    /* Дозволяємо природню прокрутку */
+    overflow: visible;
+    height: auto;
+    min-height: 100%;
+}
+
+/* Фікс для iOS Safari */
+@supports (-webkit-touch-callout: none) {
+    .modal-content {
+        padding-bottom: 40px; /* Додатковий простір для iOS */
+    }
+}
+
+            
+
+/* Забираємо горизонтальну прокрутку з всього модального вікна */
+.modal-content::-webkit-scrollbar:horizontal {
+    display: none; /* Повністю ховаємо горизонтальну прокрутку */
+}
+        .modal-content::-webkit-scrollbar { width: 6px; }
+        .modal-content::-webkit-scrollbar-track { background: transparent; }
+        .modal-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #2a2f33, #3a4147);
+            border-radius: 3px;
+        }
+           
+            
+        .modal-header {
+            background: linear-gradient(0deg, #2a2f33, #3a4147);
+            padding: 8px 12px;
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1002;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            border-bottom: 1px solid rgba(74, 157, 233, 0.3);
+        }
+        .close-btn {
+            background: linear-gradient(135deg, #2a6bb1, #4a9de9);
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Orbitron', sans-serif;
+            box-shadow: 0 2px 8px rgba(42, 107, 177, 0.4);
+        }
+        .close-btn:hover {
+            background: linear-gradient(135deg, #1a4b81, #2a6bb1);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(42, 107, 177, 0.5);
+        }
+
+        /* === ТЕОРІЯ === */
+        .theory-content h2 {
+            color: #4a9de9;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(74, 157, 233, 0.5);
+            margin-bottom: 20px;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .theory-content p, .theory-content li {
+            color: #e0e0e0;
+            font-size: clamp(18px, 3vw, 20px);
+            line-height: 1.7;
+            text-align: justify;
+        }
+        .example {
+            background: rgba(74, 157, 233, 0.1);
+            font-size: 1.2rem;
+            border-left: 4px solid #4a9de9;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 6px;
+            font-weight: bold;
+            color: #99c9ff;
+        }
+        .solution {
+            background: rgba(74, 157, 233, 0.15);
+            border: 2px solid #4a9de9;
+            padding: 10px;
+            margin: 15px 0;
+            border-radius: 6px;
+            text-align: center;
+            color: #4a9de9;
+            font-weight: bold;
+        }
+       
+        mjx-container { color: #ffff99 !important; font-style: italic !important; }
+        mjx-container {
+    font-size: clamp(18px, 3vw, 20px) !important;
+      
+}
+         mjx-frac {
+            font-size: 1.0em !important;
+            padding: 2px !important;
+        }
+        mjx-num, mjx-den {
+            padding: 2px !important;
+        }
+        mjx-msqrt, mjx-msup, mjx-msub, mjx-munderover {
+    font-size: 1.05em !important;
+}
+
+                        summary {
+    position: relative;
+    font-weight: 800;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #1a1f2e 0%, #2a3042 100%);
+    border-radius: 12px;
+    color: #e0f0ff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.4),
+        0 0 20px rgba(74, 157, 233, 0.15);
+    cursor: pointer;
+    list-style: none;
+    overflow: hidden;
+    border: 1px solid rgba(74, 157, 233, 0.3);
+    user-select: none;
+    text-shadow: 0 0 10px rgba(74, 157, 233, 0.3);
+}
+
+/* Ховаємо стандартну стрілку */
+summary::-webkit-details-marker,
+summary::marker {
+    display: none;
+}
+
+/* МЕТАЛЕВА СТРІЛКА В СТИЛІ ЕЛІПСА */
+summary::after {
+    content: "▼";
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #4a9de9, #66b3ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: all 0.4s ease;
+    filter: drop-shadow(0 0 8px rgba(74, 157, 233, 0.6));
+    text-shadow: 0 0 15px rgba(74, 157, 233, 0.5);
+}
+
+/* Поворот + підсвітка при відкритті */
+details[open] summary::after {
+    content: "▲";
+    transform: translateY(-50%) rotate(360deg);
+    filter: drop-shadow(0 0 15px rgba(74, 157, 233, 0.9));
+    background: linear-gradient(135deg, #66b3ff, #99ccff);
+}
+
+/* ХОВЕР — МЕТАЛЕВИЙ ЕФЕКТ */
+summary:hover {
+    background: linear-gradient(135deg, #2a3042 0%, #3a4157 100%);
+    border-color: #4a9de9;
+    box-shadow: 
+        0 8px 25px rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(74, 157, 233, 0.4),
+        inset 0 0 30px rgba(74, 157, 233, 0.1);
+    transform: translateY(-2px);
+    color: #ffffff;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+}
+
+summary:hover::after {
+    transform: translateY(-50%) scale(1.3);
+    filter: drop-shadow(0 0 20px rgba(74, 157, 233, 1));
+    background: linear-gradient(135deg, #66b3ff, #99ccff);
+}
+
+/* МЕТАЛЕВА ОБВОДКА ПРИ ФОКУСІ */
+summary:focus-visible {
+    outline: none;
+    box-shadow: 
+        0 0 0 3px rgba(74, 157, 233, 0.5),
+        0 0 40px rgba(74, 157, 233, 0.6),
+        inset 0 0 20px rgba(74, 157, 233, 0.2);
+}
+
+/* ПІДСВІТКА ПРИ ВІДКРИТТІ */
+details[open] summary {
+    border-bottom: 3px solid #4a9de9;
+    border-radius: 12px 12px 0 0;
+    background: linear-gradient(135deg, #1a1f2e 0%, #252b40 100%);
+    box-shadow: 
+        0 -4px 20px rgba(74, 157, 233, 0.3),
+        0 8px 25px rgba(0, 0, 0, 0.4),
+        inset 0 0 25px rgba(74, 157, 233, 0.15);
+    color: #f0f8ff;
+}
+
+/* ДОДАЄМО МЕТАЛЕВУ ТЕКСТУРУ */
+summary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        linear-gradient(90deg, 
+            transparent 0%, 
+            rgba(255,255,255,0.03) 50%, 
+            transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+summary:hover::before {
+    opacity: 1;
+}
+
+/* АДАПТИВНІСТЬ */
+@media (max-width: 768px) {
+    summary {
+        padding: 14px 16px;
+        font-size: 0.9rem;
+        border-radius: 10px;
+    }
+    
+    summary::after {
+        right: 16px;
+        font-size: 0.9rem;
+    }
+    
+    details[open] summary {
+        border-radius: 10px 10px 0 0;
+    }
+}
+
+    /* Стилі для детального викладу теорії */
+.definition {
+    background: rgba(74, 157, 233, 0.1);
+    border-left: 4px solid #4a9de9;
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 8px;
+}
+
+.derivation {
+    background: rgba(42, 107, 177, 0.08);
+    border: 1px solid rgba(74, 157, 233, 0.3);
+    padding: 20px;
+    margin: 25px 0;
+    border-radius: 10px;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
+}
+
+.important {
+    background: linear-gradient(135deg, rgba(74, 157, 233, 0.15), rgba(42, 107, 177, 0.1));
+    border: 2px solid #4a9de9;
+    padding: 20px;
+    margin: 25px 0;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(74, 157, 233, 0.2);
+}
+
+.properties {
+    background: rgba(42, 107, 177, 0.05);
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 10px;
+    border: 1px solid rgba(74, 157, 233, 0.2);
+}
+
+.special-case {
+    background: rgba(144, 224, 144, 0.1);
+    border-left: 4px solid #90e090;
+    padding: 18px;
+    margin: 20px 0;
+    border-radius: 8px;
+}
+
+.vertical-ellipse {
+    background: rgba(74, 157, 233, 0.08);
+    border: 1px solid rgba(74, 157, 233, 0.3);
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 10px;
+}
+
+.theory-content h3 {
+    color: #4a9de9;
+    padding-bottom: 8px;
+    margin: 30px 0 20px 0;
+    font-family: 'Orbitron', sans-serif;
+    border-bottom: 3px solid transparent;
+    background-image: linear-gradient(to right, #ff9966, #ffbb66);
+    background-size: 100% 3px;
+    background-repeat: no-repeat;
+    background-position: left bottom;
+}
+
+
+
+.theory-content h4 {
+    color: #66b3ff;
+    margin: 25px 0 15px 0;
+    font-family: 'Exo 2', sans-serif;
+}
+
+.theory-content ul {
+    margin: 15px 0;
+    padding-left: 25px;
+}
+
+.theory-content li {
+    margin: 8px 0;
+    line-height: 1.6;
+}
+
+.math-notation-centered {
+    display: block;
+    text-align: center;
+    font-size: clamp(18px, 3vw, 20px);
+    margin: 12px 0;
+    color: #ffff99;
+    /* ВИПРАВЛЕННЯ: НІЯКИХ вертикальних прокруток ніде */
+    overflow-x: visible;
+    overflow-y: visible;
+    white-space: normal; /* Дозволяємо переноси формул на комп'ютері */
+    padding: 5px 0;
+}
+   
+
+   /* ТІЛЬКИ для мобільних - горизонтальна прокрутка */
+@media (max-width: 768px) {
+    .math-notation-centered {
+        overflow-x: auto; /* ТІЛЬКИ горизонтальна прокрутка на мобільних */
+        overflow-y: hidden; /* ЗАБОРОНЯЄМО вертикальну прокрутку */
+        white-space: nowrap; /* Забороняємо переноси на мобільних */
+        -webkit-overflow-scrolling: touch; /* Плавна прокрутка на iOS */
+        padding: 8px 0;
+        
+        /* Стильна голуба прокрутка тільки для мобільних */
+        scrollbar-width: thin;
+        scrollbar-color: #4a9de9 transparent;
+    }
+
+    /* Стилі для Webkit браузерів (Chrome, Safari, Edge) - тільки на мобільних */
+    .math-notation-centered::-webkit-scrollbar {
+        height: 6px; /* Тонка горизонтальна прокрутка */
+        width: 0; /* ЗАБОРОНЯЄМО вертикальну прокрутку */
+    }
+
+    .math-notation-centered::-webkit-scrollbar-track {
+        background: transparent; /* Прозорий трек */
+        border-radius: 3px;
+    }
+
+    .math-notation-centered::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #4a9de9, #66b3ff); /* Голубий градієнт */
+        border-radius: 3px;
+        box-shadow: 0 0 4px rgba(74, 157, 233, 0.5);
+    }
+
+    .math-notation-centered::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #66b3ff, #99ccff); /* Світліший при наведенні */
+    }
+    
+    /* ЗАБОРОНЯЄМО вертикальну прокрутку для всіх елементів */
+    .math-notation-centered::-webkit-scrollbar:vertical {
+        display: none; /* Повністю ховаємо вертикальну прокрутку */
+    }
+}
+   strong {
+    color: #ff9966;
+}
+
+ /* Стилі для детальних прикладів */
+.example-detailed {
+    background: linear-gradient(135deg, rgba(42, 107, 177, 0.1), rgba(74, 157, 233, 0.05));
+    border: 1px solid rgba(74, 157, 233, 0.3);
+    border-radius: 12px;
+    padding: 0;
+    margin: 25px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    overflow: hidden;
+}
+
+.example-header {
+    background: linear-gradient(135deg, #2a6bb1, #4a9de9);
+    color: #ffffff;
+    padding: 16px 20px;
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 700;
+    border-bottom: 1px solid rgba(74, 157, 233, 0.3);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.example-header strong {
+    color: #ffffff;
+    font-size: 1.3rem;
+}
+
+.solution-steps {
+    padding: 20px;
+}
+
+.solution-steps strong {
+    color: #4a9de9;
+    font-family: 'Exo 2', sans-serif;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.solution-steps p {
+    margin: 12px 0;
+    line-height: 1.6;
+    color: #e0e8ff;
+}
+
+.final-answer {
+    background: rgba(144, 224, 144, 0.15);
+    border: 2px solid #90e090;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 20px 0 0 0;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(144, 224, 144, 0.2);
+}
+
+.final-answer p {
+    margin: 0;
+    color: #90e090;
+    font-weight: 700;
+    font-family: 'Exo 2', sans-serif;
+    font-size: 1.1rem;
+}
+
+/* Покращення для математичних формул у прикладах */
+.solution-steps .math-notation-centered {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(74, 157, 233, 0.2);
+    margin: 15px 0;
+    padding: 12px;
+}
+
+    
+
+/* Адаптивність для мобільних */
+@media (max-width: 768px) {
+    .example-detailed {
+        margin: 20px 0;
+    }
+    
+    .example-header {
+        padding: 14px 16px;
+        font-size: 0.95rem;
+    }
+    .example-header strong {
+        font-size: 1.0rem;
+}
+    .solution-steps {
+        padding: 16px;
+    }
+    
+    .final-answer {
+        padding: 12px;
+    }
+    
+    .final-answer p {
+        font-size: 1rem;
+    }
+}
+
+    
+
+details {
+    margin: 15px 0;
+    border-radius: 12px;
+    overflow: visible; /* Змініть з hidden на visible */
+}
+
+details > div {
+    padding: 20px;
+    background: linear-gradient(135deg, #1e2538 0%, #2a3248 100%);
+    border: 1px solid rgba(74, 157, 233, 0.2);
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    color: #e0e8ff;
+    font-family: 'Roboto Condensed', sans-serif;
+    line-height: 1.6;
+    box-shadow: 
+        inset 0 0 30px rgba(0, 0, 0, 0.3),
+        0 4px 15px rgba(0, 0, 0, 0.2);
+    overflow: visible; /* Дозволяємо контенту виходити за межі */
+}
+      
+
+        /* === ВІДЕО === */
+        .video-card {
+            width: 350px;
+            height: 250px;
+            background: #3a4147;
+            border-radius: 15px;
+            border: 1px solid rgba(144, 224, 239, 0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 10px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            color: #4a9de9;
+        }
+        .video-card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+        }
+        .video-card img {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 8px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+        .video-card h3 {
+            font-size: clamp(16px, 2.5vw, 18px);
+            font-weight: 600;
+            margin: 0;
+        }
+        .video-player-container {
+            width: 80vw;
+            max-width: 960px;
+            aspect-ratio: 16 / 9;
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .video-player-container iframe {
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            display: block;
+            border: none;
+        }
+
+        /* === ПИТАННЯ === */
+        .question-card {
+            perspective: 1000px;
+            margin: 20px auto;
+            max-width: 964px;
+            width: 100%;
+            min-height: 150px;
+            cursor: pointer;
+        }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            min-height: 200px;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .question-card.flipped .card-inner { transform: rotateY(180deg); }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            min-height: 200px;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            text-align: center;
+            border: 1px solid rgba(74, 157, 233, 0.3);
+        }
+        .card-front {
+            background: #2a2f33;
+            color: #ffffff;
+        }
+        .card-back {
+            background: linear-gradient(135deg, #1a1a1a, #2b2b2b);
+            color: #e0e0e0;
+            transform: rotateY(180deg);
+            text-align: justify;
+            padding: 20px;
+        }
+        .card-front span, .card-back span {
+            font-size: clamp(17px, 3vw, 19px);
+            line-height: 1.4;
+        }
+        #questionsModal mjx-container { color: #ffff99 !important; font-style: normal !important; font-weight: 500 !important; }
+
+        /* === ТРЕНАЖЕР === */
+        .trainer-container {
+            width: 90%;
+            max-width: 800px;
+            padding: 3vw 4vw;
+            text-align: center;
+            background: linear-gradient(135deg, #2a2f33, #3a4147);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(74, 157, 233, 0.15);
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100%;
+            border: 1px solid rgba(74, 157, 233, 0.3);
+        }
+        .question-circle {
+            width: clamp(80px, 15vw, 120px);
+            height: clamp(80px, 15vw, 120px);
+            margin: 0 auto 3vw;
+            background: linear-gradient(135deg, #2a6bb1, #4a9de9);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(42, 107, 177, 0.4);
+        }
+        .question-circle h3 {
+            color: #ffffff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(16px, 2.5vw, 20px);
+            margin: 0;
+            text-shadow: 0 0 6px rgba(0,0,0,0.5);
+        }
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2vw;
+            justify-content: center;
+            margin-bottom: 3vw;
+            width: 100%;
+        }
+        .option {
+            padding: 1.5vw 3vw;
+            border: 1.5px solid #2a6bb1;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #2a2f33, #3a4147);
+            cursor: pointer;
+            font-size: clamp(15px, 3.5vw, 18px);
+            min-height: 45px;
+            max-width: 45%;
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+            transition: all 0.3s ease;
+            color: #e0e0e0;
+        }
+        .option:hover {
+            background: linear-gradient(135deg, #2a6bb1, #4a9de9);
+            transform: scale(1.03);
+            border-color: #4a9de9;
+            box-shadow: 0 4px 12px rgba(42, 107, 177, 0.3);
+        }
+        .option.selected {
+            background: linear-gradient(135deg, #4a9de9, #66b3ff) !important;
+            color: #ffffff !important;
+            border: 2px solid #ffffff !important;
+            font-weight: bold;
+        }
+            mjx-container.math-notation-centered * {
+    color: #ffff99 !important;
+    font-style: italic !important;
+}
+
+    /* Білий текст усього тренажера */
+#trainerModal {
+  color: #ffffff;
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+}
+
+/* Формули — жовті */
+#trainerModal mjx-container {
+  color: #ffff99 !important;
+  font-style: italic !important;
+  background: none !important;
+}
+
+/* Текст питання */
+#trainerModal .question-text {
+  color: #ffffff !important;
+  font-style: normal !important;
+  text-align: center;
+  font-size: clamp(18px, 3.5vw, 20px);
+  line-height: 1.5;
+}
+
+/* Формули всередині тексту питання */
+#trainerModal .question-text mjx-container {
+  color: #ffff99 !important;
+}
+
+/* Варіанти відповідей */
+#trainerModal .options-container mjx-container {
+  color: #ffff99 !important;
+  font-style: italic !important;
+  background: none !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+  font-size: clamp(18px, 3vw, 20px) !important;
+}
+
+/* Центровані окремі формули */
+#trainerModal .math-notation-centered {
+  color: #ffff99 !important;
+  font-style: italic;
+  text-align: center;
+  font-size: clamp(18px, 3vw, 20px);
+  margin: 10px 0;
+}
+/* Білий текст */
+.question-text, #trainerModal, #trainerModal .options-container {
+    color: #ffffff;
+}
+
+/* Формули MathJax — жовті */
+#trainerModal mjx-container {
+    color: #ffff99 !important;
+    font-style: normal !important;
+}
+
+/* Жовті формули MathJax */
+.math-formula mjx-container {
+    color: #ffff99 !important;
+    font-style: normal !important;
+}
+
+
+        button {
+            background: linear-gradient(135deg, #2a6bb1, #4a9de9);
+            color: #ffffff;
+            border: none;
+            border-radius: 25px;
+            padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 24px);
+            font-size: clamp(16px, 3vw, 18px);
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(42, 107, 177, 0.3);
+        }
+        button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #1a4b81, #2a6bb1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(42, 107, 177, 0.4);
+        }
+        button:disabled { background: #555; cursor: not-allowed; }
+
+        .feedback {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(24px, 5.8vw, 30px);
+            font-family: 'Orbitron', sans-serif;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+            z-index: 1001;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            text-align: center;
+            border: 2px solid transparent;
+        }
+        .feedback.show { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+        .correct-feedback { color: #ffffff; background: linear-gradient(135deg, #2a9d8f, #2a9d8f); border-color: #2a9d8f; }
+        .incorrect-feedback { color: #ffffff; background: linear-gradient(135deg, #e63946, #c1121f); border-color: #e63946; }
+
+       /* === МЕДАЛЬ З ТРИЗУБОМ === */
+        .completion-emoji {
+            position: relative;
+            display: inline-block;
+            width: clamp(56px, 12vw, 96px);
+            height: clamp(56px, 12vw, 96px);
+            vertical-align: middle;
+            margin: 0 auto 3vw;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1c2526, #2e3a3b);
+            border: 3px dashed #ffd700;
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+            overflow: hidden;
+            animation: medalAppear 0.8s ease-out;
+        }
+        .completion-emoji::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><filter id='s' x='-50%' y='-50%' width='200%' height='200%'><feDropShadow dx='0' dy='2' stdDeviation='2' flood-color='%23000000' flood-opacity='0.25'/></filter></defs><rect x='30' y='0' width='60' height='40' rx='4' fill='%23007ACC'/><rect x='30' y='20' width='60' height='20' rx='4' fill='%23FFD700'/><g transform='translate(60,70)'><polygon points='0,-26 6,-6 26,-6 9,6 15,26 0,14 -15,26 -9,6 -26,-6 -6,-6' fill='%23FFD700' filter='url(%23s)'/></g></svg>");
+            background-size: 75%;
+            background-repeat: no-repeat;
+            background-position: center 60%;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+            animation: medalBounce 1.2s ease-out 0.3s both;
+        }
+        @keyframes medalAppear {
+            0% { transform: scale(0.3) rotate(-180deg); opacity: 0; }
+            60% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes medalBounce {
+            0% { transform: translateY(-120px) rotate(-30deg) scale(0.4); opacity: 0; }
+            60% { transform: translateY(15px) rotate(10deg) scale(1.15); opacity: 1; }
+            80% { transform: translateY(-8px) rotate(-5deg) scale(1.05); }
+            100% { transform: translateY(0) rotate(0) scale(1); }
+        }
+
+        .completion-message {
+            background: linear-gradient(145deg, #1c2533, #2d3848);
+            border: 2.5px solid #ffffff;
+            border-radius: 15px;
+            padding: clamp(12px, 3vw, 18px);
+            box-shadow: 0 6px 12px rgba(255,77,77,0.4);
+            margin: 2vw auto;
+            max-width: 90%;
+            text-align: center;
+        }
+        .completion-message h2 {
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        .completion-message p { color: #ffffff; }
+
+        #completionModal .modal-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+        #completionModal .completion-message {
+            text-align: center;
+            max-width: 500px;
+        }
+
+
+        /* === НАВІГАЦІЯ === */
+        .navigation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px auto;
+            max-width: 1000px;
+        }
+        .nav-button {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #2a2f33, #3a4147);
+            color: #e0e0e0;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(74, 157, 233, 0.3);
+            font-weight: bold;
+        }
+        .nav-button:hover {
+            background: linear-gradient(135deg, #2a6bb1, #4a9de9);
+            color: #ffffff;
+            transform: scale(1.03);
+            box-shadow: 0 4px 12px rgba(42, 107, 177, 0.3);
+        }
+        .nav-button svg { margin-right: 8px; fill: currentColor; }
+            
+
+        /* === АДАПТИВНІСТЬ === */
+        @media (max-width: 768px) {
+            .title-box { margin-top: 40px; padding: 15px 20px; }
+            .title-box h1 { font-size: 24px; }
+            .section-container { flex-direction: column; align-items: center; gap: 20px; }
+            .section { width: 80%; height: 180px; }
+            .modal { top: 2%; left: 2%; width: 96%; height: 96%; }
+            .options-container { flex-direction: column; }
+            .option { max-width: 100%; }
+            .video-card-container {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            .video-card {
+                width: 260px;
+                height: 160px;
+                margin: 5px;
+            }
+            .video-card img {
+                width: 40px;
+                height: 40px;
+                margin-bottom: 6px;
+            }
+            .video-player-container {
+                width: 80vw;
+                max-width: 600px;
+                aspect-ratio: 16 / 9;
+            }
+            .video-card h3 {
+                font-size: clamp(14px, 2.5vw, 16px);
+            }
+        }
+        @media (max-width: 480px) {
+            .title-box h1 { font-size: 22px; }
+            .section { width: 90%; height: 150px; }
+            .section h2 { font-size: 16px; }
+ mjx-container {
+    font-size: clamp(16px, 3vw, 17px) !important;
+     }
+            /* Варіанти відповідей */
+#trainerModal .options-container mjx-container {
+    font-size: clamp(15px, 2.5vw, 16px) !important;
+}
+             .example {
+            font-size: 1.0rem;
+                   }
+             .theory-content h2 {
+            font-size: 18px !important;
+        }
+            .video-card-container {
+                gap: 10px;
+                padding: 10px;
+            }
+            .video-card {
+                width: 90%;
+                max-width: 260px;
+                height: 140px;
+                margin: 5px;
+            }
+            .video-card img {
+                width: 30px;
+                height: 30px;
+                margin-bottom: 5px;
+            }
+            .video-card h3 {
+                font-size: clamp(12px, 2.5vw, 14px);
+            }
+            .video-player-container {
+                width: 80vw;
+                max-width: 400px;
+                aspect-ratio: 16 / 9;
+            }
+         .question-circle h3 {
+           
+            font-size: clamp(13px, 2vw, 14px);
+           
+        }
+             .feedback {
+           
+            font-size: clamp(16px, 3vw, 17px);
+           
+        }
+                                 }
+             /* Корекція для canvas: масштабуємо малюнок */
+    #ellipseCanvas {
+        transform: scale(calc(90vw / 520));
+        transform-origin: center top;
+        width: 520px !important;
+        height: 520px !important;
+    }
+
+            /* === ВИПРАВЛЕННЯ ДЛЯ ТРЕНАЖЕРА НА МОБІЛЬНИХ === */
+@media (max-width: 768px) {
+    .question-text {
+        white-space: break-spaces !important;     /* ← ДОДАЙ ЦЕ */
+        word-wrap: break-word !important;
+        overflow-wrap: anywhere !important;       /* або break-word */
+        text-align: center;
+        line-height: 1.5;
+        display: block;
+        width: 100%;
+    }
+
+    .option {
+        white-space: break-spaces !important;     /* ← І ТУТ */
+        word-wrap: break-word;
+        overflow-wrap: anywhere;
+        text-align: center;
+        padding: 12px 15px;
+        min-height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        max-width: 100%;
+    }
+
+    #ellipseCanvas {
+        /* На телефоні: 90% ширини екрану */
+        width: 90vw;
+        height: 90vw;
+        max-width: 270px;
+        max-height: 270px;
+        
+        /* Масштабуємо canvas, щоб не розтягувався */
+        image-rendering: pixelated;
+        image-rendering: crisp-edges;
+    }
+  
+}
+           
+    </style>
+</head>
+<body>
+
+    <div class="title-box">
+        <h1>49. Еліпс</h1>
+    </div>
+
+     <div class="section-container">
+        <div class="section" id="openTheoryBtn">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Книга" loading="lazy">
+            <h2>Теоретичні відомості</h2>
+        </div>
+        <div class="section" id="openVideoBtn">
+            <img src="https://img.icons8.com/fluency/96/video.png" alt="Відео" loading="lazy">
+            <h2>Відеоматеріали</h2>
+        </div>
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Картки" loading="lazy">
+            <h2>Питання і відповіді</h2>
+        </div>
+        <div class="section" id="openTrainerBtn">
+            <img src="https://img.icons8.com/fluency/96/flash-on.png" alt="Тренажер" loading="lazy">
+            <h2>Тренажер</h2>
+        </div>
+    </div>
+
+    <div class="navigation-buttons">
+       <a class="nav-button" href="{{ url_for('tema10') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            До теми 10
+        </a>
+        <a class="nav-button" href="{{ url_for('home') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            На головну
+        </a>
+    </div>
+
+    </div>
+
+    <!-- ТЕОРІЯ -->
+    <div id="theoryModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeTheoryBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="theory-content">
+             <details>
+  <summary>Канонічне рівняння еліпса та його властивості</summary>
+  <div class="theory-content">
+    
+    <h2>Еліпс та його властивості</h2>
+    
+    <div class="definition">
+      <p><strong>Еліпсом</strong> називається множина точок площини, для кожної з яких сума відстаней до двох фіксованих точок цієї площини є сталою величиною, більшою за відстань між цими точками. Ці фіксовані точки називаються <strong>фокусами еліпса</strong>, а відстань між ними – <strong>фокальною відстанню</strong>.</p>
+    </div>
+
+    <h3>Канонічне рівняння еліпса</h3>
+    
+    <p>Розглянемо еліпс із фокусами \( F_1 (-c;0) \) і \( F_2 (c;0) \), розташованими симетрично відносно початку координат на осі \( Ox \). Фокальна відстань дорівнює \( |F_1 F_2| = 2c \).</p>
+    
+    <p>Для довільної точки \( M(x;y) \) на еліпсі (рис. 10.2) сума відстаней до фокусів є величиною сталою, яку позначимо \( 2a \):</p>
+    <p class="math-notation-centered">\[ |F_1 M| + |F_2 M| = 2a \]</p>
+    <p>де \( 2a > 2c \), звідки \( a > c \).</p>
+    <img src="/static/figure10.2.jpg" alt="Еліпс_1" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+     
+    <p>Використовуючи формулу відстані між двома точками, отримаємо:</p>
+    <p class="math-notation-centered">\[ F_1 M = \sqrt{(x+c)^2 + y^2}, \quad F_2 M = \sqrt{(x-c)^2 + y^2} \]</p>
+    
+    <p>Отже, рівняння еліпса:</p>
+    <p class="math-notation-centered">\[ \sqrt{(x+c)^2 + y^2} + \sqrt{(x-c)^2 + y^2} = 2a \]</p>
+    
+    <div class="derivation">
+      <p><strong>Виведення канонічного рівняння:</strong></p>
+      <p>Перенесемо другий доданок з лівої частини рівняння у праву:</p>
+      <p class="math-notation-centered">\[ \sqrt{(x+c)^2 + y^2} = 2a - \sqrt{(x-c)^2 + y^2} \]</p>
+            <p>Піднесемо обидві частини до квадрата:</p>
+      <p class="math-notation-centered">\[ (\sqrt{(x+c)^2 + y^2})^2 = (2a - \sqrt{(x-c)^2 + y^2})^2 \]</p>
+      <p class="math-notation-centered">\[ (x+c)^2 + y^2 = 4a^2 - 4a\sqrt{(x-c)^2 + y^2} + (x-c)^2 + y^2 \]</p>
+      
+      <p>Розкриємо дужки:</p>
+            <p class="math-notation-centered">\[
+x^2 + 2cx + c^2 + y^2 = 4a^2 - 4a\sqrt{(x - c)^2 + y^2} + x^2 - 2cx + c^2 + y^2
+\]</p>
+ <p>Після спрощення отримаємо:</p>
+      <p class="math-notation-centered">\[ 4cx = 4a^2 - 4a\sqrt{(x-c)^2 + y^2} \]</p>
+      <p class="math-notation-centered">\[ cx = a^2 - a\sqrt{(x-c)^2 + y^2} \]</p>
+      
+      <p>Перенесемо члени і ще раз піднесемо до квадрата:</p>
+      <p class="math-notation-centered">\[ a\sqrt{(x-c)^2 + y^2} = a^2 - cx \]</p>
+      <p class="math-notation-centered">\[ \sqrt{(x-c)^2 + y^2} = a - \frac{c}{a}x \]</p>
+      <p class="math-notation-centered">\[ (x-c)^2 + y^2 = (a - \frac{c}{a}x)^2 \]</p>
+ <p>Розкриємо дужки:</p>
+<p class="math-notation-centered">\[
+x^2 - 2cx + c^2 + y^2 = a^2 - \frac{2cx + c^2}{a^2} \, x^2
+\]</p>
+      
+      <p>Після перенесення і спрощення отримаємо:</p>
+      <p class="math-notation-centered">\[ \frac{a^2 - c^2}{a^2}x^2 + y^2 = a^2 - c^2 \]</p>
+      
+      <p>Позначимо \( b^2 = a^2 - c^2 \) (оскільки \( a > c \), то \( b^2 > 0 \)):</p>
+      <p class="math-notation-centered">\[ \frac{b^2}{a^2}x^2 + y^2 = b^2 \]</p>
+      
+      <p>Розділимо обидві частини на \( b^2 \), отримаємо:</p>
+      <p class="math-notation-centered">\[ \frac{x^2}{a^2} + \frac{y^2}{b^2} = 1 \quad \text{(10.5)} \]</p>
+    </div>
+
+    <div class="important">
+      <p><strong>Канонічне рівняння еліпса:</strong></p>
+      <p class="math-notation-centered">\[ \frac{x^2}{a^2} + \frac{y^2}{b^2} = 1 \]</p>
+      <p>де \( a \) – велика піввісь, \( b \) – мала піввісь, \( c = \sqrt{a^2 - b^2} \) – половина фокальної відстані.</p>
+      <p class="math-notation-centered">\[ c^2 = a^2 - b^2 \quad \text{(10.6)} \]</p>
+    </div>
+
+    <h3>Геометричні властивості еліпса</h3>
+    <p>На рисунку (рис. 10.3) зображено еліпс з центром у точці \(O(0,0)\). Його канонічне рівняння має вигляд:
+            </p> <p class="math-notation-centered">\[ \frac{x^2}{a^2} + \frac{y^2}{b^2} = 1 \]</p>
+<img src="/static/figure10.3.jpg" alt="Еліпс_2" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+     
+    <div class="properties">
+      <p><strong>1) Симетрія.</strong> Еліпс симетричний відносно осей \( Ox \), \( Oy \) та початку координат (центра еліпса).</p>
+      
+      <p><strong>2) Перетин з осями координат:</strong></p>
+      <ul>
+        <li>При \( x = 0 \): \( \frac{y^2}{b^2} = 1 \Rightarrow y = \pm b \)</li>
+        <li>Точки \( (0;b) \) та \( (0;-b) \) – вершини малої осі</li>
+        <li>При \( y = 0 \): \( \frac{x^2}{a^2} = 1 \Rightarrow x = \pm a \)</li>
+        <li>Точки \( (a;0) \) і \( (-a;0) \) – вершини великої осі</li>
+      </ul>
+      
+      <p><strong>3) Вершини та осі:</strong></p>
+      <ul>
+        <li>Велика вісь: відрізок \( A_1A_2 \), де \( A_1(-a;0) \), \( A_2(a;0) \); довжина \( 2a \)</li>
+        <li>Мала вісь: відрізок \( B_1B_2 \), де \( B_1(0;-b) \), \( B_2(0;b) \); довжина \( 2b \)</li>
+      </ul>
+      
+      <p><strong>4) Ексцентриситет:</strong></p>
+      <p class="math-notation-centered">\[ \varepsilon = \frac{c}{a} \quad \text{(10.7)} \]</p>
+      <p>де \( c = \sqrt{a^2 - b^2} \), \( a \) – велика піввісь.</p>
+      <p><strong>Властивості:</strong> \( 0 \leq \varepsilon < 1 \), оскільки \( 0 \leq c < a \). Якщо \( \varepsilon = 0 \), то \( c = 0 \) і еліпс стає колом.</p>
+      
+      <p><strong>5) Директриси:</strong></p>
+      <p>Директрисами еліпса є дві прямі \( d_1 \) і \( d_2 \), паралельні малій осі:</p>
+      <p class="math-notation-centered">\[ x = \pm \frac{a}{\varepsilon} = \pm \frac{a^2}{c} \quad \text{(10.8)} \]</p>
+      
+      <p><strong>6) Співвідношення для довільної точки на еліпсі:</strong></p>
+      <p>Для довільної точки \(M(x; y)\), що лежить на еліпсі, виконується рівність:</p> <p class="math-notation-centered">\[ \frac{\lvert F_1M \rvert}{\lvert ML_1 \rvert} = \frac{\lvert F_2M \rvert}{\lvert ML_2 \rvert} = \varepsilon = \frac{c}{a}, \]</p> <p>де \(\lvert F_1M \rvert\) — відстань від точки \(M\) до одного з фокусів еліпса, а \(\lvert ML_1 \rvert\) — відстань від точки \(M\) до відповідної директриси.</p>
+    </div>
+
+    <div class="special-case">
+      <h4>Особливий випадок: коло</h4>
+      <p>Якщо \( a = b \), то \( c = 0 \), і канонічне рівняння еліпса набуває вигляду:</p>
+      <p class="math-notation-centered">\[ x^2 + y^2 = a^2 \]</p>
+      <p>що є рівнянням кола з радіусом \( a \).</p>
+    </div>
+
+    <h3>Еліпс з великою піввіссю \( b > a \)</h3>
+    
+    <div class="vertical-ellipse">
+      <p>Розглянемо еліпс, у якого велика піввісь дорівнює \( b \), а мала піввісь – \( a \), тобто \( b > a \). Такий еліпс витягнутий уздовж осі \( Oy \)(рис. 10.4), а його геометричні властивості визначаються наступними характеристиками.</p>
+      <img src="/static/figure10.4.jpg" alt="Еліпс_3" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+     
+      <p><strong>1) Основна властивість:</strong></p>
+      <p class="math-notation-centered">\[ |F_1 M| + |F_2 M| = 2b \]</p>
+      
+      <p><strong>2) Рівняння еліпса:</strong></p>
+      <p class="math-notation-centered">\[ \frac{x^2}{a^2} + \frac{y^2}{b^2} = 1 \]</p>
+      <p>де \( a \) – мала піввісь, \( b \) – велика піввісь, \( c = \sqrt{b^2 - a^2} \) – половина фокальної відстані.</p>
+      <p>Фокуси розташовані на осі \( Oy \) у точках \( F_1(0;-c) \) і \( F_2(0;c) \).</p>
+      <p class="math-notation-centered">\[ c^2 = b^2 - a^2 \quad \text{(10.9)} \]</p>
+      
+<p><strong>3) Ексцентриситет:</strong></p>
+      <p class="math-notation-centered">\[ \varepsilon = \frac{c}{b} \quad \text{(10.10)} \]</p>
+      <p>де \( c = \sqrt{b^2 - a^2} \), \( b \) – велика піввісь.</p>
+      <p><strong>Властивість:</strong> \( 0 \leq \varepsilon < 1 \), оскільки \( c < b \).</p>
+
+      <p><strong>4) Директриси:</strong></p>
+      <p class="math-notation-centered">\[ y = \pm \frac{b^2}{c}= \pm \frac{b}{\varepsilon} \quad \text{(10.11)} \]</p>
+      
+      
+    </div>
+
+  </div>
+</details>
+           <details>
+    <summary>Рівняння еліпса з осьовою симетрією</summary>
+    <div class="theory-content">
+        
+        <h3>Еліпс зі зміщеним центром</h3>
+        
+        <div class="definition">
+            <p>Розглянемо еліпс, центр якого розташований у точці з координатами \( (x_0;y_0) \), а його осі симетрії паралельні осям координат (рис. 10.5 та 10.6). Нехай довжини осей еліпса дорівнюють \( 2a \) та \( 2b \), де \( a \) і \( b \) – це півосі еліпса, відповідно вздовж осей, паралельних \( Ox \) і \( Oy \).</p>
+        </div>
+<img src="/static/figure10.5.jpg" alt="Еліпс_4" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+     <img src="/static/figure10.6.jpg" alt="Еліпс_5" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+     
+        <div class="important">
+            <p><strong>Канонічне рівняння еліпса зі зміщеним центром:</strong></p>
+            <p class="math-notation-centered">\[ \frac{(x-x_0)^2}{a^2} + \frac{(y-y_0)^2}{b^2} = 1 \quad \text{(10.12)} \]</p>
+            <p>Це рівняння описує еліпс із центром у \( (x_0;y_0) \), де \( a \) і \( b \) визначають розміри еліпса вздовж його осей.</p>
+        </div>
+
+        <h4>Основні характеристики</h4>
+        
+        <div class="properties">
+            <p><strong>1) Вершини</strong></p>
+            <p>Вершини еліпса – це точки, де еліпс перетинає свої осі симетрії, що проходять через центр \( (x_0;y_0) \). Координати вершин залежать від напрямку осей:</p>
+            
+            <div class="vertex-list">
+                <p><strong>Вздовж осі паралельної осі \( Ox \):</strong></p>
+                <p class="math-notation-centered">\[ (x_0-a;y_0), \quad (x_0+a;y_0) \]</p>
+                
+                <p><strong>Вздовж осі паралельної осі \( Oy \):</strong></p>
+                <p class="math-notation-centered">\[ (x_0;y_0-b), \quad (x_0;y_0+b) \]</p>
+            </div>
+            
+            <p>Ці точки є кінцями осей еліпса. Якщо \( a > b \), то відрізок між \( (x_0-a;y_0) \) і \( (x_0+a;y_0) \) є великою віссю, а між \( (x_0;y_0-b) \) і \( (x_0;y_0+b) \) – малою. У протилежному випадку \( (b > a) \) велика вісь лежить вздовж осі \( Oy \).</p>
+        </div>
+
+        <div class="properties">
+            <p><strong>2) Фокуси</strong></p>
+            <p>Фокуси еліпса розташовані на великій осі на відстані \( c \) від центру \( (x_0;y_0) \), де \( c \) – це половина відстані між фокусами \( 2c \). Координати фокусів і значення \( c \) залежать від того, яка з півосей є більшою.</p>
+            
+            <div class="focus-cases">
+                <div class="case">
+                    <p><strong>Випадок 1:</strong> Якщо \( a > b \)</strong> (велика вісь паралельна осі \( Ox \), рис. 10.5,)то фокуси мають координати:</p>
+                     <p class="math-notation-centered">\[ F_1(x_0-c;y_0), \quad F_2(x_0+c;y_0) \]</p>
+                    <p>Відстань \( c \) обчислюється за формулою:</p>
+                    <p class="math-notation-centered">\[ c = \sqrt{a^2 - b^2} \]</p>
+                </div>
+                
+                <div class="case">
+                    <p><strong>Випадок 2:</strong> Якщо \( a < b \)</strong> (велика вісь паралельна осі \( Oy \), рис. 10.6), то фокуси мають координати:</p>
+                     <p class="math-notation-centered">\[ F_1(x_0;y_0-c), \quad F_2(x_0;y_0+c) \]</p>
+                   <p>Відстань \( c \) обчислюється за формулою:</p>
+                    <p class="math-notation-centered">\[ c = \sqrt{b^2 - a^2} \]</p>
+                </div>
+            </div>
+        </div>
+     
+
+    </div>
+</details>
+
+           <details>
+    <summary>Загальне рівняння еліпса</summary>
+    <div class="theory-content">
+        
+        <h3>Перехід від канонічного до загального рівняння</h3>
+        
+        <div class="definition">
+            <p>Розглянемо рівняння еліпса з центром у точці \( (x_0,y_0) \), осі якого паралельні осям координат. Його канонічне рівняння має вигляд:</p>
+            <p class="math-notation-centered">\[ \frac{(x-x_0)^2}{a^2} + \frac{(y-y_0)^2}{b^2} = 1 \]</p>
+            <p>де \( a \) і \( b \) півосі, а \( (x_0,y_0) \) – координати центру еліпса.</p>
+        </div>
+
+        <div class="derivation">
+            <p><strong>Виведення загального рівняння:</strong></p>
+            
+            <p>Щоб отримати загальне рівняння еліпса, звільняємося від дробів, помноживши обидві частини рівняння на \( a^2 b^2 \):</p>
+            <p class="math-notation-centered">\[ b^2 (x-x_0)^2 + a^2 (y-y_0)^2 = a^2 b^2 \]</p>
+            
+            <p>Розкриємо дужки:</p>
+            <p class="math-notation-centered">\[ b^2 (x^2 - 2xx_0 + x_0^2) + a^2 (y^2 - 2yy_0 + y_0^2) = a^2 b^2 \]</p>
+            
+            <p>Перегрупуємо члени так, щоб усі змінні з \( x^2 \), \( y^2 \), \( x \) і \( y \) були зібрані разом:</p>
+            <p class="math-notation-centered">\[ b^2 x^2 + a^2 y^2 - 2b^2 x_0 x - 2a^2 y_0 y + (b^2 x_0^2 + a^2 y_0^2 - a^2 b^2) = 0 \]</p>
+        </div>
+
+        <div class="important">
+            <p><strong>Загальне рівняння еліпса:</strong></p>
+            <p class="math-notation-centered">\[ Ax^2 + By^2 + Cx + Dy + E = 0 \quad \text{(10.13)} \]</p>
+            <p>де \( A = b^2 \), \( B = a^2 \), \( C = -2b^2 x_0 \), \( D = -2a^2 y_0 \), \( E = b^2 x_0^2 + a^2 y_0^2 - a^2 b^2 \).</p>
+        </div>
+
+        <div class="properties">
+            <p><strong>Властивості коефіцієнтів:</strong></p>
+            <p>Ці коефіцієнти є дійсними числами, причому \( A \neq B \) та \( AB > 0 \), тобто коефіцієнти при \( x^2 \) і \( y^2 \) повинні бути різні (що виключає випадок кола) і мати однаковий знак.</p>
+        </div>
+
+        <div class="note">
+            <p><strong>Загальне рівняння другого порядку:</strong></p>
+            <p>Рівняння (10.13) називається загальним рівнянням еліпса. Це рівняння є окремим випадком загального рівняння другого порядку:</p>
+            <p class="math-notation-centered">\[ Ax^2 + By^2 + Cx + Dy + E = 0 \]</p>
+            <p>і задає еліпс, якщо виконуються умови:</p>
+            <p class="math-notation-centered">\[ A \neq B, \quad AB > 0 \]</p>
+            <p>Тобто, коефіцієнти при квадратичних членах \( x^2 \) та \( y^2 \) повинні бути різними і мати однакові знаки.</p>
+        </div>
+       
+
+    </div>
+</details>
+
+             <details>
+    <summary>Приклади складання рівнянь еліпсів</summary>
+    <div class="theory-content">
+        
+        <h3>Практичні приклади</h3>
+
+        <div class="example-detailed">
+            <div class="example-header">
+                <strong>Приклад 10.5.</strong> Скласти рівняння еліпса, півосі якого дорівнюють \( a = 5 \), \( b = 3 \).
+            </div>
+            
+            <div class="solution-steps">
+                <p><strong>Розв'язання:</strong></p>
+                <p>Канонічне рівняння еліпса з центром у початку координат має вигляд (формула 10.5):</p>
+                <p class="math-notation-centered">\[ \frac{x^2}{a^2} + \frac{y^2}{b^2} = 1 \]</p>
+                <p>де \( a \) – велика піввісь, \( b \) – мала піввісь.</p>
+                
+                <p>Підставивши задані значення півосей \( a = 5 \), \( b = 3 \), отримаємо:</p>
+                <p class="math-notation-centered">\[ \frac{x^2}{5^2} + \frac{y^2}{3^2} = 1, \quad \frac{x^2}{25} + \frac{y^2}{9} = 1 \]</p>
+                
+                <div class="final-answer">
+                    <p><strong>Відповідь.</strong> \( \dfrac{x^2}{25} + \dfrac{y^2}{9} = 1 \).</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="example-detailed">
+            <div class="example-header">
+                <strong>Приклад 10.6.</strong> Скласти рівняння еліпса, одна вісь якого збігається з віссю ординат і дорівнює \( 12 \), а друга вісь дорівнює \( 8 \).
+            </div>
+            
+            <div class="solution-steps">
+                <p><strong>Розв'язання:</strong></p>
+                <p>Вісь, що збігається з віссю ординат: це означає, що дана вісь паралельна осі \( Oy \). У прикладі вказано, що її довжина дорівнює 12. Оскільки вісь еліпса – це повна довжина \( 2b = 12 \), то піввісь \( b = \dfrac{12}{2} = 6 \).</p>
+                
+                <p>Друга вісь: її довжина дорівнює 8, і вона паралельна осі \( Ox \). Отже, \( 2a = 8 \), звідки \( a = \dfrac{8}{2} = 4 \).</p>
+                
+                <p>Таким чином, маємо: \( a = 4 \) (піввісь вздовж осі \( Ox \)), \( b = 6 \) (піввісь вздовж осі \( Oy \)).</p>
+                
+                <p>Підставимо знайдені значення \( a = 4 \) і \( b = 6 \) у формулу канонічного рівняння еліпса (10.5):</p>
+                <p class="math-notation-centered">\[ \frac{x^2}{4^2} + \frac{y^2}{6^2} = 1, \quad \frac{x^2}{16} + \frac{y^2}{36} = 1 \]</p>
+                
+                <div class="final-answer">
+                    <p><strong>Відповідь.</strong> \( \dfrac{x^2}{16} + \dfrac{y^2}{36} = 1 \).</p>
+    
+                </div>
+            </div>
+        </div>
+<div class="example-detailed">
+    <div class="example-header">
+        <strong>Приклад 10.7.</strong> Скласти рівняння еліпса, одна вісь якого збігається з віссю ординат і дорівнює \( 30 \), а відстань між фокусами дорівнює \( 24 \).
+    </div>
+    
+    <div class="solution-steps">
+        <p><strong>Розв'язання:</strong></p>
+        <p>Шукане рівняння еліпса можна записати у вигляді</p>
+        <p class="math-notation-centered">\[ \frac{x^2}{a^2} + \frac{y^2}{b^2} = 1 \]</p>
+        
+        <p>Оскільки одна вісь збігається з віссю ординат, \( 2b = 30 \), тоді її піввісь \( b = 15 \). Відстань між фокусами \( 2c = 24 \implies c = 12 \). Так як фокуси розміщені на осі \( Oy \), то виконується рівність \( c^2 = b^2 - a^2 \), тобто \( a^2 = b^2 - c^2 \) або після підстановки</p>
+        <p class="math-notation-centered">\[ a^2 = 900 - 576 = 324 \]</p>
+        
+        <p>Остаточно дістанемо рівняння шуканого еліпса</p>
+        <p class="math-notation-centered">\[ \frac{x^2}{324} + \frac{y^2}{900} = 1 \]</p>
+        
+        <div class="final-answer">
+            <p><strong>Відповідь.</strong> \( \dfrac{x^2}{324} + \dfrac{y^2}{900} = 1 \).</p>
+        </div>
+    </div>
+</div>
+
+<div class="example-detailed">
+    <div class="example-header">
+        <strong>Приклад 10.8.</strong> Знайти довжини осей еліпса \( 25x^2 + 16y^2 = 400 \) та обчислити координати його фокусів.
+    </div>
+    
+    <div class="solution-steps">
+        <p><strong>Розв'язання:</strong></p>
+        <p>Запишемо рівняння еліпса \( 25x^2 + 16y^2 = 400 \) у канонічному вигляді. Для цього поділимо обидві частини рівняння на 400, щоб права частина дорівнювала 1:</p>
+        <p class="math-notation-centered">\[ \frac{25x^2}{400} + \frac{16y^2}{400} = \frac{400}{400} \]</p>
+        
+        <p>Спрощуємо:</p>
+        <p class="math-notation-centered">\[ \frac{x^2}{16} + \frac{y^2}{25} = 1 \]</p>
+        
+        <p>З цього рівняння видно, що:</p>
+        <ul>
+            <li>\( a^2 = 16 \), тому \( a = 4 \), і довжина осі вздовж осі \( Ox \): \( 2a = 8 \)</li>
+            <li>\( b^2 = 25 \), тому \( b = 5 \), і довжина осі вздовж осі \( Oy \): \( 2b = 10 \)</li>
+        </ul>
+        
+        <p>Тепер знайдемо координати фокусів. Оскільки \( b > a \), тоді фокуси розміщенні на осі \( Oy \). Скористаємося рівністю \( c^2 = b^2 - a^2 \), де \( c \) – відстань від центру до фокусів:</p>
+        <p class="math-notation-centered">\[ c = \sqrt{b^2 - a^2} = \sqrt{25 - 16} = \sqrt{9} = 3 \]</p>
+        
+        <p>Тоді координати фокусів будуть:</p>
+        <p class="math-notation-centered">\[ F_1(0;-3), \quad F_2(0;3) \]</p>
+        
+        <div class="final-answer">
+            <p><strong>Відповідь.</strong> \( 2a = 8 \), \( 2b = 10 \), \( F_1(0;-3) \), \( F_2(0;3) \).</p>
+        </div>
+    </div>
+</div>
+
+<div class="example-detailed">
+    <div class="example-header">
+        <strong>Приклад 10.9.</strong> Скласти канонічне рівняння еліпса, який проходить через точку \( M(6;0) \), якщо фокальна відстань дорівнює \( 8 \).
+    </div>
+    
+    <div class="solution-steps">
+        <p><strong>Розв'язання:</strong></p>
+        <p>Фокальна відстань еліпса – це відстань між його фокусами, яка позначається як \( 2c \). За умовою прикладу \( 2c = 8 \), звідки \( c = 4 \). Запишемо канонічне рівняння еліпса:</p>
+        <p class="math-notation-centered">\[ \frac{x^2}{a^2} + \frac{y^2}{b^2} = 1 \]</p>
+        
+        <p>Оскільки точка \( M(6;0) \) лежить на еліпсі, її координати мають задовольняти рівняння еліпса:</p>
+        <p class="math-notation-centered">\[ \frac{6^2}{a^2} + \frac{0^2}{b^2} = 1 \]</p>
+        
+        <p>Спрощуємо:</p>
+        <p class="math-notation-centered">\[ \frac{36}{a^2} = 1 \implies a^2 = 36 \]</p>
+        
+        <p>Для еліпса у якого фокуси лежать на осі \( Ox \) виконується співвідношення \( c^2 = a^2 - b^2 \). Підставимо відомі значення \( c = 4 \) і \( a^2 = 36 \):</p>
+        <p class="math-notation-centered">\[ 4^2 = 36 - b^2 \implies b^2 = 36 - 16 = 20 \]</p>
+        
+        <p>Підставимо ці значення в канонічне рівняння:</p>
+        <p class="math-notation-centered">\[ \frac{x^2}{36} + \frac{y^2}{20} = 1 \]</p>
+        
+        <div class="final-answer">
+            <p><strong>Відповідь.</strong> \( \dfrac{x^2}{36} + \dfrac{y^2}{20} = 1 \).</p>
+        </div>
+    </div>
+</div>
+
+<div class="example-detailed">
+    <div class="example-header">
+        <strong>Приклад 10.10.</strong> Показати, що рівняння \( 36x^2 + 100y^2 - 3600 = 0 \) є рівнянням еліпса. Визначити координати фокусів і фокальну відстань.
+    </div>
+    
+    <div class="solution-steps">
+        <p><strong>Розв'язання:</strong></p>
+        <p>Щоб показати, що дане рівняння є рівнянням еліпса, приведемо його до канонічного вигляду:</p>
+        <p class="math-notation-centered">\[ \frac{x^2}{a^2} + \frac{y^2}{b^2} = 1 \]</p>
+        
+        <p>Спочатку перенесемо вільний член на праву сторону:</p>
+        <p class="math-notation-centered">\[ 36x^2 + 100y^2 = 3600 \]</p>
+        
+        <p>Далі поділимо обидві частини рівняння на 3600, щоб права частина дорівнювала 1:</p>
+        <p class="math-notation-centered">\[ \frac{36x^2}{3600} + \frac{100y^2}{3600} = \frac{3600}{3600} \]</p>
+        
+        <p>Спрощуючи дроби, отримаємо:</p>
+        <p class="math-notation-centered">\[ \frac{x^2}{100} + \frac{y^2}{36} = 1 \]</p>
+        
+        <p>Це є канонічним рівнянням еліпса з центром у точці \( (0;0) \). Отже, ми довели, що дане рівняння описує еліпс.</p>
+        
+        <p>Визначимо параметри еліпса. З отриманого рівняння маємо, що \( a^2 = 100 \) і \( b^2 = 36 \), причому \( a > b \), тому велика вісь еліпса лежить вздовж осі \( Ox \).</p>
+        
+        <p>З рівності \( c^2 = a^2 - b^2 \) обчислимо \( c \):</p>
+        <p class="math-notation-centered">\[ c^2 = 100 - 36 = 64 \implies c = 8 \]</p>
+        
+        <p>Координати фокусів еліпса:</p>
+        <p class="math-notation-centered">\[ F_1(-8;0), \quad F_2(8;0) \]</p>
+        
+        <p>Фокальна відстань:</p>
+        <p class="math-notation-centered">\[ |F_1 F_2| = 2c = 16 \]</p>
+        
+        <div class="final-answer">
+            <p><strong>Відповідь.</strong> Дане рівняння є рівнянням еліпса. Фокуси знаходяться в точках \( F_1(-8;0) \) і \( F_2(8;0) \), а фокальна відстань дорівнює 16.</p>
+        </div>
+    </div>
+</div>
+
+<div class="example-detailed">
+    <div class="example-header">
+        <strong>Приклад 10.11.</strong> Побудувати еліпси \( \dfrac{x^2}{25} + \dfrac{y^2}{16} = 1 \) і \( \dfrac{x^2}{9} + \dfrac{y^2}{25} = 1 \). Для кожного еліпса обчислити його ексцентриситет.
+    </div>
+    
+    <div class="solution-steps">
+        <p><strong>Розв'язання:</strong></p>
+        
+        <div class="sub-example">
+            <p><strong>Еліпс \( \dfrac{x^2}{25} + \dfrac{y^2}{16} = 1 \):</strong></p>
+            <p>З рівняння випливає, що півосі еліпса мають довжини \( a = 5 \) та \( b = 4 \), де \( a > b \), тобто велика вісь розташована вздовж осі \( Ox \).</p>
+            
+            <p><strong>Вершини еліпса:</strong></p>
+            <p class="math-notation-centered">\[ A_1(-5;0), \quad A_2(5;0), \quad B_1(0;-4), \quad B_2(0;4) \]</p>
+            
+            <p>Обчислимо \( c \) із рівності \( c^2 = a^2 - b^2 \):</p>
+            <p class="math-notation-centered">\[ c^2 = 25 - 16 = 9 \implies c = 3 \]</p>
+            
+            <p><strong>Фокуси еліпса:</strong></p>
+            <p class="math-notation-centered">\[ F_1(-3;0), \quad F_2(3;0) \]</p>
+            
+            <p><strong>Ексцентриситет:</strong></p>
+            <p class="math-notation-centered">\[ \varepsilon = \frac{c}{a} = \frac{3}{5} = 0,6 \]</p>
+            
+            <p><strong>Побудова.</strong> Через вершини еліпса будуємо прямокутник зі сторонами \( 2a = 10 \) і \( 2b = 8 \). В середині прямокутника в кожній чверті будуємо дуги між вершинами (рис. 10.7).</p>
+<img src="/static/figure10.7.jpg" alt="Еліпс_6" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+     
+        </div>
+
+        <div class="sub-example">
+            <p><strong>Еліпс \( \dfrac{x^2}{9} + \dfrac{y^2}{25} = 1 \):</strong></p>
+            <p>З рівняння випливає, що півосі еліпса мають довжини \( a = 3 \) та \( b = 5 \), де \( b > a \), тобто велика вісь розташована вздовж осі \( Oy \).</p>
+            
+            <p><strong>Вершини еліпса:</strong></p>
+            <p class="math-notation-centered">\[ A_1(-3;0), \quad A_2(3;0), \quad B_1(0;-5), \quad B_2(0;5) \]</p>
+            
+            <p>Обчислимо \( c \) із рівності \( c^2 = b^2 - a^2 \):</p>
+            <p class="math-notation-centered">\[ c^2 = 25 - 9 = 16 \implies c = 4 \]</p>
+            
+            <p><strong>Фокуси еліпса:</strong></p>
+            <p class="math-notation-centered">\[ F_1(0;-4), \quad F_2(0;4) \]</p>
+            
+            <p><strong>Ексцентриситет:</strong></p>
+            <p class="math-notation-centered">\[ \varepsilon = \frac{c}{b} = \frac{4}{5} = 0,8 \]</p>
+            
+            <p><strong>Побудова.</strong> Через вершини еліпса будуємо прямокутник зі сторонами \( 2a = 6 \) і \( 2b = 10 \). В середині прямокутника в кожній чверті будуємо дуги між вершинами (рис. 10.8).</p>
+<img src="/static/figure10.8.jpg" alt="Еліпс_7" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+     
+        </div>
+    </div>
+</div>
+
+<div class="example-detailed">
+    <div class="example-header">
+        <strong>Приклад 10.12.</strong> Дано криву \( 3x^2 + 4y^2 - 18x - 40y + 115 = 0 \). Потрібно показати, що ця крива – еліпс і знайти його осі, фокуси і ексцентриситет. Побудувати цей еліпс.
+    </div>
+    
+    <div class="solution-steps">
+        <p><strong>Розв'язання:</strong></p>
+        <p>Щоб визначити тип кривої, приведемо дане рівняння до канонічного вигляду еліпса, який має форму:</p>
+        <p class="math-notation-centered">\[ \frac{(x-x_0)^2}{a^2} + \frac{(y-y_0)^2}{b^2} = 1 \]</p>
+        <p>де \( (x_0;y_0) \) – центр еліпса, \( a \) і \( b \) – півосі.</p>
+        
+        <p>У даному рівнянні \( 3x^2 + 4y^2 - 18x - 40y + 115 = 0 \) згрупуємо члени, пов'язані з \( x \) і \( y \):</p>
+        <p class="math-notation-centered">\[ (3x^2 - 18x) + (4y^2 - 40y) + 115 = 0 \]</p>
+        
+        <p>Винесемо коефіцієнти перед квадратами за дужки:</p>
+        <p class="math-notation-centered">\[ 3(x^2 - 6x) + 4(y^2 - 10y) + 115 = 0 \]</p>
+        
+        <p>Доповнимо вираз, що стоїть у дужках, до повних квадратів:</p>
+        <p class="math-notation-centered">\[ 3(x^2 - 6x + 9 - 9) + 4(y^2 - 10y + 25 - 25) + 115 = 0 \]</p>
+        
+        <p>Це дає:</p>
+        <p class="math-notation-centered">\[ 3((x-3)^2 - 9) + 4((y-5)^2 - 25) + 115 = 0 \]</p>
+        <p class="math-notation-centered">\[ 3(x-3)^2 - 27 + 4(y-5)^2 - 100 + 115 = 0 \]</p>
+        
+        <p>Спростимо:</p>
+        <p class="math-notation-centered">\[ 3(x-3)^2 + 4(y-5)^2 - 12 = 0 \]</p>
+        
+        <p>Перенесемо -12 вправо:</p>
+        <p class="math-notation-centered">\[ 3(x-3)^2 + 4(y-5)^2 = 12 \]</p>
+        
+        <p>Поділимо обидві частини рівняння на 12:</p>
+        <p class="math-notation-centered">\[ \frac{(x-3)^2}{4} + \frac{(y-5)^2}{3} = 1 \]</p>
+        
+        <p>Це рівняння еліпса.</p>
+        
+        <p><strong>Характеристики еліпса.</strong> Центр еліпса:</p>
+        <p class="math-notation-centered">\[ (x_0;y_0) = (3;5) \]</p>
+        
+        <p><strong>Знайдемо осі:</strong></p>
+        <p class="math-notation-centered">\[ a^2 = 4 \implies a = 2, \quad 2a = 4 \]</p>
+        <p class="math-notation-centered">\[ b^2 = 3 \implies b = \sqrt{3}, \quad 2b = 2\sqrt{3} \]</p>
+        
+        <p>Обчислимо \( c \):</p>
+        <p class="math-notation-centered">\[ c = \sqrt{a^2 - b^2} = \sqrt{4 - 3} = 1 \]</p>
+        
+        <p><strong>Фокуси еліпса:</strong></p>
+        <p class="math-notation-centered">\[ F_1(x_0 - c; y_0) = F_1(3 - 1; 5) = F_1(2; 5) \]</p>
+        <p class="math-notation-centered">\[ F_2(x_0 + c; y_0) = F_2(3 + 1; 5) = F_2(4; 5) \]</p>
+        
+        <p><strong>Ексцентриситет:</strong></p>
+        <p class="math-notation-centered">\[ \varepsilon = \frac{c}{a} = \frac{1}{2} = 0,5 \]</p>
+        
+        <p><strong>Побудова еліпса.</strong> Центр еліпса \( (3;5) \) (рис. 10.9).</p>
+        
+        <p><strong>Вершини:</strong></p>
+        <p class="math-notation-centered">\[ (x_0 - a; y_0) = (3 - 2; 5) = (1; 5) \]</p>
+        <p class="math-notation-centered">\[ (x_0 + a; y_0) = (3 + 2; 5) = (5; 5) \]</p>
+        <p class="math-notation-centered">\[ (x_0; y_0 - b) = (3; 5 - \sqrt{3}) \]</p>
+        <p class="math-notation-centered">\[ (x_0; y_0 + b) = (3; 5 + \sqrt{3}) \]</p>
+        
+        <p>Побудуємо прямокутник із вершинами на осях еліпса, всередині якого в кожній чверті малюємо дуги, що сполучають вершини.</p>
+<img src="/static/figure10.9.jpg" alt="Еліпс_8" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+   
+    </div>
+</div>
+    
+    </div>
+</details>
+             </div>
+        </div>
+    </div>
+
+  <!-- ВІДЕО -->
+<div id="videoModal" class="modal" role="dialog" aria-modal="true">
+    <div class="modal-header">
+        <button class="close-btn" id="closeVideoBtn" aria-label="Закрити">× Закрити</button>
+    </div>
+    <div class="modal-content">
+
+        <!-- КАРТКИ ВІДЕО (спочатку видно) -->
+        <div class="video-card-container" id="videoList">
+            <div class="video-card" data-video="https://www.youtube.com/embed/hGbLQnQzRpE">
+                <img src="https://img.icons8.com/fluency/48/play.png" alt="Відео" loading="lazy">
+                <h3>Знайомство з еліпсами</h3>
+            </div>
+            <div class="video-card" data-video="https://www.youtube.com/embed/MewWZZ9tC2A">
+                <img src="https://img.icons8.com/fluency/48/play.png" alt="Відео" loading="lazy">
+                <h3>Канонічне рівняння еліпса за графіком</h3>
+            </div>
+            <div class="video-card" data-video="https://www.youtube.com/embed/Iv31F8rO1q4">
+                <img src="https://img.icons8.com/fluency/48/play.png" alt="Відео" loading="lazy">
+                <h3>Зображення еліпса за канонічним рівнянням</h3>
+            </div>
+            <div class="video-card" data-video="https://www.youtube.com/embed/qusCbGp3S9g">
+                <img src="https://img.icons8.com/fluency/48/play.png" alt="Відео" loading="lazy">
+                <h3>Знаходження фокусів еліпса за його рівнянням</h3>
+            </div>
+        </div>
+
+        <!-- ПЛЕЄР (спочатку прихований) -->
+        <div class="video-player-container" id="videoPlayer" style="display:none;">
+            <iframe id="youtubeIframe" src="" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen></iframe>
+        </div>
+
+    </div>
+</div>
+  
+   <!-- ПИТАННЯ (флеш-картки) — ПОВНІСТЮ З MATHJAX -->
+<div id="questionsModal" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeQuestionsBtn">× Закрити</button>
+    </div>
+    <div class="modal-content">
+
+        <!-- КАРТКА 1 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>1. Що таке еліпс?</span></div>
+                <div class="card-back">
+    <div class="back-content">
+        <span>Еліпс — геометричне місце точок площини, для яких сума відстаней до двох фіксованих точок (фокусів) є сталою величиною:</span>
+        \[ |MF_1| + |MF_2| = 2a \]
+    </div>
+</div>
+            </div>
+        </div>
+
+       <!-- КАРТКА 2 -->
+<div class="question-card" onclick="this.classList.toggle('flipped')">
+    <div class="card-inner">
+        <div class="card-front">
+            <span>2. Де розташовані фокуси?</span>
+        </div>
+        <div class="card-back">
+            <div class="back-content">
+              <span>На великій осі: \(F_1(-c,\,0)\), \(F_2(c,\,0)\),</span><br>
+<span>де \(c = \sqrt{a^2 - b^2}\)</span>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+        <!-- КАРТКА 3 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>3. Канонічне рівняння еліпса з великою піввіссю \(a\) вздовж осі \(Ox\) та малою \(b\) вздовж \(Oy\)?</span></div>
+                <div class="card-back">
+                    <p>\[ \frac{x^2}{a^2} + \frac{y^2}{b^2} = 1 \]</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- КАРТКА 4 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>4. Як пов’язані \(a\), \(b\), \(c\)</span></div>
+                <div class="card-back">
+                    <p>\[ c^2 = a^2 - b^2 \]</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- КАРТКА 5 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>5. Формула ексцентриситету еліпса.</span></div>
+                <div class="card-back">
+     <p>\[ \varepsilon = \frac{c}{a} \]</p>
+    </div>
+
+            </div>
+        </div>
+
+        <!-- КАРТКА 6 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>6. Координати вершин</span></div>
+               <div class="card-back">
+    <div class="back-content" style="line-height:2.1; text-align:center;">
+       <span> Велика вісь: \( (\pm a, 0) \) <br>
+        Мала вісь: \( (0, \pm b) \)</span>
+    </div>
+</div>
+
+            </div>
+        </div>
+
+       
+        <!-- КАРТКА 7 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>7. Директриси еліпса</span></div>
+                <div class="card-back">
+                    <p>\[ x = \pm \frac{a}{\varepsilon} \]</p>
+                    <p>або</p>
+                    <p>\[ x = \pm \frac{a^2}{c} \]</p>
+                </div>
+            </div>
+        </div>
+
+       
+        <!-- КАРТКА 8 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>8. Еліпс з центром \( (x_0;\ y_0) \)</span></div>
+                <div class="card-back">
+                    <p>\[ \frac{(x-x_0)^2}{a^2} + \frac{(y-y_0)^2}{b^2} = 1 \]</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- КАРТКА 9 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>9. Загальне рівняння еліпса</span></div>
+                <div class="card-back">
+    <div class="back-content" style="text-align:center; padding:20px; line-height:2.3;">
+        \[ Ax^{2} + By^{2} + Cx + Dy + E = 0, \]<br>
+       <span> якщо виконуються умови: \( A \neq B \), \( AB > 0 \).</span>
+    </div>
+</div>
+            </div>
+        </div>
+       
+</div>
+    </div>
+</div>
+
+   <!-- ТРЕНАЖЕР -->
+<div id="trainerModal" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeTrainerBtn">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="trainer-container">
+            <div class="question-circle">
+               <h3 id="questionNumber">Питання 1</h3>
+            </div>
+            <p id="questionText" class="math-notation-centered"></p>
+
+            <!-- КАНАЛ ДЛЯ ЕЛІПСА — ТЕПЕР ВСЕРЕДИНІ МОДАЛКИ -->
+            <canvas id="ellipseCanvas" width="520" height="520" style="display: none; margin: 20px auto; border: 2px solid #333; background: #f9f9f9; border-radius: 8px; box-shadow: 0 0 15px rgba(0,0,0,0.3);"></canvas>
+
+            <div class="options-container" id="optionsContainer"></div>
+            <button id="submitAnswer" disabled>Підтвердити</button>
+            <div id="feedback" class="feedback"></div>
+        </div>
+    </div>
+</div>
+    
+<!-- ЗАВЕРШЕННЯ -->
+<div id="completionModal" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeCompletionBtn">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="completion-message">
+            <div class="completion-emoji"></div>
+            <h2>МІСІЯ ВИКОНАНА!</h2>
+            <p>Ти — сталевий воїн геометрії!</p>
+            <p><strong>СЛАВА УКРАЇНІ!</strong></p>
+            <button id="resetTrainerBtn">Повернутися до полігону</button>
+        </div>
+    </div>
+</div>
+
+<div id="modalOverlay"></div>
+
+    <div id="modalOverlay"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.body.classList.add('loaded');
+
+            const els = {
+                openTheoryBtn: document.getElementById('openTheoryBtn'),
+                openVideoBtn: document.getElementById('openVideoBtn'),
+                openQuestionsBtn: document.getElementById('openQuestionsBtn'),
+                openTrainerBtn: document.getElementById('openTrainerBtn'),
+                theoryModal: document.getElementById('theoryModal'),
+                videoModal: document.getElementById('videoModal'),
+                questionsModal: document.getElementById('questionsModal'),
+                trainerModal: document.getElementById('trainerModal'),
+                completionModal: document.getElementById('completionModal'),
+                closeTheoryBtn: document.getElementById('closeTheoryBtn'),
+                closeVideoBtn: document.getElementById('closeVideoBtn'),
+                closeQuestionsBtn: document.getElementById('closeQuestionsBtn'),
+                closeTrainerBtn: document.getElementById('closeTrainerBtn'),
+                closeCompletionBtn: document.getElementById('closeCompletionBtn'),
+                modalOverlay: document.getElementById('modalOverlay'),
+                questionText: document.getElementById('questionText'),
+                optionsContainer: document.getElementById('optionsContainer'),
+                submitAnswer: document.getElementById('submitAnswer'),
+                feedback: document.getElementById('feedback'),
+                questionNumber: document.getElementById('questionNumber'), // ДОДАЙ ЦЕ!
+                resetTrainerBtn: document.getElementById('resetTrainerBtn')
+            };
+
+
+            // === МОДАЛКИ ===
+    function toggleModal(modal, show) {
+        modal.style.display = show ? 'flex' : 'none';
+        els.modalOverlay.style.display = show ? 'block' : 'none';
+        document.body.style.overflow = show ? 'hidden' : 'auto';
+        if (show && window.MathJax?.typesetPromise) {
+            MathJax.typesetPromise([modal]).catch(() => {});
+        }
+    }
+
+            els.openTheoryBtn.addEventListener('click', () => toggleModal(els.theoryModal, true));
+            els.openVideoBtn.addEventListener('click', () => toggleModal(els.videoModal, true));
+            els.openQuestionsBtn.addEventListener('click', () => toggleModal(els.questionsModal, true));
+           els.openTrainerBtn.addEventListener('click', () => {
+    stage = 1;
+    toggleModal(els.trainerModal, true);
+    displayQuestion();
+});
+
+            [els.closeTheoryBtn, els.closeVideoBtn, els.closeQuestionsBtn, els.closeTrainerBtn, els.closeCompletionBtn].forEach(btn => {
+                btn.addEventListener('click', () => toggleModal(btn.closest('.modal'), false));
+            });
+
+            els.modalOverlay.addEventListener('click', () => {
+                document.querySelectorAll('.modal').forEach(m => toggleModal(m, false));
+            });
+
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') document.querySelectorAll('.modal').forEach(m => toggleModal(m, false));
+            });
+            
+            // ——— ВІДЕО: КЛІК ПО КАРТЦІ → ВІДКРИВАЄТЬСЯ ПЛЕЄР ———
+            const videoList = document.getElementById('videoList');
+            const videoPlayer = document.getElementById('videoPlayer');
+            const youtubeIframe = document.getElementById('youtubeIframe');
+
+            // Клік по будь-якій картці відео
+            videoList.addEventListener('click', function(e) {
+                const videoCard = e.target.closest('.video-card');
+                if (!videoCard) return;
+
+                // Отримуємо посилання на відео з data-атрибута
+                const videoUrl = videoCard.getAttribute('data-video');
+                
+                // Встановлюємо посилання в iframe БЕЗ autoplay
+                youtubeIframe.src = videoUrl;
+
+                // Перемикаємо відображення
+                videoList.style.display = 'none';
+                videoPlayer.style.display = 'flex';
+            });
+
+            // Кнопка «Закрити» - зупиняє відео
+            els.closeVideoBtn.addEventListener('click', function() {
+                youtubeIframe.src = ''; // зупиняємо відео
+                videoPlayer.style.display = 'none';
+                videoList.style.display = 'flex';
+            });
+
+            // Закриття через overlay або Esc
+            const resetVideo = function() {
+                if (youtubeIframe.src) {
+                    youtubeIframe.src = '';
+                    videoPlayer.style.display = 'none';
+                    videoList.style.display = 'flex';
+                }
+            };
+
+            // Додаємо обробник для overlay
+            els.modalOverlay.addEventListener('click', resetVideo);
+            
+            // Додаємо обробник для Esc
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && els.videoModal.style.display === 'flex') {
+                    resetVideo();
+                }
+            });
+            // Поліпшення прокрутки для мобільних пристроїв
+function improveMobileScrolling() {
+    const theoryModal = document.getElementById('theoryModal');
+    const modalContent = theoryModal.querySelector('.modal-content');
+    
+    // Запобігаємо блокуванню прокрутки
+    modalContent.addEventListener('touchstart', function(e) {
+        this.style.overflowY = 'auto';
+    });
+    
+    // Відновлюємо прокрутку після закриття/відкриття
+    theoryModal.addEventListener('click', function() {
+        modalContent.style.overflowY = 'auto';
+    });
+}
+
+// Викликаємо функцію при завантаженні
+document.addEventListener('DOMContentLoaded', function() {
+    improveMobileScrolling();
+});
+
+            // === ГЛОБАЛЬНІ ЗМІННІ ===
+    let stage = 1; // 1 або 2
+    let selected = null;
+    let correctIndex = null;
+
+  
+   
+    // === ГЕНЕРАЦІЯ a², b² ===
+    function getRandomSquare(min, max) {
+        const n = Math.floor(Math.random() * (Math.floor(Math.sqrt(max)) - Math.ceil(Math.sqrt(min)) + 1)) + Math.ceil(Math.sqrt(min));
+        return n * n;
+    }
+
+function isPerfectSquare(n) {
+    const s = Math.sqrt(n);
+    return s === Math.floor(s);
+}
+
+function extractSquareFactor(n) {
+    let factor = 1;
+    for (let i = 2; i * i <= n; i++) {
+        while (n % (i * i) === 0) {
+            factor *= i;
+            n /= (i * i);
+        }
+    }
+    return factor > 1 ? factor : 1;
+}
+
+function formatNumber(num) {
+    const int = Math.floor(num);
+    if (int === num) return int.toString();
+
+    const sqrtVal = Math.round(num * num); // c²
+    const factor = extractSquareFactor(sqrtVal);
+
+    if (factor > 1) {
+        const inside = sqrtVal / (factor * factor);
+        return factor === 1 ? `\\sqrt{${inside}}` : `${factor}\\sqrt{${inside}}`;
+    }
+
+    return `\\sqrt{${sqrtVal}}`;
+}
+
+            function gcdMath(a, b) {
+    a = Math.abs(a);
+    b = Math.abs(b);
+    while (b) {
+        const t = b;
+        b = a % b;
+        a = t;
+    }
+    return a;
+}
+
+function isSquareMultiple(n) {
+    // Повертає [коефіцієнт, внутрішнє], або false
+    // Наприклад: 8 → [2, 2], 18 → [3, 2], 5 → false
+    for (let i = 2; i <= n; i++) {
+        if (n % (i * i) === 0) {
+            const inside = n / (i * i);
+            if (isPerfectSquare(inside)) {
+                return [i, inside];
+            }
+        }
+    }
+    return false;
+}
+
+    // === ПИТАННЯ 1: МАЛА ПІВОСЬ ===
+    function generateQuestion1() {
+        let a2, b2;
+        do {
+            a2 = getRandomSquare(4, 400);
+            b2 = getRandomSquare(4, a2 - 1);
+        } while (a2 === b2);
+
+        const isHorizontal = Math.random() < 0.5;
+        const a = Math.sqrt(a2), b = Math.sqrt(b2);
+
+        const equation = isHorizontal
+            ? `\\frac{x^2}{${a2}} + \\frac{y^2}{${b2}} = 1`
+            : `\\frac{x^2}{${b2}} + \\frac{y^2}{${a2}} = 1`;
+
+        const correct = formatNumber(b);
+
+        const wrongs = [
+            formatNumber(a),
+            a2.toString(),
+            b2.toString()
+        ];
+
+        const extra = Math.random() < 0.5
+            ? formatNumber(Math.sqrt(a2 + b2))
+            : getRandomSquare(4, 400).toString();
+        if (!wrongs.includes(extra)) wrongs.push(extra);
+        wrongs.length = 3;
+
+        return {
+            text: `Знайти довжину малої півосі еліпса \\(${equation}\\).`,
+            correct: correct,
+            wrong: wrongs
+        };
+    }
+
+   // === ПИТАННЯ 2: ФОКУСИ ===
+function generateQuestion2() {
+    let a2, b2;
+    do {
+        a2 = getRandomSquare(4, 400);
+        b2 = getRandomSquare(4, a2 - 1);
+    } while (a2 === b2);
+
+    const isHorizontal = Math.random() < 0.5;
+    const a = Math.sqrt(a2), b = Math.sqrt(b2);
+    const c = Math.sqrt(Math.abs(a2 - b2));
+    const hypot = Math.sqrt(a2 + b2); // √(a² + b²) — хитра помилка
+
+    const equation = isHorizontal
+        ? `\\frac{x^2}{${a2}} + \\frac{y^2}{${b2}} = 1`
+        : `\\frac{x^2}{${b2}} + \\frac{y^2}{${a2}} = 1`;
+
+    let correct;
+    if (isHorizontal) {
+        correct = `F(\\pm ${formatNumber(c)};0)`;
+    } else {
+        correct = `F(0;\\pm ${formatNumber(c)})`;
+    }
+
+    const wrongs = [];
+
+    // 1. ±a (велика піввісь)
+    const aStr = formatNumber(a);
+    const aWrong = isHorizontal ? `F(\\pm ${aStr};0)` : `F(0;\\pm ${aStr})`;
+    wrongs.push(aWrong);
+
+    // 2. ±b (мала піввісь)
+    const bStr = formatNumber(b);
+    const bWrong = isHorizontal ? `F(\\pm ${bStr};0)` : `F(0;\\pm ${bStr})`;
+    wrongs.push(bWrong);
+
+    // 3. ±√(a² + b²) — хитра помилка!
+    const hypotStr = formatNumber(hypot);
+    const hypotWrong = isHorizontal ? `F(\\pm ${hypotStr};0)` : `F(0;\\pm ${hypotStr})`;
+    wrongs.push(hypotWrong);
+
+    // Якщо випадково збіглися — замінюємо останній на випадковий
+    if (wrongs.includes(correct)) {
+        wrongs.pop();
+        const randomVal = getRandomSquare(4, 400);
+        const randStr = formatNumber(Math.sqrt(randomVal));
+        wrongs.push(isHorizontal ? `F(\\pm ${randStr};0)` : `F(0;\\pm ${randStr})`);
+    }
+
+    return {
+        text: `Знайти фокуси еліпса \\(${equation}\\).`,
+        correct: correct,
+        wrong: wrongs
+    };
+}
+
+           
+// === ПИТАННЯ 3: ЕКСЦЕНТРИСИТЕТ ===
+function generateQuestion3() {
+    let a2, b2;
+    do {
+        a2 = getRandomSquare(4, 400);
+        b2 = getRandomSquare(4, a2 - 1);
+    } while (a2 === b2);
+
+    // Завжди major > minor
+    const major2 = Math.max(a2, b2);
+    const minor2 = Math.min(a2, b2);
+
+    const isHorizontal = Math.random() < 0.5;
+    const equation = isHorizontal
+        ? `\\frac{x^2}{${major2}} + \\frac{y^2}{${minor2}} = 1`
+        : `\\frac{x^2}{${minor2}} + \\frac{y^2}{${major2}} = 1`;
+
+    const major = Math.sqrt(major2);
+    const minor = Math.sqrt(minor2);
+    const c = Math.sqrt(major2 - minor2);
+
+    const correct = formatEccentricity(null, c, major, null); // c/a — правильна
+
+    const wrongs = [
+        formatEccentricity(null, minor, major, null), // b/a
+        formatEccentricity(null, major, c, null),     // a/c — ОБЕРНЕНИЙ!
+        formatEccentricity(null, Math.sqrt(major2 + minor2), major, null) // √(a²+b²)/a
+    ];
+
+    return {
+        text: `Знайти ексцентриситет еліпса \\(${equation}\\).`,
+        correct: correct,
+        wrong: wrongs
+    };
+}
+ function formatEccentricity(_, num, den, _) {
+    // num, den — чисельник і знаменник (наприклад: c, a → c/a)
+    // Якщо num або den — корені, ми працюємо з їх квадратами
+    const n2 = Math.round(num * num); // num²
+    const d2 = Math.round(den * den); // den²
+
+    if (d2 === 0) return "0";
+    if (n2 === 0) return "0";
+
+    const gcd = gcdMath(n2, d2);
+    const n = n2 / gcd;
+    const d = d2 / gcd;
+
+    const f1 = extractSquareFactor(n);
+    const f2 = extractSquareFactor(d);
+
+    const insideN = n / (f1 * f1);
+    const insideD = d / (f2 * f2);
+
+    let numStr = f1 > 1 ? `${f1}` : '';
+    if (insideN > 1) {
+        numStr += numStr ? `\\sqrt{${insideN}}` : `\\sqrt{${insideN}}`;
+    }
+
+    let denStr = f2 > 1 ? `${f2}` : '';
+    if (insideD > 1) {
+        denStr += denStr ? `\\sqrt{${insideD}}` : `\\sqrt{${insideD}}`;
+    }
+
+    if (!numStr) numStr = '1';
+    if (!denStr) return `\\sqrt{${numStr}}`;
+
+    return `\\frac{${numStr}}{${denStr}}`;
+}
+       // === ПИТАННЯ 4: СКЛАСТИ РІВНЯННЯ ЕЛІПСА ===
+function generateQuestion4() {
+    // Генеруємо випадкове c і малу піввісь
+    const c = Math.floor(Math.random() * 8) + 3; // c від 3 до 10
+    const b = Math.floor(Math.random() * (c - 1)) + 2; // b < c
+
+    const isHorizontal = Math.random() < 0.5;
+
+    let fociStr, majorAxis, minorAxis;
+    if (isHorizontal) {
+        fociStr = `F(\\pm ${c};0)`;
+        majorAxis = `a`;
+        minorAxis = `b = ${b}`;
+    } else {
+        fociStr = `F(0;\\pm ${c})`;
+        majorAxis = `b`;
+        minorAxis = `a = ${b}`;
+    }
+
+    // a² = c² + b²
+    const a2 = c * c + b * b;
+    const b2 = b * b;
+
+    const correct = isHorizontal
+        ? `\\frac{x^2}{${a2}} + \\frac{y^2}{${b2}} = 1`
+        : `\\frac{x^2}{${b2}} + \\frac{y^2}{${a2}} = 1`;
+
+    const wrongs = [
+        // 1. Переплутані осі
+        isHorizontal
+            ? `\\frac{x^2}{${b2}} + \\frac{y^2}{${a2}} = 1`
+            : `\\frac{x^2}{${a2}} + \\frac{y^2}{${b2}} = 1`,
+
+        // 2. a² = c² (без b²)
+        isHorizontal
+            ? `\\frac{x^2}{${c * c}} + \\frac{y^2}{${b2}} = 1`
+            : `\\frac{x^2}{${b2}} + \\frac{y^2}{${c * c}} = 1`,
+
+        // 3. b² = c² + a² (хитра помилка)
+        isHorizontal
+            ? `\\frac{x^2}{${a2}} + \\frac{y^2}{${c * c + a2}} = 1`
+            : `\\frac{x^2}{${c * c + a2}} + \\frac{y^2}{${a2}} = 1`
+    ];
+
+    const text = `Скласти рівняння еліпса з фокусами \\(${fociStr}\\), та малою піввіссю \\(${minorAxis}\\).`;
+
+    return { text, correct, wrong: wrongs };
+}
+
+           
+function generateQuestion5() {
+    // Центр: h ≠ 0, k ≠ 0, але не обидва нулі
+    let h, k;
+    do {
+        h = Math.floor(Math.random() * 19) - 9; // від -9 до 9
+        k = Math.floor(Math.random() * 19) - 9;
+    } while (h === 0 && k === 0);
+
+    // Гарантія: a ≠ b, різниця ≥ 2
+    const a = Math.floor(Math.random() * 7) + 4; // 4..10
+    const b = Math.floor(Math.random() * (a - 2)) + 2; // 2..(a-2)
+
+    const a2 = a * a;
+    const b2 = b * b;
+
+    // Випадково міняємо осі
+    const isHorizontal = Math.random() < 0.5;
+    const xDenom = isHorizontal ? a2 : b2;
+    const yDenom = isHorizontal ? b2 : a2;
+
+    // === Формуємо частину (x ± h) розумно ===
+    const xPart = h === 0 
+        ? 'x' 
+        : `(x${h > 0 ? ' - ' + h : ' + ' + (-h)})`;
+
+    const yPart = k === 0 
+        ? 'y' 
+        : `(y${k > 0 ? ' - ' + k : ' + ' + (-k)})`;
+
+    // Рівняння
+    const equation = `\\frac{${xPart}^2}{${xDenom}} + \\frac{${yPart}^2}{${yDenom}} = 1`;
+
+    const correct = `(${h},${k})`;
+    const wrongs = [
+        `(${k},${h})`,
+        `(${h === 0 ? 1 : -h},${k === 0 ? 1 : -k})`,
+        `(${isHorizontal ? a : b},${isHorizontal ? b : a})`
+    ];
+
+    return {
+        text: `Знайти центр еліпса, описаного рівнянням \\(${equation}\\).`,
+        correct: correct,
+        wrong: wrongs
+    };
+}
+
+    // === ПИТАННЯ 6: КООРДИНАТИ ВЕРШИН ЕЛІПСА (зі зміщеним центром) ===
+function generateQuestion6() {
+    // Центр: h ≠ 0, k ≠ 0, але не обидва нулі
+    let h, k;
+    do {
+        h = Math.floor(Math.random() * 19) - 9; // -9..9
+        k = Math.floor(Math.random() * 19) - 9;
+    } while (h === 0 && k === 0);
+
+    // a ≠ b, різниця ≥ 2 → точно еліпс
+    const a = Math.floor(Math.random() * 7) + 4;          // 4..10
+    const b = Math.floor(Math.random() * (a - 2)) + 2;    // 2..(a-2)
+
+    const a2 = a * a;
+    const b2 = b * b;
+
+    const isHorizontal = Math.random() < 0.5;
+    const xDenom = isHorizontal ? a2 : b2;
+    const yDenom = isHorizontal ? b2 : a2;
+    const major = isHorizontal ? a : b;   // головна напіввісь
+    const minor = isHorizontal ? b : a;   // мала
+
+    // ---------- РІВНЯННЯ: без (x-0), (y-0) ----------
+    const xTerm = h === 0 ? 'x' : `\\left(x ${h > 0 ? '- ' + h : '+ ' + (-h)}\\right)`;
+    const yTerm = k === 0 ? 'y' : `\\left(y ${k > 0 ? '- ' + k : '+ ' + (-k)}\\right)`;
+    const equation = `\\frac{${xTerm}^2}{${xDenom}} + \\frac{${yTerm}^2}{${yDenom}} = 1`;
+
+    // ---------- ФОРМАТУВАННЯ КООРДИНАТ ----------
+    const fmt = (base, offset) => {
+        if (offset === 0) return `${base}`;
+        if (base === 0) return `\\pm ${offset}`;
+        return `${base} \\pm ${offset}`;
+    };
+
+    // ---------- ВЕРШИНИ (з ; ) ----------
+    const majorVertex = isHorizontal
+        ? `\\left(${fmt(h, major)}; ${fmt(k, 0)}\\right)`
+        : `\\left(${fmt(h, 0)}; ${fmt(k, major)}\\right)`;
+
+    const minorVertex = isHorizontal
+        ? `\\left(${fmt(h, 0)}; ${fmt(k, minor)}\\right)`
+        : `\\left(${fmt(h, minor)}; ${fmt(k, 0)}\\right)`;
+
+    const correct = `${majorVertex} \\text{ та } ${minorVertex}`;
+
+    // ---------- НЕПРАВИЛЬНІ ВІДПОВІДІ ----------
+    const wrongs = [
+        // 1. Переплутані осі
+        isHorizontal
+            ? `\\left(${fmt(h, minor)}; ${fmt(k, 0)}\\right) \\text{ та } \\left(${fmt(h, 0)}; ${fmt(k, major)}\\right)`
+            : `\\left(${fmt(h, 0)}; ${fmt(k, minor)}\\right) \\text{ та } \\left(${fmt(h, major)}; ${fmt(k, 0)}\\right)`,
+
+        // 2. Без ± (одна сторона)
+        isHorizontal
+            ? `(${h + major}; ${k}) \\text{ та } (${h}; ${k + minor})`
+            : `(${h}; ${k + major}) \\text{ та } (${h + minor}; ${k})`,
+
+        // 3. Центр у (0; 0)
+        `(0 \\pm ${major}; 0) \\text{ та } (0; 0 \\pm ${minor})`
+    ];
+
+    return {
+        text: `Які координати вершин еліпса \\(${equation}\\).`,
+        correct: correct,
+        wrong: wrongs
+    };
+}
+    
+// === ПИТАННЯ 7: ЯКЕ РІВНЯННЯ ВІДПОВІДАЄ ЕЛІПСУ? (4 варіанти) ===
+function drawEllipseQuestion() {
+    const canvas = document.getElementById('ellipseCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // === СІТКА ===
+    const cellSize = 20;
+    const gridMin = -12, gridMax = 12;
+    const originX = 260, originY = 260;
+
+    ctx.strokeStyle = '#ddd'; ctx.lineWidth = 1;
+    for (let i = gridMin; i <= gridMax; i++) {
+        const x = originX + i * cellSize;
+        const y = originY + i * cellSize;
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+    }
+
+    // === ОСІ ===
+    ctx.strokeStyle = '#000'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(0, originY); ctx.lineTo(canvas.width, originY); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(originX, 0); ctx.lineTo(originX, canvas.height); ctx.stroke();
+
+    // Стрілки
+    const arrowSize = 8;
+    ctx.fillStyle = '#000';
+    ctx.beginPath(); ctx.moveTo(canvas.width - arrowSize, originY - arrowSize / 2);
+    ctx.lineTo(canvas.width, originY); ctx.lineTo(canvas.width - arrowSize, originY + arrowSize / 2); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(originX - arrowSize / 2, arrowSize);
+    ctx.lineTo(originX, 0); ctx.lineTo(originX + arrowSize / 2, arrowSize); ctx.fill();
+
+    // Підписи осей — ЖИРНІ
+    ctx.font = 'bold 18px Arial';
+    ctx.fillText('x', canvas.width - 20, originY + 20);
+    ctx.fillText('y', originX - 20, 15);
+
+    // Цифри
+    ctx.font = '12px Arial';
+    ctx.fillStyle = '#000';
+    for (let i = gridMin; i <= gridMax; i++) {
+        if (i === 0) continue;
+        const x = originX + i * cellSize;
+        const y = originY + i * cellSize;
+
+        // X
+        ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+        ctx.fillText(i, x, originY + 5);
+
+        // Y — + зверху, - знизу
+        ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+        ctx.fillText(i, originX - 5, originY - i * cellSize);
+    }
+
+    // === ГЕНЕРУЄМО ЕЛІПС ===
+    let h, k, a, b;
+    do {
+        h = Math.floor(Math.random() * 21) - 10;
+        k = Math.floor(Math.random() * 21) - 10;
+    } while (h === 0 && k === 0);
+
+    b = Math.floor(Math.random() * 3) + 2; // 2..4
+    a = b + Math.floor(Math.random() * 4) + 2; // b+2..b+5
+
+    if (Math.abs(h) + a > 10 || Math.abs(k) + b > 10) {
+        return drawEllipseQuestion();
+    }
+
+    const isHorizontal = Math.random() < 0.5;
+    const a2 = a * a, b2 = b * b;
+    const xDenom = isHorizontal ? a2 : b2;
+    const yDenom = isHorizontal ? b2 : a2;
+
+    // === МАЛЮЄМО ЕЛІПС ===
+    ctx.strokeStyle = '#d00'; ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    for (let theta = 0; theta <= Math.PI * 2; theta += 0.01) {
+        const x = isHorizontal ? h + a * Math.cos(theta) : h + b * Math.cos(theta);
+        const y = isHorizontal ? k + b * Math.sin(theta) : k + a * Math.sin(theta);
+        const px = originX + x * cellSize;
+        const py = originY - y * cellSize;
+        if (theta === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.closePath(); ctx.stroke();
+
+    // === ЦЕНТР ===
+    ctx.fillStyle = '#d00';
+    ctx.beginPath();
+    ctx.arc(originX + h * cellSize, originY - k * cellSize, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // === ФУНКЦІЯ ФОРМАТУВАННЯ ===
+    function term(varName, center, denom) {
+        if (center === 0) return `\\frac{${varName}^2}{${denom}}`;
+        const sign = center >= 0 ? '-' : '+';
+        return `\\frac{(${varName}${sign}${Math.abs(center)})^2}{${denom}}`;
+    }
+
+    // === ПРАВИЛЬНА ВІДПОВІДЬ ===
+    const correct = `${term('x', h, xDenom)} + ${term('y', k, yDenom)} = 1`;
+
+    // === 3 ХИБНІ ВІДПОВІДІ ===
+    const wrongs = [];
+
+    // 1. Переплутані знаменники
+    wrongs.push(`${term('x', h, yDenom)} + ${term('y', k, xDenom)} = 1`);
+
+    // 2. Центр у (0,0)
+    wrongs.push(`\\frac{x^2}{${xDenom}} + \\frac{y^2}{${yDenom}} = 1`);
+
+    // 3. Знак у x або y перевернутий
+    const flipX = h !== 0 ? -h : (k !== 0 ? h : 1);
+    const flipY = k !== 0 ? k : h;
+    wrongs.push(`${term('x', flipX, xDenom)} + ${term('y', flipY, yDenom)} = 1`);
+
+    return {
+        text: `Яке рівняння відповідає еліпсу на рисунку?`,
+        correct: correct,
+        wrong: wrongs, // ТІЛЬКИ 3
+        canvas: true
+    };
+}
+            
+     // === ПИТАННЯ 8: ПЕРЕТВОРЕННЯ ЗАГАЛЬНОГО РІВНЯННЯ ЕЛІПСА В КАНОНІЧНЕ ===
+function createEllipseGeneralToCanonicalQuestion() {
+    // Генеруємо випадкові параметри еліпса
+    let h, k, a, b;
+    
+    // Центр: -4..4, не (0,0)
+    do {
+        h = Math.floor(Math.random() * 9) - 4;
+        k = Math.floor(Math.random() * 9) - 4;
+    } while (h === 0 && k === 0);
+    
+    // Півосі: 2..6 (різні, щоб не було кола)
+    do {
+        a = Math.floor(Math.random() * 5) + 2;
+        b = Math.floor(Math.random() * 5) + 2;
+    } while (a === b);
+    
+    // Коефіцієнти для загального рівняння
+    const A = b * b;  // коефіцієнт при x²
+    const B = a * a;  // коефіцієнт при y²
+    const C = -2 * A * h;  // коефіцієнт при x
+    const D = -2 * B * k;  // коефіцієнт при y
+    const E = A * h * h + B * k * k - a * a * b * b;  // вільний член
+    
+    // Форматуємо загальне рівняння як формулу LaTeX
+    let generalEquation = `${A}x^2`;
+    
+    // Додаємо y² з знаком
+    generalEquation += B > 0 ? ` + ${B}y^2` : ` - ${Math.abs(B)}y^2`;
+    
+    // Додаємо x з знаком
+    if (C !== 0) {
+        generalEquation += C > 0 ? ` + ${C}x` : ` - ${Math.abs(C)}x`;
+    }
+    
+    // Додаємо y з знаком
+    if (D !== 0) {
+        generalEquation += D > 0 ? ` + ${D}y` : ` - ${Math.abs(D)}y`;
+    }
+    
+    // Додаємо вільний член з знаком
+    if (E !== 0) {
+        generalEquation += E > 0 ? ` + ${E}` : ` - ${Math.abs(E)}`;
+    }
+    
+    generalEquation += ` = 0`;
+    
+    // Функція для форматування канонічного рівняння (без (x-0)², просто x²)
+    function formatCanonical(hVal, kVal, aVal, bVal) {
+        const xPart = hVal === 0 ? `x^2` : `(x${hVal >= 0 ? '-' : '+'}${Math.abs(hVal)})^2`;
+        const yPart = kVal === 0 ? `y^2` : `(y${kVal >= 0 ? '-' : '+'}${Math.abs(kVal)})^2`;
+        
+        return `\\frac{${xPart}}{${aVal * aVal}} + \\frac{${yPart}}{${bVal * bVal}} = 1`;
+    }
+    
+    // Канонічне рівняння
+    const canonicalEquation = formatCanonical(h, k, a, b);
+    
+    // Неправильні варіанти (3 штуки)
+    const wrongs = [
+        // Поміняти місцями a² і b² (найпоширеніша помилка)
+        formatCanonical(h, k, b, a),
+        
+        // Відсутній зсув (центр в (0,0)) - забули про перенесення
+        `\\frac{x^2}{${a * a}} + \\frac{y^2}{${b * b}} = 1`,
+        
+        // Неправильні знаки в дужках (переплутали знаки)
+        function() {
+            const xPart = h === 0 ? `x^2` : `(x${h >= 0 ? '+' : '-'}${Math.abs(h)})^2`;
+            const yPart = k === 0 ? `y^2` : `(y${k >= 0 ? '-' : '+'}${Math.abs(k)})^2`;
+            return `\\frac{${xPart}}{${a * a}} + \\frac{${yPart}}{${b * b}} = 1`;
+        }()
+    ];
+    
+    return {
+        text: `Загальне рівняння еліпса: \\(${generalEquation}\\). Якому канонічному рівнянню воно відповідає?`,
+        correct: canonicalEquation,
+        wrong: wrongs
+    };
+}
+
+function displayQuestion() {
+    let q;
+    if (stage === 1) q = generateQuestion1();
+    else if (stage === 2) q = generateQuestion2();
+    else if (stage === 3) q = generateQuestion3();
+    else if (stage === 4) q = generateQuestion4();
+    else if (stage === 5) q = generateQuestion5();
+    else if (stage === 6) q = generateQuestion6();
+    else if (stage === 7) q = drawEllipseQuestion();
+    else if (stage === 8) q = createEllipseGeneralToCanonicalQuestion();
+
+    els.questionNumber.textContent = `Питання ${stage}`;
+    els.questionText.innerHTML = `<p class="question-text">${q.text}</p>`;
+
+    // Показати canvas тільки для Питання 7
+    if (q.canvas) {
+        document.getElementById('ellipseCanvas').style.display = 'block';
+    } else {
+        document.getElementById('ellipseCanvas').style.display = 'none';
+    }
+
+    const allOptions = [q.correct, ...q.wrong].sort(() => Math.random() - 0.5);
+    correctIndex = allOptions.indexOf(q.correct);
+
+    els.optionsContainer.innerHTML = '';
+    allOptions.forEach((opt, i) => {
+        const div = document.createElement('div');
+        div.className = 'option';
+        div.dataset.value = i;
+        div.innerHTML = `<span class="math-formula">\\(${opt}\\)</span>`;
+        els.optionsContainer.appendChild(div);
+    });
+
+    selected = null;
+    els.submitAnswer.disabled = true;
+    document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+
+    if (window.MathJax?.typesetPromise) {
+        MathJax.typesetPromise([els.questionText, els.optionsContainer]).then(() => {
+            els.questionText.style.opacity = 1;
+            els.optionsContainer.style.opacity = 1;
+        });
+    } else {
+        els.questionText.style.opacity = 1;
+        els.optionsContainer.style.opacity = 1;
+    }
+}
+
+    // === КЛІК ПО ВАРІАНТУ ===
+    els.optionsContainer.addEventListener('click', e => {
+        const opt = e.target.closest('.option');
+        if (!opt) return;
+        document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        selected = opt.dataset.value;
+        els.submitAnswer.disabled = false;
+    });
+
+        // === ПЕРЕВІРКА ===
+els.submitAnswer.addEventListener('click', () => {
+    const isCorrect = parseInt(selected) === correctIndex;
+
+    els.feedback.textContent = isCorrect ? '✓ Ціль уражена!' : '✗ Промах! Спробуй ще!';
+    els.feedback.className = `feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'} show`;
+
+    setTimeout(() => {
+        els.feedback.classList.remove('show');
+        setTimeout(() => {
+            if (isCorrect) {
+                if (stage < 8) { // Змінити з 7 на 8
+                    stage++;
+                    displayQuestion();
+                } else {
+                    toggleModal(els.trainerModal, false);
+                    toggleModal(els.completionModal, true);
+                }
+            } else {
+                if (stage === 7) drawEllipseQuestion(); // перемалювати тільки для питання 7
+                displayQuestion();
+            }
+        }, 300);
+    }, 1200);
+});
+    // === ПОВЕРНЕННЯ ===
+    els.resetTrainerBtn.addEventListener('click', () => {
+        stage = 1;
+        toggleModal(els.completionModal, false);
+        toggleModal(els.trainerModal, true);
+        displayQuestion();
+    });
+
+    // === ЗАКРИТТЯ ===
+    [els.closeTrainerBtn, els.closeCompletionBtn].forEach(btn => {
+        btn.addEventListener('click', () => toggleModal(btn.closest('.modal'), false));
+    });
+    els.modalOverlay.addEventListener('click', () => {
+        document.querySelectorAll('.modal').forEach(m => toggleModal(m, false));
+    });
+
+   
+
+});
+
+</script>
+   </body>
+</html>
