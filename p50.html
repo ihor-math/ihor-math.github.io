@@ -321,29 +321,7 @@
             .modal { top: 2%; left: 2%; width: 96%; height: 96%; }
             .options-container { flex-direction: column; }
             .option { max-width: 100%; }
-            .video-card-container {
-                flex-direction: column;
-                gap: 15px;
-                padding: 15px;
-            }
-            .video-card {
-                width: 260px;
-                height: 160px;
-                margin: 5px;
-            }
-            .video-card img {
-                width: 40px;
-                height: 40px;
-                margin-bottom: 6px;
-            }
-            .video-player-container {
-                width: 80vw;
-                max-width: 600px;
-                aspect-ratio: 16 / 9;
-            }
-            .video-card h3 {
-                font-size: clamp(14px, 2.5vw, 16px);
-            }
+           
         }
         @media (max-width: 480px) {
             .title-box h1 { font-size: 22px; }
@@ -362,37 +340,39 @@
              .theory-content h2 {
             font-size: 18px !important;
         }
-            .video-card-container {
-                gap: 10px;
-                padding: 10px;
-            }
-            .video-card {
-                width: 90%;
-                max-width: 260px;
-                height: 140px;
-                margin: 5px;
-            }
-            .video-card img {
-                width: 30px;
-                height: 30px;
-                margin-bottom: 5px;
-            }
-            .video-card h3 {
-                font-size: clamp(12px, 2.5vw, 14px);
-            }
-            .video-player-container {
-                width: 80vw;
-                max-width: 400px;
-                aspect-ratio: 16 / 9;
-            }
-         
+                   
              .feedback {
            
             font-size: clamp(16px, 3vw, 17px);
            
         }
                                  }
-       
+        
+       /* Адаптивність для мобільних */
+@media (max-width: 768px) {
+    .video-card-container {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        padding: 15px;
+    }
+    
+    .video-card {
+        padding: 15px;
+    }
+    
+    .video-card img {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .video-card h3 {
+        font-size: 1rem;
+    }
+    
+    .video-player-container iframe {
+        height: 250px;
+    }
+}
            
         /* === ПИТАННЯ === */
         .question-card {
@@ -2623,6 +2603,7 @@ function initTrainer(){
     </script>
 </body>
 </html>
+
 
 
 
