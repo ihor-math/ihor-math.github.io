@@ -875,7 +875,19 @@ summary:hover::before {
     text-align: center; /* Центрування, якщо justify заважає */
     line-height: 1.5; /* Більший інтервал для читабельності */
 }
-
+/* ТЕКСТ ПИТАННЯ */
+    .question-text {
+        white-space: break-spaces !important;
+        word-wrap: break-word !important;
+        overflow-wrap: anywhere !important;
+         color: #ffffff;
+        text-align: center;
+        line-height: 1.5;
+        display: block;
+        width: 100%;
+        font-size: 20px;
+        padding: 0 10px;
+    }
    
 /* АДАПТАЦІЯ ДЛЯ МОБІЛЬНИХ */
 @media (max-width: 768px) {
@@ -2525,7 +2537,7 @@ els.submitAnswer.addEventListener('click', () => {
 
     const isCorrect = parseInt(selected) === correctIndex;
 
-    els.feedback.textContent = isCorrect ? 'Ціль уражена!' : 'Промах!';
+    els.feedback.textContent = isCorrect ? '✓ Ціль уражена!' : '✗ Промах! Спробуй ще!';
     els.feedback.className = `feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'} show`;
 
     setTimeout(() => {
@@ -2580,4 +2592,5 @@ function initTrainer(){
     </script>
 </body>
 </html>
+
 
