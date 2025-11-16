@@ -1,0 +1,2583 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>50. Гіпербола</title>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    console.log("MathJax is loaded and ready!");
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" onerror="console.error('Failed to load MathJax')"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        *, *:before, *:after { box-sizing: border-box; }
+        body {
+            margin: 0;
+            background: radial-gradient(circle at center, #0b0e17 0%, #1a1f2e 40%, #2d3247 100%);
+            color: #d0d7e6;
+            font-family: 'Roboto Condensed', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        body.loaded { visibility: visible; opacity: 1; }
+
+        /* === ЗАГОЛОВОК === */
+        .title-box {
+            margin-top: 60px;
+            padding: 20px 40px;
+            background: linear-gradient(135deg, #1e2538, #2c344d);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.7), inset 0 0 15px rgba(70, 130, 255, 0.2);
+            border-radius: 16px;
+            max-width: 90%;
+            text-align: center;
+            border: 1px solid #3e506e;
+        }
+        .title-box h1 {
+            margin: 0;
+            font-size: 28px;
+            color: #00d4ff;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 12px rgba(0, 212, 255, 0.7);
+            letter-spacing: 1.5px;
+        }
+
+        /* === КАРТКИ РОЗДІЛІВ === */
+        .section-container {
+            margin-top: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 28px;
+        }
+        .section {
+            width: 260px;
+            height: 200px;
+            background: linear-gradient(145deg, #1a202e, #2a334a);
+            border-radius: 14px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.5), inset 0 0 10px rgba(0, 212, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #00aaff44;
+        }
+        .section:hover {
+            transform: translateY(-6px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(0, 212, 255, 0.3);
+            background: linear-gradient(145deg, #1e2738, #33405a);
+            border-color: #00d4ff;
+        }
+        .section h2 {
+            font-size: 20px;
+            color: #ffffff;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 6px rgba(0, 212, 255, 0.4);
+        }
+        .section img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 15px;
+            object-fit: cover;
+            border-radius: 8px;
+            filter: drop-shadow(0 0 8px #00d4ff) brightness(1.4);
+        }
+
+        /* === МОДАЛЬНІ ВІКНА === */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 5%; left: 5%; width: 90%; height: 90%;
+            background: linear-gradient(135deg, #1c2233, #2d3755);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6), inset 0 0 20px rgba(0, 212, 255, 0.15);
+            z-index: 1001;
+            overflow: hidden;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            border: 1px solid #00aaff66;
+        }
+        #modalOverlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10, 15, 30, 0.92);
+            z-index: 999;
+            backdrop-filter: blur(8px);
+        }
+        .modal-content {
+            padding: 20px;
+            flex-grow: 1;
+            background: #1f2638;
+            border-radius: 10px;
+            margin: 10px;
+            color: #d0d7e6;
+            width: calc(100% - 20px);
+             /* ВИПРАВЛЕННЯ: Дозволяємо вертикальну прокрутку */
+    overflow-y: auto;
+    overflow-x: hidden;
+    
+    /* Важливо для мобільних пристроїв */
+    -webkit-overflow-scrolling: touch;
+    
+    display: block;
+    max-height: calc(100% - 60px);
+}
+            /* Поліпшення прокрутки для мобільних пристроїв */
+.modal {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+}
+
+.theory-content {
+    /* Дозволяємо природню прокрутку */
+    overflow: visible;
+    height: auto;
+    min-height: 100%;
+}
+
+/* Фікс для iOS Safari */
+@supports (-webkit-touch-callout: none) {
+    .modal-content {
+        padding-bottom: 40px; /* Додатковий простір для iOS */
+    }
+}
+
+            
+
+/* Забираємо горизонтальну прокрутку з всього модального вікна */
+.modal-content::-webkit-scrollbar:horizontal {
+    display: none; /* Повністю ховаємо горизонтальну прокрутку */
+}
+        }
+        .modal-content::-webkit-scrollbar { width: 6px; }
+        .modal-content::-webkit-scrollbar-track { background: transparent; }
+        .modal-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(#1e2538, #2c344d);
+            border-radius: 3px;
+        }
+        .modal-header {
+            background: linear-gradient(0deg, #1c2233, #2d3755);
+            padding: 8px 12px;
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1002;
+            border-bottom: 1px solid #00aaff44;
+        }
+        .close-btn {
+            background: linear-gradient(135deg, #0066cc, #00aaff);
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Orbitron', sans-serif;
+            box-shadow: 0 2px 8px rgba(0, 102, 204, 0.5);
+        }
+        .close-btn:hover {
+            background: linear-gradient(135deg, #004d99, #0088cc);
+            transform: scale(1.06);
+            box-shadow: 0 4px 14px rgba(0, 102, 204, 0.7);
+        }
+
+        /* === ТЕОРІЯ === */
+        .theory-content h2 {
+            color: #00d4ff;
+            text-align: center;
+            text-shadow: 0 0 12px rgba(0, 212, 255, 0.6);
+            margin-bottom: 20px;
+            font-family: 'Orbitron', sans-serif;
+        }
+            .theory-content h3 {
+    color: #4a9de9;
+    padding-bottom: 8px;
+    margin: 30px 0 20px 0;
+    font-family: 'Orbitron', sans-serif;
+    border-bottom: 3px solid transparent;
+    background-image: linear-gradient(to right, #ff9966, #ffbb66);
+    background-size: 100% 3px;
+    background-repeat: no-repeat;
+    background-position: left bottom;
+}
+
+        .theory-content p, .theory-content li {
+            color: #d0d7e6;
+            font-size: clamp(18px, 3vw, 20px);
+            line-height: 1.7;
+            text-align: justify;
+        }
+        .example {
+            background: rgba(0, 212, 255, 0.12);
+            border-left: 4px solid #00d4ff;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 6px;
+            font-weight: bold;
+            color: #00eeff;
+        }
+        .solution {
+            background: rgba(0, 212, 255, 0.18);
+            border: 2px solid #00d4ff;
+            padding: 10px;
+            margin: 15px 0;
+            border-radius: 6px;
+            text-align: center;
+            color: #00ffcc;
+            font-weight: bold;
+        }
+        .math-notation-centered {
+            display: block;
+            text-align: center;
+            font-size: clamp(18px, 3vw, 20px);
+            margin: 12px 0;
+            color: #a0faff;
+        }
+        mjx-container { color: #a0faff !important; font-style: italic !important; }
+        mjx-container { font-size: clamp(18px, 3vw, 20px) !important; }
+
+        /* === ВІДЕО === */
+        .video-card-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 16px;
+        padding: 16px;
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+    .video-card {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .video-card:hover {
+        background: #e9ecef;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .video-card img {
+        width: 48px;
+        height: 48px;
+        flex-shrink: 0;
+    }
+    .video-card h3 {
+        margin: 0;
+        font-size: 1rem;
+        color: #2c3e50;
+        line-height: 1.4;
+    }
+    .video-player-container {
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 16px;
+    }
+    .video-player-container iframe {
+        width: 100%;
+        height: 450px;
+        border-radius: 12px;
+    }
+                         /* === АДАПТИВНІСТЬ === */
+        @media (max-width: 768px) {
+            .title-box { margin-top: 40px; padding: 15px 20px; }
+            .title-box h1 { font-size: 24px; }
+            .section-container { flex-direction: column; align-items: center; gap: 20px; }
+            .section { width: 80%; height: 180px; }
+            .modal { top: 2%; left: 2%; width: 96%; height: 96%; }
+            .options-container { flex-direction: column; }
+            .option { max-width: 100%; }
+            .video-card-container {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            .video-card {
+                width: 260px;
+                height: 160px;
+                margin: 5px;
+            }
+            .video-card img {
+                width: 40px;
+                height: 40px;
+                margin-bottom: 6px;
+            }
+            .video-player-container {
+                width: 80vw;
+                max-width: 600px;
+                aspect-ratio: 16 / 9;
+            }
+            .video-card h3 {
+                font-size: clamp(14px, 2.5vw, 16px);
+            }
+        }
+        @media (max-width: 480px) {
+            .title-box h1 { font-size: 22px; }
+            .section { width: 90%; height: 150px; }
+            .section h2 { font-size: 16px; }
+ mjx-container {
+    font-size: clamp(16px, 3vw, 17px) !important;
+     }
+            /* Варіанти відповідей */
+#trainerModal .options-container mjx-container {
+    font-size: clamp(15px, 2.5vw, 16px) !important;
+}
+             .example {
+            font-size: 1.0rem;
+                   }
+             .theory-content h2 {
+            font-size: 18px !important;
+        }
+            .video-card-container {
+                gap: 10px;
+                padding: 10px;
+            }
+            .video-card {
+                width: 90%;
+                max-width: 260px;
+                height: 140px;
+                margin: 5px;
+            }
+            .video-card img {
+                width: 30px;
+                height: 30px;
+                margin-bottom: 5px;
+            }
+            .video-card h3 {
+                font-size: clamp(12px, 2.5vw, 14px);
+            }
+            .video-player-container {
+                width: 80vw;
+                max-width: 400px;
+                aspect-ratio: 16 / 9;
+            }
+         
+             .feedback {
+           
+            font-size: clamp(16px, 3vw, 17px);
+           
+        }
+                                 }
+       
+           
+        /* === ПИТАННЯ === */
+        .question-card {
+            perspective: 1000px;
+            margin: 20px auto;
+            max-width: 964px;
+            width: 100%;
+            min-height: 150px;
+            cursor: pointer;
+        }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            min-height: 200px;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .question-card.flipped .card-inner { transform: rotateY(180deg); }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            min-height: 200px;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+            text-align: center;
+            border: 1px solid #00aaff44;
+        }
+        .card-front {
+            background: #1a202e;
+            color: #ffffff;
+        }
+        .card-back {
+            background: linear-gradient(135deg, #1c2233, #2d3755);
+            color: #d0d7e6;
+            transform: rotateY(180deg);
+            text-align: justify;
+            padding: 20px;
+        }
+        .card-front span, .card-back span {
+            font-size: clamp(17px, 3vw, 19px);
+            line-height: 1.4;
+        }
+
+        /* === ТРЕНАЖЕР === */
+        .trainer-container {
+            width: 90%;
+            max-width: 800px;
+            padding: 3vw 4vw;
+            text-align: center;
+            background: linear-gradient(135deg, #1a1f2e, #2a334a);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.2);
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100%;
+            border: 1px solid #00aaff44;
+        }
+        .question-circle {
+            width: clamp(80px, 15vw, 120px);
+            height: clamp(80px, 15vw, 120px);
+            margin: 0 auto 3vw;
+            background: linear-gradient(135deg, #0066cc, #00aaff);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.5);
+        }
+        .question-circle h3 {
+            color: #ffffff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(16px, 2.5vw, 20px);
+            margin: 0;
+            text-shadow: 0 0 6px rgba(0,0,0,0.5);
+        }
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2vw;
+            justify-content: center;
+            margin-bottom: 3vw;
+            width: 100%;
+        }
+        .option {
+            padding: 1.5vw 3vw;
+            border: 1.5px solid #00aaff;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #1f2638, #2d3755);
+            cursor: pointer;
+            font-size: clamp(15px, 3.5vw, 18px);
+            min-height: 45px;
+            max-width: 45%;
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+            transition: all 0.3s ease;
+            color: #d0d7e6;
+        }
+        .option:hover {
+            background: linear-gradient(135deg, #0066cc, #00aaff);
+            transform: scale(1.03);
+            border-color: #00d4ff;
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.4);
+        }
+        .option.selected {
+            background: linear-gradient(135deg, #00d4ff, #00eeff) !important;
+            color: #000 !important;
+            border: 2px solid #ffffff !important;
+            font-weight: bold;
+        }
+
+        button {
+            background: linear-gradient(135deg, #0066cc, #00aaff);
+            color: #ffffff;
+            border: none;
+            border-radius: 25px;
+            padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 24px);
+            font-size: clamp(16px, 3vw, 18px);
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.4);
+        }
+        button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #004d99, #0088cc);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 102, 204, 0.5);
+        }
+        button:disabled { background: #444; cursor: not-allowed; }
+
+        .feedback {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(24px, 5.8vw, 30px);
+            font-family: 'Orbitron', sans-serif;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+            z-index: 1001;
+            opacity: 0;
+            transition: all 0.3s ease;
+            text-align: center;
+            border: 2px solid transparent;
+        }
+        .feedback.show { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+        .correct-feedback { color: #000; background: linear-gradient(135deg, #00d4ff, #00eeff); border-color: #00eeff; }
+        .incorrect-feedback { color: #fff; background: linear-gradient(135deg, #cc0000, #ff1a1a); border-color: #ff1a1a; }
+
+               /* === МЕДАЛЬ З ТРИЗУБОМ === */
+        .completion-emoji {
+            position: relative;
+            display: inline-block;
+            width: clamp(56px, 12vw, 96px);
+            height: clamp(56px, 12vw, 96px);
+            vertical-align: middle;
+            margin: 0 auto 3vw;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1c2526, #2e3a3b);
+            border: 3px dashed #ffd700;
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+            overflow: hidden;
+            animation: medalAppear 0.8s ease-out;
+        }
+        .completion-emoji::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><filter id='s' x='-50%' y='-50%' width='200%' height='200%'><feDropShadow dx='0' dy='2' stdDeviation='2' flood-color='%23000000' flood-opacity='0.25'/></filter></defs><rect x='30' y='0' width='60' height='40' rx='4' fill='%23007ACC'/><rect x='30' y='20' width='60' height='20' rx='4' fill='%23FFD700'/><g transform='translate(60,70)'><polygon points='0,-26 6,-6 26,-6 9,6 15,26 0,14 -15,26 -9,6 -26,-6 -6,-6' fill='%23FFD700' filter='url(%23s)'/></g></svg>");
+            background-size: 75%;
+            background-repeat: no-repeat;
+            background-position: center 60%;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+            animation: medalBounce 1.2s ease-out 0.3s both;
+        }
+        @keyframes medalAppear {
+            0% { transform: scale(0.3) rotate(-180deg); opacity: 0; }
+            60% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes medalBounce {
+            0% { transform: translateY(-120px) rotate(-30deg) scale(0.4); opacity: 0; }
+            60% { transform: translateY(15px) rotate(10deg) scale(1.15); opacity: 1; }
+            80% { transform: translateY(-8px) rotate(-5deg) scale(1.05); }
+            100% { transform: translateY(0) rotate(0) scale(1); }
+        }
+
+        .completion-message {
+            background: linear-gradient(145deg, #1c2533, #2d3848);
+            border: 2.5px solid #ffffff;
+            border-radius: 15px;
+            padding: clamp(12px, 3vw, 18px);
+            box-shadow: 0 6px 12px rgba(255,77,77,0.4);
+            margin: 2vw auto;
+            max-width: 90%;
+            text-align: center;
+        }
+        .completion-message h2 {
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        .completion-message p { color: #ffffff; }
+
+        #completionModal .modal-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+        #completionModal .completion-message {
+            text-align: center;
+            max-width: 500px;
+        }
+
+
+        /* === НАВІГАЦІЯ === */
+        .navigation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px auto;
+            max-width: 1000px;
+        }
+        .nav-button {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #1f2638, #2d3755);
+            color: #d0d7e6;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid #00aaff44;
+            font-weight: bold;
+        }
+        .nav-button:hover {
+            background: linear-gradient(135deg, #0066cc, #00aaff);
+            color: #ffffff;
+            transform: scale(1.03);
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.4);
+        }
+        .nav-button svg { margin-right: 8px; fill: currentColor; }
+
+       
+            /* ТІЛЬКИ для мобільних - горизонтальна прокрутка */
+@media (max-width: 768px) {
+    .math-notation-centered {
+        overflow-x: auto; /* ТІЛЬКИ горизонтальна прокрутка на мобільних */
+        overflow-y: hidden; /* ЗАБОРОНЯЄМО вертикальну прокрутку */
+        white-space: nowrap; /* Забороняємо переноси на мобільних */
+        -webkit-overflow-scrolling: touch; /* Плавна прокрутка на iOS */
+        padding: 8px 0;
+        
+        /* Стильна голуба прокрутка тільки для мобільних */
+        scrollbar-width: thin;
+        scrollbar-color: #4a9de9 transparent;
+    }
+
+    /* Стилі для Webkit браузерів (Chrome, Safari, Edge) - тільки на мобільних */
+    .math-notation-centered::-webkit-scrollbar {
+        height: 6px; /* Тонка горизонтальна прокрутка */
+        width: 0; /* ЗАБОРОНЯЄМО вертикальну прокрутку */
+    }
+
+    .math-notation-centered::-webkit-scrollbar-track {
+        background: transparent; /* Прозорий трек */
+        border-radius: 3px;
+    }
+
+    .math-notation-centered::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #4a9de9, #66b3ff); /* Голубий градієнт */
+        border-radius: 3px;
+        box-shadow: 0 0 4px rgba(74, 157, 233, 0.5);
+    }
+
+    .math-notation-centered::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #66b3ff, #99ccff); /* Світліший при наведенні */
+    }
+    
+    /* ЗАБОРОНЯЄМО вертикальну прокрутку для всіх елементів */
+    .math-notation-centered::-webkit-scrollbar:vertical {
+        display: none; /* Повністю ховаємо вертикальну прокрутку */
+    }
+}
+
+
+              summary {
+    position: relative;
+    font-weight: 800;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #1a1f2e 0%, #2a3042 100%);
+    border-radius: 12px;
+    color: #e0f0ff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.4),
+        0 0 20px rgba(74, 157, 233, 0.15);
+    cursor: pointer;
+    list-style: none;
+    overflow: hidden;
+    border: 1px solid rgba(74, 157, 233, 0.3);
+    user-select: none;
+    text-shadow: 0 0 10px rgba(74, 157, 233, 0.3);
+}
+
+/* Ховаємо стандартну стрілку */
+summary::-webkit-details-marker,
+summary::marker {
+    display: none;
+}
+
+/* МЕТАЛЕВА СТРІЛКА В СТИЛІ ЕЛІПСА */
+summary::after {
+    content: "▼";
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #4a9de9, #66b3ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: all 0.4s ease;
+    filter: drop-shadow(0 0 8px rgba(74, 157, 233, 0.6));
+    text-shadow: 0 0 15px rgba(74, 157, 233, 0.5);
+}
+
+/* Поворот + підсвітка при відкритті */
+details[open] summary::after {
+    content: "▲";
+    transform: translateY(-50%) rotate(360deg);
+    filter: drop-shadow(0 0 15px rgba(74, 157, 233, 0.9));
+    background: linear-gradient(135deg, #66b3ff, #99ccff);
+}
+
+/* ХОВЕР — МЕТАЛЕВИЙ ЕФЕКТ */
+summary:hover {
+    background: linear-gradient(135deg, #2a3042 0%, #3a4157 100%);
+    border-color: #4a9de9;
+    box-shadow: 
+        0 8px 25px rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(74, 157, 233, 0.4),
+        inset 0 0 30px rgba(74, 157, 233, 0.1);
+    transform: translateY(-2px);
+    color: #ffffff;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+}
+
+summary:hover::after {
+    transform: translateY(-50%) scale(1.3);
+    filter: drop-shadow(0 0 20px rgba(74, 157, 233, 1));
+    background: linear-gradient(135deg, #66b3ff, #99ccff);
+}
+
+/* МЕТАЛЕВА ОБВОДКА ПРИ ФОКУСІ */
+summary:focus-visible {
+    outline: none;
+    box-shadow: 
+        0 0 0 3px rgba(74, 157, 233, 0.5),
+        0 0 40px rgba(74, 157, 233, 0.6),
+        inset 0 0 20px rgba(74, 157, 233, 0.2);
+}
+
+/* ПІДСВІТКА ПРИ ВІДКРИТТІ */
+details[open] summary {
+    border-bottom: 3px solid #4a9de9;
+    border-radius: 12px 12px 0 0;
+    background: linear-gradient(135deg, #1a1f2e 0%, #252b40 100%);
+    box-shadow: 
+        0 -4px 20px rgba(74, 157, 233, 0.3),
+        0 8px 25px rgba(0, 0, 0, 0.4),
+        inset 0 0 25px rgba(74, 157, 233, 0.15);
+    color: #f0f8ff;
+}
+
+/* ДОДАЄМО МЕТАЛЕВУ ТЕКСТУРУ */
+summary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        linear-gradient(90deg, 
+            transparent 0%, 
+            rgba(255,255,255,0.03) 50%, 
+            transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+summary:hover::before {
+    opacity: 1;
+}
+
+/* АДАПТИВНІСТЬ */
+@media (max-width: 768px) {
+    summary {
+        padding: 14px 16px;
+        font-size: 0.9rem;
+        border-radius: 10px;
+    }
+    
+    summary::after {
+        right: 16px;
+        font-size: 0.9rem;
+    }
+    
+    details[open] summary {
+        border-radius: 10px 10px 0 0;
+    }
+}
+    .definition {
+    background: rgba(74, 157, 233, 0.1);
+    border-left: 4px solid #4a9de9;
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 8px;
+}
+     strong {
+    color: #ff9966;
+}
+    .solution-title {
+  text-align: center !important;
+  display: block !important;
+  width: 100%;
+}
+/* Стилі для деталей (вкладок) у теорії */
+.theory-content details {
+    margin-bottom: 25px; /* Відступ між вкладками */
+    border: 1px solid rgba(0, 212, 255, 0.2); /* Легка обводка для візуального поділу */
+    border-radius: 10px;
+    overflow: hidden; /* Щоб контент не вилазив за межі */
+    background: linear-gradient(135deg, rgba(26, 32, 46, 0.8), rgba(42, 51, 74, 0.8)); /* Легкий градієнт для глибини */
+}
+
+.theory-content details[open] {
+    margin-bottom: 30px; /* Більше простору, коли відкрита */
+    box-shadow: 0 4px 12px rgba(0, 212, 255, 0.15); /* Тінь для акценту */
+}
+
+.theory-content > div { /* Для div всередині details */
+    padding: 20px; /* Внутрішні відступи */
+    margin: 0 0 15px 0; /* Нижній відступ для контенту */
+}
+
+.theory-content h3 {
+    margin-top: 0; /* Щоб заголовки не "стрибали" */
+}
+
+/* Адаптив для мобільних */
+@media (max-width: 768px) {
+    .theory-content details {
+        margin-bottom: 20px;
+    }
+    .theory-content > div {
+        padding: 15px;
+    }
+}
+    .card-back p {
+    margin: 8px 0; /* Відступи між рядками */
+    text-align: center; /* Центрування, якщо justify заважає */
+    line-height: 1.5; /* Більший інтервал для читабельності */
+}
+
+   
+/* АДАПТАЦІЯ ДЛЯ МОБІЛЬНИХ */
+@media (max-width: 768px) {
+    /* ТЕКСТ ПИТАННЯ */
+    .question-text {
+        white-space: break-spaces !important;
+        word-wrap: break-word !important;
+        overflow-wrap: anywhere !important;
+         color: #ffffff;
+        text-align: center;
+        line-height: 1.5;
+        display: block;
+        width: 100%;
+        font-size: 14px;
+        padding: 0 10px;
+    }
+
+    /* ВАРІАНТИ ВІДПОВІДЕЙ */
+    .option {
+        white-space: break-spaces !important;
+        word-wrap: break-word;
+        overflow-wrap: anywhere;
+        text-align: center;
+        padding: 12px 15px;
+        min-height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        max-width: 100%;
+        font-size: 14px;
+        margin: 5px 0;
+    }
+
+       /* КОНТЕЙНЕР ТРЕНАЖЕРА */
+    .trainer-container {
+        padding: 10px;
+    }
+
+    /* КНОПКА ПІДТВЕРДЖЕННЯ */
+    #hyperbolaSubmitAnswer {
+        width: 90%;
+        margin: 10px auto;
+        padding: 12px;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    
+    .question-text {
+        font-size: 14px;
+    }
+    .question-circle h3 {
+            color: #ffffff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(13px, 2vw, 14px);
+            margin: 0;
+            text-shadow: 0 0 6px rgba(0,0,0,0.5);
+        }
+    .option {
+        font-size: 13px;
+        padding: 10px 12px;
+        min-height: 45px;
+    }
+}
+    /* АДАПТИВНІСТЬ ДЛЯ ВСІХ ЕКРАНІВ */
+#imageContainer {
+   
+
+    text-align: center;
+    margin: 20px 0;
+    padding: 0 10px;
+}
+
+#imageContainer img {
+    max-width: 100%;
+    height: auto;
+    width: 100%;
+    max-height: 80vh;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: block;
+    margin: 0 auto;
+}
+
+/* ДЛЯ ДУЖЕ МАЛЕНЬКИХ ЕКРАНІВ */
+@media (max-width: 480px) {
+    #imageContainer {
+        margin: 15px 0;
+        padding: 0 5px;
+    }
+    #imageContainer img {
+        border-radius: 6px;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="title-box">
+        <h1>50. Гіпербола</h1>
+    </div>
+
+   <div class="section-container">
+        <div class="section" id="openTheoryBtn">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Книга" loading="lazy">
+            <h2>Теоретичні відомості</h2>
+        </div>
+        <div class="section" id="openVideoBtn">
+            <img src="https://img.icons8.com/fluency/96/video.png" alt="Відео" loading="lazy">
+            <h2>Відеоматеріали</h2>
+        </div>
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Картки" loading="lazy">
+            <h2>Питання і відповіді</h2>
+        </div>
+        <div class="section" id="openTrainerBtn">
+            <img src="https://img.icons8.com/fluency/96/flash-on.png" alt="Тренажер" loading="lazy">
+            <h2>Тренажер</h2>
+        </div>
+    </div>
+
+    <div class="navigation-buttons">
+       <a class="nav-button" href="{{ url_for('tema10') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            До теми 10
+        </a>
+        <a class="nav-button" href="{{ url_for('home') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            На головну
+        </a>
+    </div>
+
+   
+    <!-- ТЕОРІЯ -->
+    <div id="theoryModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeTheoryBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="theory-content">
+    <details>
+  <summary>Канонічне рівняння гіперболи</summary>
+  
+  <div class="theory-content">
+    <h2>Гіпербола</h2>
+     <div class="definition">
+     <p><strong>Гіпербола</strong> – це множина всіх точок площини, для кожної з яких модуль різниці відстаней до двох фіксованих точок, що називаються <strong>фокусами</strong> гіперболи, є сталим і меншим за відстань між цими точками.</p>
+</div>
+    <h3>Канонічне рівняння гіперболи</h3>
+    <p>Розглянемо гіперболу із фокусами \( F_1 (-c;0) \) і \( F_2 (c;0) \), розташованими симетрично відносно початку координат на осі \( Ox \). Фокальна відстань дорівнює \( |F_1 F_2| = 2c \).</p>
+    
+    <p>За означенням, для довільної точки \( M(x;y) \) на гіперболі (рис. 10.10) справджується рівність:</p>
+    <p class="math-notation-centered">\[ |\,|F_1 M| - |F_2 M|\,| = 2a \]</p>
+    <p>де \( 2a < 2c \), тобто \( a < c \).</p>
+     <img src="/static/figure10.10.jpg" alt="Гіпербола_1" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+     
+    <p>Відстані від точки \( M \) до фокусів задаються формулами:</p>
+    <p class="math-notation-centered">\[ |F_1 M| = \sqrt{(x+c)^2 + y^2}, \quad |F_2 M| = \sqrt{(x-c)^2 + y^2} \]</p>
+    
+    <p>За означенням гіперболи:</p>
+    <p class="math-notation-centered">\[ |\,|F_1 M| - |F_2 M|\,| = 2a \]</p>
+    
+    <p>Таким чином, рівняння гіперболи набуває вигляду:</p>
+    <p class="math-notation-centered">\[ \left| \sqrt{(x+c)^2 + y^2} - \sqrt{(x-c)^2 + y^2} \right| = 2a \]</p>
+    
+    <div class="example">
+  <strong>Виведення канонічного рівняння:</strong>
+  
+  <p>Розглянемо випадок \( x \geq 0 \). Тоді \( |F_1 M| > |F_2 M| \), рівняння можна записати як:</p>
+  <p class="math-notation-centered">
+    \[ \sqrt{(x+c)^2 + y^2} - \sqrt{(x-c)^2 + y^2} = 2a \tag{10.13} \]
+  </p>
+  
+  <p>Перенесемо другий доданок з лівої частини рівняння у праву:</p>
+  <p class="math-notation-centered">
+    \[ \sqrt{(x+c)^2 + y^2} = 2a + \sqrt{(x-c)^2 + y^2} \]
+  </p>
+  
+  <p>Піднесемо обидві частини цього рівняння до квадрата:</p>
+  <p class="math-notation-centered">
+    \[ (x+c)^2 + y^2 = 4a^2 + 4a\sqrt{(x-c)^2 + y^2} + (x-c)^2 + y^2 \]
+  </p>
+  
+  <p>Розкриємо дужки:</p>
+  <p class="math-notation-centered">
+    \[ x^2 + 2xc + c^2 + y^2 = 4a^2 + 4a\sqrt{(x-c)^2 + y^2} + x^2 - 2xc + c^2 + y^2 \]
+  </p>
+  
+  <p>Після спрощення отримаємо:</p>
+  <p class="math-notation-centered">
+    \[ 2xc = 4a^2 + 4a\sqrt{(x-c)^2 + y^2} - 2xc \]
+  </p>
+  
+  <p>Перенесемо члени із \( xc \) в одну сторону:</p>
+  <p class="math-notation-centered">
+    \[ 4xc - 4a^2 = 4a\sqrt{(x-c)^2 + y^2} \]
+  </p>
+  
+  <p>що можна переписати як:</p>
+  <p class="math-notation-centered">
+    \[ xc - a^2 = a\sqrt{(x-c)^2 + y^2} \]
+  </p>
+  
+  <p>Підносимо до квадрата обидві частини:</p>
+  <p class="math-notation-centered">
+    \[ (xc - a^2)^2 = a^2 \bigl( (x-c)^2 + y^2 \bigr) \]
+  </p>
+  
+  <p>Розкриємо дужки та спростимо:</p>
+  <p class="math-notation-centered">
+    \[ x^2 c^2 - 2cxa^2 + a^4 = a^2 (x^2 - 2cx + c^2 + y^2) \]
+    \[ x^2 c^2 - 2cxa^2 + a^4 = a^2 x^2 - 2cxa^2 + a^2 c^2 + a^2 y^2 \]
+  </p>
+  
+  <p>Перенесемо всі члени вліво:</p>
+  <p class="math-notation-centered">
+    \[ x^2 c^2 - 2cxa^2 + a^4 - a^2 x^2 + 2cxa^2 - a^2 c^2 - a^2 y^2 = 0 \]
+    \[ x^2 (c^2 - a^2) - a^2 y^2 + a^4 - a^2 c^2 = 0 \]
+    \[ x^2 (c^2 - a^2) - a^2 y^2 = a^2 c^2 - a^4 \]
+    \[ x^2 (c^2 - a^2) - a^2 y^2 = a^2 (c^2 - a^2) \]
+  </p>
+  
+  <p>Оскільки за означенням гіперболи \( a < c \), то \( c^2 - a^2 > 0 \). Позначимо \( b^2 = c^2 - a^2 \), тоді:</p>
+  <p class="math-notation-centered">
+    \[ b^2 x^2 - a^2 y^2 = a^2 b^2 \]
+  </p>
+  
+  <p>Поділимо обидві частини на \( a^2 b^2 \):</p>
+  <p class="math-notation-centered">
+    \[ \frac{x^2}{a^2} - \frac{y^2}{b^2} = 1 \quad (10.14) \]
+  </p>
+  
+  <p class="solution">
+    Рівняння (10.14) називається <strong>канонічним рівнянням гіперболи</strong>, де \( a \) – дійсна піввісь, \( b \) – уявна піввісь.
+  </p>
+  
+  <p>Також справджується співвідношення:</p>
+  <p class="math-notation-centered">
+    \[ c^2 = a^2 + b^2 \quad (10.15) \]
+  </p>
+</div>
+    
+    <div class="example">
+      <strong>Примітка.</strong> Якщо \( x < 0 \), то рівняння зводиться до того ж результату, що підтверджує загальність отриманого канонічного рівняння.
+    </div>
+
+    <h3>Геометричний зміст параметрів гіперболи</h3>
+    <p>Розглянемо канонічне рівняння гіперболи:</p>
+    <p class="math-notation-centered">\[ \frac{x^2}{a^2} - \frac{y^2}{b^2} = 1 \]</p>
+    
+    <p><strong>1) Симетрія.</strong> Завдяки парності канонічного рівняння гіперболи за \( x \) і \( y \), гіпербола симетрична відносно осей \( Ox \), \( Oy \) та початку координат, який є <strong>центром гіперболи</strong>.</p>
+    
+    <p><strong>2) Перетин з осями координат.</strong></p>
+    <ul>
+      <li>При \( x = 0 \): \( -\frac{y^2}{b^2} = 1 \) - рівняння немає розв'язків, тому гіпербола не перетинає вісь \( Oy \).</li>
+      <li>При \( y = 0 \): \( \frac{x^2}{a^2} = 1 \Rightarrow x = \pm a \)</li>
+    </ul>
+    <p>Отже, точки \( (a;0) \) і \( (-a;0) \) є точками перетину гіперболи з віссю \( Ox \) і одночасно являються <strong>вершинами дійсної осі</strong>.</p>
+    
+    <p><strong>3) Вершини та осі.</strong> Гіпербола має вершини:</p>
+    <p class="math-notation-centered">\[ A_1(-a;0), \quad A_2(a;0) \]</p>
+    <p>Відрізок \( A_1A_2 = 2a \) називається <strong>дійсною віссю</strong> гіперболи.</p>
+    <p>Точки \( B_1(0;-b), B_2(0;b) \) лежать на <strong>уявній осі</strong>.</p>
+    
+    <p><strong>4) Асимптоти.</strong> Гіпербола має дві асимптоти:</p>
+    <p class="math-notation-centered">
+  \[ y = \pm \frac{b}{a} x \quad (10.16) \]
+</p>
+    <p>Ці прямі називаються <strong>асимптотами гіперболи</strong> і є важливими для визначення форми гіперболи на великих відстанях від початку координат.</p>
+    
+    <p><strong>5) Ексцентриситет.</strong> Ексцентриситет гіперболи \( \varepsilon \) характеризує її витягнутість:</p>
+    <p class="math-notation-centered">
+  \[ \varepsilon = \frac{c}{a} \quad (10.17) \]
+</p>
+    <p><strong>Властивості:</strong></p>
+    <ul>
+      <li>\( \varepsilon > 1 \), оскільки \( c > a \)</li>
+      <li>Якщо \( \varepsilon \to \infty \), то гіпербола стає все більш витягнутою</li>
+    </ul>
+    
+    <p><strong>6) Директриси.</strong> Директриси гіперболи – це дві прямі, паралельні осі \( Oy \), розташовані на відстані:</p>
+   <p class="math-notation-centered">
+  \[ d = \frac{a^2}{c} = \pm \frac{a}{\varepsilon} \quad (10.18) \]
+</p>
+    <p>Їхні рівняння: \( x = \pm \frac{a}{\varepsilon} \).</p>
+
+    <h3>Спряжена (вертикальна) гіпербола</h3>
+    <p><strong>1) Рівняння спряженої гіперболи.</strong> Якщо фокальна вісь гіперболи лежить на осі ординат (вертикальна) (рис. 10.11), то її рівняння має вигляд:</p>
+   <p class="math-notation-centered">
+  \[ \frac{y^2}{b^2} - \frac{x^2}{a^2} = 1 \quad (10.19) \]
+</p>
+    <p>де \( a \) – уявна піввісь, \( b \) – дійсна піввісь, \( c^2 = a^2 + b^2 \).</p>
+     <img src="/static/figure10.11.jpg" alt="Гіпербола_1" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+     
+    <p><strong>2) Вершини.</strong> Точки \( B_1(0;-b) \) та \( B_2(0;b) \) – це точки на дійсній осі \( y \).</p>
+    
+    <p><strong>3) Фокуси.</strong> Оскільки фокуси гіперболи лежать на осі \( Oy \), їх координати:</p>
+    <p class="math-notation-centered">\[ F_1(0;-c), \quad F_2(0;c) \]</p>
+    
+    <p><strong>4) Ексцентриситет.</strong> Ексцентриситет для цієї гіперболи:</p>
+    <p class="math-notation-centered">
+  \[ \varepsilon = \frac{c}{b} \quad (10.20) \]
+</p>
+    
+    <p><strong>5) Директриси.</strong> Директриси мають рівняння:</p>
+   <p class="math-notation-centered">
+  \[ y = \pm \frac{b}{\varepsilon} \quad (10.21) \]
+</p>
+    <p>Ці прямі паралельні осі \( Ox \).</p>
+  </div>
+</details>
+
+    <details>
+    <summary>Рівняння гіперболи з осьовою симетрією та загальне рівняння гіперболи</summary>
+
+    <div class="theory-content">
+        <h3>Гіпербола зі зміщеним центром</h3>
+        
+        <p><strong>Випадок 1:</strong> Дійсна вісь гіперболи паралельна осі Ox, центр симетрії гіперболи розташований у точці \( (x_0;y_0) \) (рис. 10.12).</p>
+        <img src="/static/figure10.12.jpg" alt="Гіпербола_3" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+     
+        <p><strong>1) Рівняння.</strong> Рівняння гіперболи в цьому випадку має канонічний вигляд:</p>
+       <p class="math-notation-centered">
+  \[ \frac{(x - x_0)^2}{a^2} - \frac{(y - y_0)^2}{b^2} = 1 \quad (10.22) \]
+</p>
+        <p>де \( 2a \) – довжина дійсної осі гіперболи, яка паралельна осі \( x \), \( 2b \) – довжина уявної осі гіперболи, яка паралельна осі \( y \).</p>
+        
+        <p><strong>2) Вершини.</strong> Вершини гіперболи розташовані на її дійсній осі, яка є горизонтальною (паралельною осі \( x \)). Їхні координати:</p>
+       <p class="math-notation-centered">
+  \[ (x_0 - a;\ y_0),\ \quad (x_0 + a;\ y_0) \quad (10.23) \]
+</p>
+        
+        <p><strong>3) Фокуси.</strong> Фокуси гіперболи також розташовані на дійсній осі на відстані \( c \) від центру, де \( c \) визначається за формулою:</p>
+        <p class="math-notation-centered">\[ c = \sqrt{a^2 + b^2} \]</p>
+        <p>Координати фокусів:</p>
+        <p class="math-notation-centered">
+  \[ F_1(x_0 - c;\ y_0),\ \quad F_2(x_0 + c;\ y_0) \quad (10.24) \]
+</p>
+        
+        <p><strong>4) Асимптоти.</strong> Асимптоти гіперболи – це прямі, до яких наближаються її гілки при великих значеннях \( |x| \). Рівняння асимптот мають вигляд:</p>
+        <p class="math-notation-centered">\[ y - y_0 = \pm \frac{b}{a}(x - x_0) \]</p>
+        <p>або</p>
+        <p class="math-notation-centered">
+  \[ y = y_0 \pm \frac{b}{a}(x - x_0) \quad (10.25) \]
+</p>
+
+        <div class="example">
+            <strong>Графічна інтерпретація:</strong> Гіпербола має горизонтальну дійсну вісь, її гілки розташовані праворуч і ліворуч від центру.
+        </div>
+
+        <p><strong>Випадок 2:</strong> Дійсна вісь гіперболи паралельна осі Oy, центр симетрії гіперболи розташований у точці \( (x_0;y_0) \) (рис. 10.13).</p>
+        <img src="/static/figure10.13.jpg" alt="Гіпербола_4" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+     
+        <p><strong>1) Рівняння.</strong> Рівняння гіперболи в цьому випадку має канонічний вигляд:</p>
+        <p class="math-notation-centered">\[ \frac{(y-y_0)^2}{b^2} - \frac{(x-x_0)^2}{a^2} = 1 \]</p>
+        <p>де \( 2b \) – довжина дійсної осі, яка паралельна осі \( y \), \( 2a \) – довжина уявної осі, яка паралельна осі \( x \).</p>
+        
+        <p><strong>2) Вершини.</strong> Вершини гіперболи розташовані на дійсній осі, яка є вертикальною (паралельною осі \( Oy \)). Координати вершин:</p>
+      <p class="math-notation-centered">
+  \[ (x_0;\ y_0 - b),\ \quad (x_0;\ y_0 + b) \quad (10.26) \]
+</p>
+        
+        <p><strong>3) Фокуси.</strong> Фокуси гіперболи також розташовані на дійсній осі (паралельній осі \( Oy \)) на відстані \( c \) від центру, де \( c \) визначається за формулою:</p>
+        <p class="math-notation-centered">\[ c = \sqrt{a^2 + b^2} \]</p>
+        <p>Координати фокусів:</p>
+        <p class="math-notation-centered">
+  \[ F_1(x_0;\ y_0 - c),\ \quad F_2(x_0;\ y_0 + c) \quad (10.27) \]
+</p>
+        
+        <p><strong>4) Асимптоти.</strong> Асимптоти гіперболи – це прямі, до яких наближаються її гілки при великих значеннях \( |y| \). Рівняння асимптот мають вигляд:</p>
+        <p class="math-notation-centered">\[ y - y_0 = \pm \frac{b}{a}(x - x_0) \]</p>
+        <p>або</p>
+        <p class="math-notation-centered">
+  \[ y = y_0 \pm \frac{b}{a}(x - x_0) \quad (10.28) \]
+</p>
+
+        <div class="example">
+            <strong>Графічна інтерпретація:</strong> Гіпербола має вертикальну дійсну вісь, її гілки розташовані вгорі та внизу від центру.
+        </div>
+
+        <h3>Загальне рівняння гіперболи</h3>
+        
+        <p>Легко показати, що загальне рівняння гіперболи</p>
+        <p class="math-notation-centered">\[ \frac{(x-x_0)^2}{a^2} - \frac{(y-y_0)^2}{b^2} = 1 \quad \text{або} \quad \frac{(y-y_0)^2}{b^2} - \frac{(x-x_0)^2}{a^2} = 1 \]</p>
+        <p>після нескладних перетворень набуває вигляду</p>
+       <p class="math-notation-centered">
+  \[ Ax^2 - By^2 + Cx + Dy + E = 0 \quad (10.29) \]
+</p>
+        <p>де \( A, B, C, D \) і \( E \) – дійсні коефіцієнти, при цьому \( AB < 0 \) (тобто коефіцієнти при \( x^2 \) і \( y^2 \) мають протилежні знаки).</p>
+        
+        <p>Рівняння є окремим випадком загального рівняння другого порядку</p>
+        <p class="math-notation-centered">\[ Ax^2 + By^2 + Cx + Dy + E = 0 \]</p>
+        <p>з якого випливає, що рівняння задає гіперболу, якщо виконується умова:</p>
+        <p class="math-notation-centered">\[ AB < 0 \]</p>
+        
+        <p class="solution">Інакше кажучи, у загальному рівнянні гіперболи коефіцієнти при квадратичних членах \( x^2 \) та \( y^2 \) мають протилежні знаки.</p>
+
+        <div class="example">
+            <strong>Важливо:</strong> Ця умова дозволяє швидко визначити, чи задає дане рівняння другого порядку гіперболу, не виконуючи повних перетворень.
+        </div>
+    </div>
+</details>
+
+    <details>
+    <summary>Приклади</summary>
+
+    <div class="theory-content">
+        <h3>Приклади розв'язування задач на гіперболу</h3>
+
+        <div class="example">
+            <strong>Приклад 10.13.</strong> Довести, що рівняння \( 10x^2 - 15y^2 = 150 \) є рівнянням гіперболи. Знайти координати фокусів.
+        </div>
+       <p class="solution-title"><strong>Розв'язання:</strong></p>
+
+        <p>Щоб визначити тип кривої, приведемо рівняння до канонічного вигляду. Для цього поділимо обидві частини рівняння на 150:</p>
+        <p class="math-notation-centered">\[ \frac{10x^2}{150} - \frac{15y^2}{150} = \frac{150}{150} \]</p>
+        <p>Отримаємо:</p>
+        <p class="math-notation-centered">\[ \frac{x^2}{15} - \frac{y^2}{10} = 1 \]</p>
+        <p>Це рівняння гіперболи, для якої \( a^2 = 15 \) та \( b^2 = 10 \).</p>
+        <p>Із співвідношення \( c^2 = a^2 + b^2 \) знаходимо \( c^2 = 15 + 10 = 25 \), звідки</p>
+        <p class="math-notation-centered">\[ c = \sqrt{25} = 5 \]</p>
+        <p>Оскільки гіпербола має дійсну вісь, паралельну осі \( x \), фокуси розташовуються на осі \( x \) на відстані \( c \) від центру гіперболи. У нашому випадку, центр гіперболи знаходиться в точці \( (0;0) \), тому координати фокусів будуть:</p>
+        <p class="math-notation-centered">\[ F_1(-5;0), \quad F_2(5;0) \]</p>
+        <p class="solution">Отже, фокуси гіперболи знаходяться в точках \( F_1(-5;0) \) та \( F_2(5;0) \).</p>
+
+        <div class="example">
+            <strong>Приклад 10.14.</strong> Скласти рівняння гіперболи, симетрично розміщеної відносно осей координат, якщо її фокусна відстань дорівнює \( 10 \, а \( \frac{c}{a} = \frac{5}{4} \).
+        </div>
+        <p class="solution-title"><strong>Розв'язання:</strong></p>
+        <p>Оскільки гіпербола симетрична відносно осей координат і її дійсна вісь розташована вздовж осі \( x \), рівняння має вигляд:</p>
+        <p class="math-notation-centered">\[ \frac{x^2}{a^2} - \frac{y^2}{b^2} = 1 \]</p>
+        <p>За умовою, фокусна відстань \( 2c = 10 \), тому \( c = 5 \). І за умовою \( \frac{c}{a} = \frac{5}{4} \).</p>
+        <p>Підставимо значення \( c = 5 \):</p>
+        <p class="math-notation-centered">\[ \frac{5}{a} = \frac{5}{4} \implies a = 4 \]</p>
+        <p>Знаходимо \( b^2 \). Для гіперболи виконується рівність \( c^2 = a^2 + b^2 \). Підставимо \( c = 5 \) і \( a = 4 \):</p>
+        <p class="math-notation-centered">\[ 5^2 = 4^2 + b^2 \implies b^2 = 25 - 16 = 9 \]</p>
+        <p>Підставимо \( a^2 = 16 \) і \( b^2 = 9 \) у канонічне рівняння гіперболи:</p>
+        <p class="math-notation-centered">\[ \frac{x^2}{16} - \frac{y^2}{9} = 1 \]</p>
+        <p class="solution">Отже, шукане рівняння гіперболи: \( \frac{x^2}{16} - \frac{y^2}{9} = 1 \).</p>
+
+                <div class="example">
+            <strong>Приклад 10.15.</strong> Скласти рівняння асимптот для гіперболи \( \frac{x^2}{36} - \frac{y^2}{25} = 1 \).
+        </div>
+       <p class="solution-title"><strong>Розв'язання:</strong></p>
+        <p>Для даної гіперболи рівняння асимптот задаються формулою:</p>
+        <p class="math-notation-centered">\[ y = \pm \frac{b}{a}x \]</p>
+        <p>де \( a^2 \) і \( b^2 \) – відповідно квадрати дійсної і уявної півосей.</p>
+        <p>Визначимо значення \( a \) і \( b \). З рівняння гіперболи, видно, що:</p>
+        <p class="math-notation-centered">\[ a^2 = 36, \quad b^2 = 25 \]</p>
+        <p>Тому:</p>
+        <p class="math-notation-centered">\[ a = \sqrt{36} = 6, \quad b = \sqrt{25} = 5 \]</p>
+        <p>Підставимо значення \( a = 6 \) і \( b = 5 \) у формулу рівняння асимптот:</p>
+        <p class="math-notation-centered">\[ y = \pm \frac{b}{a}x = \pm \frac{5}{6}x \]</p>
+        <p class="solution">Отже, рівняння асимптот гіперболи: \( y = \pm \frac{5}{6}x \).</p>
+
+        <div class="example">
+            <strong>Приклад 10.16.</strong> Дано фокуси гіперболи \( F_1(-10;0) \) і \( F_2(10;0) \), а також її асимптоту \( 3x - 4y = 0 \). Знайти рівняння гіперболи.
+        </div>
+        <p class="solution-title"><strong>Розв'язання:</strong></p>
+        <p>Запишемо рівняння асимптоти у вигляді прямої з кутовим коефіцієнтом:</p>
+        <p class="math-notation-centered">\[ y = \frac{3}{4}x \]</p>
+        <p>Для гіперболи з центром у початку координат і дійсною віссю вздовж осі \( x \) канонічна форма рівняння має вигляд:</p>
+        <p class="math-notation-centered">\[ \frac{x^2}{a^2} - \frac{y^2}{b^2} = 1 \]</p>
+        <p>а її асимптоти задаються рівняннями</p>
+        <p class="math-notation-centered">\[ y = \pm \frac{b}{a}x \]</p>
+        <p>Порівнюючи з \( y = \frac{3}{4}x \), отримуємо:</p>
+        <p class="math-notation-centered">\[ \frac{b}{a} = \frac{3}{4} \implies a = \frac{4b}{3} \]</p>
+        <p>Координати фокусів дано \( F_1(-10;0) \) і \( F_2(10;0) \), тому \( c = 10 \). Для гіперболи виконується співвідношення \( c^2 = a^2 + b^2 \). Підставимо \( c = 10 \), отримаємо рівняння:</p>
+        <p class="math-notation-centered">\[ a^2 + b^2 = 100 \]</p>
+        <p>Таким чином, задача зводиться до розв'язання системи рівнянь:</p>
+        <p class="math-notation-centered">\[
+        \begin{cases}
+        a = \frac{4b}{3}, \\
+        a^2 + b^2 = 100
+        \end{cases}
+        \]</p>
+        <p>Підставимо \( a = \frac{4b}{3} \) у друге рівняння:</p>
+        <p class="math-notation-centered">\[ \left(\frac{4b}{3}\right)^2 + b^2 = 100 \]</p>
+        <p class="math-notation-centered">\[ \frac{16b^2}{9} + b^2 = 100 \]</p>
+        <p>Помножимо обидві частини на 9 і зробимо спрощення виразу:</p>
+        <p class="math-notation-centered">\[ 16b^2 + 9b^2 = 900 \]</p>
+        <p class="math-notation-centered">\[ 25b^2 = 900 \]</p>
+        <p class="math-notation-centered">\[ b^2 = 36 \]</p>
+        <p>Знайдемо \( a^2 \), підставляючи знайдене значення \( b^2 = 36 \) у друге рівняння системи \( a^2 + b^2 = 100 \):</p>
+        <p class="math-notation-centered">\[ a^2 + 36 = 100 \]</p>
+        <p class="math-notation-centered">\[ a^2 = 64 \]</p>
+        <p>Підставимо знайдені значення \( a^2 = 64 \), \( b^2 = 36 \) у канонічне рівняння гіперболи:</p>
+        <p class="math-notation-centered">\[ \frac{x^2}{64} - \frac{y^2}{36} = 1 \]</p>
+        <p class="solution">Шукане рівняння гіперболи: \( \frac{x^2}{64} - \frac{y^2}{36} = 1 \).</p>
+                <div class="example">
+            <strong>Приклад 10.17.</strong> Фокуси гіперболи знаходяться у точках \( (\pm 5; 6) \), а її ексцентриситет дорівнює \( \varepsilon = 1,25 \). Скласти рівняння гіперболи та її асимптот.
+        </div>
+        <p class="solution-title"><strong>Розв'язання:</strong></p>
+        <p>Шукана гіпербола симетрична відносно осей координат, але зміщена по осі \( Oy \) на 6 одиниць вгору. Її центр розташований у точці з координатами \( (0; 6) \) (схематичний малюнок, рис. 10.14).</p>
+            <img src="/static/figure10.14.jpg" alt="Гіпербола_5" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+     
+        <p>За умовою \( c = 5 \), оскільки відстань від центра до фокусів дорівнює \( c \). Використаємо формулу для обчислення дійсної півосі \( a \):</p>
+        <p class="math-notation-centered">\[ \varepsilon = \frac{c}{a} \implies a = \frac{c}{\varepsilon} = \frac{5}{1,25} = 4 \]</p>
+        <p>Знайдемо \( b^2 \) із співвідношення між параметрами гіперболи \( c^2 = a^2 + b^2 \):</p>
+        <p class="math-notation-centered">\[ b^2 = c^2 - a^2 = 5^2 - 4^2 = 25 - 16 = 9, \quad b = 3 \]</p>
+        <p>Оскільки гіпербола зміщена по осі \( Oy \), її рівняння матиме вигляд:</p>
+        <p class="math-notation-centered">\[ \frac{x^2}{a^2} - \frac{(y - y_0)^2}{b^2} = 1 \]</p>
+        <p>де \( y_0 = 6 \), \( a^2 = 16 \), \( b^2 = 9 \). Підставляючи ці значення, отримуємо рівняння гіперболи:</p>
+        <p class="math-notation-centered">\[ \frac{x^2}{16} - \frac{(y - 6)^2}{9} = 1 \]</p>
+        <p>Запишемо рівняння асимптот гіперболи. Оскільки асимптоти гіперболи задаються рівняннями:</p>
+        <p class="math-notation-centered">\[ y = y_0 \pm \frac{b}{a}x \]</p>
+        <p>підставимо \( y_0 = 6 \), \( b = 3 \), \( a = 4 \):</p>
+        <p class="math-notation-centered">\[ y = 6 \pm \frac{3}{4}x \]</p>
+        <p class="solution">Рівняння гіперболи: \( \frac{x^2}{16} - \frac{(y - 6)^2}{9} = 1 \), а рівняння її асимптот: \( y = 6 \pm \frac{3}{4}x \).</p>
+    </div>
+</details>
+           
+        </div>
+    </div>
+</div>
+     <!-- ВІДЕО -->
+  <div id="videoModal" class="modal">
+    <div class="modal-header">
+      <button class="close-btn" id="closeVideoBtn">× Закрити</button>
+    </div>
+    <div class="modal-content">
+      <div class="video-card-container" id="videoList">
+        <div class="video-card" data-video="https://www.youtube.com/embed/rI6r_rCrxvE">
+          <img src="https://img.icons8.com/fluency/48/play.png" alt="Відео">
+          <h3>1. Знайомство з гіперболами</h3>
+        </div>
+        <div class="video-card" data-video="https://www.youtube.com/embed/BjuI-JyN9WI">
+          <img src="https://img.icons8.com/fluency/48/play.png" alt="Відео">
+          <h3>2. Вершини та напрям гіперболи (приклад 1)</h3>
+        </div>
+        <div class="video-card" data-video="https://www.youtube.com/embed/MX4FuvHl0Wk">
+          <img src="https://img.icons8.com/fluency/48/play.png" alt="Відео">
+          <h3>3. Вершини та напрям гіперболи (приклад 2)</h3>
+        </div>
+        <div class="video-card" data-video="https://www.youtube.com/embed/7YjOs-nsWeg">
+          <img src="https://img.icons8.com/fluency/48/play.png" alt="Відео">
+          <h3>4. Зображення гіперболи на графіку</h3>
+        </div>
+        <div class="video-card" data-video="https://www.youtube.com/embed/u_vyTZvQdZE">
+          <img src="https://img.icons8.com/fluency/48/play.png" alt="Відео">
+          <h3>5. Фокуси гіперболи з рівняння</h3>
+        </div>
+        <div class="video-card" data-video="https://www.youtube.com/embed/_pKwSCYKUNg">
+          <img src="https://img.icons8.com/fluency/48/play.png" alt="Відео">
+          <h3>6. Рівняння гіперболи зі зміщеним центром симетрії</h3>
+        </div>
+      </div>
+
+      <div class="video-player-container" id="videoPlayer" style="display:none;">
+        <iframe id="youtubeIframe" src="" frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
+
+
+   <!-- ПИТАННЯ -->
+<div id="questionsModal" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeQuestionsBtn">× Закрити</button>
+    </div>
+    <div class="modal-content">
+
+        <!-- 1 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>1. Що таке гіпербола?</span></div>
+                <div class="card-back"><span>Множина точок, для яких модуль різниці відстаней до двох фокусів є сталим і меншим за відстань між ними.</span></div>
+            </div>
+        </div>
+
+        <!-- 2 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>2. Як називаються фіксовані точки, від яких відраховуються відстані?</span></div>
+                <div class="card-back"><span>Фокуси гіперболи.</span></div>
+            </div>
+        </div>
+
+        <!-- 3 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>3. Як позначають фокусну відстань гіперболи?</span></div>
+                <div class="card-back"><span>\( |F_1F_2| = 2c \)</span></div>
+            </div>
+        </div>
+
+        <!-- 4 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>4. Яке співвідношення між параметрами \( a \) і \( c \)?</span></div>
+                <div class="card-back"><span>\( a < c \)</span></div>
+            </div>
+        </div>
+
+        <!-- 5 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>5. Яке канонічне рівняння гіперболи?</span></div>
+                <div class="card-back"><span>\[ \frac{x^2}{a^2} - \frac{y^2}{b^2} = 1 \]</span></div>
+            </div>
+        </div>
+
+        <!-- 6 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>6. Як пов’язані параметри \( a \), \( b \), \( c \)?</span></div>
+                <div class="card-back"><span>\( c^2 = a^2 + b^2 \)</span></div>
+            </div>
+        </div>
+
+        <!-- 7 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>7. Чи перетинає горизонтальна гіпербола, з центром симетрії у початку координат, вісь \( Oy \)?</span></div>
+                <div class="card-back"><span>Ні, не перетинає.</span></div>
+            </div>
+        </div>
+
+        <!-- 8 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>8. У яких точках горизонтальна гіпербола, з центром симетрії у початку координат, перетинає вісь \( Ox \)?</span></div>
+                <div class="card-back"><span>\( (a;0) \) і \( (-a;0) \)</span></div>
+            </div>
+        </div>
+
+        <!-- 9 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>9. Як називаються відрізки \( A_1A_2 \) і \( B_1B_2 \)?</span></div>
+                <div class="card-back"><span>\( A_1A_2 = 2a \) — дійсна вісь, \( B_1B_2 = 2b \) — уявна вісь.</span></div>
+            </div>
+        </div>
+
+        <!-- 10 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>10. Яке рівняння асимптот гіперболи?</span></div>
+                <div class="card-back"><span>\( y = \pm \frac{b}{a}x \)</span></div>
+            </div>
+        </div>
+
+        <!-- 11 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>11. Що показують асимптоти гіперболи?</span></div>
+                <div class="card-back"><span>Прямі, до яких наближаються її гілки при великих \( |x| \).</span></div>
+            </div>
+        </div>
+
+        <!-- 12 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>12. Як обчислюється ексцентриситет гіперболи?</span></div>
+                <div class="card-back"><span>\( \varepsilon = \frac{c}{a} \)</span></div>
+            </div>
+        </div>
+
+        <!-- 13 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>13. Яке значення має ексцентриситет гіперболи?</span></div>
+                <div class="card-back"><span>\( \varepsilon > 1 \)</span></div>
+            </div>
+        </div>
+
+        <!-- 14 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>14. Які рівняння директрис гіперболи?</span></div>
+                <div class="card-back"><span>\( x = \pm \frac{a}{\varepsilon} \)</span></div>
+            </div>
+        </div>
+
+        <!-- 15 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>15. Яке рівняння має вертикальна (спряжена) гіпербола?</span></div>
+                <div class="card-back"><span>\[ \frac{y^2}{b^2} - \frac{x^2}{a^2} = 1 \]</span></div>
+            </div>
+        </div>
+
+        <!-- 16 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>16. Де розташовані фокуси вертикальної гіперболи?</span></div>
+                <div class="card-back"><span>\( (0; \pm c) \)</span></div>
+            </div>
+        </div>
+
+        <!-- 17 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>17. Як визначається ексцентриситет вертикальної гіперболи?</span></div>
+                <div class="card-back"><span>\( \varepsilon = \frac{c}{b} \)</span></div>
+            </div>
+        </div>
+
+        <!-- 18 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>18. Яке рівняння має горизонтальна гіпербола з центром симетрії у точці \( (x_0; y_0) \)?</span></div>
+                <div class="card-back"><span>\[ \frac{(x - x_0)^2}{a^2} - \frac{(y - y_0)^2}{b^2} = 1 \]</span></div>
+            </div>
+        </div>
+
+        <!-- 19 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>19. Які координати фокусів горизонтальної гіперболи з центром симетрії у \( (x_0; y_0) \)?</span></div>
+                <div class="card-back"><span>\( F_1(x_0 - c; y_0) \), \( F_2(x_0 + c; y_0) \)</span></div>
+            </div>
+        </div>
+
+        <!-- 20 -->
+       <div class="question-card" onclick="this.classList.toggle('flipped')">
+    <div class="card-inner">
+        <div class="card-front"><span>20. За якою ознакою рівняння другого порядку є рівнянням гіперболи?</span></div>
+        <div class="card-back">
+    <span>\( Ax^2 - By^2 + Cx + Dy + E = 0 \)<br>Якщо коефіцієнти при \( x^2 \) і \( y^2 \) мають протилежні знаки: \( AB < 0 \)</span>
+</div>
+
+    </div>
+</div>
+
+
+
+    </div>
+</div>
+
+
+  <!-- ТРЕНАЖЕР -->
+<div id="trainerModal" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeTrainerBtn">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="trainer-container">
+            <div class="question-circle">
+                <h3 id="questionNumber">Питання 1</h3>
+            </div>
+            <p id="questionText" class="math-notation-centered"></p>
+
+            <!-- МІСЦЕ ДЛЯ МАЛЮНКА (СТАЦІОНАРНІ JPG) -->
+            <div id="imageContainer" style="text-align:center; margin:20px 0;">
+                <!-- сюди вставиться <img src="static/1.jpg"> -->
+            </div>
+
+            <!-- КАНАЛ ДЛЯ КАНАВУ (ДЛЯ ІНШИХ ПИТАНЬ) — ХОВАЄМО -->
+            <div id="canvasContainer" style="display:none; text-align:center; margin:20px 0;">
+                <canvas id="hyperbolaCanvas" width="520" height="520" style="border:1px solid #ccc;"></canvas>
+            </div>
+
+            <div class="options-container" id="optionsContainer"></div>
+            <button id="submitAnswer" disabled>Підтвердити</button>
+            <div id="feedback" class="feedback"></div>
+        </div>
+    </div>
+</div>
+                        
+    <!-- ЗАВЕРШЕННЯ -->
+    <div id="completionModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeCompletionBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="completion-message">
+                <div class="completion-emoji"></div>
+                <h2>МІСІЯ ВИКОНАНА!</h2>
+                <p>Солдате, ти — гордість України!</p>
+                <p><strong>СЛАВА УКРАЇНІ!</strong></p>
+                <button id="resetTrainerBtn">Спробувати ще раз!</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalOverlay"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.body.classList.add('loaded');
+            const els = {
+                openTheoryBtn: document.getElementById('openTheoryBtn'),
+                openVideoBtn: document.getElementById('openVideoBtn'),
+                openQuestionsBtn: document.getElementById('openQuestionsBtn'),
+                openTrainerBtn: document.getElementById('openTrainerBtn'),
+                theoryModal: document.getElementById('theoryModal'),
+                videoModal: document.getElementById('videoModal'),
+                questionsModal: document.getElementById('questionsModal'),
+                trainerModal: document.getElementById('trainerModal'),
+                completionModal: document.getElementById('completionModal'),
+                closeTheoryBtn: document.getElementById('closeTheoryBtn'),
+                closeVideoBtn: document.getElementById('closeVideoBtn'),
+                closeQuestionsBtn: document.getElementById('closeQuestionsBtn'),
+                closeTrainerBtn: document.getElementById('closeTrainerBtn'),
+                closeCompletionBtn: document.getElementById('closeCompletionBtn'),
+                 videoList: document.getElementById('videoList'),
+        videoPlayer: document.getElementById('videoPlayer'),
+                youtubeIframe: document.getElementById('youtubeIframe'),
+                modalOverlay: document.getElementById('modalOverlay'),
+                questionText: document.getElementById('questionText'),
+                optionsContainer: document.getElementById('optionsContainer'),
+                submitAnswer: document.getElementById('submitAnswer'),
+                feedback: document.getElementById('feedback'),
+                resetTrainerBtn: document.getElementById('resetTrainerBtn')
+            };
+
+           
+            function toggleModal(modal, show) {
+                modal.style.display = show ? 'flex' : 'none';
+                els.modalOverlay.style.display = show ? 'block' : 'none';
+                document.body.style.overflow = show ? 'hidden' : 'auto';
+                if (show && window.MathJax?.typesetPromise) {
+                    MathJax.typesetPromise([modal]).catch(() => {});
+                }
+            }
+
+            els.openTheoryBtn.addEventListener('click', () => toggleModal(els.theoryModal, true));
+            els.openVideoBtn.addEventListener('click', () => toggleModal(els.videoModal, true));
+            els.openQuestionsBtn.addEventListener('click', () => toggleModal(els.questionsModal, true));
+            els.openTrainerBtn.addEventListener('click', () => { toggleModal(els.trainerModal, true); initTrainer(); });
+
+            [els.closeTheoryBtn, els.closeVideoBtn, els.closeQuestionsBtn, els.closeTrainerBtn, els.closeCompletionBtn].forEach(btn => {
+                btn.addEventListener('click', () => toggleModal(btn.closest('.modal'), false));
+            });
+
+            els.modalOverlay.addEventListener('click', () => {
+                document.querySelectorAll('.modal').forEach(m => toggleModal(m, false));
+            });
+
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') document.querySelectorAll('.modal').forEach(m => toggleModal(m, false));
+            });
+
+ // === ТРЕНАЖЕР ===
+let selected = null;
+let correctIndex = null;
+let stage = 1;
+
+const squares = [1,4,9,16,25,36,49,64,81,100,121,144,169,196,225,256,289,324,361,400];
+
+function getRandomSquare(min, max) {
+    const valid = squares.filter(s => s >= min && s <= max);
+    return valid[Math.floor(Math.random()*valid.length)];
+}
+            // Додай функцію gcd, якщо ще немає
+function gcd(a, b) {
+    return b === 0 ? a : gcd(b, a % b);
+}
+
+function simplifyFraction(num, den) {
+    if (!Number.isInteger(num) || !Number.isInteger(den)) {
+        return { num: simplifySqrt(num * num), den: simplifySqrt(den * den) };
+    }
+    const g = gcd(Math.abs(num), Math.abs(den));
+    return { num: num / g, den: den / g };
+}
+
+/* ---------- СПРОЩЕННЯ КОРЕНЯ ---------- */
+function simplifySqrt(n) {
+    if (n === 0) return '0';
+    if (Number.isInteger(Math.sqrt(n))) return Math.sqrt(n).toString();
+
+    let coeff = 1;
+    let radicand = n;
+
+    for (let i = 2; i * i <= radicand; i++) {
+        while (radicand % (i * i) === 0) {
+            coeff *= i;
+            radicand /= (i * i);
+        }
+    }
+
+    if (radicand === 1) return coeff.toString();
+    if (coeff === 1) return `\\sqrt{${n}}`;
+    return `${coeff}\\sqrt{${radicand}}`;
+}
+
+            /* ---------- СПРОЩЕННЯ ДРОБУ: 2/1 → 2, 6/1 → 6 ---------- */
+/* ---------- СПРОЩЕННЯ ДРОБУ: 10/1 → 10, 1/10 → 1/10 ---------- */
+function simplifyFraction(num, den) {
+    if (!Number.isInteger(num) || !Number.isInteger(den)) {
+        return { num: simplifySqrt(num * num), den: simplifySqrt(den * den) };
+    }
+    const g = gcd(Math.abs(num), Math.abs(den));
+    const n = num / g;
+    const d = den / g;
+
+    // Якщо знаменник === 1 → повертаємо тільки чисельник
+    if (d === 1) {
+        return { num: n, den: null }; // den = null → без дробу
+    }
+    return { num: n, den: d };
+}
+
+
+/* ---------- ПИТАННЯ 1: ДІЙСНА / УЯВНА ВІСЬ ---------- */
+function generateQuestion1() {
+    const isHorizontal = Math.random() > 0.5; // true → дійсна по x, уявна по y
+    const wantReal = Math.random() > 0.5;     // true → питаємо дійсну, false → уявну
+
+    // Квадрати під дійсною і уявною осями
+    let real2 = squares[Math.floor(Math.random() * squares.length)]; // під дійсною
+    let imag2 = squares[Math.floor(Math.random() * squares.length)]; // під уявною
+    while (imag2 === real2) {
+        imag2 = squares[Math.floor(Math.random() * squares.length)];
+    }
+
+    // Формуємо рівняння: завжди "+" під дійсною, "-" під уявною
+    const equation = isHorizontal
+        ? `\\frac{x^2}{${real2}} - \\frac{y^2}{${imag2}} = 1`
+        : `\\frac{y^2}{${real2}} - \\frac{x^2}{${imag2}} = 1`;
+
+    // Що питаємо?
+    const axisType = wantReal ? "дійсної" : "уявної";
+    const correctVal2 = wantReal ? real2 : imag2;
+    const correct = simplifySqrt(correctVal2); // √16 → 4
+
+    // Неправильні відповіді
+    const otherVal2 = wantReal ? imag2 : real2;
+    const otherSqrt = simplifySqrt(otherVal2);
+
+    let wrongs = [
+        otherSqrt,
+        `${real2}`,  // саме число під дробом
+        `${imag2}`
+    ];
+    wrongs = wrongs.filter((w, i, a) => a.indexOf(w) === i && w !== correct);
+    while (wrongs.length < 3) wrongs.push('0');
+    wrongs.sort(() => Math.random() - 0.5);
+
+    // Текст питання
+    const text = `Для гіперболи \\(${equation}\\) знайти довжину її ${axisType} осі.`;
+
+    return { text, correct, wrong: wrongs };
+}
+/* ---------- ПИТАННЯ 2 (фокуси) ---------- */
+function generateQuestion2(){
+    let a2, b2;
+    do {
+        a2 = getRandomSquare(4,400);
+        b2 = getRandomSquare(4,400);
+    } while (a2 === b2);
+
+    const isHorizontal = Math.random() < 0.5;
+    const c2 = a2 + b2;
+    const c = simplifySqrt(c2);
+
+    const equation = isHorizontal
+        ? `\\frac{x^2}{${a2}} - \\frac{y^2}{${b2}} = 1`
+        : `\\frac{y^2}{${b2}} - \\frac{x^2}{${a2}} = 1`;
+
+    const correct = isHorizontal
+        ? `F(\\pm ${c};0)`
+        : `F(0;\\pm ${c})`;
+
+    const wrongs = [];
+
+    const diff = Math.abs(a2 - b2);
+    const eVal = simplifySqrt(diff);
+    const ellipseWrong = isHorizontal
+        ? `F(\\pm ${eVal};0)`
+        : `F(0;\\pm ${eVal})`;
+    wrongs.push(ellipseWrong);
+
+    const ellipseWrongOpposite = isHorizontal
+        ? `F(0;\\pm ${eVal})`
+        : `F(\\pm ${eVal};0)`;
+    wrongs.push(ellipseWrongOpposite);
+
+    const correctOpposite = isHorizontal
+        ? `F(0;\\pm ${c})`
+        : `F(\\pm ${c};0)`;
+    wrongs.push(correctOpposite);
+
+    const filtered = wrongs.filter(w => w !== correct);
+    return {text:`Знайти фокуси гіперболи \\(${equation}\\).`, correct, wrong:filtered};
+}
+
+/* ---------- ПИТАННЯ 3 (асимптоти) — БЕЗ /1 У ВІДПОВІДЯХ ---------- */
+function generateQuestion3() {
+    let a2, b2;
+    do {
+        a2 = getRandomSquare(4, 400);
+        b2 = getRandomSquare(4, 400);
+    } while (a2 === b2);
+
+    const isHorizontal = Math.random() < 0.5;
+    const a = Math.sqrt(a2), b = Math.sqrt(b2);
+
+    const equation = isHorizontal
+        ? `\\frac{x^2}{${a2}} - \\frac{y^2}{${b2}} = 1`
+        : `\\frac{y^2}{${b2}} - \\frac{x^2}{${a2}} = 1`;
+
+    // Асимптоти: y = ± (b/a) x
+    const frac = simplifyFraction(b, a);
+    let correct;
+    if (frac.den === null) {
+        correct = `y = \\pm ${frac.num}x`;
+    } else {
+        correct = `y = \\pm \\frac{${frac.num}}{${frac.den}}x`;
+    }
+
+    const wrongs = [];
+
+    // 1. Інвертований дріб: y = ± (a/b) x
+    const invFrac = simplifyFraction(a, b);
+    if (invFrac.den === null) {
+        wrongs.push(`y = \\pm ${invFrac.num}x`);
+    } else {
+        wrongs.push(`y = \\pm \\frac{${invFrac.num}}{${invFrac.den}}x`);
+    }
+
+    // 2. Без дробу: y = ± b x
+    const bStr = Number.isInteger(b) ? b : simplifySqrt(b2);
+    wrongs.push(`y = \\pm ${bStr}x`);
+
+    // 3. y = ± x
+    wrongs.push(`y = \\pm x`);
+
+    // 4. Коренева форма: y = ± √(b²/a²) x
+    wrongs.push(`y = \\pm \\sqrt{\\frac{${b2}}{${a2}}}x`);
+
+    // Фільтруємо дублікати та збіги з correct
+    const uniqueWrongs = wrongs
+        .filter((w, i, arr) => arr.indexOf(w) === i && w !== correct)
+        .slice(0, 3);
+
+    return {
+        text: `Знайти асимптоти гіперболи \\(${equation}\\):`,
+        correct: correct,
+        wrong: uniqueWrongs
+    };
+}
+
+            /* ---------- ПИТАННЯ 4 (рівняння гіперболи за вершиною і фокусом) ---------- */
+function generateQuestion4() {
+    let a, b, c;
+    do {
+        a = Math.floor(Math.random() * 19) + 2; // 2..20
+        b = Math.floor(Math.random() * 19) + 2; // 2..20
+        c = Math.floor(Math.random() * 19) + 2; // 2..20
+    } while (c * c !== a * a + b * b); // ТОЧНО c² = a² + b²
+
+    const isHorizontal = Math.random() < 0.5;
+    const isPositive = Math.random() < 0.5;
+
+    let vertex, focus, equationCorrect;
+
+    if (isHorizontal) {
+        // ГОРИЗОНТАЛЬНА: x²/a² - y²/b² = 1
+        const signA = isPositive ? '' : '-';
+        const signC = isPositive ? '' : '-';
+        vertex = `\\(A(${signA}${a};0)\\)`;
+        focus = `\\(F(${signC}${c};0)\\)`;
+        equationCorrect = `\\frac{x^2}{${a*a}} - \\frac{y^2}{${b*b}} = 1`;
+    } else {
+        // ВЕРТИКАЛЬНА: y²/b² - x²/a² = 1
+        const signB = isPositive ? '' : '-';
+        const signC = isPositive ? '' : '-';
+        vertex = `\\(B(0;${signB}${b})\\)`;
+        focus = `\\(F(0;${signC}${c})\\)`;
+        equationCorrect = `\\frac{y^2}{${b*b}} - \\frac{x^2}{${a*a}} = 1`;
+    }
+
+    const text = `Знайти рівняння гіперболи з центром у початку координат, якщо її одна вершина ${vertex}, а фокус ${focus}.`;
+
+    const correct = equationCorrect;
+
+    const wrongs = [];
+
+    // 1. Переплутана орієнтація
+    if (isHorizontal) {
+        wrongs.push(`\\frac{y^2}{${b*b}} - \\frac{x^2}{${a*a}} = 1`);
+    } else {
+        wrongs.push(`\\frac{x^2}{${a*a}} - \\frac{y^2}{${b*b}} = 1`);
+    }
+
+    // 2. b² = c² (не відняли a²)
+    if (isHorizontal) {
+        wrongs.push(`\\frac{x^2}{${a*a}} - \\frac{y^2}{${c*c}} = 1`);
+    } else {
+        wrongs.push(`\\frac{y^2}{${c*c}} - \\frac{x^2}{${a*a}} = 1`);
+    }
+
+    // 3. Еліпс
+    if (isHorizontal) {
+        wrongs.push(`\\frac{x^2}{${a*a}} + \\frac{y^2}{${b*b}} = 1`);
+    } else {
+        wrongs.push(`\\frac{y^2}{${b*b}} + \\frac{x^2}{${a*a}} = 1`);
+    }
+
+    // 4. = -1
+    wrongs.push(equationCorrect.replace('= 1', '= -1'));
+
+    const uniqueWrongs = wrongs
+        .filter((w, i, arr) => arr.indexOf(w) === i && w !== correct)
+        .slice(0, 3);
+
+    return {
+        text: text,
+        correct: correct,
+        wrong: uniqueWrongs
+    };
+}
+
+// hyperbolaData.js — БЕЗ $$ (MathJax працює з \displaystyle)
+const HYPERBOLA_DATA = [
+  {
+    image: "1.jpg",
+    answers: [
+      "\\dfrac{(x-2)^2}{16} - \\dfrac{(y-4)^2}{16} = 1",
+      "\\dfrac{(x+2)^2}{16} - \\dfrac{(y+4)^2}{16} = 1",
+      "\\dfrac{(y-4)^2}{16} - \\dfrac{(x-2)^2}{16} = 1",
+      "\\dfrac{(x-2)^2}{16} - \\dfrac{(y-4)^2}{9} = 1"
+    ]
+  },
+  {
+    image: "2.jpg",
+    answers: [
+      "\\dfrac{(x+1)^2}{16} - \\dfrac{(y+3)^2}{16} = 1",
+      "\\dfrac{(x-1)^2}{16} - \\dfrac{(y-3)^2}{16} = 1",
+      "\\dfrac{(y-3)^2}{16} - \\dfrac{(x-1)^2}{16} = 1",
+      "\\dfrac{(x+1)^2}{9} - \\dfrac{(y+3)^2}{9} = 1"
+    ]
+  },
+  {
+    image: "3.jpg",
+    answers: [
+      "\\dfrac{y^2}{9} - \\dfrac{(x-1)^2}{16} = 1",
+      "\\dfrac{y^2}{16} - \\dfrac{(x-1)^2}{9} = 1",
+      "\\dfrac{y^2}{16} - \\dfrac{(x-1)^2}{16} = 11",
+      "\\dfrac{x^2}{9} - \\dfrac{(y-1)^2}{9} = 1"
+    ]
+  },
+  {
+    image: "4.jpg",
+    answers: [
+      "\\dfrac{(x+2)^2}{16} - \\dfrac{y^2}{4} = 1",
+      "\\dfrac{x^2}{16} - \\dfrac{(y+2)^2}{4} = 1",
+      "\\dfrac{y^2}{4} - \\dfrac{(x+2)^2}{16} = 1",
+      "\\dfrac{x^2}{4} - \\dfrac{(y+2)^2}{16} = 1"
+    ]
+  },
+  {
+    image: "5.jpg",
+    answers: [
+      "\\dfrac{(y+4)^2}{9} - \\dfrac{(x+1)^2}{9} = 1",
+      "\\dfrac{(x+1)^2}{9} - \\dfrac{(y+4)^2}{9} = 1",
+      "\\dfrac{(y-4)^2}{9} - \\dfrac{(x-1)^2}{9} = 1",
+      "\\dfrac{(x-1)^2}{9} - \\dfrac{(y-4)^2}{9} = 1"
+    ]
+  },
+  {
+    image: "6.jpg",
+    answers: [
+      "\\dfrac{y^2}{9} - \\dfrac{(x+4)^2}{9} = 1",
+      "\\dfrac{(y-1)^2}{9} - \\dfrac{x^2}{9} = 1",
+      "\\dfrac{y^2}{9} - \\dfrac{(x+4)^2}{16} = 1",
+      "\\dfrac{(y-1)^2}{16} - \\dfrac{x^2}{9} = 1"
+    ]
+  },
+  {
+    image: "7.jpg",
+    answers: [
+      "\\dfrac{(x-1)^2}{4} - \\dfrac{(y-4)^2}{16} = 1",
+      "\\dfrac{(x+1)^2}{4} - \\dfrac{(y+4)^2}{16} = 1",
+      "\\dfrac{(y-4)^2}{16} - \\dfrac{(x-1)^2}{4} = 1",
+      "\\dfrac{(x-1)^2}{16} - \\dfrac{(y-4)^2}{4} = 1"
+    ]
+  },
+  {
+    image: "8.jpg",
+    answers: [
+      "\\dfrac{(x-3)^2}{9} - \\dfrac{(y+1)^2}{4} = 1",
+      "\\dfrac{(y+1)^2}{4} - \\dfrac{(x-3)^2}{9} = 1",
+      "\\dfrac{(x-3)^2}{4} - \\dfrac{(y+1)^2}{9} = 1",
+      "\\dfrac{(x+3)^2}{9} - \\dfrac{(y-1)^2}{4} = 1"
+    ]
+  },
+  {
+    image: "9.jpg",
+    answers: [
+      "\\dfrac{(y+2)^2}{16} - \\dfrac{(x+1)^2}{16} = 1",
+      "\\dfrac{(x+1)^2}{16} - \\dfrac{(y+2)^2}{16} = 1",
+      "\\dfrac{(y-2)^2}{16} - \\dfrac{(x-1)^2}{16} = 1",
+      "\\dfrac{(x-1)^2}{16} - \\dfrac{(y-2)^2}{16} = 1"
+    ]
+  },
+  {
+    image: "10.jpg",
+    answers: [
+      "\\dfrac{(x-1)^2}{16} - \\dfrac{y^2}{9} = 1",
+      "\\dfrac{x^2}{9} - \\dfrac{(y-1)^2}{16} = 1",
+      "\\dfrac{(x-1)^2}{9} - \\dfrac{y^2}{16} = 1",
+      "\\dfrac{x^2}{16} - \\dfrac{(y-1)^2}{9} = 1"
+    ]
+  },
+  {
+    image: "11.jpg",
+    answers: [
+      "\\dfrac{(y+3)^2}{4} - \\dfrac{(x+2)^2}{9} = 1",
+      "\\dfrac{(y+2)^2}{4} - \\dfrac{(x+3)^2}{9} = 1",
+      "\\dfrac{(x+2)^2}{9} - \\dfrac{(y+3)^2}{4} = 1",
+      "\\dfrac{(x+3)^2}{9} - \\dfrac{(y+2)^2}{4} = 1"
+    ]
+  },
+  {
+    image: "12.jpg",
+    answers: [
+      "\\dfrac{(x+2)^2}{16} - \\dfrac{(y+3)^2}{4} = 1",
+      "\\dfrac{(y+3)^2}{16} - \\dfrac{(x+2)^2}{4} = 1",
+      "\\dfrac{(x+3)^2}{16} - \\dfrac{(y+2)^2}{4} = 1",
+      "\\dfrac{(y+3)^2}{4} - \\dfrac{(x+2)^2}{16} = 1"
+    ]
+  },
+  {
+    image: "13.jpg",
+    answers: [
+      "\\dfrac{(x+3)^2}{4} - \\dfrac{(y-1)^2}{4} = 1",
+      "\\dfrac{(y-1)^2}{4} - \\dfrac{(x+3)^2}{4} = 1",
+      "\\dfrac{(x-3)^2}{4} - \\dfrac{(y+1)^2}{4} = 1",
+      "\\dfrac{(x+3)^2}{4} - \\dfrac{(y+1)^2}{4} = 1"
+    ]
+  },
+  {
+    image: "14.jpg",
+    answers: [
+      "\\dfrac{(y-4)^2}{4} - \\dfrac{(x-2)^2}{9} = 1",
+      "\\dfrac{(y-4)^2}{9} - \\dfrac{(x-2)^2}{4} = 1",
+      "\\dfrac{(x-2)^2}{4} - \\dfrac{(y-4)^2}{9} = 1",
+      "\\dfrac{(y-2)^2}{4} - \\dfrac{(x-4)^2}{9} = 1"
+    ]
+  },
+  {
+    image: "15.jpg",
+    answers: [
+      "\\dfrac{(y-3)^2}{4} - \\dfrac{(x+1)^2}{16} = 1",
+      "\\dfrac{(y-3)^2}{16} - \\dfrac{(x+1)^2}{4} = 1",
+      "\\dfrac{(y+1)^2}{4} - \\dfrac{(x-3)^2}{16} = 1",
+      "\\dfrac{(x+1)^2}{16} - \\dfrac{(y-3)^2}{4} = 1"
+    ]
+  },
+  {
+    image: "16.jpg",
+    answers: [
+      "\\dfrac{(x-1)^2}{9} - \\dfrac{(y-4)^2}{4} = 1",
+      "\\dfrac{(y-4)^2}{9} - \\dfrac{(x-1)^2}{4} = 1",
+      "\\dfrac{(x-1)^2}{4} - \\dfrac{(y-4)^2}{9} = 1",
+      "\\dfrac{(x-1)^2}{4} - \\dfrac{(y-4)^2}{9} = 1"
+    ]
+  },
+  {
+    image: "17.jpg",
+    answers: [
+      "\\dfrac{(y-3)^2}{9} - \\dfrac{(x+4)^2}{4} = 1",
+      "\\dfrac{(y-3)^2}{4} - \\dfrac{(x+4)^2}{9} = 1",
+      "\\dfrac{(y+4)^2}{9} - \\dfrac{(x-3)^2}{4} = 1",
+      "\\dfrac{(x+4)^2}{4} - \\dfrac{(y-3)^2}{9} = 1"
+    ]
+  },
+  {
+    image: "18.jpg",
+    answers: [
+      "\\dfrac{(x+4)^2}{16} - \\dfrac{(y+1)^2}{9} = 1",
+      "\\dfrac{(x+4)^2}{9} - \\dfrac{(y+1)^2}{16} = 1",
+      "\\dfrac{(x-4)^2}{16} - \\dfrac{(y-1)^2}{9} = 1",
+      "\\dfrac{(y+1)^2}{9} - \\dfrac{(x+4)^2}{16} = 1"
+    ]
+  },
+  {
+    image: "19.jpg",
+    answers: [
+      "\\dfrac{x^2}{9} - \\dfrac{(y+2)^2}{4} = 1",
+      "\\dfrac{x^2}{4} - \\dfrac{(y+2)^2}{9} = 1",
+      "\\dfrac{(x+2)^2}{9} - \\dfrac{y^2}{4} = 1",
+      "\\dfrac{x^2}{9} - \\dfrac{y^2}{4} = 1"
+    ]
+  },
+  {
+    image: "20.jpg",
+    answers: [
+      "\\dfrac{(y-3)^2}{9} - \\dfrac{(x+2)^2}{9} = 1",
+      "\\dfrac{(y+2)^2}{9} - \\dfrac{(x-3)^2}{9} = 1",
+      "\\dfrac{(y+3)^2}{9} - \\dfrac{(x-2)^2}{9} = 1",
+      "\\dfrac{(x+2)^2}{9} - \\dfrac{(y-3)^2}{9} = 1"
+    ]
+  },
+  {
+    image: "21.jpg",
+    answers: [
+      "\\dfrac{(x-3)^2}{4} - \\dfrac{(y-2)^2}{9} = 1",
+      "\\dfrac{(x-3)^2}{9} - \\dfrac{(y-2)^2}{4} = 1",
+      "\\dfrac{(x-2)^2}{4} - \\dfrac{(y-3)^2}{9} = 1",
+      "\\dfrac{(y-2)^2}{9} - \\dfrac{(x-3)^2}{4} = 1"
+    ]
+  },
+  {
+    image: "22.jpg",
+    answers: [
+      "\\dfrac{(y+4)^2}{9} - \\dfrac{(x-3)^2}{4} = 1",
+      "\\dfrac{(y-3)^2}{9} - \\dfrac{(x+4)^2}{4} = 1",
+      "\\dfrac{(y+4)^2}{4} - \\dfrac{(x-3)^2}{9} = 1",
+      "\\dfrac{(x-3)^2}{4} - \\dfrac{(y+4)^2}{9} = 1"
+    ]
+  },
+  {
+    image: "23.jpg",
+    answers: [
+      "\\dfrac{(x+3)^2}{9} - \\dfrac{(y+1)^2}{9} = 1",
+      "\\dfrac{(x+1)^2}{9} - \\dfrac{(y+3)^2}{9} = 1",
+      "\\dfrac{(y+1)^2}{9} - \\dfrac{(x+3)^2}{9} = 1",
+      "\\dfrac{(x-3)^2}{9} - \\dfrac{(y-1)^2}{9} = 1"
+    ]
+  },
+  {
+    image: "24.jpg",
+    answers: [
+      "\\dfrac{(y-2)^2}{4} - \\dfrac{(x-3)^2}{9} = 1",
+      "\\dfrac{(y-3)^2}{4} - \\dfrac{(x-2)^2}{9} = 1",
+      "\\dfrac{(y-2)^2}{9} - \\dfrac{(x-3)^2}{4} = 1",
+      "\\dfrac{(y-3)^2}{9} - \\dfrac{(x-2)^2}{4} = 1"
+    ]
+  },
+  {
+    image: "25.jpg",
+    answers: [
+      "\\dfrac{(x+3)^2}{16} - \\dfrac{(y-4)^2}{4} = 1",
+      "\\dfrac{(x-4)^2}{16} - \\dfrac{(y+3)^2}{4} = 1",
+      "\\dfrac{(y-4)^2}{4} - \\dfrac{(x+3)^2}{16} = 1",
+      "\\dfrac{(x+3)^2}{4} - \\dfrac{(y-4)^2}{16} = 1"
+    ]
+  },
+  {
+    image: "26.jpg",
+    answers: [
+      "\\dfrac{(y+2)^2}{4} - \\dfrac{x^2}{16} = 1",
+      "\\dfrac{y^2}{4} - \\dfrac{(x+2)^2}{16} = 1",
+      "\\dfrac{(y+2)^2}{16} - \\dfrac{x^2}{4} = 1",
+      "\\dfrac{y^2}{16} - \\dfrac{(x+2)^2}{4} = 1"
+    ]
+  },
+  {
+    image: "27.jpg",
+    answers: [
+      "\\dfrac{y^2}{9} - \\dfrac{(x+3)^2}{16} = 1",
+      "\\dfrac{y^2}{16} - \\dfrac{(x+3)^2}{9} = 1",
+      "\\dfrac{(y+3)^2}{16} - \\dfrac{x^2}{9} = 1",
+      "\\dfrac{x^2}{9} - \\dfrac{(y+3)^2}{16} = 1"
+    ]
+  },
+  {
+    image: "28.jpg",
+    answers: [
+      "\\dfrac{(y-2)^2}{9} - \\dfrac{(x-3)^2}{9} = 1",
+      "\\dfrac{(y-3)^2}{9} - \\dfrac{(x-2)^2}{9} = 1",
+      "\\dfrac{(y+2)^2}{9} - \\dfrac{(x+3)^2}{9} = 1",
+      "\\dfrac{(x-2)^2}{9} - \\dfrac{(y-3)^2}{9} = 1"
+    ]
+  },
+  {
+    image: "29.jpg",
+    answers: [
+      "\\dfrac{(y+2)^2}{16} - \\dfrac{(x+4)^2}{9} = 1",
+      "\\dfrac{(y+2)^2}{9} - \\dfrac{(x+4)^2}{16} = 1",
+      "\\dfrac{(y+4)^2}{16} - \\dfrac{(x+2)^2}{9} = 1",
+      "\\dfrac{(y+4)^2}{9} - \\dfrac{(x+2)^2}{16} = 1"
+    ]
+  },
+  {
+    image: "30.jpg",
+    answers: [
+      "\\dfrac{(x+4)^2}{9} - \\dfrac{(y+2)^2}{16} = 1",
+      "\\dfrac{(x+4)^2}{16} - \\dfrac{(y+2)^2}{9} = 1",
+      "\\dfrac{(x+2)^2}{9} - \\dfrac{(y+4)^2}{16} = 1",
+      "\\dfrac{(x+2)^2}{16} - \\dfrac{(y+4)^2}{9} = 1"
+    ]
+  }
+];
+
+            /* ---------- ПИТАННЯ 5 — СТАЦІОНАРНІ МАЛЮНКИ (1.jpg — 30.jpg) ---------- */
+function generateQuestion5() {
+    // Випадково вибираємо малюнок
+    const q = HYPERBOLA_DATA[Math.floor(Math.random() * HYPERBOLA_DATA.length)];
+
+    // Очищаємо canvas (не треба)
+    const canvas = document.getElementById('hyperbolaCanvas');
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    // Створюємо <img>
+    const img = document.createElement('img');
+    img.src = `static/${q.image}`;
+    img.alt = "Гіпербола";
+    img.style.maxWidth = '520px';
+    img.style.display = 'block';
+    img.style.margin = '10px auto';
+    img.style.border = '1px solid #ccc';
+
+    // Вставляємо у контейнер
+    const container = document.getElementById('imageContainer');
+    if (container) {
+        container.innerHTML = '';
+        container.appendChild(img);
+    }
+
+    // Перемішуємо відповіді
+    const options = [...q.answers];
+    const shuffled = [];
+    while (options.length > 0) {
+        const i = Math.floor(Math.random() * options.length);
+        shuffled.push(options.splice(i, 1)[0]);
+    }
+
+    // Правильна — перша в оригіналі
+    const correct = q.answers[0];
+
+    return {
+        text: "Яке рівняння відповідає гіперболі на рисунку?",
+        correct: correct,
+        wrong: shuffled.filter(a => a !== correct),
+        canvas: false,
+        image: true
+    };
+}
+// === ПИТАННЯ 6: ЗАГАЛЬНЕ → КАНОНІЧНЕ ДЛЯ ГІПЕРБОЛИ ===
+function createHyperbolaGeneralToCanonicalQuestion() {
+    let h, k, a, b, orientation;
+
+    do {
+        h = Math.floor(Math.random() * 9) - 4;
+        k = Math.floor(Math.random() * 9) - 4;
+    } while (h === 0 && k === 0);
+
+    a = Math.floor(Math.random() * 3) + 2;  // 2..4
+    b = Math.floor(Math.random() * 3) + 2;  // 2..4
+
+    orientation = Math.random() < 0.5 ? 0 : 1;
+
+    let A, B, C, D, E;
+    let canonicalEquation;
+
+    if (orientation === 0) {
+        // ГОРИЗОНТАЛЬНА: (x-h)²/a² - (y-k)²/b² = 1
+        // Розкриваємо дужки: (x² - 2hx + h²)/a² - (y² - 2ky + k²)/b² = 1
+        // Помножуємо на a²b²: b²(x² - 2hx + h²) - a²(y² - 2ky + k²) = a²b²
+        // b²x² - 2b²hx + b²h² - a²y² + 2a²ky - a²k² - a²b² = 0
+        A = b * b;                    // коефіцієнт при x²
+        B = -a * a;                   // коефіцієнт при y²
+        C = -2 * b * b * h;           // коефіцієнт при x
+        D = 2 * a * a * k;            // коефіцієнт при y
+        E = b * b * h * h - a * a * k * k - a * a * b * b;  // вільний член
+
+        // Формуємо канонічне рівняння
+        const xPart = h === 0 ? "x^2" : `(x${h >= 0 ? '-' : '+'}${Math.abs(h)})^2`;
+        const yPart = k === 0 ? "y^2" : `(y${k >= 0 ? '-' : '+'}${Math.abs(k)})^2`;
+        canonicalEquation = `\\dfrac{${xPart}}{${a * a}} - \\dfrac{${yPart}}{${b * b}} = 1`;
+    } else {
+        // ВЕРТИКАЛЬНА: (y-k)²/a² - (x-h)²/b² = 1
+        // Розкриваємо дужки: (y² - 2ky + k²)/a² - (x² - 2hx + h²)/b² = 1
+        // Помножуємо на a²b²: b²(y² - 2ky + k²) - a²(x² - 2hx + h²) = a²b²
+        // b²y² - 2b²ky + b²k² - a²x² + 2a²hx - a²h² - a²b² = 0
+        A = -a * a;                   // коефіцієнт при x²
+        B = b * b;                    // коефіцієнт при y²
+        C = 2 * a * a * h;            // коефіцієнт при x
+        D = -2 * b * b * k;           // коефіцієнт при y
+        E = b * b * k * k - a * a * h * h - a * a * b * b;  // вільний член
+
+        // Формуємо канонічне рівняння
+        const xPart = h === 0 ? "x^2" : `(x${h >= 0 ? '-' : '+'}${Math.abs(h)})^2`;
+        const yPart = k === 0 ? "y^2" : `(y${k >= 0 ? '-' : '+'}${Math.abs(k)})^2`;
+        canonicalEquation = `\\dfrac{${yPart}}{${a * a}} - \\dfrac{${xPart}}{${b * b}} = 1`;
+    }
+
+    // Формуємо загальне рівняння
+    let generalEquation = '';
+    
+    // x² член
+    if (A !== 0) {
+        if (A === 1) generalEquation += 'x^2';
+        else if (A === -1) generalEquation += '-x^2';
+        else generalEquation += `${A}x^2`;
+    }
+    
+    // y² член
+    if (B !== 0) {
+        if (B > 0) {
+            if (generalEquation !== '') generalEquation += ' + ';
+            generalEquation += (B === 1 ? 'y^2' : `${B}y^2`);
+        } else {
+            generalEquation += (B === -1 ? ' - y^2' : ` - ${Math.abs(B)}y^2`);
+        }
+    }
+    
+    // x член
+    if (C !== 0) {
+        if (C > 0) {
+            if (generalEquation !== '') generalEquation += ' + ';
+            generalEquation += `${C}x`;
+        } else {
+            generalEquation += ` - ${Math.abs(C)}x`;
+        }
+    }
+    
+    // y член
+    if (D !== 0) {
+        if (D > 0) {
+            if (generalEquation !== '') generalEquation += ' + ';
+            generalEquation += `${D}y`;
+        } else {
+            generalEquation += ` - ${Math.abs(D)}y`;
+        }
+    }
+    
+    // вільний член
+    if (E !== 0) {
+        if (E > 0) {
+            if (generalEquation !== '') generalEquation += ' + ';
+            generalEquation += `${E}`;
+        } else {
+            generalEquation += ` - ${Math.abs(E)}`;
+        }
+    }
+    
+    generalEquation += ' = 0';
+
+    // Перевірка: якщо рівняння починається з "-", додаємо "−" замість "-"
+    if (generalEquation.startsWith('-')) {
+        generalEquation = '−' + generalEquation.substring(1);
+    }
+
+    // Функція для форматування канонічного рівняння
+    function formatCanonical(hVal, kVal, aVal, bVal, isHorizontal) {
+        const xPart = hVal === 0 ? "x^2" : `(x${hVal >= 0 ? '-' : '+'}${Math.abs(hVal)})^2`;
+        const yPart = kVal === 0 ? "y^2" : `(y${kVal >= 0 ? '-' : '+'}${Math.abs(kVal)})^2`;
+        return isHorizontal
+            ? `\\dfrac{${xPart}}{${aVal * aVal}} - \\dfrac{${yPart}}{${bVal * bVal}} = 1`
+            : `\\dfrac{${yPart}}{${aVal * aVal}} - \\dfrac{${xPart}}{${bVal * bVal}} = 1`;
+    }
+
+    // Неправильні варіанти
+    const wrongs = [
+        // 1. Переплутані a і b
+        formatCanonical(h, k, b, a, orientation === 0),
+        
+        // 2. Центр у (0,0)
+        formatCanonical(0, 0, a, b, orientation === 0),
+        
+        // 3. Неправильні знаки центрів
+        formatCanonical(-h, -k, a, b, orientation === 0)
+    ];
+
+    // Додаткова перевірка коректності
+    console.log('Параметри:', {h, k, a, b, orientation});
+    console.log('Коефіцієнти:', {A, B, C, D, E});
+    console.log('Загальне рівняння:', generalEquation);
+    console.log('Канонічне рівняння:', canonicalEquation);
+
+    return {
+        text: `Загальне рівняння гіперболи: \\(${generalEquation}\\). Якому канонічному рівнянню воно відповідає?`,
+        correct: canonicalEquation,
+        wrong: wrongs,
+        canvas: false
+    };
+}
+/* ---------- ВИВІД ПИТАННЯ ---------- */
+function displayQuestion() {
+    let q;
+
+    if (stage === 1) q = generateQuestion1();
+    else if (stage === 2) q = generateQuestion2();
+    else if (stage === 3) q = generateQuestion3();
+    else if (stage === 4) q = generateQuestion4();
+    else if (stage === 5) q = generateQuestion5();
+    else if (stage === 6) q = createHyperbolaGeneralToCanonicalQuestion(); // ПИТАННЯ 6
+
+    document.getElementById('questionNumber').textContent = `Питання ${stage}`;
+
+    // === КЕРУВАННЯ CANVAS ТА МАЛЮНКАМИ ===
+    const canvasContainer = document.getElementById('canvasContainer');
+    const imageContainer = document.getElementById('imageContainer');
+
+    if (q.canvas) {
+        canvasContainer.style.display = 'block';
+        imageContainer.style.display = 'none';
+        // Якщо потрібно перемалювати canvas — виклич функцію
+        if (stage === 5) generateQuestion5();
+    } else {
+        canvasContainer.style.display = 'none';
+        if (stage === 5) {
+            imageContainer.style.display = 'block';
+            // generateQuestion5() вже викликається в else if (stage === 5)
+        } else {
+            imageContainer.style.display = 'none';
+        }
+    }
+
+    // === ТЕКСТ ПИТАННЯ ===
+    els.questionText.innerHTML = `<p class="question-text">${q.text}</p>`;
+
+    // === ПЕРЕМІШУВАННЯ ВІДПОВІДЕЙ ===
+    const all = [q.correct, ...q.wrong].sort(() => Math.random() - 0.5);
+    correctIndex = all.indexOf(q.correct);
+
+    // === СТВОРЕННЯ КНОПОК ===
+    els.optionsContainer.innerHTML = '';
+    all.forEach((opt, i) => {
+        const div = document.createElement('div');
+        div.className = 'option';
+        div.dataset.value = i;
+        div.innerHTML = `<span class="math-formula">\\(${opt}\\)</span>`;
+        els.optionsContainer.appendChild(div);
+    });
+
+    // === СКИДАННЯ ВИБОРУ ===
+    selected = null;
+    els.submitAnswer.disabled = true;
+    document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+
+    // === MATHJAX — РЕНДЕР ФОРМУЛ ===
+    if (window.MathJax?.typesetPromise) {
+        MathJax.typesetPromise([els.questionText, els.optionsContainer]).catch(() => {});
+    }
+}
+/* ---------- ВИБІР ВАРІАНТА ---------- */
+els.optionsContainer.addEventListener('click', e=>{
+    const opt = e.target.closest('.option');
+    if(!opt) return;
+    document.querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));
+    opt.classList.add('selected');
+    selected = opt.dataset.value;
+    els.submitAnswer.disabled = false;
+});
+
+/* ---------- ПЕРЕВІРКА ВІДПОВІДІ ---------- */
+els.submitAnswer.addEventListener('click', () => {
+    if (selected === null) return;
+
+    const isCorrect = parseInt(selected) === correctIndex;
+
+    els.feedback.textContent = isCorrect ? 'Ціль уражена!' : 'Промах!';
+    els.feedback.className = `feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'} show`;
+
+    setTimeout(() => {
+        els.feedback.classList.remove('show');
+
+        setTimeout(() => {
+            if (isCorrect) {
+                // === ПРОХОДЖЕННЯ ЕТАПІВ ===
+                if (stage === 1) {
+                    stage = 2;
+                    displayQuestion();
+                } else if (stage === 2) {
+                    stage = 3;
+                    displayQuestion();
+                } else if (stage === 3) {
+                    stage = 4;
+                    displayQuestion();
+                } else if (stage === 4) {
+                    stage = 5;
+                    displayQuestion();
+                } else if (stage === 5) {
+                    stage = 6; // ПЕРЕХІД ДО ПИТАННЯ 6
+                    displayQuestion();
+                } else if (stage === 6) {
+                    // ПИТАННЯ 6 — ОСТАННЄ
+                    toggleModal(els.trainerModal, false);
+                    toggleModal(els.completionModal, true);
+                }
+            } else {
+                // НЕПРАВИЛЬНО — ПОВТОРЮЄМО ТОЙ Ж ЕТАП
+                displayQuestion();
+            }
+        }, 300);
+    }, 1200);
+});
+
+/* ---------- СКИДАННЯ ---------- */
+els.resetTrainerBtn.addEventListener('click',()=>{
+    toggleModal(els.completionModal,false);
+    toggleModal(els.trainerModal,true);
+    stage = 1;
+    displayQuestion();
+});
+
+/* ---------- ІНІЦІАЛІЗАЦІЯ ---------- */
+function initTrainer(){
+    stage = 1;
+    displayQuestion();
+}
+    });
+        
+    </script>
+</body>
+</html>
