@@ -1725,6 +1725,40 @@ summary:hover::before {
             document.addEventListener('keydown', e => {
                 if (e.key === 'Escape') document.querySelectorAll('.modal').forEach(m => toggleModal(m, false));
             });
+            // Обробник кліків на відеокартки
+els.videoList.addEventListener('click', function(e) {
+    const videoCard = e.target.closest('.video-card');
+    if (!videoCard) return;
+    
+    const videoUrl = videoCard.getAttribute('data-video');
+    if (videoUrl) {
+        // Ховаємо список відео
+        els.videoList.style.display = 'none';
+        
+        // Показуємо плеєр
+        els.videoPlayer.style.display = 'block';
+        
+        // Встановлюємо URL відео
+        els.youtubeIframe.src = videoUrl;
+        
+        // Оновлюємо MathJax (якщо потрібно)
+        if (window.MathJax?.typesetPromise) {
+            MathJax.typesetPromise([els.videoModal]);
+        }
+    }
+});
+
+// Обробник закриття відеомодалки - скидаємо плеєр
+els.closeVideoBtn.addEventListener('click', function() {
+    // Ховаємо плеєр
+    els.videoPlayer.style.display = 'none';
+    
+    // Показуємо список відео
+    els.videoList.style.display = 'grid';
+    
+    // Зупиняємо відео
+    els.youtubeIframe.src = '';
+});
 
  // === ТРЕНАЖЕР ===
 let selected = null;
@@ -2589,6 +2623,7 @@ function initTrainer(){
     </script>
 </body>
 </html>
+
 
 
 
