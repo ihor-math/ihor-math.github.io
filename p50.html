@@ -1425,9 +1425,6 @@ summary:hover::before {
       </div>
     </div>
   </div>
-
-
-
    <!-- ПИТАННЯ -->
 <div id="questionsModal" class="modal">
     <div class="modal-header">
@@ -1442,7 +1439,6 @@ summary:hover::before {
                 <div class="card-back"><span>Множина точок, для яких модуль різниці відстаней до двох фокусів є сталим і меншим за відстань між ними.</span></div>
             </div>
         </div>
-
         <!-- 2 -->
         <div class="question-card" onclick="this.classList.toggle('flipped')">
             <div class="card-inner">
@@ -1641,7 +1637,7 @@ summary:hover::before {
             <div class="completion-message">
                 <div class="completion-emoji"></div>
                 <h2>МІСІЯ ВИКОНАНА!</h2>
-                <p>Солдате, ти — гордість України!</p>
+                 <p>Ти — сталевий воїн геометрії!</p>
                 <p><strong>СЛАВА УКРАЇНІ!</strong></p>
                 <button id="resetTrainerBtn">Спробувати ще раз!</button>
             </div>
@@ -1784,8 +1780,7 @@ function simplifySqrt(n) {
     return `${coeff}\\sqrt{${radicand}}`;
 }
 
-            /* ---------- СПРОЩЕННЯ ДРОБУ: 2/1 → 2, 6/1 → 6 ---------- */
-/* ---------- СПРОЩЕННЯ ДРОБУ: 10/1 → 10, 1/10 → 1/10 ---------- */
+           /* ---------- СПРОЩЕННЯ ДРОБУ: 10/1 → 10, 1/10 → 1/10 ---------- */
 function simplifyFraction(num, den) {
     if (!Number.isInteger(num) || !Number.isInteger(den)) {
         return { num: simplifySqrt(num * num), den: simplifySqrt(den * den) };
@@ -1838,7 +1833,7 @@ function generateQuestion1() {
     wrongs.sort(() => Math.random() - 0.5);
 
     // Текст питання
-    const text = `Для гіперболи \\(${equation}\\) знайти довжину її ${axisType} осі.`;
+    const text = `Для гіперболи \\(${equation}\\) знайти довжину її ${axisType} півосі.`;
 
     return { text, correct, wrong: wrongs };
 }
@@ -2603,6 +2598,7 @@ function initTrainer(){
     </script>
 </body>
 </html>
+
 
 
 
