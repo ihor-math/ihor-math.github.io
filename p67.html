@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>67. Поняття границі функції</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+    window.MathJax = {
+        tex: {inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']]},
+        startup: {ready: () => MathJax.startup.defaultReady()}
+    };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<style>
+    *, *:before, *:after { box-sizing: border-box; }
+   body {
+    margin: 0;
+    background: linear-gradient(135deg, #0a1a0a, #1a2a1a);
+    color: #e2e8f0;
+    font-family: 'Roboto Condensed', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+body.loaded { visibility: visible; opacity: 1; }
+
+.title-box {
+    margin: 60px auto 40px;
+    padding: 20px 50px;
+    background: linear-gradient(140deg, #001a33, #8B0000);
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+    max-width: 90%;
+    text-align: center;
+    border: 1px solid #3a553a;
+}
+.title-box h1 {
+    margin: 0;
+    font-size: 28px;
+    color: #90e090;
+    font-family: 'Orbitron', sans-serif;
+    text-shadow: 0 0 10px rgba(144,224,144,0.6);
+}
+
+.section-container {
+    margin-top: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: center;
+    padding: 0 20px;
+}
+.section {
+    width: 320px;
+    height: 220px;
+    background: linear-gradient(145deg, #1a251a, #2a352a);
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid #3a553a;
+}
+.section:hover {
+    transform: translateY(-8px) scale(1.04);
+    box-shadow: 0 12px 30px rgba(96,160,96,0.4);
+    background: linear-gradient(145deg, #203020, #304030);
+}
+.section h2 {
+    color: #90e090;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 22px;
+    margin-top: 15px;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 4%; left: 4%; width: 92%; height: 92%;
+    background: linear-gradient(135deg, #1a251a, #2a352a);
+    border-radius: 16px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.7);
+    z-index: 1001;
+    overflow: hidden;
+    flex-direction: column;
+    border: 2px solid #3a553a;
+}
+#modalOverlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,10,0,0.92);
+    z-index: 999;
+    backdrop-filter: blur(5px);
+}
+.modal-header {
+    background: linear-gradient(0deg, #1a251a, #2a352a);
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid #3a553a;
+}
+.modal-header h2 {
+    margin: 0;
+    color: #90e090;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 24px;
+}
+.close-btn {
+    position: absolute;
+    top: 10px; right: 15px;
+    background: #b81414;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-size: 16px;
+    cursor: pointer;
+    font-family: 'Orbitron', sans-serif;
+}
+.close-btn:hover { background: #e03030; }
+
+.modal-content {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: #0f180f;
+}
+
+/* ========= ФЛЕШ-КАРТКИ ========= */
+.question-card {
+    perspective: 1000px;
+    margin: 20px auto;
+    max-width: 900px;
+    cursor: pointer;
+}
+.card-inner {
+    position: relative;
+    width: 100%;
+    min-height: 140px;
+    transition: transform 0.7s;
+    transform-style: preserve-3d;
+}
+.question-card.flipped .card-inner { transform: rotateY(180deg); }
+
+.card-front, .card-back {
+    position: absolute;
+    width: 100%;
+    min-height: 140px;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+    text-align: center;
+    border: 1px solid #3a553a;
+}
+.card-front {
+    background: linear-gradient(135deg, #102010, #203020);
+    color: #c0e0c0;
+}
+.card-back {
+    background: linear-gradient(135deg, #201010, #302020);
+    color: #e0e0e0;
+    transform: rotateY(180deg);
+}
+.card-front span, .card-back span {
+    font-size: clamp(17px, 3.5vw, 21px);
+    line-height: 1.5;
+}
+mjx-container { color: #e0e090 !important; font-style: italic !important; }
+
+/* ========= КНОПКИ ВНИЗУ ========= */
+.navigation-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    margin: 40px auto 60px;
+}
+.nav-button {
+    background: linear-gradient(135deg, #1a2a1a, #2a3a2a);
+    color: #90e090;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-size: 18px;
+    text-decoration: none;
+    font-family: 'Orbitron', sans-serif;
+    border: 1px solid #3a553a;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    transition: all 0.3s;
+}
+.nav-button:hover {
+    background: linear-gradient(135deg, #406040, #60a060);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(96,160,96,0.5);
+}
+
+/* ──────── СТИЛЬНА ВІЙСЬКОВА ПРОКРУТКА ──────── */
+.modal-content::-webkit-scrollbar,
+body::-webkit-scrollbar {
+    width: 10px;
+}
+
+.modal-content::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+    background: #0a120a;
+    border-radius: 10px;
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+}
+
+.modal-content::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, 
+        #2d4d2d 0%, 
+        #60a060 30%, 
+        #90e090 50%, 
+        #60a060 70%, 
+        #2d4d2d 100%);
+    border-radius: 10px;
+    border: 2px solid #0f180f;
+    box-shadow: 
+        0 0 12px rgba(144, 224, 144, 0.7),
+        inset 0 0 6px rgba(0,0,0,0.6);
+    transition: all 0.3s ease;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, 
+        #3d6d3d, 
+        #70b870, 
+        #a0f0a0, 
+        #70b870, 
+        #3d6d3d);
+    box-shadow: 
+        0 0 20px rgba(144, 224, 144, 0.9),
+        inset 0 0 8px rgba(0,0,0,0.7);
+    transform: scale(1.05);
+}
+
+.modal-content,
+body {
+    scrollbar-width: thin;
+    scrollbar-color: #60a060 #0a120a;
+}
+
+.modal-content:hover::-webkit-scrollbar-thumb,
+body:hover::-webkit-scrollbar-thumb {
+    box-shadow: 
+        0 0 25px rgba(144, 224, 144, 1),
+        inset 0 0 10px rgba(0,0,0,0.8);
+}
+
+/* ──────── СУЧАСНА ТЕОРІЯ 2025 ──────── */
+.theory-content {
+    padding: 20px;
+    line-height: 1.75;
+    color: #d8e8d8;
+    font-size: clamp(17px, 3vw, 19px);
+}
+
+.theory-content h2 {
+    text-align: center;
+    color: #90ff90;
+    font-size: clamp(26px, 5vw, 30px);
+    margin: 0 0 35px 0;
+    font-weight: 700;
+}
+
+.theory-content h3 {
+    color: #a0ffa0;
+    font-size: 22px;
+    margin: 35px 0 15px 0;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #406040;
+}
+
+.theory-content p {
+    margin: 18px 0;
+    text-align: justify;
+}
+
+.theory-content ul {
+    margin: 20px 0;
+    padding-left: 30px;
+}
+
+.theory-content ul li {
+    margin: 10px 0;
+}
+
+mjx-container {
+    color: #c0ff80 !important;
+    font-size: 1.2em !important;
+}
+
+.math-notation-centered {
+    text-align: center;
+    background: #0f1a0f;
+    padding: 16px;
+    border-radius: 10px;
+    margin: 25px 0;
+    border: 1px solid #305030;
+}
+.math-notation-centered mjx-container {
+    font-size: 1.2em !important;
+    display: inline-block;
+}
+
+.theory-content p:last-child {
+    background: #102010;
+    border: 1px solid #408040;
+    padding: 18px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-align: center;
+    color: #e0ffe0;
+    margin-top: 40px;
+}
+
+.highlight-limit {
+    font-weight: 900;
+    color: #ffa500;
+}
+
+.navigation-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin: 40px 0;
+    flex-wrap: wrap;
+}
+
+.nav-button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 24px;
+    background: rgba(30, 60, 30, 0.7);
+    color: #a0ffa0;
+    text-decoration: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 18px;
+    transition: all 0.3s ease;
+    border: 1px solid #406040;
+    backdrop-filter: blur(4px);
+}
+
+.nav-button:hover {
+    background: rgba(50, 90, 50, 0.9);
+    color: #e0ffe0;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(96, 240, 96, 0.3);
+}
+
+.nav-button .icon {
+    width: 28px;
+    height: 28px;
+    fill: none;
+    stroke: #b0ffb0;
+    stroke-width: 2.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: all 0.3s ease;
+}
+
+.nav-button:hover .icon {
+    stroke: #e0ffe0;
+    stroke-width: 3.2;
+    filter: drop-shadow(0 0 8px rgba(176, 255, 176, 0.6));
+}
+
+/* ──────── АДАПТАЦІЯ ДЛЯ МОБІЛЬНИХ ПРИСТРОЇВ ──────── */
+
+@media (max-width: 768px) {
+    .title-box {
+        margin: 30px auto 20px;
+        padding: 15px 20px;
+        max-width: 95%;
+    }
+    
+    .title-box h1 {
+        font-size: 22px;
+    }
+    
+    .section-container {
+        margin-top: 20px;
+        gap: 20px;
+        padding: 0 15px;
+    }
+    
+    .section {
+        width: 80%;
+        max-width: 280px;
+        height: 180px;
+    }
+    
+    .section h2 {
+        font-size: 18px;
+        margin-top: 10px;
+    }
+    
+    .modal {
+        top: 2%;
+        left: 2%;
+        width: 96%;
+        height: 96%;
+    }
+    
+    .modal-header h2 {
+        font-size: 20px;
+        padding: 0 40px;
+    }
+    
+    .close-btn {
+        top: 8px;
+        right: 10px;
+        padding: 6px 14px;
+        font-size: 14px;
+    }
+    
+    .modal-content {
+        padding: 15px;
+    }
+    
+    .card-front, .card-back {
+        min-height: 120px;
+        padding: 15px;
+    }
+    
+    .navigation-buttons {
+        gap: 15px;
+        margin: 30px auto 40px;
+        /* ВИДАЛИТИ flex-direction: column */
+        /* flex-direction: column; */
+        align-items: center;
+    }
+    
+    .nav-button {
+        padding: 12px 20px;
+        font-size: 16px;
+        width: auto; /* Змінити з 90% на auto */
+        max-width: 250px;
+        justify-content: center;
+    }
+    
+    .theory-content {
+        padding: 15px;
+    }
+    
+    .theory-content h2 {
+        font-size: 22px;
+        margin-bottom: 25px;
+    }
+    
+    .theory-content h3 {
+        font-size: 18px;
+        margin: 25px 0 12px 0;
+    }
+    
+    .theory-content ul {
+        padding-left: 20px;
+    }
+    
+    .math-notation-centered {
+        padding: 12px;
+        margin: 20px 0;
+    }
+}
+
+@media (max-width: 460px) {
+    .title-box {
+        margin: 20px auto 15px;
+        padding: 12px 15px;
+    }
+    
+    .title-box h1 {
+        font-size: 18px;
+    }
+    
+    .section-container {
+        gap: 15px;
+        padding: 0 10px;
+    }
+    
+    .section {
+        height: 120px;
+        max-width: 80%;
+    }
+    
+    .section h2 {
+        font-size: 16px;
+    }
+    
+    .modal {
+        top: 1%;
+        left: 1%;
+        width: 98%;
+        height: 98%;
+        border-radius: 12px;
+    }
+    
+    .modal-header {
+        padding: 8px;
+    }
+    
+    .modal-header h2 {
+        font-size: 18px;
+        padding: 0 35px;
+    }
+    
+    .close-btn {
+        padding: 5px 12px;
+        font-size: 12px;
+    }
+    
+    .modal-content {
+        padding: 10px;
+    }
+    
+    .card-front, .card-back {
+        min-height: 100px;
+        padding: 12px;
+    }
+    
+    .card-front span, .card-back span {
+        font-size: 16px;
+    }
+    
+    .navigation-buttons {
+        gap: 10px;
+        margin: 20px auto 30px;
+        /* Залишити рядне розташування */
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    
+    .nav-button {
+        padding: 10px 16px;
+        font-size: 14px;
+        width: auto; /* Забезпечити автоматичну ширину */
+    }
+    
+    .nav-button .icon {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .theory-content {
+        padding: 10px;
+        font-size: 16px;
+    }
+    
+    .theory-content h2 {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .theory-content h3 {
+        font-size: 16px;
+        margin: 20px 0 10px 0;
+    }
+    
+    .theory-content p:last-child {
+        padding: 12px;
+        margin-top: 30px;
+    }
+    
+    /* Вимикаємо ховер-ефекти на тач-пристроях */
+    .section:hover {
+        transform: none;
+    }
+    
+    .nav-button:hover {
+        transform: none;
+        background: rgba(30, 60, 30, 0.7);
+    }
+}
+
+
+    
+</style>
+</head>
+<body>
+
+<div class="title-box"><h1>67. Поняття границі функції</h1></div>
+
+<div class="section-container">
+    <div class="section" id="openTheory"><h2>Теоретичні відомості</h2></div>
+    <div class="section" id="openQuestions"><h2>Питання і відповіді</h2></div>
+</div>
+
+<div class="navigation-buttons">
+    <a class="nav-button prev" href="{{ url_for('tema12') }}">
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M15 18l-6-6 6-6"/>
+        </svg>
+            До теми 10
+        </a>
+    <a class="nav-button home" href="{{ url_for('home') }}">
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        </svg>
+            На головну
+        </a>
+    </div>
+
+<!-- ==================== ТЕОРІЯ ==================== -->
+<div id="theoryModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="theoryTitle">
+    <div class="modal-header">
+                <button class="close-btn" id="closeTheory">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="theory-content">
+
+            <h2>Поняття границі функції</h2>
+
+           <p>
+    <span class="highlight-limit">Границя</span> – це фундаментальне поняття математичного аналізу, яке застосовується як до числових послідовностей, так і до функцій. 
+    У цьому параграфі розглянемо саме поняття <em>границі функції</em>.
+</p>
+            <p>У деяких випадках легко визначити, до якого значення прямує функція, коли її аргумент наближається до певної точки \(a\) або до нескінченності \(\infty\). Проте бувають і складніші випадки, де для знаходження границі потрібні спеціальні методи математичного аналізу.</p>
+
+            <p>Для функції \(y = f(x)\), яка визначена на певному інтервалі,  <span class="highlight-limit">границею функції</span> в точці \(a\)</strong> називається таке число \(A\), до якого наближається значення функції \(f(x)\), коли \(x\) наближається до \(a\). Це записується так:</p>
+            <p class="math-notation-centered">
+                \[\lim_{x \to a} f(x) = A \tag{12.1}\]
+            </p>
+
+            <p>Термін «lim» походить від латинського слова <em>limes</em> або французького <em>limite</em>, що означає «межа» чи «границя».</p>
+
+            <h3>Приклади</h3>
+            <ul>
+                <li>Для функції \(y = x^2\) при \(x \to 2\): \(\lim\limits_{x \to 2} x^2 = 4\)</li>
+                <li>Для функції \(y = \frac{1}{x}\) при \(x \to \infty\): \(\lim\limits_{x \to \infty} \frac{1}{x} = 0\)</li>
+            </ul>
+
+            <p>Границю функції можна пояснити геометрично, розглянувши її поведінку на графіку.</p>
+
+            <h3>Приклад 1</h3>
+            <p>Функція \(f(x) = x + 2\). Графік – пряма (рис. 12.1).<br>
+            При \(x \to 2\) значення функції прямує до 4.</p>
+            <p class="math-notation-centered">
+                \[\lim_{x \to 2} (x + 2) = 4\]
+            </p>
+
+            <h3>Приклад 2</h3>
+            <p>Розглянемо функцію</p>
+            <p class="math-notation-centered">
+                \[g(x) = \frac{x^2 - 4}{x - 2}\]
+            </p>
+            <p>Функція не визначена в точці \(x = 2\) (знаменник дорівнює нулю).<br>
+            Область визначення: \(x \in (-\infty; 2) \cup (2; +\infty)\).</p>
+
+            <p>Спрощуємо вираз:</p>
+            <p class="math-notation-centered">
+                \[g(x) = \frac{(x-2)(x+2)}{x-2} = x + 2 \quad (x \neq 2)\]
+            </p>
+            <p>Графік – пряма \(y = x + 2\) з виколотою точкою в \(x = 2\) (рис. 12.2).<br>
+            При наближенні \(x \to 2\) як зліва, так і справа значення \(g(x) \to 4\).</p>
+            <p class="math-notation-centered">
+                \[\lim_{x \to 2} \frac{x^2 - 4}{x - 2} = 4\]
+            </p>
+
+            <h3>Приклад 3 (кусково-задана функція)</h3>
+            <p>Розглянемо функцію</p>
+            <p class="math-notation-centered">
+                \[h(x) = \begin{cases} 
+                x + 2, & x \geq 2 \\
+                x,     & x < 2 
+                \end{cases}\]
+            </p>
+            <p>Графік побудовано на рис. 12.3.</p>
+            <ul>
+                <li>При \(x \to 2^-\) (зліва): \(h(x) \to 2\)</li>
+                <li>При \(x \to 2^+\) (справа): \(h(x) \to 4\)</li>
+            </ul>
+            <p>Оскільки ліва і права границі різні — <strong>границя функції в точці \(x = 2\) не існує</strong>:</p>
+            <p class="math-notation-centered">
+                \[\lim_{x \to 2} h(x) \quad \text{не існує}\]
+            </p>
+
+            <p class="note" style="margin-top: 30px; color:#90e090; font-weight:bold;">
+                Висновок: границя функції залежить лише від поведінки функції <strong>поблизу</strong> точки, а не від її значення в самій точці (функція може бути навіть не визначена в точці \(a\)).
+            </p>
+
+        </div>
+    </div>
+</div>
+
+<!-- ==================== ПИТАННЯ І ВІДПОВІДІ ==================== -->
+<div id="questionsModal" class="modal">
+    <div class="modal-header">
+        <h2>Питання і відповіді</h2>
+        <button class="close-btn" id="closeQuestions">× Закрити</button>
+    </div>
+    <div class="modal-content">
+
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>1. Що таке границя функції?</span></div>
+                <div class="card-back"><span>Це число \(A\), до якого прямує \(f(x)\), коли \(x \to a\) (або \(x \to \infty\)).</span></div>
+            </div>
+        </div>
+
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>2. Як записується, що границя дорівнює \(A\)?</span></div>
+                <div class="card-back"><span>\(\lim\limits_{x \to a} f(x) = A\) </span></div>
+            </div>
+        </div>
+
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>3. Звідки походить слово «lim»?</span></div>
+                <div class="card-back"><span>Від лат. <em>limes</em> або фр. <em>limite</em> — «межа», «границя».</span></div>
+            </div>
+        </div>
+
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>4. Приклад границі при \(x \to 2\)</span></div>
+                <div class="card-back"><span>\(\lim\limits_{x \to 2} x^2 = 4\)</span></div>
+            </div>
+        </div>
+
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>5. Приклад границі при \(x \to \infty\)</span></div>
+                <div class="card-back"><span>\(\lim\limits_{x \to \infty} \dfrac{1}{x} = 0\)</span></div>
+            </div>
+        </div>
+
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>6. Чи повинна функція бути визначена в точці \(a\), щоб існувала границя?</span></div>
+                <div class="card-back"><span>Ні. Границя залежить лише від поведінки поблизу \(a\).</span></div>
+            </div>
+        </div>
+
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>7. Чому функція \(g(x) = \dfrac{x^2-4}{x-2}\) не визначена в \(x=2\)?</span></div>
+                <div class="card-back"><span>Знаменник дорівнює нулю при \(x=2\).</span></div>
+            </div>
+        </div>
+
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>8. Яка границя \(g(x)\) при \(x \to 2\)?</span></div>
+                <div class="card-back"><span>\(\lim\limits_{x \to 2} \dfrac{x^2-4}{x-2} = 4\)</span></div>
+            </div>
+        </div>
+
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>9. Чому границя існує, хоча функція не визначена в точці?</span></div>
+                <div class="card-back"><span>Після скорочення \((x-2)\) отримуємо \(g(x) = x+2\) при \(x \neq 2\), тому зліва і справа значення прямує до \(4\).</span></div>
+            </div>
+        </div>
+
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>10. Від чого залежить існування границі в точці?</span></div>
+                <div class="card-back"><span>Тільки від того, чи збігаються ліва і права границі (поведінка поблизу точки).</span></div>
+            </div>
+        </div>
+
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>11. Чи може границя існувати, якщо функція в точці не визначена?</span></div>
+                <div class="card-back"><span>Так (приклад 2). Головне — однакова поведінка зліва і справа.</span></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="modalOverlay"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    document.body.classList.add('loaded');
+
+    const theoryModal = document.getElementById('theoryModal');
+    const questionsModal = document.getElementById('questionsModal');
+    const overlay = document.getElementById('modalOverlay');
+
+    document.getElementById('openTheory').onclick = () => { theoryModal.style.display = 'flex'; overlay.style.display = 'block'; }
+    document.getElementById('openQuestions').onclick = () => { questionsModal.style.display = 'flex'; overlay.style.display = 'block'; }
+
+    document.getElementById('closeTheory').onclick =
+    document.getElementById('closeQuestions').onclick = () => {
+        theoryModal.style.display = questionsModal.style.display = overlay.style.display = 'none';
+    }
+
+    overlay.onclick = () => {
+        theoryModal.style.display = questionsModal.style.display = overlay.style.display = 'none';
+    }
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            theoryModal.style.display = questionsModal.style.display = overlay.style.display = 'none';
+        }
+    });
+});
+</script>
+</body>
+</html>
