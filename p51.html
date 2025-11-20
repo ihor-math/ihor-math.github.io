@@ -1,0 +1,2346 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>51. Парабола</title>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                ready: () => {
+                    console.log("MathJax is loaded and ready!");
+                    MathJax.startup.defaultReady();
+                }
+            }
+        };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" onerror="console.error('Failed to load MathJax')"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        *, *:before, *:after { box-sizing: border-box; }
+        body {
+            margin: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, #0a1a0a 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, #1a2a1a 0%, transparent 40%),
+                radial-gradient(circle at 40% 80%, #0f150f 0%, transparent 40%),
+                #0a0f0a;
+            color: #c0c0c0;
+            font-family: 'Roboto Condensed', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        body.loaded { visibility: visible; opacity: 1; }
+
+        /* === ЗАГОЛОВОК === */
+        .title-box {
+            margin-top: 60px;
+            padding: 20px 40px;
+            background: 
+                linear-gradient(135deg, #1a251a 0%, #2a352a 100%);
+            box-shadow: 
+                0 6px 20px rgba(0,0,0,0.8),
+                inset 0 1px 0 rgba(120, 160, 120, 0.3);
+            border-radius: 16px;
+            max-width: 90%;
+            text-align: center;
+            border: 1px solid #3a553a;
+            position: relative;
+            overflow: hidden;
+        }
+        .title-box:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #60a060, transparent);
+        }
+        .title-box h1 {
+            margin: 0;
+            font-size: 28px;
+            color: #90e090;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 8px rgba(144, 224, 144, 0.5);
+            letter-spacing: 1px;
+        }
+
+        /* === КАРТКИ РОЗДІЛІВ === */
+        .section-container {
+            margin-top: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+        }
+        .section {
+            width: 260px;
+            height: 200px;
+            background: 
+                linear-gradient(145deg, #1a251a, #2a352a);
+            border-radius: 14px;
+            box-shadow: 
+                0 6px 16px rgba(0,0,0,0.6),
+                inset 0 1px 0 rgba(120, 160, 120, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #3a553a;
+            position: relative;
+            overflow: hidden;
+        }
+        .section:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(144, 224, 144, 0.1), transparent);
+            transition: left 0.6s;
+        }
+        .section:hover:before {
+            left: 100%;
+        }
+        .section:hover {
+            transform: scale(1.06);
+            box-shadow: 
+                0 10px 25px rgba(96, 160, 96, 0.3),
+                inset 0 1px 0 rgba(120, 160, 120, 0.3);
+            background: linear-gradient(145deg, #1e2e1e, #2e3e2e);
+        }
+        .section h2 {
+            font-size: 20px;
+            color: #c0e0c0;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 4px rgba(0,0,0,0.5);
+        }
+        .section img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 15px;
+            object-fit: cover;
+            border-radius: 8px;
+            filter: 
+                brightness(1.2) 
+                drop-shadow(0 0 6px #60a060)
+                sepia(0.3) hue-rotate(60deg);
+        }
+
+        /* === МОДАЛЬНІ ВІКНА === */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 5%; left: 5%; width: 90%; height: 90%;
+            background: 
+                linear-gradient(135deg, #1a251a, #2a352a);
+            border-radius: 15px;
+            box-shadow: 
+                0 10px 25px rgba(0,0,0,0.6),
+                inset 0 1px 0 rgba(120, 160, 120, 0.2);
+            z-index: 1001;
+            overflow: hidden;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            border: 1px solid #3a553a;
+        }
+        #modalOverlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 10, 5, 0.9);
+            z-index: 999;
+            backdrop-filter: blur(6px);
+        }
+        .modal-content {
+            padding: 20px;
+            flex-grow: 1;
+            background: #1a251a;
+            border-radius: 10px;
+            margin: 10px;
+            color: #c0c0c0;
+            width: calc(100% - 20px);
+            overflow-y: auto;
+            display: block;
+            max-height: calc(100% - 60px);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+        .modal-content::-webkit-scrollbar { width: 6px; }
+        .modal-content::-webkit-scrollbar-track { background: transparent; }
+        .modal-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #1a251a, #2a352a);
+            border-radius: 3px;
+        }
+        .modal-header {
+            background: linear-gradient(0deg, #1a251a, #2a352a);
+            padding: 8px 12px;
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1002;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            border-bottom: 1px solid #3a553a;
+        }
+        .close-btn {
+            background: linear-gradient(135deg, #406040, #60a060);
+            color: #e0f0e0;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Orbitron', sans-serif;
+            box-shadow: 0 2px 8px rgba(64, 96, 64, 0.4);
+            text-shadow: 0 0 2px rgba(0,0,0,0.5);
+        }
+        .close-btn:hover {
+            background: linear-gradient(135deg, #305030, #406040);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(64, 96, 64, 0.5);
+        }
+
+        /* === ТЕОРІЯ === */
+        .theory-content h2 {
+            color: #90e090;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(144, 224, 144, 0.5);
+            margin-bottom: 20px;
+            font-family: 'Orbitron', sans-serif;
+            border-bottom: 1px solid #3a553a;
+            padding-bottom: 10px;
+        }
+        .theory-content p, .theory-content li {
+            color: #c0c0c0;
+            font-size: clamp(18px, 3vw, 20px);
+            line-height: 1.7;
+            text-align: justify;
+        }
+        .example {
+            background: #0a1e2c;
+            font-size: 1.2rem;
+            border-left: 4px solid #60a060;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 6px;
+            font-weight: bold;
+            color: #a0e0a0;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
+        }
+        .solution {
+            background: #0a1e2c;
+            border: 2px solid #ff8c00;
+            padding: 10px;
+            margin: 15px 0;
+            border-radius: 6px;
+            text-align: center;
+            color: #90e090;
+            font-weight: bold;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
+        }
+            /* === ПРИМУСОВО УСУНУТИ БІЛИЙ ФОН У .solution === */
+.solution {
+    background: #0a1e2c !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.solution * {
+    background: transparent !important;
+    color: #D3D3D3 !important;
+}
+
+/* Головне: MathJax у .solution */
+.solution mjx-container,
+.solution mjx-container * {
+    background: transparent !important;
+    background-color: transparent !important;
+    color: #90e090 !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* Примусово для всіх рівнів */
+.solution mjx-mrow,
+.solution mjx-mi,
+.solution mjx-mo,
+.solution mjx-mn,
+.solution mjx-msup,
+.solution mjx-msub,
+.solution mjx-mfrac {
+    background: transparent !important;
+    color: #90e090 !important;
+}
+            
+       .math-notation-centered {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+    margin: 16px 0 !important;
+    padding: 8px 0 !important;
+    width: 100% !important;
+    font-size: clamp(18px, 3vw, 20px);
+    color: #e0e090;
+}
+
+.math-notation-centered mjx-container {
+    display: inline-block !important;
+    margin: 0 auto !important;
+    text-align: center !important;
+    color: #e0e090 !important;
+    font-style: italic !important;
+}
+        mjx-container { color: #e0e090 !important; font-style: italic !important; }
+        mjx-container {
+    font-size: clamp(18px, 3vw, 20px) !important;
+      
+}
+         mjx-frac {
+            font-size: 1.0em !important;
+            padding: 2px !important;
+        }
+        mjx-num, mjx-den {
+            padding: 2px !important;
+        }
+        mjx-msqrt, mjx-msup, mjx-msub, mjx-munderover {
+    font-size: 1.05em !important;
+}
+      
+
+       
+        /* === ПИТАННЯ === */
+        .question-card {
+            perspective: 1000px;
+            margin: 20px auto;
+            max-width: 964px;
+            width: 100%;
+            min-height: 150px;
+            cursor: pointer;
+        }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            min-height: 200px;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .question-card.flipped .card-inner { transform: rotateY(180deg); }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            min-height: 200px;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            text-align: center;
+            border: 1px solid #3a553a;
+        }
+        .card-front {
+            background: #1a251a;
+            color: #c0e0c0;
+        }
+        .card-back {
+            background: linear-gradient(135deg, #0a150a, #1a251a);
+            color: #c0e0c0;
+            transform: rotateY(180deg);
+            text-align: justify;
+            padding: 20px;
+        }
+        .card-front span, .card-back span {
+            font-size: clamp(17px, 3vw, 19px);
+            line-height: 1.4;
+        }
+        #questionsModal mjx-container { color: #e0e090 !important; font-style: normal !important; font-weight: 500 !important; }
+
+        /* === ТРЕНАЖЕР === */
+        .trainer-container {
+            width: 90%;
+            max-width: 800px;
+            padding: 3vw 4vw;
+            text-align: center;
+            background: linear-gradient(135deg, #1a251a, #2a352a);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(96, 160, 96, 0.15);
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100%;
+            border: 1px solid #3a553a;
+        }
+        .question-circle {
+            width: clamp(80px, 15vw, 120px);
+            height: clamp(80px, 15vw, 120px);
+            margin: 0 auto 3vw;
+            background: linear-gradient(135deg, #406040, #60a060);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(64, 96, 64, 0.4);
+            border: 2px solid #70b070;
+        }
+        .question-circle h3 {
+            color: #e0f0e0;
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(16px, 2.5vw, 20px);
+            margin: 0;
+            text-shadow: 0 0 6px rgba(0,0,0,0.5);
+        }
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2vw;
+            justify-content: center;
+            margin-bottom: 3vw;
+            width: 100%;
+        }
+        .option {
+            padding: 1.5vw 3vw;
+            border: 1.5px solid #406040;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #1a251a, #2a352a);
+            cursor: pointer;
+            font-size: clamp(15px, 3.5vw, 18px);
+            min-height: 45px;
+            max-width: 45%;
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+            transition: all 0.3s ease;
+            color: #c0e0c0;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
+        }
+        .option:hover {
+            background: linear-gradient(135deg, #406040, #60a060);
+            transform: scale(1.03);
+            border-color: #60a060;
+            box-shadow: 0 4px 12px rgba(64, 96, 64, 0.3);
+        }
+        .option.selected {
+            background: linear-gradient(135deg, #60a060, #80c080) !important;
+            color: #e0f0e0 !important;
+            border: 2px solid #90e090 !important;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(96, 160, 96, 0.5);
+        }
+            mjx-container.math-notation-centered * {
+    color: #e0e090 !important;
+    font-style: italic !important;
+}
+
+    /* Білий текст усього тренажера */
+#trainerModal {
+  color: #e0e0e0;
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+}
+
+/* Формули — жовті */
+#trainerModal mjx-container {
+  color: #e0e090 !important;
+  font-style: italic !important;
+  background: none !important;
+}
+
+/* Текст питання */
+#trainerModal .question-text {
+  color: #e0e0e0 !important;
+  font-style: normal !important;
+  text-align: center;
+  font-size: clamp(16px, 3vw, 18px);
+  line-height: 1.5;
+}
+
+/* Формули всередині тексту питання */
+#trainerModal .question-text mjx-container {
+  color: #e0e090 !important;
+}
+
+/* Варіанти відповідей */
+#trainerModal .options-container mjx-container {
+  color: #e0e090 !important;
+  font-style: italic !important;
+  background: none !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+  font-size: clamp(16px, 3vw, 18px) !important;
+}
+
+/* Центровані окремі формули */
+#trainerModal .math-notation-centered {
+  color: #e0e090 !important;
+  font-style: italic;
+  text-align: center;
+  font-size: clamp(18px, 3vw, 20px);
+  margin: 10px 0;
+}
+/* Білий текст */
+.question-text, #trainerModal, #trainerModal .options-container {
+    color: #e0e0e0;
+}
+
+/* Формули MathJax — жовті */
+#trainerModal mjx-container {
+    color: #e0e090 !important;
+    font-style: normal !important;
+}
+
+/* Жовті формули MathJax */
+.math-formula mjx-container {
+    color: #e0e090 !important;
+    font-style: normal !important;
+}
+
+
+        button {
+            background: linear-gradient(135deg, #406040, #60a060);
+            color: #e0f0e0;
+            border: none;
+            border-radius: 25px;
+            padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 24px);
+            font-size: clamp(16px, 3vw, 18px);
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(64, 96, 64, 0.3);
+            text-shadow: 0 0 2px rgba(0,0,0,0.5);
+        }
+        button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #305030, #406040);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(64, 96, 64, 0.4);
+        }
+        button:disabled { background: #404040; cursor: not-allowed; }
+
+        .feedback {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(24px, 5.8vw, 30px);
+            font-family: 'Orbitron', sans-serif;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+            z-index: 1001;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            text-align: center;
+            border: 2px solid transparent;
+        }
+        .feedback.show { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+        .correct-feedback { 
+            color: #e0f0e0; 
+            background: linear-gradient(135deg, #406040, #60a060); 
+            border-color: #70b070; 
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+        .incorrect-feedback { 
+            color: #e0f0e0; 
+            background: linear-gradient(135deg, #804040, #a06060); 
+            border-color: #b07070; 
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+
+         /* === МЕДАЛЬ З ТРИЗУБОМ === */
+        .completion-emoji {
+            position: relative;
+            display: inline-block;
+            width: clamp(56px, 12vw, 96px);
+            height: clamp(56px, 12vw, 96px);
+            vertical-align: middle;
+            margin: 0 auto 3vw;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1c2526, #2e3a3b);
+            border: 3px dashed #ffd700;
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+            overflow: hidden;
+            animation: medalAppear 0.8s ease-out;
+        }
+        .completion-emoji::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><filter id='s' x='-50%' y='-50%' width='200%' height='200%'><feDropShadow dx='0' dy='2' stdDeviation='2' flood-color='%23000000' flood-opacity='0.25'/></filter></defs><rect x='30' y='0' width='60' height='40' rx='4' fill='%23007ACC'/><rect x='30' y='20' width='60' height='20' rx='4' fill='%23FFD700'/><g transform='translate(60,70)'><polygon points='0,-26 6,-6 26,-6 9,6 15,26 0,14 -15,26 -9,6 -26,-6 -6,-6' fill='%23FFD700' filter='url(%23s)'/></g></svg>");
+            background-size: 75%;
+            background-repeat: no-repeat;
+            background-position: center 60%;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+            animation: medalBounce 1.2s ease-out 0.3s both;
+        }
+        @keyframes medalAppear {
+            0% { transform: scale(0.3) rotate(-180deg); opacity: 0; }
+            60% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes medalBounce {
+            0% { transform: translateY(-120px) rotate(-30deg) scale(0.4); opacity: 0; }
+            60% { transform: translateY(15px) rotate(10deg) scale(1.15); opacity: 1; }
+            80% { transform: translateY(-8px) rotate(-5deg) scale(1.05); }
+            100% { transform: translateY(0) rotate(0) scale(1); }
+        }
+
+        .completion-message {
+            background: linear-gradient(145deg, #1c2533, #2d3848);
+            border: 2.5px solid #ffffff;
+            border-radius: 15px;
+            padding: clamp(12px, 3vw, 18px);
+            box-shadow: 0 6px 12px rgba(255,77,77,0.4);
+            margin: 2vw auto;
+            max-width: 90%;
+            text-align: center;
+        }
+        .completion-message h2 {
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        .completion-message p { color: #ffffff; }
+
+        #completionModal .modal-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+        #completionModal .completion-message {
+            text-align: center;
+            max-width: 500px;
+        }
+
+
+        /* === НАВІГАЦІЯ === */
+        .navigation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px auto;
+            max-width: 1000px;
+        }
+        .nav-button {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #1a251a, #2a352a);
+            color: #c0e0c0;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid #3a553a;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        .nav-button:hover {
+            background: linear-gradient(135deg, #406040, #60a060);
+            color: #e0f0e0;
+            transform: scale(1.03);
+            box-shadow: 0 4px 12px rgba(64, 96, 64, 0.3);
+        }
+        .nav-button svg { margin-right: 8px; fill: currentColor; }
+            
+
+        /* === АДАПТИВНІСТЬ === */
+        @media (max-width: 768px) {
+            .title-box { margin-top: 40px; padding: 15px 20px; }
+            .title-box h1 { font-size: 24px; }
+            .section-container { flex-direction: column; align-items: center; gap: 20px; }
+            .section { width: 80%; height: 180px; }
+            .modal { top: 2%; left: 2%; width: 96%; height: 96%; }
+            .options-container { flex-direction: column; }
+            .option { max-width: 100%; }
+            
+        }
+        @media (max-width: 480px) {
+            .title-box h1 { font-size: 20px; }
+            .section { width: 90%; height: 150px; }
+            .section h2 { font-size: 16px; }
+ mjx-container {
+    font-size: clamp(15px, 2.5vw, 18px) !important;
+     }
+             .example {
+            font-size: 1.0rem;
+                   }
+             .theory-content h2 {
+            font-size: 18px !important;
+        }
+            
+         .question-circle h3 {
+           
+            font-size: clamp(13px, 2vw, 14px);
+           
+        }
+             .feedback {
+           
+            font-size: clamp(16px, 3vw, 17px);
+           
+        }
+                    }
+             summary {
+    position: relative;
+    font-weight: 800;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #1a1f2e 0%, #2a3042 100%);
+    border-radius: 12px;
+    color: #8adb8b;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.4),
+        0 0 20px rgba(74, 157, 233, 0.15);
+    cursor: pointer;
+    list-style: none;
+    overflow: hidden;
+    border: 1px solid rgba(74, 157, 233, 0.3);
+    user-select: none;
+    text-shadow: 0 0 10px rgba(74, 157, 233, 0.3);
+}
+
+/* Ховаємо стандартну стрілку */
+summary::-webkit-details-marker,
+summary::marker {
+    display: none;
+}
+
+/* МЕТАЛЕВА СТРІЛКА В СТИЛІ ЕЛІПСА */
+summary::after {
+    content: "▼";
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    font-weight: 900;
+   background: linear-gradient(135deg, #ffd1dc, #ffc0cb);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: all 0.4s ease;
+    filter: drop-shadow(0 0 8px rgba(74, 157, 233, 0.6));
+    text-shadow: 0 0 15px rgba(74, 157, 233, 0.5);
+}
+
+/* Поворот + підсвітка при відкритті */
+details[open] summary::after {
+    content: "▲";
+    transform: translateY(-50%) rotate(360deg);
+    filter: drop-shadow(0 0 15px rgba(74, 157, 233, 0.9));
+    background: linear-gradient(135deg, #ffd1dc, #ffc0cb);
+}
+
+/* ХОВЕР — МЕТАЛЕВИЙ ЕФЕКТ */
+summary:hover {
+    background: linear-gradient(135deg, #2a3042 0%, #3a4157 100%);
+    border-color: #4a9de9;
+    box-shadow: 
+        0 8px 25px rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(74, 157, 233, 0.4),
+        inset 0 0 30px rgba(74, 157, 233, 0.1);
+    transform: translateY(-2px);
+    color: #50c878;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+}
+
+summary:hover::after {
+    transform: translateY(-50%) scale(1.3);
+    filter: drop-shadow(0 0 20px rgba(74, 157, 233, 1));
+    background: linear-gradient(135deg, #ffd1dc, #ffc0cb);
+}
+
+/* МЕТАЛЕВА ОБВОДКА ПРИ ФОКУСІ */
+summary:focus-visible {
+    outline: none;
+    box-shadow: 
+        0 0 0 3px rgba(74, 157, 233, 0.5),
+        0 0 40px rgba(74, 157, 233, 0.6),
+        inset 0 0 20px rgba(74, 157, 233, 0.2);
+}
+
+/* ПІДСВІТКА ПРИ ВІДКРИТТІ */
+details[open] summary {
+    border-bottom: 3px solid #50c878;
+    border-radius: 12px 12px 0 0;
+    background: linear-gradient(135deg, #ffc0cb 0%,  100%);
+    box-shadow: 
+        0 -4px 20px rgba(74, 157, 233, 0.3),
+        0 8px 25px rgba(0, 0, 0, 0.4),
+        inset 0 0 25px rgba(74, 157, 233, 0.15);
+    color: #fecdc1;
+}
+
+/* ДОДАЄМО МЕТАЛЕВУ ТЕКСТУРУ */
+summary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        linear-gradient(90deg, 
+            transparent 0%, 
+            rgba(255,255,255,0.03) 50%, 
+            transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+summary:hover::before {
+    opacity: 1;
+}
+
+/* АДАПТИВНІСТЬ */
+@media (max-width: 768px) {
+    summary {
+        padding: 14px 16px;
+        font-size: 0.9rem;
+        border-radius: 10px;
+    }
+    
+    summary::after {
+        right: 16px;
+        font-size: 0.9rem;
+    }
+    
+    details[open] summary {
+        border-radius: 10px 10px 0 0;
+    }
+}
+    .definition {
+    background: rgba(74, 157, 233, 0.1);
+    border-left: 4px solid #4a9de9;
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 8px;
+}
+     strong {
+    color: #ff9966;
+}
+    .solution {
+    font-weight: bold;
+    color: #2c3e50;
+    background-color: #ecf0f1;
+    padding: 10px;
+    border-left: 4px solid #3498db;
+}
+   .note {
+    background-color: #fffde7;
+    padding: 10px;
+    margin: 15px 0;
+    border-radius: 5px;
+    border-left: 4px solid #ffd54f;
+}
+    .theory-content h3 {
+    color: #4a9de9;
+    padding-bottom: 8px;
+    margin: 30px 0 20px 0;
+    font-family: 'Orbitron', sans-serif;
+    border-bottom: 3px solid transparent;
+    background-image: linear-gradient(to right, #ff9966, #ffbb66);
+    background-size: 100% 3px;
+    background-repeat: no-repeat;
+    background-position: left bottom;
+}
+
+/* Стилі для деталей (вкладок) у теорії */
+.theory-content details {
+    margin-bottom: 25px; /* Відступ між вкладками */
+    border: 1px solid rgba(0, 212, 255, 0.2); /* Легка обводка для візуального поділу */
+    border-radius: 10px;
+    overflow: hidden; /* Щоб контент не вилазив за межі */
+    background: linear-gradient(135deg, rgba(26, 32, 46, 0.8), rgba(42, 51, 74, 0.8)); /* Легкий градієнт для глибини */
+}
+
+.theory-content details[open] {
+    margin-bottom: 30px; /* Більше простору, коли відкрита */
+    box-shadow: 0 4px 12px rgba(0, 212, 255, 0.15); /* Тінь для акценту */
+}
+
+.theory-content > div { /* Для div всередині details */
+    padding: 20px; /* Внутрішні відступи */
+    margin: 0 0 15px 0; /* Нижній відступ для контенту */
+}
+
+.theory-content h3 {
+    margin-top: 0; /* Щоб заголовки не "стрибали" */
+}
+
+/* Адаптив для мобільних */
+@media (max-width: 768px) {
+    .theory-content details {
+        margin-bottom: 20px;
+    }
+    .theory-content > div {
+        padding: 15px;
+    }
+}
+    table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th, td {
+    border: 2px solid #64eeb5;
+    padding: 6px 10px;
+    text-align: center;
+}
+
+th {
+    background: #d2fbe6;
+    font-weight: bold;
+    color: #620000;
+}
+    /* Робимо так, щоб на мобілках canvas не ламав верстку */
+@media (max-width: 600px) {
+    canvas {
+        image-rendering: -moz-crisp-edges;
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+        image-rendering: pixelated; /* для ідеальної чіткості на маленьких екранах */
+    }
+}
+   
+    </style>
+</head>
+<body>
+
+    <div class="title-box">
+        <h1>51. Парабола</h1>
+    </div>
+
+     <div class="section-container">
+        <div class="section" id="openTheoryBtn">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Книга" loading="lazy">
+            <h2>Теоретичні відомості</h2>
+        </div>
+       
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Картки" loading="lazy">
+            <h2>Питання і відповіді</h2>
+        </div>
+        <div class="section" id="openTrainerBtn">
+            <img src="https://img.icons8.com/fluency/96/flash-on.png" alt="Тренажер" loading="lazy">
+            <h2>Тренажер</h2>
+        </div>
+    </div>
+
+    <div class="navigation-buttons">
+       <a class="nav-button" href="{{ url_for('tema10') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            До теми 10
+        </a>
+        <a class="nav-button" href="{{ url_for('home') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            На головну
+        </a>
+    </div>
+
+    </div>
+
+    <!-- ТЕОРІЯ -->
+    <div id="theoryModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeTheoryBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="theory-content">
+    <details>
+        <summary>Парабола та її рівняння</summary>
+
+        <h2>Парабола</h2>
+
+        <p>Парабола – це множина всіх точок площини, які рівновіддалені від фіксованої точки (фокуса) і фіксованої прямої (директриси).</p>
+
+        <p>Фокальний параметр параболи – це відстань між фокусом параболи та її директрисою, яка позначається символом \( p\). Цей параметр визначає ширину параболи і використовується в її рівнянні.</p>
+
+        <p>Вісь параболи – це пряма, яка проходить через фокус параболи і перпендикулярна до її директриси. Вона є віссю симетрії параболи.</p>
+
+        <h3>Рівняння параболи</h3>
+
+        <p>Нехай на площині задано фокус \( F\) і директрису, відстань між якими дорівнює \( p\). Введемо прямокутну систему координат \( Oxy\) так, щоб:</p>
+        <ul>
+            <li>вісь \( Ox\) проходила через фокус і була перпендикулярною до директриси;</li>
+            <li>вісь \( Oy\) ділила відстань між фокусом \( F\) і директрисою навпіл (рис. 10.15).</li>
+        </ul>
+<img src="/static/figure10.15.jpg" alt="Парабола_1" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+     
+        <p>У такій системі координат фокус має координати</p>
+        <p class="math-notation-centered">\( F\left(\frac{p}{2};0\right), \) (10.30)</p>
+
+        <p>а рівняння директриси можна записати як</p>
+        <p class="math-notation-centered">\( x=-\frac{p}{2}. \) (10.31)</p>
+
+        <p>Нехай \( M(x;y) \) – довільна точка площини. Відстань від цієї точки \( M \) до фокуса \( F \) дорівнює:</p>
+        <p class="math-notation-centered">\( |MF|=\sqrt{\left(x-\frac{p}{2}\right)^2+y^2}, \)</p>
+
+        <p>а відстань від точки \( M \) до директриси \( d \) дорівнює:</p>
+        <p class="math-notation-centered">\( |MB|=|x+\frac{p}{2}|. \)</p>
+
+        <p>Точка \( M \) розміщена на параболі тоді і тільки тоді, коли виконується рівність</p>
+        <p class="math-notation-centered">\( |MB|=|MF| .\)</p>
+
+        <p>Підставляючи відповідні вирази, отримуємо рівняння:</p>
+        <p class="math-notation-centered">\( \sqrt{\left(x-\frac{p}{2}\right)^2+y^2}=|x+\frac{p}{2}|. \)</p>
+
+        <p>Обидві частини рівняння є додатними, тоді воно рівносильне рівнянню:</p>
+        <p class="math-notation-centered">\( \left(x-\frac{p}{2}\right)^2+y^2=\left(x+\frac{p}{2}\right)^2. \)</p>
+
+        <p>Розкриваючи дужки та спрощуючи, маємо:</p>
+        <p class="math-notation-centered">\( x^2-px+\frac{p^2}{4}+y^2=x^2+px+\frac{p^2}{4}. \)</p>
+
+        <p>Скоротивши однакові члени, отримуємо канонічне рівняння параболи:</p>
+        <p class="math-notation-centered">\( y^2=2px .\) (10.32)</p>
+
+        <p>Рівняння (10.32) називається <strong>канонічним рівнянням параболи</strong>.</p>
+
+        <p>Рівняння \( y^2=2px \) описує параболу, симетричну відносно осі \( Ox \), яка розташована праворуч від осі \( Oy \) за умови \( p>0 .\)</p>
+
+        <h3>Ексцентриситет параболи</h3>
+        <p class="math-notation-centered">\( \varepsilon=\frac{|MF|}{|MB|}=\frac{r}{d}=1 ,\)</p>
+        <p>де \( MF=r \) – фокальний радіус, а \( MB=d \) – відстань від точки \( M \) до директриси.</p>
+
+        <h3>Форми та характеристики параболи</h3>
+
+        <p><strong>1) Симетрія.</strong> У рівнянні \( y^2=2px \) змінна \( y \) входить у парній степені, це означає, що парабола симетрична відносно осі \( Ox \). Вісь \( Ox \) є віссю симетрії параболи. Ця вісь також називається фокальною віссю параболи, оскільки вздовж неї розташовані фокус і директриса.</p>
+
+        <p><strong>2) Розташування.</strong> Оскільки \( p>0 \), то \( x≥0 \), а отже, парабола розташована справа від осі \( Oy \).</p>
+
+        <p><strong>3) Вершина.</strong> При \( x=0 \) маємо \( y=0 \), тобто парабола проходить через початок координат. Точка \( O(0;0) \) називається вершиною параболи.</p>
+
+        <p><strong>4) Поведінка параболи при зростанні \( y \).</strong> При збільшенні значень змінної \( x \), модуль \( |y| \) також зростає. Це означає, що гілки параболи розкриваються вправо, віддаляючись від осі \( Ox \), а розмах параболи (відстань між верхньою і нижньою гілками) необмежено збільшується зі зростанням \( x \).</p>
+
+        <p><strong>5) Інші форми параболи.</strong> Окрім рівняння \( y^2=2px \), параболи можуть бути описані іншими канонічними формами, які визначають їхню орієнтацію при \( p>0 \):</p>
+        <ul>
+            <li>\( y^2=-2px \): парабола відкрита вліво, вісь симетрії – \( Ox \) (\( x≤0 \));</li>
+            <li>\( x^2=2py \): парабола відкрита вгору, вісь симетрії – \( Oy \);</li>
+            <li>\( x^2=-2py \): парабола відкрита вниз, вісь симетрії – \( Oy \) (\( y≤0 \)) (рис. 10.16 – 10.18).</li>
+        </ul>
+    <img src="/static/figure10.16.jpg" alt="Параболи_2" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+     
+        <h3>Рівняння параболи із зміщеною вершиною</h3>
+
+        <p>Розглянемо рівняння параболи, у якої вершина не збігається із початком координат, а розташована в точці \( (x_0;y_0) \), причому вісь параболи паралельна одній із осей координат. Такі параболи описані канонічними рівняннями, які наведено в таблиці 1 і відповідають рисункам 10.19–10.22.</p>
+
+        <p style="text-align: right;"><strong>Таблиця 1</strong></p>
+
+        <table>
+            <tr>
+                <th>Номер рисунка</th>
+                <th>Рівняння параболи</th>
+            </tr>
+            <tr>
+                <td>10.19</td>
+                <td>\( (y-y_0)^2=2p(x-x_0) \)</td>
+            </tr>
+            <tr>
+                <td>10.20</td>
+                <td>\( (y-y_0)^2=-2p(x-x_0) \)</td>
+            </tr>
+            <tr>
+                <td>10.21</td>
+                <td>\( (x-x_0)^2=2p(y-y_0) \)</td>
+            </tr>
+            <tr>
+                <td>10.22</td>
+                <td>\( (x-x_0)^2=-2p(y-y_0) \)</td>
+            </tr>
+        </table>
+<img src="/static/figure10.19.jpg" alt="Параболи_3" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+     <img src="/static/figure10.20.jpg" alt="Параболи_4" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+     
+        <h3>Загальне рівняння параболи</h3>
+
+        <p>Загальне рівняння другого порядку має вигляд:</p>
+        <p class="math-notation-centered">\( Ax^2+By^2+Cx+Dy+E=0 .\)</p>
+
+        <p>Це рівняння описує всі квадратичні криві, у яких відсутній змішаний член \( xy \) (тобто криві, які не мають нахилу до координатних осей). Для параболи вісь симетрії паралельна одній з координатних осей.</p>
+
+        <p>Щоб рівняння описувало саме параболу, повинні виконуватися певні умови:</p>
+
+        <p><strong>1) Якщо \( A=0 \) і \( B≠0 \):</strong><br>
+        У такому випадку рівняння містить \( y^2 \), але не містить \( x^2 \), і набуває вигляду:</p>
+        <p class="math-notation-centered">\( By^2+Cx+Dy+E=0 .\) (10.33)</p>
+        <p>Це рівняння описує параболу, вісь якої паралельна осі \( Oy .\)</p>
+
+        <p><strong>2) Якщо \( A≠0 \) і \( B=0 \):</strong><br>
+        У цьому випадку рівняння містить \( x^2 \), але не містить \( y^2 \), і набуває вигляду:</p>
+        <p class="math-notation-centered">\( Ax^2+Cx+Dy+E=0. \) (10.34)</p>
+        <p>Це рівняння описує параболу, вісь якої паралельна осі \( Ox .\)</p>
+
+        <p>Ці умови допомагають чітко відрізнити параболу від інших квадратичних кривих, таких як коло, еліпс чи гіпербола.</p>
+
+    </details>
+            
+       <details>
+    <summary>Приклади</summary>
+
+   <div class="example">
+    <strong>Приклад 10.18.</strong> Парабола симетрична відносно осі абсцис і проходить через точку A(3;-6), вершина її лежить в початку координат. Скласти рівняння параболи.
+</div>
+<p class="solution">
+    Оскільки парабола симетрична відносно осі Ox і має вершину в початку координат, її рівняння має вигляд:<br>
+    <span class="math-notation-centered">\( y^2 = 2px, \) або \( y^2 = -2px. \)</span><br>
+    Знак перед 2p визначає напрямок гілок параболи: якщо \( p > 0 \), вони спрямовані вправо, якщо \( p < 0 \) – вліво. Оскільки парабола проходить через точку A(3;-6), де абсциса є додатною, її гілки спрямовані вправо, тобто:<br>
+    <span class="math-notation-centered">\( y^2 = 2px. \)</span><br>
+    Підставимо координати точки A(3;-6) в рівняння:<br>
+    <span class="math-notation-centered">\( (-6)^2 = 2p \cdot 3. \)</span><br>
+    Отримаємо:<br>
+    <span class="math-notation-centered">\( 36 = 6p. \)</span><br>
+    Звідси:<br>
+    <span class="math-notation-centered">\( p = 6. \)</span><br>
+    Підставимо знайдене значення p у рівняння параболи:<br>
+    <span class="math-notation-centered">\( y^2 = 12x. \)</span><br>
+    <strong>Відповідь.</strong> \( y^2 = 12x \).
+</p>
+
+   <div class="example">
+    <strong>Приклад 10.19.</strong> Скласти рівняння параболи, вершина якої \( O_1(2;3) \) і фокус \( F(5;3) \).
+</div>
+<p class="solution">
+    Вершина і фокус мають однакові ординати (\( y = 3 \)), отже, вісь симетрії параболи паралельна осі абсцис Ox. Оскільки абсциса фокуса більша за абсцису вершини (\( 5 > 2 \)), гілки параболи спрямовані вправо (рис. 10.23).<br>
+<img src="/static/figure10.23.jpg" alt="Парабола_5" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+         Відстань між фокусом і вершиною знаходиться за формулою:<br>
+    <span class="math-notation-centered">\( O_1 F = \frac{p}{2} = 5 - 2 = 3. \)</span><br>
+    Звідки \( p = 6 \), тому \( 2p = 12 \).<br>
+    Відомо, що рівняння параболи з вершиною у точці \( (x_0; y_0) \) має вигляд:<br>
+    <span class="math-notation-centered">\( (y - y_0)^2 = 2p(x - x_0), \)</span><br>
+    Підставимо значення \( x_0 = 2 \), \( y_0 = 3 \), \( 2p = 12 \):<br>
+    <span class="math-notation-centered">\( (y - 3)^2 = 12(x - 2). \)</span><br>
+    Розкриємо дужки:<br>
+    <span class="math-notation-centered">\( y^2 - 6y + 9 = 12x - 24. \)</span><br>
+    Переносимо всі члени в одну частину рівняння:<br>
+    <span class="math-notation-centered">\( y^2 - 6y - 12x + 33 = 0. \)</span><br>
+    <strong>Відповідь.</strong> \( y^2 - 6y - 12x + 33 = 0 \).
+</p>
+
+<div class="example">
+    <strong>Приклад 10.20.</strong> За даним рівнянням параболи \( y^2 = -8x \) обчислити координати її фокуса, одержати рівняння директриси. Побудувати.
+</div>
+<p class="solution">
+    З рівняння параболи \( y^2 = -8x \) маємо:<br>
+    <span class="math-notation-centered">\( 2p = -8 \implies p = -4. \)</span><br>
+    Парабола симетрична відносно осі Ox. Відстань між фокусом і вершиною параболи дорівнює \( p/2 \). Тому фокус має координати:<br>
+    <span class="math-notation-centered">\( F\left(\frac{p}{2}; 0\right) = (-2; 0). \)</span><br>
+    Рівняння директриси параболи можна знайти за формулою:<br>
+    <span class="math-notation-centered">\( x = -\frac{p}{2} = 2. \)</span><br>
+    Парабола симетрична відносно осі Ox, її гілки напрямлені вліво. Для перевірки візьмемо точку, що лежить на параболі. Нехай \( x = -2 \), підставимо в рівняння параболи:<br>
+    <span class="math-notation-centered">\( y^2 = -8 \cdot (-2) = 16 \implies y = \pm 4. \)</span><br>
+    Таким чином, точка \( (-2; \pm 4) \) лежить на параболі. На основі отриманих результатів будуємо параболу (рис. 10.24).<br>
+            <img src="/static/figure10.24.jpg" alt="Парабола_6" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+     
+    <strong>Відповідь.</strong> \( F(-2; 0) \), \( x = 2 \).
+</p>
+
+<div class="example">
+    <strong>Приклад 10.21.</strong> Побудувати параболу \( x^2 - 2x + 8y + 25 = 0 \). Знайти координати фокуса та рівняння директриси.
+</div>
+<p class="solution">
+    Почнемо з перетворення рівняння \( x^2 - 2x + 8y + 25 = 0 \) у вигляд, подібний до канонічного рівняння параболи \( (x - x_0)^2 = 2p(y - y_0) \):<br>
+    <span class="math-notation-centered">\( x^2 - 2x = -8y - 25. \)</span><br>
+    Додамо до обох частин рівняння 1, щоб отримати повний квадрат:<br>
+    <span class="math-notation-centered">\( x^2 - 2x + 1 = -8y - 25 + 1. \)</span><br>
+    Отримуємо:<br>
+    <span class="math-notation-centered">\( (x - 1)^2 = -8y - 24, \)</span><br>
+    <span class="math-notation-centered">\( (x - 1)^2 = -8(y + 3). \)</span><br>
+    З отриманого рівняння маємо, що координати вершини параболи: \( x_0 = 1 \), \( y_0 = -3 \). Отже, вершина параболи в точці \( C(1; -3) \).<br>
+    Тепер знайдемо точки перетину параболи з осями Ox і Oy:<br>
+    <strong>1) Перетин з віссю Ox (для \( y = 0 \)):</strong><br>
+    <span class="math-notation-centered">\( x^2 - 2x + 1 = -24, \)</span><br>
+    <span class="math-notation-centered">\( x^2 - 2x + 25 = 0. \)</span><br>
+    Обчислюємо дискримінант:<br>
+    <span class="math-notation-centered">\( D = 4 - 100 = -96 < 0. \)</span><br>
+    Дискримінант від'ємний, отже рівняння не має дійсних коренів, і парабола не перетинає вісь Ox.<br>
+    <strong>2) Перетин з віссю Oy (для \( x = 0 \)):</strong><br>
+    <span class="math-notation-centered">\( 1 = -8y - 24, \)</span><br>
+    <span class="math-notation-centered">\( 8y = -25 \implies y = -3{,}125. \)</span><br>
+    Отже, точка перетину з віссю Oy має координати \( (0; -3{,}125) \).<br>
+    Тепер знайдемо координати фокуса. З рівняння \( (x - 1)^2 = -8(y + 3) \) маємо:<br>
+    <span class="math-notation-centered">\( 2p = -8 \implies p = -4. \)</span><br>
+    Координати фокуса:<br>
+    <span class="math-notation-centered">\( F(x_0; y_0 + \frac{p}{2}) = F(1; -3 - 2) = F(1; -5). \)</span><br>
+    Рівняння директриси:<br>
+    <span class="math-notation-centered">\( y = y_0 - \frac{p}{2} = -3 - (-2) = -3 + 2 = -1. \)</span><br>
+    На основі знайдених результатів побудуємо параболу (рис. 10.25).<br>
+            <img src="/static/figure10.25.jpg" alt="Парабола_7" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+     
+    <strong>Відповідь.</strong> \( F(1; -5) \), \( y = -1 \).
+</p>
+ </details>
+</div>
+    
+        </div>
+    </div>
+
+             
+  
+   <!-- ПИТАННЯ -->
+<div id="questionsModal" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeQuestionsBtn">× Закрити</button>
+    </div>
+    <div class="modal-content">
+
+        <!-- КАРТКА 1 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>1. Що таке парабола?</span>
+                </div>
+                <div class="card-back">
+                    <span>Парабола — це множина всіх точок площини, які рівновіддалені від фіксованої точки (\( F \), фокус) і фіксованої прямої (\( d \), директриса).</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- КАРТКА 2 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>2. Яке канонічне рівняння параболи, відкритої вправо, з вершиною в початку координат?</span>
+                </div>
+                <div class="card-back">
+                    <span>\[ y^2 = 2px \]</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- КАРТКА 3 -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>3. Що таке фокальний параметр параболи?</span>
+                </div>
+                <div class="card-back">
+                    <span>Фокальний параметр \( p \) — це відстань між фокусом \( F \) та директрисою \( d \). Визначає ширину параболи.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- КАРТКА 4 (нова) -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>4. Які координати фокуса в канонічній системі координат для \( y^2 = 2px \)?</span>
+                </div>
+                <div class="card-back">
+                    <span>\[ F\left( \frac{p}{2}; 0 \right) \]</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- КАРТКА 5 (нова) -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>5. Яке рівняння директриси для параболи \( y^2 = 2px \)?</span>
+                </div>
+                <div class="card-back">
+                    <span>\[ x = -\frac{p}{2} \]</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- КАРТКА 6 (нова) -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>6. Який ексцентриситет параболи?</span>
+                </div>
+                <div class="card-back">
+                    <span>\[ \varepsilon = 1 \]</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- КАРТКА 7 (нова) -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>7. Яка вісь симетрії параболи \( y^2 = 2px \)?</span>
+                </div>
+                <div class="card-back">
+                    <span>Вісь \( Ox \) (фокальна вісь).</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- КАРТКА 8 (нова) -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>8. Де розташована вершина параболи \( y^2 = 2px \)?</span>
+                </div>
+                <div class="card-back">
+                    <span>\[ O(0; 0) \]</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- КАРТКА 9 (нова) -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>9. Рівняння параболи, відкритої вліво (p > 0)?</span>
+                </div>
+                <div class="card-back">
+                    <span>\[ y^2 = -2px \]</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- КАРТКА 10 (нова) -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <span>10. Рівняння параболи з вершиною \( (x_0; y_0) \), відкритої вгору?</span>
+                </div>
+                <div class="card-back">
+                    <span>\[ (x - x_0)^2 = 2p(y - y_0) \]</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+  <!-- ТРЕНАЖЕР -->
+<div id="trainerModal" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeTrainerBtn">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="trainer-container">
+            <div class="question-circle">
+                <h3 id="questionNumber">Питання 6</h3>
+            </div>
+
+            <!-- ТЕКСТ ПИТАННЯ -->
+           <div id="questionText" class="math-notation-centered">
+    <p class="question-text" style="text-align: center; font-weight: bold; margin: 15px 0;">
+        Яке рівняння відповідає зображеній параболі?
+    </p>
+</div>
+
+<div id="canvasContainer" style="text-align: center;"></div>
+
+            <!-- ОПЦІЇ -->
+            <div class="options-container" id="optionsContainer"></div>
+
+            <!-- КНОПКА -->
+            <button id="submitAnswer" disabled>Підтвердити</button>
+
+            <!-- ФІДБЕК -->
+            <div id="feedback" class="feedback"></div>
+        </div>
+    </div>
+</div>
+
+    <!-- ЗАВЕРШЕННЯ -->
+    <div id="completionModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeCompletionBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="completion-message">
+                <div class="completion-emoji"></div>
+                <h2>МІСІЯ ВИКОНАНА!</h2>
+                <p>Ти — сталевий воїн геометрії!</p>
+                <p><strong>СЛАВА УКРАЇНІ!</strong></p>
+                <button id="resetTrainerBtn">Спробувати ще раз!</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalOverlay"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.body.classList.add('loaded');
+
+            const els = {
+                openTheoryBtn: document.getElementById('openTheoryBtn'),
+                 openQuestionsBtn: document.getElementById('openQuestionsBtn'),
+                openTrainerBtn: document.getElementById('openTrainerBtn'),
+                theoryModal: document.getElementById('theoryModal'),
+                questionsModal: document.getElementById('questionsModal'),
+                trainerModal: document.getElementById('trainerModal'),
+                completionModal: document.getElementById('completionModal'),
+                closeTheoryBtn: document.getElementById('closeTheoryBtn'),
+                closeQuestionsBtn: document.getElementById('closeQuestionsBtn'),
+                closeTrainerBtn: document.getElementById('closeTrainerBtn'),
+                closeCompletionBtn: document.getElementById('closeCompletionBtn'),
+                modalOverlay: document.getElementById('modalOverlay'),
+                questionText: document.getElementById('questionText'),
+                optionsContainer: document.getElementById('optionsContainer'),
+                submitAnswer: document.getElementById('submitAnswer'),
+                feedback: document.getElementById('feedback'),
+                resetTrainerBtn: document.getElementById('resetTrainerBtn')
+            };
+
+
+            function toggleModal(modal, show) {
+                modal.style.display = show ? 'flex' : 'none';
+                els.modalOverlay.style.display = show ? 'block' : 'none';
+                document.body.style.overflow = show ? 'hidden' : 'auto';
+                if (show && window.MathJax?.typesetPromise) {
+                    MathJax.typesetPromise([modal]).catch(() => {});
+                }
+            }
+
+            els.openTheoryBtn.addEventListener('click', () => toggleModal(els.theoryModal, true));
+                       els.openQuestionsBtn.addEventListener('click', () => toggleModal(els.questionsModal, true));
+            els.openTrainerBtn.addEventListener('click', () => { toggleModal(els.trainerModal, true); initTrainer(); });
+
+            [els.closeTheoryBtn, els.closeQuestionsBtn, els.closeTrainerBtn, els.closeCompletionBtn].forEach(btn => {
+                btn.addEventListener('click', () => toggleModal(btn.closest('.modal'), false));
+            });
+
+            els.modalOverlay.addEventListener('click', () => {
+                document.querySelectorAll('.modal').forEach(m => toggleModal(m, false));
+            });
+
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') document.querySelectorAll('.modal').forEach(m => toggleModal(m, false));
+            });
+
+                               
+
+           // === ГЛОБАЛЬНІ ЗМІННІ ДЛЯ ТРЕНАЖЕРА ===
+let selected = null;
+let correctIndex = null;
+let stage = 1;
+
+// === ПИТАННЯ 1: Знайти фокальний параметр p для рівняння параболи ===
+function generateQuestion1() {
+    const type = Math.random() < 0.5 ? 'horizontal' : 'vertical'; // горизонтальна або вертикальна
+    
+    let text, correct, k, p;
+    
+    if (type === 'horizontal') {
+        // Горизонтальна парабола: y² = 2px або y² = -2px
+        const sign = Math.random() < 0.5 ? -1 : 1;
+        const absK = (Math.floor(Math.random() * 10) + 1) * 2; // 2, 4, 6, ..., 20
+        k = sign * absK;
+        p = k / 2; // 2p = k → p = k/2
+
+        const kTex = k < 0 ? `-${-k}` : `${k}`;
+        text = `Знайти фокальний параметр параболи \\(y^2 = ${kTex}x\\).`;
+        correct = `${p}`;
+        
+    } else {
+        // Вертикальна парабола: x² = 2py або x² = -2py
+        const sign = Math.random() < 0.5 ? -1 : 1;
+        const absK = (Math.floor(Math.random() * 10) + 1) * 2; // 2, 4, 6, ..., 20
+        k = sign * absK;
+        p = k / 2; // 2p = k → p = k/2
+
+        const kTex = k < 0 ? `-${-k}` : `${k}`;
+        text = `Знайти фокальний параметр параболи \\(x^2 = ${kTex}y\\).`;
+        correct = `${p}`;
+    }
+
+    // 3 неправильні відповіді
+    const wrongs = new Set();
+    const addWrong = (val) => {
+        const str = val % 1 === 0 ? `${val}` : `${val.toFixed(1)}`;
+        if (str !== correct) wrongs.add(str);
+    };
+
+    // Загальні помилки для обох типів
+    addWrong(Math.abs(k));           // |k| = |2p|
+    addWrong(k / 4);                 // k/4 = p/2
+    addWrong(-p);                    // -p (протилежний знак)
+    addWrong(Math.abs(k) / 2);       // |k|/2 = |p|
+    addWrong(p * 2);                 // 2p
+    addWrong(p + 1);                 // p+1
+
+    while (wrongs.size < 3) {
+        const rand = (Math.floor(Math.random() * 39) - 19); // -19..19
+        if (rand !== 0) addWrong(rand);
+    }
+
+    return {
+        text,
+        correct,
+        wrong: Array.from(wrongs).slice(0, 3)
+    };
+}
+
+// === ПИТАННЯ 2: Знайти фокус параболи ===
+function generateQuestion2() {
+    const type = Math.random() < 0.5 ? 'horizontal' : 'vertical';
+    
+    let text, correct, k, p;
+    
+    if (type === 'horizontal') {
+        // Горизонтальна парабола: y² = 2px або y² = -2px
+        const sign = Math.random() < 0.5 ? -1 : 1;
+        const absK = (Math.floor(Math.random() * 10) + 1) * 2; // 2, 4, 6, ..., 20
+        k = sign * absK;
+        p = Math.abs(k) / 2; // |k|/2
+        const focusX = k > 0 ? p / 2 : -p / 2; // F(p/2; 0) або F(-p/2; 0)
+
+        const kTex = k < 0 ? `-${-k}` : `${k}`;
+        text = `Знайти фокус параболи \\(y^2 = ${kTex}x\\).`;
+        correct = `F(${focusX};0)`;
+        
+    } else {
+        // Вертикальна парабола: x² = 2py або x² = -2py
+        const sign = Math.random() < 0.5 ? -1 : 1;
+        const absK = (Math.floor(Math.random() * 10) + 1) * 2; // 2, 4, 6, ..., 20
+        k = sign * absK;
+        p = Math.abs(k) / 2; // |k|/2
+        const focusY = k > 0 ? p / 2 : -p / 2; // F(0; p/2) або F(0; -p/2)
+
+        const kTex = k < 0 ? `-${-k}` : `${k}`;
+        text = `Знайти фокус параболи \\(x^2 = ${kTex}y\\).`;
+        correct = `F(0;${focusY})`;
+    }
+
+    // 3 неправильні відповіді
+    const wrongs = new Set();
+    
+    if (type === 'horizontal') {
+        // Помилки для горизонтальних парабол
+        const addWrong = (x) => {
+            const str = `F(${x};0)`;
+            if (str !== correct) wrongs.add(str);
+        };
+
+        addWrong(p);           // F(p;0)
+        addWrong(0);           // F(0;0)
+        addWrong(-p);          // F(-p;0)
+        addWrong(p / 4);       // F(p/4;0)
+        addWrong(p * 2);       // F(2p;0)
+
+        while (wrongs.size < 3) {
+            const randX = (Math.floor(Math.random() * 39) - 19) / 2; // -9.5 .. 9.5
+            if (Math.abs(randX) > 0.1) addWrong(randX.toFixed(1));
+        }
+    } else {
+        // Помилки для вертикальних парабол
+        const addWrong = (y) => {
+            const str = `F(0;${y})`;
+            if (str !== correct) wrongs.add(str);
+        };
+
+        addWrong(p);           // F(0;p)
+        addWrong(0);           // F(0;0)
+        addWrong(-p);          // F(0;-p)
+        addWrong(p / 4);       // F(0;p/4)
+        addWrong(p * 2);       // F(0;2p)
+
+        while (wrongs.size < 3) {
+            const randY = (Math.floor(Math.random() * 39) - 19) / 2; // -9.5 .. 9.5
+            if (Math.abs(randY) > 0.1) addWrong(randY.toFixed(1));
+        }
+    }
+
+    return {
+        text,
+        correct,
+        wrong: Array.from(wrongs).slice(0, 3)
+    };
+}
+// === ПИТАННЯ 3: Знайти директрису параболи ===
+function generateQuestion3() {
+    const type = Math.random() < 0.5 ? 'horizontal' : 'vertical';
+    
+    let text, correct, k, p;
+    
+    if (type === 'horizontal') {
+        // Горизонтальна парабола: y² = 2px або y² = -2px
+        const sign = Math.random() < 0.5 ? -1 : 1;
+        const absK = (Math.floor(Math.random() * 10) + 1) * 2; // 2, 4, 6, ..., 20
+        k = sign * absK;
+        p = k / 2; // 2p = k → p = k/2
+
+        // Директриса: x = -p/2
+        const directrixX = -p / 2;
+        correct = `x = ${directrixX}`;
+
+        const kTex = k < 0 ? `-${-k}` : `${k}`;
+        text = `Знайти директрису параболи \\(y^2 = ${kTex}x\\).`;
+        
+    } else {
+        // Вертикальна парабола: x² = 2py або x² = -2py
+        const sign = Math.random() < 0.5 ? -1 : 1;
+        const absK = (Math.floor(Math.random() * 10) + 1) * 2; // 2, 4, 6, ..., 20
+        k = sign * absK;
+        p = k / 2; // 2p = k → p = k/2
+
+        // Директриса: y = -p/2
+        const directrixY = -p / 2;
+        correct = `y = ${directrixY}`;
+
+        const kTex = k < 0 ? `-${-k}` : `${k}`;
+        text = `Знайти директрису параболи \\(x^2 = ${kTex}y\\).`;
+    }
+
+    // 3 неправильні відповіді
+    const wrongs = new Set();
+    
+    if (type === 'horizontal') {
+        // Помилки для горизонтальних парабол
+        const addWrong = (val) => {
+            const str = `x = ${val % 1 === 0 ? val : val.toFixed(1)}`;
+            if (str !== correct) wrongs.add(str);
+        };
+
+        addWrong(p / 2);           // x = p/2
+        addWrong(-p);              // x = -p
+        addWrong(0);               // x = 0
+        addWrong(p);               // x = p
+        addWrong(-p / 4);          // x = -p/4
+        addWrong(p / 2 * -1);      // x = -p/2 (правильна, але з іншим знаком)
+
+        while (wrongs.size < 3) {
+            const rand = (Math.floor(Math.random() * 39) - 19) / 2; // -9.5 .. 9.5
+            if (Math.abs(rand) > 0.1) addWrong(rand);
+        }
+    } else {
+        // Помилки для вертикальних парабол
+        const addWrong = (val) => {
+            const str = `y = ${val % 1 === 0 ? val : val.toFixed(1)}`;
+            if (str !== correct) wrongs.add(str);
+        };
+
+        addWrong(p / 2);           // y = p/2
+        addWrong(-p);              // y = -p
+        addWrong(0);               // y = 0
+        addWrong(p);               // y = p
+        addWrong(-p / 4);          // y = -p/4
+        addWrong(p / 2 * -1);      // y = -p/2 (правильна, але з іншим знаком)
+
+        while (wrongs.size < 3) {
+            const rand = (Math.floor(Math.random() * 39) - 19) / 2; // -9.5 .. 9.5
+            if (Math.abs(rand) > 0.1) addWrong(rand);
+        }
+    }
+
+    return {
+        text,
+        correct,
+        wrong: Array.from(wrongs).slice(0, 3)
+    };
+}
+    // === ПИТАННЯ 4: Скласти рівняння параболи з фокусом ===
+function generateQuestion4() {
+    // Випадково вибираємо тип параболи: горизонтальна (y²=±2px) або вертикальна (x²=±2py)
+    const isHorizontal = Math.random() < 0.5;
+    
+    // Генеруємо параметр p
+    const p = (Math.floor(Math.random() * 9) + 1) * 2; // 2, 4, 6, ..., 18 (парні)
+    
+    let focusX, focusY, text, correct;
+    
+    if (isHorizontal) {
+        // Горизонтальна парабола: y² = ±2px
+        // Фокус: F(p/2; 0) або F(-p/2; 0)
+        const sign = Math.random() < 0.5 ? -1 : 1;
+        focusX = sign * (p / 2);
+        focusY = 0;
+        
+        const focusTex = focusX % 1 === 0 ? `${focusX}` : `${focusX.toFixed(1)}`;
+        text = `Скласти рівняння параболи з фокусом \\(F(${focusTex};0)\\).`;
+        
+        // Рівняння: y² = 2px або y² = -2px
+        const k = sign * 2 * p;
+        const kTex = k < 0 ? `-${-k}` : `${k}`;
+        correct = `y^2 = ${kTex}x`;
+    } else {
+        // Вертикальна парабола: x² = ±2py
+        // Фокус: F(0; p/2) або F(0; -p/2)
+        const sign = Math.random() < 0.5 ? -1 : 1;
+        focusX = 0;
+        focusY = sign * (p / 2);
+        
+        const focusTex = focusY % 1 === 0 ? `${focusY}` : `${focusY.toFixed(1)}`;
+        text = `Скласти рівняння параболи з фокусом \\(F(0;${focusTex})\\).`;
+        
+        // Рівняння: x² = 2py або x² = -2py
+        const k = sign * 2 * p;
+        const kTex = k < 0 ? `-${-k}` : `${k}`;
+        correct = `x^2 = ${kTex}y`;
+    }
+
+    // Генеруємо неправильні відповіді
+    const wrongs = new Set();
+    const addWrong = (wrongK, isHorizWrong) => {
+        const wrongKTex = wrongK < 0 ? `-${-wrongK}` : `${wrongK}`;
+        const str = isHorizWrong ? `y^2 = ${wrongKTex}x` : `x^2 = ${wrongKTex}y`;
+        if (str !== correct) wrongs.add(str);
+    };
+
+    // Типові помилки
+    if (isHorizontal) {
+        // Для горизонтальної параболи
+        addWrong(-2 * p, true);           // протилежний знак
+        addWrong(p, true);                // p замість 2p
+        addWrong(4 * p, true);            // 4p замість 2p
+        addWrong(Math.abs(2 * p), true);  // |2p| (завжди додатнє)
+        
+        // Додаємо варіанти з вертикальною параболою як помилкові
+        const wrongKTex = (2 * p < 0) ? `-${-2 * p}` : `${2 * p}`;
+        wrongs.add(`x^2 = ${wrongKTex}y`);
+    } else {
+        // Для вертикальної параболи
+        addWrong(-2 * p, false);          // протилежний знак
+        addWrong(p, false);               // p замість 2p
+        addWrong(4 * p, false);           // 4p замість 2p
+        addWrong(Math.abs(2 * p), false); // |2p| (завжди додатнє)
+        
+        // Додаємо варіанти з горизонтальною параболою як помилкові
+        const wrongKTex = (2 * p < 0) ? `-${-2 * p}` : `${2 * p}`;
+        wrongs.add(`y^2 = ${wrongKTex}x`);
+    }
+
+    // Додаємо випадкові варіанти
+    while (wrongs.size < 3) {
+        const randK = (Math.floor(Math.random() * 36) + 2) * (Math.random() < 0.5 ? -1 : 1);
+        const randIsHorizontal = Math.random() < 0.5;
+        addWrong(randK, randIsHorizontal);
+    }
+
+    return {
+        text,
+        correct,
+        wrong: Array.from(wrongs).slice(0, 3)
+    };
+}
+
+    // === ПИТАННЯ 5: Приведення загального рівняння параболи до канонічного вигляду ===
+function generateQuestion5() {
+
+    // --- Допоміжні функції ---
+    const vertex = (v, name) => {
+        if (v === 0) return name;
+        const sign = v > 0 ? '-' : '+';
+        const absV = Math.abs(v);
+        return `\\left(${name}${sign}${absV}\\right)`;
+    };
+
+    // --- ФОРМАТУВАННЯ КОЕФІЦІЄНТІВ (без 1, -1) ---
+    const term = (coef, variable) => {
+        if (coef === 0) return '';
+        if (coef === 1) return ` + ${variable}`;
+        if (coef === -1) return ` - ${variable}`;
+        return ` ${coef > 0 ? '+ ' : '- '}${Math.abs(coef)}${variable}`;
+    };
+
+    const constantTerm = c => {
+        if (c === 0) return '';
+        return ` ${c > 0 ? '+ ' : '- '}${Math.abs(c)}`;
+    };
+
+    // --- Генеруємо параметри ---
+    const possible2p = [];
+    for (let i = -40; i <= 40; i += 4)
+        if (i !== 0) possible2p.push(i);
+
+    const twoP = possible2p[Math.floor(Math.random() * possible2p.length)];
+    const x0 = Math.floor(Math.random() * 11) - 5;
+    const y0 = Math.floor(Math.random() * 11) - 5;
+    const type = Math.floor(Math.random() * 4); // 0 вправо, 1 вліво, 2 вгору, 3 вниз
+
+    let canonicalEq = "";
+    let pStr = ""; // рядковий коефіцієнт для replace
+    let A = 0, B = 0, C = 0, D = 0, E = 0;
+
+    // === Формуємо канонічне рівняння та pStr ===
+    if (type === 0) { // вправо: (y - y0)² = 2p (x - x0)
+        pStr = twoP >= 0 ? `${twoP}` : `-${Math.abs(twoP)}`;
+        canonicalEq = `${vertex(y0, 'y')}^2 = ${pStr}${vertex(x0, 'x')}`;
+        B = 1; D = -2 * y0; E = y0 * y0 + twoP * x0; C = -twoP;
+
+    } else if (type === 1) { // вліво: (y - y0)² = -2p (x - x0)
+        pStr = twoP >= 0 ? `-${twoP}` : `${Math.abs(twoP)}`;
+        canonicalEq = `${vertex(y0, 'y')}^2 = ${pStr}${vertex(x0, 'x')}`;
+        B = 1; D = -2 * y0; E = y0 * y0 - twoP * x0; C = twoP;
+
+    } else if (type === 2) { // вгору: (x - x0)² = 2p (y - y0)
+        pStr = twoP >= 0 ? `${twoP}` : `-${Math.abs(twoP)}`;
+        canonicalEq = `${vertex(x0, 'x')}^2 = ${pStr}${vertex(y0, 'y')}`;
+        A = 1; C = -2 * x0; E = x0 * x0 + twoP * y0; D = -twoP;
+
+    } else if (type === 3) { // вниз: (x - x0)² = -2p (y - y0)
+        pStr = twoP >= 0 ? `-${twoP}` : `${Math.abs(twoP)}`;
+        canonicalEq = `${vertex(x0, 'x')}^2 = ${pStr}${vertex(y0, 'y')}`;
+        A = 1; C = -2 * x0; E = x0 * x0 - twoP * y0; D = twoP;
+    }
+
+    // --- Формуємо загальне рівняння ---
+    let generalEq = '';
+
+    if (A !== 0) {
+        generalEq += A === 1 ? 'x^2' : A === -1 ? '-x^2' : `${A}x^2`;
+    }
+    if (B !== 0) {
+        generalEq += B === 1 ? ' + y^2' : B === -1 ? ' - y^2' : term(B, 'y^2');
+    }
+    if (C !== 0) generalEq += term(C, 'x');
+    if (D !== 0) generalEq += term(D, 'y');
+    generalEq += constantTerm(E);
+
+    generalEq = generalEq.replace(/^\s*\+\s*/, '').trim();
+    if (!generalEq.includes('=')) generalEq += ' = 0';
+
+    const text = `Привести до канонічного вигляду рівняння параболи: \\(${generalEq}\\).`;
+
+    // --- Неправильні варіанти ---
+    const wrongs = new Set();
+    const addWrong = (eq) => {
+        if (eq !== canonicalEq && !wrongs.has(eq)) wrongs.add(eq);
+    };
+
+    // 1. Знак навпаки
+    const oppositePStr = pStr[0] === '-' ? pStr.slice(1) : `-${pStr.replace('-', '')}`;
+    addWrong(canonicalEq.replace(pStr, oppositePStr));
+
+    // 2. Перестановка x ↔ y (якщо можливо)
+    const swapped = canonicalEq
+        .replace(/x/g, "TEMP")
+        .replace(/y/g, "x")
+        .replace(/TEMP/g, "y");
+    addWrong(swapped);
+
+    // 3. 2p → p (половина)
+    const halfAbs = Math.abs(twoP) / 2;
+    const halfStr = twoP >= 0 ? `${halfAbs}` : `-${halfAbs}`;
+    const halfPStr = pStr[0] === '-' ? `-${halfAbs}` : `${halfAbs}`;
+    addWrong(canonicalEq.replace(pStr, halfPStr));
+
+    // 4. 2p → 4p (подвоєння)
+    const doubleAbs = Math.abs(twoP) * 2;
+    const doubleStr = twoP >= 0 ? `${doubleAbs}` : `-${doubleAbs}`;
+    const doublePStr = pStr[0] === '-' ? `-${doubleAbs}` : `${doubleAbs}`;
+    addWrong(canonicalEq.replace(pStr, doublePStr));
+
+    // --- Випадкові неправильні ---
+    while (wrongs.size < 3) {
+        const rx = x0 + Math.floor(Math.random() * 5 - 2);
+        const ry = y0 + Math.floor(Math.random() * 5 - 2);
+        const rp = possible2p[Math.floor(Math.random() * possible2p.length)];
+        const typ = Math.floor(Math.random() * 4);
+
+        let eq = "";
+        if (typ === 0) {
+            const rpStr = rp >= 0 ? `${rp}` : `-${Math.abs(rp)}`;
+            eq = `${vertex(ry, 'y')}^2 = ${rpStr}${vertex(rx, 'x')}`;
+        } else if (typ === 1) {
+            const rpStr = rp >= 0 ? `-${rp}` : `${Math.abs(rp)}`;
+            eq = `${vertex(ry, 'y')}^2 = ${rpStr}${vertex(rx, 'x')}`;
+        } else if (typ === 2) {
+            const rpStr = rp >= 0 ? `${rp}` : `-${Math.abs(rp)}`;
+            eq = `${vertex(rx, 'x')}^2 = ${rpStr}${vertex(ry, 'y')}`;
+        } else {
+            const rpStr = rp >= 0 ? `-${rp}` : `${Math.abs(rp)}`;
+            eq = `${vertex(rx, 'x')}^2 = ${rpStr}${vertex(ry, 'y')}`;
+        }
+
+        addWrong(eq);
+    }
+
+    return {
+        text,
+        correct: canonicalEq,
+        wrong: Array.from(wrongs).slice(0, 3)
+    };
+}
+// === ПИТАННЯ 6: Яке рівняння відповідає графіку? (Canvas + 4 варіанти) ===
+let canvasQuestion6 = null;
+
+function generateQuestion6() {
+    // === CANVAS: АДАПТИВНА ВЕРСІЯ (комп — 500px, мобілка — на всю ширину) ===
+    const canvas = document.createElement('canvas');
+    
+    // Фізичний розмір (пікселі, в яких малюємо) — завжди 500×500
+    canvas.width = 500;
+    canvas.height = 500;
+
+    // Відображуваний розмір — адаптивний
+    canvas.style.width = '100%';          // на мобілці — на всю ширину
+    canvas.style.height = 'auto';         // зберігає квадрат
+    canvas.style.maxWidth = '500px';      // на компі — не більше 500px
+    canvas.style.display = 'block';
+    canvas.style.margin = '20px auto';
+    canvas.style.border = '2px solid #333';
+    canvas.style.background = '#f8f8f8';
+    canvas.style.borderRadius = '10px';
+    canvas.style.boxShadow = '0 6px 20px rgba(0,0,0,0.12)';
+    
+    // Опційно: трохи краща чіткість на мобілках
+    canvas.style.imageRendering = 'crisp-edges';
+
+    const ctx = canvas.getContext('2d');
+    const size = 20;
+    const gridMin = -10, gridMax = 10;
+    const originX = canvas.width / 2;
+    const originY = canvas.height / 2;
+
+    const drawGrid = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // 1. Заповнюємо весь canvas сірим фоном сітки
+    ctx.fillStyle = '#f2f2f2';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // 2. Малюємо сітку 1×1 (кожна клітинка 20px) по всьому canvas
+    ctx.strokeStyle = '#cccccc';
+    ctx.lineWidth = 1;
+
+    // вертикальні лінії
+    for (let i = -12.5; i <= 12.5; i += 0.5) {  // кожні 10px, але малюємо тільки цілі
+        if (Math.abs(i % 1) < 0.01) { // тільки цілі значення (кожні 20px)
+            const x = originX + i * size;
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, canvas.height);
+            ctx.stroke();
+        }
+    }
+    // горизонтальні лінії
+    for (let i = -12.5; i <= 12.5; i += 0.5) {
+        if (Math.abs(i % 1) < 0.01) {
+            const y = originY - i * size;
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(canvas.width, y);
+            ctx.stroke();
+        }
+    }
+
+    // 3. Потовщені осі
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(0, originY);
+    ctx.lineTo(canvas.width, originY);        // X
+    ctx.moveTo(originX, 0);
+    ctx.lineTo(originX, canvas.height);       // Y
+    ctx.stroke();
+
+    // 4. Стрілки (чіткі, великі)
+    ctx.fillStyle = '#000';
+    // → X
+    ctx.beginPath();
+    ctx.moveTo(canvas.width - 15, originY - 7);
+    ctx.lineTo(canvas.width - 5, originY);
+    ctx.lineTo(canvas.width - 15, originY + 7);
+    ctx.closePath();
+    ctx.fill();
+    // ↑ Y
+    ctx.beginPath();
+    ctx.moveTo(originX - 7, 15);
+    ctx.lineTo(originX, 5);
+    ctx.lineTo(originX + 7, 15);
+    ctx.closePath();
+    ctx.fill();
+
+    // 5. Підписи осей
+    ctx.font = 'bold 18px Arial';
+    ctx.fillText('x', canvas.width - 25, originY + 25);
+    ctx.fillText('y', originX - 25, 25);
+
+    // 6. Цифри тільки від -10 до 10
+    ctx.fillStyle = '#333';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    for (let i = -10; i <= 10; i++) {
+        if (i !== 0) {
+            ctx.fillText(i, originX + i * size, originY + 8);
+        }
+    }
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'right';
+    for (let i = -10; i <= 10; i++) {
+        if (i !== 0) {
+            ctx.fillText(i, originX - 8, originY - i * size);
+        }
+    }
+
+    // 0 в центрі
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    ctx.fillText('0', originX + 5, originY + 5);
+};
+    // === ПАРАБОЛА ===
+    const vertexX = Math.floor(Math.random() * 15) - 7; // -7..7
+const vertexY = Math.floor(Math.random() * 15) - 7; // -7..7
+
+    const possible2p = [8, 12, 16, 20, 24, 28];
+    const twoP = possible2p[Math.floor(Math.random() * possible2p.length)] * (Math.random() < 0.5 ? 1 : -1);
+    const type = Math.floor(Math.random() * 4);
+    
+
+    // === КАНОНІЧНЕ РІВНЯННЯ (LaTeX) ===
+    const vertexTerm = (v, name) => v === 0 ? name : `\\left(${name}${v > 0 ? `-${v}` : `+${-v}`}\\right)`;
+
+    let correctEq = '';
+    if (type === 0) correctEq = `${vertexTerm(vertexY, 'y')}^2 = ${twoP}${vertexTerm(vertexX, 'x')}`;
+    else if (type === 1) correctEq = `${vertexTerm(vertexY, 'y')}^2 = ${twoP}${vertexTerm(vertexX, 'x')}`;
+    else if (type === 2) correctEq = `${vertexTerm(vertexX, 'x')}^2 = ${twoP}${vertexTerm(vertexY, 'y')}`;
+    else correctEq = `${vertexTerm(vertexX, 'x')}^2 = ${twoP}${vertexTerm(vertexY, 'y')}`;
+
+    // === РОЗРАХУНОК ДИРЕКТРИСИ ===
+    let directrix = null;
+    let isVerticalDirectrix = false;
+    
+    if (type === 0 || type === 1) {
+        // Для горизонтальних парабол: (y-y0)² = 2p(x-x0)
+        // Директриса: x = x0 - p/2
+        directrix = vertexX - (twoP / 4);
+        isVerticalDirectrix = true;
+    } else {
+        // Для вертикальних парабол: (x-x0)² = 2p(y-y0)
+        // Директриса: y = y0 - p/2
+        directrix = vertexY - (twoP / 4);
+        isVerticalDirectrix = false;
+    }
+    // Перевірка, щоб директриса була в межах від -10 до 10
+if (directrix < -10) directrix = -10;
+if (directrix > 10) directrix = 10;
+
+    // === МАЛЮЄМО ПАРАБОЛУ ТА ДИРЕКТРИСУ ===
+    drawGrid();
+
+    // Малюємо директрису синім
+       // === ДИРЕКТРИСА ===
+    if (directrix !== null) {
+        ctx.strokeStyle = 'blue';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 4]);
+
+        if (isVerticalDirectrix) {
+            // вертикальна директриса
+            const dx = originX + directrix * size;
+            ctx.beginPath();
+            ctx.moveTo(dx, originY - 10 * size);
+            ctx.lineTo(dx, originY + 10 * size);
+            ctx.stroke();
+
+            // Підпис "d" знизу (під віссю X)
+            ctx.setLineDash([]);
+            ctx.fillStyle = 'blue';
+            ctx.font = 'bold 16px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            ctx.fillText('d', dx, originY + 12);
+        } else {
+            // горизонтальна директриса
+            const dy = originY - directrix * size;
+            ctx.beginPath();
+            ctx.moveTo(originX - 10 * size, dy);
+            ctx.lineTo(originX + 10 * size, dy);
+            ctx.stroke();
+
+            // Підпис "d" праворуч від лінії
+            ctx.setLineDash([]);
+            ctx.fillStyle = 'blue';
+            ctx.font = 'bold 16px Arial';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('d', originX + 10 * size + 8, dy);
+        }
+        ctx.setLineDash([]);
+    }
+
+    // Малюємо параболу червоним
+   // === МАЛЮЄМО ПАРАБОЛУ ДО САМОГО КРАЮ CANVAS ===
+ctx.strokeStyle = 'red';
+ctx.lineWidth = 3;
+ctx.beginPath();
+
+let first = true;
+const steps = 800;
+
+// Максимальне відхилення по осі, яке ми хочемо намалювати (в одиницях графіка)
+const maxT = 15;   // можна навіть 20 — вітки будуть дуже довгі
+
+for (let i = 0; i <= steps; i++) {
+    const t = (i / steps) * 2 * maxT - maxT;   // від -maxT до +maxT
+
+    let x, y;
+
+    if (type === 0 || type === 1) {            // (y−k)² = 2p(x−h)
+        y = vertexY + t;
+        x = vertexX + (t * t) / twoP;
+    } else {                                   // (x−h)² = 2p(y−k)
+        x = vertexX + t;
+        y = vertexY + (t * t) / twoP;
+    }
+
+    const px = originX + x * size;
+    const py = originY - y * size;
+
+    // Малюємо, тільки якщо точка всередині canvas (з маленьким запасом)
+    if (px >= 0 && px <= canvas.width && py >= 0 && py <= canvas.height) {
+        if (first) {
+            ctx.moveTo(px, py);
+            first = false;
+        } else {
+            ctx.lineTo(px, py);
+        }
+    }
+}
+ctx.stroke();
+
+    // Вершина — червона точка
+    ctx.fillStyle = 'red';
+    ctx.beginPath();
+    ctx.arc(originX + vertexX * size, originY - vertexY * size, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // === 4 ВАРІАНТИ ===
+    const wrongs = new Set();
+
+    const generateWrong = () => {
+        const wx = Math.floor(Math.random() * 13) - 6;
+        const wy = Math.floor(Math.random() * 11) - 5;
+        const w2p = possible2p[Math.floor(Math.random() * possible2p.length)] * (Math.random() < 0.5 ? 1 : -1);
+        const wtype = Math.floor(Math.random() * 4);
+
+        let eq = '';
+        if (wtype === 0 || wtype === 1) {
+            eq = `${vertexTerm(wy, 'y')}^2 = ${w2p}${vertexTerm(wx, 'x')}`;
+        } else {
+            eq = `${vertexTerm(wx, 'x')}^2 = ${w2p}${vertexTerm(wy, 'y')}`;
+        }
+        return eq;
+    };
+
+    while (wrongs.size < 3) {
+        const wrong = generateWrong();
+        if (wrong !== correctEq) wrongs.add(wrong);
+    }
+
+    const allOptions = [correctEq, ...wrongs].sort(() => Math.random() - 0.5);
+    const correctIndex = allOptions.indexOf(correctEq);
+
+    canvasQuestion6 = { canvas, allOptions, correctIndex };
+
+    return {
+        text: "Яке рівняння відповідає зображеній параболі?",
+        correct: correctEq,
+        wrong: Array.from(wrongs),
+        canvas: canvas
+    };
+}
+            
+// === ПОКАЗ ПИТАННЯ ===
+function displayQuestion() {
+    let q;
+
+    // === ГЕНЕРУЄМО ПИТАННЯ ===
+    if (stage === 1) {
+        q = generateQuestion1();
+        document.getElementById('questionNumber').textContent = 'Питання 1';
+    } else if (stage === 2) {
+        q = generateQuestion2();
+        document.getElementById('questionNumber').textContent = 'Питання 2';
+    } else if (stage === 3) {
+        q = generateQuestion3();
+        document.getElementById('questionNumber').textContent = 'Питання 3';
+    } else if (stage === 4) {
+        q = generateQuestion4();
+        document.getElementById('questionNumber').textContent = 'Питання 4';
+    } else if (stage === 5) {
+        q = generateQuestion5();
+        document.getElementById('questionNumber').textContent = 'Питання 5';
+    } else if (stage === 6) {
+        q = generateQuestion6();
+        document.getElementById('questionNumber').textContent = 'Питання 6';
+    }
+
+    // === ПІДГОТОВКА ===
+    els.questionText.style.opacity = 0;
+    els.optionsContainer.style.opacity = 0;
+
+    // === ОЧИЩАЄМО ВСЕ ===
+    els.questionText.innerHTML = '';
+    const canvasContainer = document.getElementById('canvasContainer');
+    if (canvasContainer) canvasContainer.innerHTML = '';
+
+    // === ДОДАЄМО ТЕКСТ ПИТАННЯ ДЛЯ ВСІХ ПИТАНЬ ===
+    const questionParagraph = document.createElement('p');
+    questionParagraph.className = 'question-text';
+    questionParagraph.style.textAlign = 'center';
+    questionParagraph.style.fontWeight = 'bold';
+    questionParagraph.style.margin = '15px 0';
+    
+    if (stage === 6) {
+        questionParagraph.textContent = "Яке рівняння відповідає зображеній параболі?";
+    } else {
+        questionParagraph.textContent = q.text;
+    }
+    
+    els.questionText.appendChild(questionParagraph);
+
+    // === ДОДАЄМО CANVAS ТІЛЬКИ ДЛЯ ПИТАННЯ 6 ===
+    if (stage === 6 && q.canvas) {
+        const container = document.getElementById('canvasContainer');
+        if (container) {
+            container.appendChild(q.canvas);
+        } else {
+            // Якщо контейнера немає, створюємо його
+            const newContainer = document.createElement('div');
+            newContainer.id = 'canvasContainer';
+            newContainer.style.textAlign = 'center';
+            newContainer.appendChild(q.canvas);
+            els.questionText.appendChild(newContainer);
+        }
+    }
+
+    // === ОПЦІЇ ===
+    const allOptions = [q.correct, ...q.wrong].sort(() => Math.random() - 0.5);
+    correctIndex = allOptions.indexOf(q.correct);
+
+    els.optionsContainer.innerHTML = '';
+    allOptions.forEach((opt, i) => {
+        const div = document.createElement('div');
+        div.className = 'option';
+        div.dataset.value = i;
+        div.innerHTML = `<span class="math-formula">\\(${opt}\\)</span>`;
+        els.optionsContainer.appendChild(div);
+    });
+
+    // === СКИДАННЯ ===
+    selected = null;
+    els.submitAnswer.disabled = true;
+    document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+
+    // === MathJax + АНІМАЦІЯ ===
+    if (window.MathJax?.typesetPromise) {
+        MathJax.typesetPromise([els.questionText, els.optionsContainer]).then(() => {
+            els.questionText.style.opacity = 1;
+            els.optionsContainer.style.opacity = 1;
+        });
+    } else {
+        els.questionText.style.opacity = 1;
+        els.optionsContainer.style.opacity = 1;
+    }
+}
+// === ІНІЦІАЛІЗАЦІЯ ТРЕНАЖЕРА ===
+function initTrainer() {
+    stage = 1; // Скидаємо до першого питання
+    selected = null;
+    correctIndex = null;
+    displayQuestion();
+    
+    // Скидаємо стан кнопки
+    els.submitAnswer.disabled = true;
+    document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+}
+
+// === ОБРОБНИК ВІДПОВІДЕЙ ===
+els.submitAnswer.addEventListener('click', () => {
+    if (selected === null) {
+        els.feedback.textContent = 'Оберіть варіант відповіді!';
+        els.feedback.className = 'feedback incorrect-feedback show';
+        setTimeout(() => els.feedback.classList.remove('show'), 1200);
+        return;
+    }
+
+    const isCorrect = parseInt(selected) === correctIndex;
+
+    els.feedback.textContent = isCorrect ? '✓ Ціль уражена!' : '✗ Промах! Спробуй ще!';
+    els.feedback.className = `feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'} show`;
+
+    setTimeout(() => {
+        els.feedback.classList.remove('show');
+        setTimeout(() => {
+            if (isCorrect) {
+                // ПРАВИЛЬНО — ПЕРЕХОДИМО НАСТУПНЕ
+                if (stage === 1) stage = 2;
+                else if (stage === 2) stage = 3;
+                else if (stage === 3) stage = 4;
+                else if (stage === 4) stage = 5;
+                else if (stage === 5) stage = 6;
+                else if (stage === 6) {
+                    toggleModal(els.trainerModal, false);
+                    toggleModal(els.completionModal, true);
+                    return;
+                }
+                displayQuestion();
+            } else {
+                // НЕПРАВИЛЬНО
+                if (stage === 5) {
+                    // ДЛЯ ПИТАННЯ 5 — НОВЕ ПИТАННЯ 5
+                    displayQuestion(); // generateQuestion5() викличеться знову
+                } else if (stage === 6) {
+                    // ДЛЯ ПИТАННЯ 6 — НОВИЙ ГРАФІК
+                    displayQuestion();
+                } else {
+                    // ДЛЯ 1–4 — ПРОСТО НОВЕ
+                    displayQuestion();
+                }
+            }
+        }, 300);
+    }, 1200);
+});
+// === ОБРОБНИК ДЛЯ КНОПКИ "СПРОБУВАТИ ЩЕ РАЗ" ===
+els.resetTrainerBtn.addEventListener('click', function() {
+    toggleModal(els.completionModal, false);
+    toggleModal(els.trainerModal, true);
+    initTrainer();
+});
+
+// === ОБРОБНИК ВИБОРУ ВАРІАНТУ ===
+els.optionsContainer.addEventListener('click', e => {
+    const opt = e.target.closest('.option');
+    if (!opt) return;
+    document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+    opt.classList.add('selected');
+    selected = opt.dataset.value;
+    els.submitAnswer.disabled = false;
+    
+    // Додатково: лог для дебагу
+    console.log('Обрано варіант:', selected, 'Правильний індекс:', correctIndex);
+});
+        });
+    </script>
+</body>
+</html>
