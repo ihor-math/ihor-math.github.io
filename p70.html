@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>70. Властивості границь</title>
+    <script>
+    window.MathJax = {
+        tex: {
+            inlineMath: [['\\(', '\\)']],
+            displayMath: [['\\[', '\\]']],
+            macros: {
+                tg: "{\\operatorname{tg}}",   // головний трюк — гарантія червоної рисочки!
+                ctg: "{\\operatorname{ctg}}",
+                th: "{\\operatorname{th}}"
+            }
+        }
+    };
+</script>
+<!-- Додаємо YouTube IFrame API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;700&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        *, *:before, *:after { box-sizing: border-box; }
+        body {
+            margin: 0;
+            background: linear-gradient(135deg, #0f1b2e, #1e2d42);
+            font-family: 'Roboto', sans-serif;
+            color: #e2e8f0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            padding: 10px;
+        }
+        body.loaded { visibility: visible; opacity: 1; }
+
+        .title-box {
+            margin-top: 40px;
+            padding: 18px 30px;
+            background: linear-gradient(140deg, #1e3a5f, #3d6029);
+            border: 3px solid #d4af37;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            max-width: 800px;
+        }
+        .title-box::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #d4af37, #b8860b, #d4af37);
+        }
+        .title-box h1 {
+            margin: 0;
+            font-family: 'Oswald', sans-serif;
+            font-size: clamp(22px, 5vw, 32px);
+            color: #fff8e7;
+            text-shadow: 2px 2px 6px #000;
+            letter-spacing: 1.8px;
+            text-align: center;
+        }
+
+        .section-container {
+            margin-top: 50px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            justify-content: center;
+            width: 100%;
+            max-width: 900px;
+        }
+        .section {
+            width: min(280px, 90vw);
+            height: 200px;
+            background: linear-gradient(45deg, #1e3a5f, #3d6029);
+            border: 3px solid #d4af37;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .section::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #d4af37, #b8860b, #d4af37);
+        }
+        .section:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(212,175,55,0.4);
+        }
+        .section img { 
+            width: clamp(50px, 12vw, 68px); 
+            height: clamp(50px, 12vw, 68px); 
+            filter: drop-shadow(0 0 10px #d4af37); 
+        }
+        .section h2 { 
+            margin: 15px 0 0; 
+            font-family: 'Oswald', sans-serif; 
+            font-size: clamp(18px, 4vw, 24px); 
+            color: #fff8e7; 
+            padding: 0 10px;
+        }
+
+        .modal { 
+            display: none; 
+            position: fixed; 
+            top: 3%; 
+            left: 3%; 
+            width: 94%; 
+            height: 94%; 
+            background: linear-gradient(135deg, #1e3a5f, #3d6029); 
+            border: 3px solid #d4af37; 
+            border-radius: 14px; 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.7); 
+            z-index: 1001; 
+            flex-direction: column; 
+        }
+        #modalOverlay { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.85); 
+            z-index: 999; 
+        }
+        
+        /* СТИЛЬНА ВЕРТИКАЛЬНА СМУЖКА ПРОКРУТКИ */
+        .modal-content { 
+            padding: 20px; 
+            background: #0f1b2e; 
+            margin: 10px; 
+            border-radius: 10px; 
+            overflow-y: auto; 
+            flex-grow: 1; 
+            border: 1px solid #d4af37;
+            
+            /* Стильна смужка прокрутки */
+            scrollbar-width: thin;
+            scrollbar-color: #d4af37 #1e3a5f;
+        }
+        
+        .modal-content::-webkit-scrollbar {
+            width: 12px;
+        }
+        
+        .modal-content::-webkit-scrollbar-track {
+            background: #1e3a5f;
+            border-radius: 8px;
+            margin: 5px;
+        }
+        
+        .modal-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, #d4af37, #b8860b);
+            border-radius: 8px;
+            border: 2px solid #1e3a5f;
+            box-shadow: 0 0 8px rgba(212,175,55,0.5);
+        }
+        
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(to bottom, #e6c158, #c9961c);
+        }
+        
+        .modal-header { 
+            background: linear-gradient(90deg, #3d6029, #1e3a5f); 
+            padding: 12px 15px; 
+            display: flex; 
+            justify-content: flex-end; 
+        }
+        .close-btn { 
+            background: #8b0000; 
+            color: #fff; 
+            border: none; 
+            padding: 8px 20px; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            font-family: 'Oswald', sans-serif; 
+            font-size: clamp(14px, 3.5vw, 16px);
+            transition: all 0.3s;
+        }
+        .close-btn:hover { 
+            background: #c62828; 
+            transform: scale(1.05);
+        }
+
+        .navigation-buttons { 
+           display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px auto;
+            max-width: 1000px;
+        }
+        .nav-button {
+display: flex;
+            align-items: center;
+             background: #3d6029; 
+            color: #fff8e7; 
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 18px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid #8b9d6f;
+            font-family: 'Oswald', sans-serif;
+            letter-spacing: 0.5px;
+        }
+            
+            
+        .nav-button:hover { 
+            background: #d4af37; 
+            color: #0f1b2e; 
+            transform: scale(1.03); 
+        }
+
+        /* Теорія */
+        .theory-content {
+            font-size: clamp(15px, 4vw, 17px);
+            line-height: 1.6;
+        }
+        
+        .theory-content h2 { 
+            color: #d4af37; 
+            font-family: 'Oswald', sans-serif;
+            text-align: center;
+            border-left: 6px solid #d4af37; 
+            padding-left: 15px; 
+            margin-top: 25px;
+            font-size: clamp(18px, 4.5vw, 24px);
+        }
+
+            .theory-content h3 { 
+            color: #d4af37; 
+            font-family: 'Oswald', sans-serif; 
+            border-left: 6px solid #d4af37; 
+            padding-left: 15px; 
+            margin-top: 25px;
+            font-size: clamp(18px, 4.5vw, 24px);
+        }
+        
+        .theory-content ul { 
+            line-height: 1.8; 
+            padding-left: 20px;
+        }
+        
+        .theory-content li {
+            margin: 12px 0;
+        }
+
+        /* Флеш-картки */
+       /* ─────── ФЛЕШ-КАРТКИ — ЗАВЖДИ В ОДИН СТОВПЧИК ─────── */
+.cards-container {
+    display: flex;
+    flex-direction: column;     /* головне — стовпчик! */
+    align-items: center;        /* центруємо по горизонталі */
+    gap: 18px;                  /* відстань між картками */
+    width: 100%;
+    max-width: 800px;           /* не ширше 600px */
+    margin: 20px auto;         /* центруємо контейнер */
+    padding: 10px 15px;
+    box-sizing: border-box;
+}
+
+.question-card {
+    perspective: 1000px;
+    width: 100%;                /* завжди на всю ширину контейнера */
+    max-width: 800px;           /* максимальна ширина картки */
+    height: 160px;
+    cursor: pointer;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+    transition: transform 0.3s ease;
+}
+
+.question-card:hover {
+    transform: translateY(-4px);
+}
+
+/* На мобілках трохи менші картки */
+@media (max-width: 768px) {
+    .cards-container {
+        gap: 15px;
+        padding: 10px;
+        max-width: 100%;
+    }
+    
+    .question-card {
+        height: 125px;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .question-card {
+        height: 115px;
+    }
+    
+    .card-front, .card-back {
+        padding: 12px !important;
+        font-size: 14px !important;
+    }
+}
+        .card-inner { 
+            position: relative; 
+            width: 100%; 
+            height: 100%; 
+            transition: transform 0.6s; 
+            transform-style: preserve-3d; 
+        }
+        
+        .question-card.flipped .card-inner { 
+            transform: rotateY(180deg); 
+        }
+        
+        .card-front, .card-back {
+            position: absolute; 
+            width: 100%; 
+            height: 100%; 
+            backface-visibility: hidden;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 20px;
+            border-radius: 12px; 
+            border: 3px solid #d4af37; 
+            text-align: center; 
+            font-size: clamp(15px, 4vw, 18px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        .card-front { 
+            background: #1e3a5f; 
+            color: #fff8e7; 
+        }
+        
+        .card-back { 
+            background: #3d6029; 
+            color: #fff8e7; 
+            transform: rotateY(180deg); 
+        }
+
+        mjx-container { color: #ffec8b !important; }
+
+        /* Відео блоки */
+        .video-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 15px 0;
+        }
+        
+        .video-item {
+            width: min(380px, 90vw);
+            height: 220px;
+            background: #3d6029;
+            border: 3px solid #d4af37;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .video-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(212,175,55,0.3);
+        }
+        
+        .video-item img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 10px;
+        }
+        
+        .video-item h3 {
+            color: #fff8e7;
+            margin: 10px 0;
+            font-size: clamp(16px, 4vw, 18px);
+        }
+        
+        .video-item p {
+            font-size: clamp(12px, 3vw, 14px);
+            margin: 5px 0;
+        }
+
+                        #youtubePlayer1 {
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%; /* 16:9 */
+    position: relative;
+}
+
+#youtubePlayer1 iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+                        /* Стилі для теоретичного контенту */
+.property-card {
+    background: linear-gradient(135deg, #1e3a5f, #2a4a3a);
+    border: 2px solid #d4af37;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.property-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 100%;
+    background: linear-gradient(to bottom, #d4af37, #b8860b, #d4af37);
+}
+
+.property-card h3 {
+    color: #d4af37;
+    font-family: 'Oswald', sans-serif;
+    margin-top: 0;
+    font-size: clamp(16px, 4vw, 20px);
+    border-bottom: 2px solid #d4af37;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+}
+
+.property-card p {
+    margin: 10px 0;
+    line-height: 1.6;
+}
+
+.property-card .note {
+    font-style: italic;
+    color: #ffec8b;
+    background: rgba(212,175,55,0.1);
+    padding: 10px;
+    border-radius: 6px;
+    border-left: 3px solid #d4af37;
+}
+
+.formula {
+    text-align: center;
+    margin: 15px 0;
+    padding: 15px;
+    background: rgba(212,175,55,0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(212,175,55,0.3);
+}
+
+.formula mjx-container {
+    font-size: 120% !important;
+}
+
+.info-box {
+    background: linear-gradient(135deg, #3d6029, #2a4a3a);
+    border: 2px solid #d4af37;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 25px 0;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+.info-box p {
+    margin: 0;
+    font-size: clamp(15px, 4vw, 17px);
+}
+
+.example-card {
+    background: linear-gradient(135deg, #2a4a3a, #1e3a5f);
+    border: 2px solid #d4af37;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 25px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.example-card h3 {
+    color: #d4af37;
+    font-family: 'Oswald', sans-serif;
+    margin-top: 0;
+    font-size: clamp(16px, 4vw, 20px);
+    border-bottom: 1px solid #d4af37;
+    padding-bottom: 8px;
+}
+
+.example-card p {
+    margin: 12px 0;
+    line-height: 1.6;
+}
+
+.example-card strong {
+    color: #ffec8b;
+}
+
+/* Адаптація для мобільних */
+@media (max-width: 768px) {
+    .property-card,
+    .example-card {
+        padding: 15px;
+        margin: 15px 0;
+    }
+    
+    .formula {
+        padding: 12px;
+        margin: 12px 0;
+    }
+    
+    .info-box {
+        padding: 15px;
+        margin: 20px 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .property-card,
+    .example-card {
+        padding: 12px;
+        margin: 12px 0;
+    }
+    
+    .formula {
+        padding: 10px;
+        margin: 10px 0;
+    }
+    
+    .property-card h3,
+    .example-card h3 {
+        font-size: 16px;
+    }
+}
+
+        /* Медіа-запити для мобільних */
+        @media (max-width: 768px) {
+            .title-box {
+                margin-top: 25px;
+                padding: 15px 20px;
+            }
+            
+            .section-container {
+                margin-top: 35px;
+                gap: 20px;
+            }
+            
+            .section {
+                height: 170px;
+            }
+            
+            .modal {
+                top: 2%;
+                left: 2%;
+                width: 96%;
+                height: 96%;
+            }
+            
+            .modal-content {
+                padding: 15px;
+            }
+            
+            .navigation-buttons {
+                margin: 30px 0 20px;
+                gap: 15px;
+            }
+            
+            .nav-button {
+                min-width: 170px;
+                padding: 10px 20px;
+            }
+            
+            .question-card {
+                height: 120px;
+            }
+            
+            .card-front, .card-back {
+                padding: 15px;
+            }
+            
+            .video-item {
+                height: 180px;
+                padding: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+            
+            .title-box {
+                margin-top: 20px;
+                padding: 12px 15px;
+            }
+            
+            .section {
+                height: 150px;
+            }
+            
+            .section img {
+                width: 45px;
+                height: 45px;
+            }
+            
+            .modal-content {
+                padding: 12px;
+            }
+            
+            .nav-button {
+                min-width: 150px;
+                padding: 8px 15px;
+            }
+            
+            .question-card {
+                height: 110px;
+            }
+            
+            .theory-content {
+                font-size: 14px;
+            }
+            
+            .video-item {
+                height: 160px;
+            }
+            mjx-container {
+   
+    font-size: 1.0em !important;   
+}
+        }
+
+    /* Стилі для відео-карток */
+.glow-title {
+    color: #d4af37;
+    text-align: center;
+    font-family: 'Oswald', sans-serif;
+    font-size: clamp(20px, 5vw, 28px);
+    text-shadow: 0 0 10px rgba(212,175,55,0.5);
+    margin-bottom: 30px;
+}
+
+.video-card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 25px;
+    padding: 20px 0;
+}
+
+.video-card {
+    width: min(320px, 90vw);
+    height: 180px;
+    background: linear-gradient(135deg, #1e3a5f, #3d6029);
+    border: 3px solid #d4af37;
+    border-radius: 15px;
+    padding: 25px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+.video-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #d4af37, #b8860b, #d4af37);
+}
+
+.video-card:hover {
+    transform: translateY(-8px) scale(1.05);
+    box-shadow: 0 12px 30px rgba(212,175,55,0.3);
+    border-color: #ffd700;
+}
+
+.video-card img {
+                width: 40px;
+                height: 40px;
+                margin-bottom: 6px;
+            }
+
+.video-card:hover img {
+    transform: scale(1.1);
+}
+
+.video-card h3 {
+    color: #fff8e7;
+    font-family: 'Oswald', sans-serif;
+    font-size: clamp(16px, 4vw, 20px);
+    margin: 0;
+    line-height: 1.3;
+}
+
+/* ─────── ВИПРАВЛЕНИЙ ВІДЕОПЛЕЄР ─────── */
+.video-player-container {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%; /* 16:9 співвідношення */
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+    margin: 10px 0;
+}
+
+#youtubePlayer1 {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    border: none !important;
+}
+
+/* Гарантуємо, що iframe займає всю площу */
+#youtubePlayer1 iframe {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    border: none !important;
+}
+
+    #videoPlayerModal1 .modal-content {
+    padding: 15px !important;
+    margin: 10px !important;
+    background: #000 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+/* Адаптація для мобільних */
+@media (max-width: 768px) {
+    .video-card-container {
+        gap: 20px;
+        padding: 15px 0;
+    }
+    
+    .video-card {
+        height: 160px;
+        padding: 20px;
+    }
+    
+    .video-card img {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 12px;
+    }
+    
+    .glow-title {
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .video-card {
+        height: 140px;
+        padding: 15px;
+    }
+    
+    .video-card img {
+        width: 50px;
+        height: 50px;
+        margin-bottom: 10px;
+    }
+    
+    .video-card-container {
+        gap: 15px;
+    }
+}
+
+    
+    </style>
+</head>
+<body>
+    <!-- Весь ваш HTML код залишається незмінним -->
+    <div class="title-box">
+        <h1>70. Властивості границь</h1>
+    </div>
+
+    <div class="section-container">
+        <div class="section" id="openTheoryBtn">
+             <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Книга">
+            <h2>Теоретичні відомості</h2>
+        </div>
+        <div class="section" id="openVideoBtn">
+            <img src="https://img.icons8.com/fluency/96/video.png" alt="Відео">
+            <h2>Відеоматеріали</h2>
+        </div>
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Картки">
+            <h2>Питання і відповіді</h2>
+        </div>
+    </div>
+
+    <div class="navigation-buttons">
+        <a class="nav-button prev" href="#">
+            <svg width="22" height="22" fill="#fff8e7" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+            До теми 12
+        </a>
+        <a class="nav-button home" href="#">
+            <svg width="22" height="22" fill="#fff8e7" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            На головну
+        </a>
+    </div>
+
+        <!-- Теорія -->
+    <div id="theoryModal" class="modal">
+        <div class="modal-header"><button class="close-btn" id="closeTheoryBtn">× Закрити</button></div>
+        <div class="modal-content">
+            <div class="theory-content">
+                <h2>Основні властивості границь функцій</h2>
+                
+                <p>Для функцій, що мають границю, виконуються такі основні властивості:</p>
+
+                <div class="property-card">
+                    <h3>1) Унікальність границі</h3>
+                    <p>Якщо функція \( f(x) \) має границю при \( x \to a \), то ця границя є єдиною.</p>
+                    <p class="note">Функція не може одночасно наближатися до двох різних значень.</p>
+                </div>
+
+                <div class="property-card">
+                    <h3>2) Границя константи</h3>
+                    <p>Границя постійної функції дорівнює її значенню:</p>
+                    <div class="formula">\[ \lim_{x \to a} C = C \]</div>
+                    <p>де \( C \) – константа.</p>
+                </div>
+
+                <div class="property-card">
+                    <h3>3) Границя суми або різниці</h3>
+                    <p>Границя суми (або різниці) двох функцій дорівнює сумі (або різниці) їхніх границь:</p>
+                    <div class="formula">\[ \lim_{x \to a} [f(x) \pm g(x)] = \lim_{x \to a} f(x) \pm \lim_{x \to a} g(x) \]</div>
+                    <p>за умови, що ці границі існують.</p>
+                </div>
+
+                <div class="property-card">
+                    <h3>4) Границя добутку</h3>
+                    <p>Границя добутку двох функцій дорівнює добутку їхніх границь:</p>
+                    <div class="formula">\[ \lim_{x \to a} [f(x) \cdot g(x)] = \lim_{x \to a} f(x) \cdot \lim_{x \to a} g(x) \]</div>
+                    <p>за умови, що ці границі існують.</p>
+                </div>
+
+                <div class="property-card">
+                    <h3>5) Винесення константи</h3>
+                    <p>Постійний множник можна виносити за знак границі:</p>
+                    <div class="formula">\[ \lim_{x \to a} [C \cdot f(x)] = C \cdot \lim_{x \to a} f(x) \]</div>
+                    <p>де \( C \in \mathbb{R} \).</p>
+                </div>
+
+                <div class="property-card">
+                    <h3>6) Границя частки</h3>
+                    <p>Границя частки двох функцій дорівнює частці їхніх границь:</p>
+                   <div class="formula">\[ \lim_{x \to a} \frac{f(x)}{g(x)} = \frac{\displaystyle\lim_{x \to a} f(x)}{\displaystyle\lim_{x \to a} g(x)} \]</div>
+                    <p>за умови, що границі чисельника і знаменника існують, а границя знаменника не дорівнює нулю:</p>
+                    <div class="formula">\[ \lim_{x \to a} g(x) \neq 0 \]</div>
+                </div>
+
+                <div class="info-box">
+                    <p><strong>Усі ці властивості справедливі як при \( x \to a \), так і при \( x \to \infty \).</strong></p>
+                </div>
+
+                <h2>Приклади застосування властивостей</h2>
+
+                <div class="example-card">
+                    <h3>Приклад 12.3</h3>
+                    <p>Обчислити границю:</p>
+                    <div class="formula">\[ \lim_{x \to 2} (5x^2 - 13x + 5) \]</div>
+                    <p style="text-align: center;"><strong>Розв'язання:</strong></p>
+
+                    <p>Використовуємо властивість границі для суми, різниці, множення константи:</p>
+                    <div class="formula">\[ \lim_{x \to 2} (5x^2 - 13x + 5) = \lim_{x \to 2} (5x^2) - \lim_{x \to 2} (13x) + \lim_{x \to 2} 5 = 20 - 26 + 5 = -1 \]</div>
+                    <p>Або, використовуючи правило безпосередньої підстановки:</p>
+<div class="formula">\[ \lim_{x \to a} f(x) = f(a) \]</div>
+                    <div class="formula">\[ \lim_{x \to 2} (5x^2 - 13x + 5) = 5 \cdot 2^2 - 13 \cdot 2 + 5 = 20 - 26 + 5 = -1 \]</div>
+                </div>
+
+               <div class="example-card">
+    <h3>Приклад 12.4</h3>
+    <p>Обчислити границю:</p>
+    <div class="formula">\[ \lim_{x \to 1} \frac{x + 1}{2x - 1} \]</div>
+   <p style="text-align: center;"><strong>Розв'язання:</strong></p>
+
+    <p>Використовуємо властивість границі частки:</p>
+    <div class="formula">\[ \lim_{x \to 1} \frac{x + 1}{2x - 1} = \frac{\displaystyle\lim_{x \to 1} (x + 1)}{\displaystyle\lim_{x \to 1} (2x - 1)} \]</div>
+    <p>за умови, що знаменник не дорівнює нулю. Перевіримо:</p>
+    <div class="formula">\[ \lim_{x \to 1} (2x - 1) = 2 \cdot 1 - 1 = 1 \neq 0 \]</div>
+    <p>Тепер обчислимо границю в чисельнику:</p>
+    <div class="formula">\[ \lim_{x \to 1} (x + 1) = 1 + 1 = 2 \]</div>
+    <p>Отже,</p>
+    <div class="formula">\[ \lim_{x \to 1} \frac{x + 1}{2x - 1} = \frac{\displaystyle\lim_{x \to 1} (x + 1)}{\displaystyle\lim_{x \to 1} (2x - 1)} = \frac{2}{1} = 2 \]</div>
+    <p>Або за правилом безпосередньої підстановки:</p>
+    <div class="formula">\[ \lim_{x \to 1} \frac{x + 1}{2x - 1} = \frac{1 + 1}{2 \cdot 1 - 1} = \frac{2}{1} = 2 \]</div>
+</div>
+
+<div class="example-card">
+    <h3>Приклад 12.5</h3>
+    <p>Обчислити границю:</p>
+    <div class="formula">\[ \lim_{x \to 0} \frac{\sin 15x}{\mathrm{tg}\,10x} \]</div>
+    <p style="text-align: center;"><strong>Розв'язання:</strong></p>
+
+    <p>При підстановці \( x = 0 \) отримуємо невизначеність:</p>
+    <div class="formula">\[ \lim_{x \to 0} \frac{\sin 15x}{\mathrm{tg}\,10x} = \frac{\sin 0}{\mathrm{tg}\,0} = \frac{0}{0} \]</div>
+    <p>Скористаємося еквівалентністю нескінченно малих функцій:</p>
+    <div class="formula">\[ \sin 15x \sim 15x, \quad \mathrm{tg}\,10x \sim 10x \quad \text{при } x \to 0 \]</div>
+    <p>Тоді:</p>
+    <div class="formula">\[ \lim_{x \to 0} \frac{\sin 15x}{\mathrm{tg}\,10x} = \lim_{x \to 0} \frac{15x}{10x} = \lim_{x \to 0} \frac{15}{10} = \frac{3}{2} \]</div>
+</div>
+            </div>
+        </div>
+    </div>
+            
+    <div id="videoModal" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeVideoBtn" aria-label="Закрити">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <h2 class="glow-title">Оберіть відео</h2>
+        <div class="video-card-container">
+            <div class="video-card" data-video="YTEDdFPTNk4">
+                <img src="https://img.icons8.com/?size=100&id=o1CR3NjO7Pv8&format=png&color=000000" alt="Відеокамера">
+               
+                <h3>Властивості границь</h3>
+            </div>
+           
+        </div>
+    </div>
+</div>
+
+<!-- Відеоплеєр -->
+<div id="videoPlayerModal1" class="modal" style="display:none;">
+    <div class="modal-header">
+        <button class="close-btn" id="closeVideoPlayerBtn1">× Закрити</button>
+    </div>
+    <div class="modal-content" style="padding:0; margin:0; background:#000; border-radius:0 0 12px 12px;">
+        <div class="video-player-container">
+            <div id="youtubePlayer1"></div>
+        </div>
+    </div>
+</div>
+
+  <!-- Питання і відповіді (флеш-картки) -->
+<div id="questionsModal" class="modal">
+    <div class="modal-header"><button class="close-btn" id="closeQuestionsBtn">× Закрити</button></div>
+    <div class="modal-content">
+        <div class="cards-container">
+
+            <!-- Картка 1 -->
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span>1. Унікальність границі</span></div>
+                    <div class="card-back"><span>Якщо \(\lim\limits_{x \to a} f(x)\) існує, то ця границя єдина</span></div>
+                </div>
+            </div>
+
+            <!-- Картка 2 -->
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span>2. \(\lim\limits_{x \to a} C\) (C — константа)</span></div>
+                    <div class="card-back"><span>\(C\)</span></div>
+                </div>
+            </div>
+
+            <!-- Картка 3 -->
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span>3. Границя суми</span></div>
+                    <div class="card-back"><span>\(\lim\limits_{x \to a} [f(x) + g(x)] = \lim\limits_{x \to a} f(x) + \lim\limits_{x \to a} g(x)\)</span></div>
+                </div>
+            </div>
+
+            <!-- Картка 4 -->
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span>4. Границя різниці</span></div>
+                    <div class="card-back"><span>\(\lim\limits_{x \to a} [f(x) - g(x)] = \lim\limits_{x \to a} f(x) - \lim\limits_{x \to a} g(x)\)</span></div>
+                </div>
+            </div>
+
+            <!-- Картка 5 -->
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span>5. Границя добутку</span></div>
+                    <div class="card-back"><span>\(\lim\limits_{x \to a} [f(x) \cdot g(x)] = \lim\limits_{x \to a} f(x) \cdot \lim\limits_{x \to a} g(x)\)</span></div>
+                </div>
+            </div>
+
+            <!-- Картка 6 -->
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span>6. Винесення константи</span></div>
+                    <div class="card-back"><span>\(\lim\limits_{x \to a} [C \cdot f(x)] = C \cdot \lim\limits_{x \to a} f(x)\)</span></div>
+                </div>
+            </div>
+
+            <!-- Картка 7 -->
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span>7. Границя частки</span></div>
+                    <div class="card-back"><span>\(\lim\limits_{x \to a} \frac{f(x)}{g(x)} = \frac{\lim\limits_{x \to a} f(x)}{\lim\limits_{x \to a} g(x)}\), \(( \lim\limits_{x \to a} g(x) \neq 0 )\)</span></div>
+                </div>
+            </div>
+
+            <!-- Картка 8 -->
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span>8. \(\lim\limits_{x \to a} x\)</span></div>
+                    <div class="card-back"><span>\(a\)</span></div>
+                </div>
+            </div>
+
+            <!-- Картка 9 -->
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span>9. \(\lim\limits_{x \to a} x^n\)</span></div>
+                    <div class="card-back"><span>\(a^n\)</span></div>
+                </div>
+            </div>
+
+            <!-- Картка 10 -->
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span>10. Якщо функція неперервна в точці \(a\), то…</span></div>
+                    <div class="card-back"><span>\(\lim\limits_{x \to a} f(x) = f(a)\)</span></div>
+                </div>
+            </div>
+
+            <!-- Картка 11 -->
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span>11. \(\lim\limits_{x \to 2} (5x^2 - 13x + 5) = ?\)</span></div>
+                    <div class="card-back"><span>\(-1\)</span></div>
+                </div>
+            </div>
+
+            <!-- Картка 12 -->
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span>12. \(\lim\limits_{x \to 1} \frac{x+1}{2x-1} = ?\)</span></div>
+                    <div class="card-back"><span>\(2\)</span></div>
+                </div>
+            </div>
+
+            <!-- Картка 13 -->
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span>13. \(\lim\limits_{x \to 0} \frac{\sin 15x}{\tg 10x} = ?\)</span></div>
+                    <div class="card-back"><span>\(\frac{15}{10} = \frac{3}{2}\)</span></div>
+                </div>
+            </div>
+
+            <!-- Картка 14 -->
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span>14. Чому можна підставляти \(x = a\) в многочлен?</span></div>
+                    <div class="card-back"><span>Багаточлен неперервний всюди \(\Rightarrow \lim\limits_{x \to a} f(x) = f(a)\)</span></div>
+                </div>
+            </div>
+
+            <!-- Картка 15 -->
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span>15. Які властивості дозволяють «розносити» lim?</span></div>
+                    <div class="card-back"><span>суми, різниці, добутку, частки, винесення константи</span></div>
+                </div>
+            </div>
+
+            <!-- Картка 16 -->
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span>16. Коли НЕ можна застосовувати границю частки?</span></div>
+                    <div class="card-back"><span>Коли \(\lim\limits_{x \to a} g(x) = 0\)</span></div>
+                </div>
+            </div>
+
+            <!-- Картка 17 -->
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span>17. \(\lim\limits_{x \to 0} \frac{3x^2 + 2x - 1}{5x + 4} = ?\)</span></div>
+                    <div class="card-back"><span>\(\frac{-1}{4} = -\frac{1}{4}\)</span></div>
+                </div>
+            </div>
+
+            <!-- Картка 18 -->
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span>18. \(\lim\limits_{x \to \pi} \cos x = ?\)</span></div>
+                    <div class="card-back"><span>\(\cos \pi = -1\)</span></div>
+                </div>
+            </div>
+
+            <!-- Картка 19 -->
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span>19. Скільки різних границь може мати функція в одній точці?</span></div>
+                    <div class="card-back"><span>Тільки одну (якщо границя існує)</span></div>
+                </div>
+            </div>
+
+            <!-- Картка 20 -->
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span>20. Чи справедливі всі властивості при \(x \to \infty\)?</span></div>
+                    <div class="card-back"><span>Так</span></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+   <div id="modalOverlay"></div>
+
+<script>
+    let youtubePlayer = null;
+
+    function onYouTubeIframeAPIReady() {
+        console.log('YouTube IFrame API готове!');
+    }
+
+    function createPlayer(videoId) {
+        if (youtubePlayer) {
+            youtubePlayer.destroy();
+        }
+
+        // ПРОСТИЙ ВАРІАНТ - створюємо iframe напряму
+        const playerContainer = document.getElementById('youtubePlayer1');
+        playerContainer.innerHTML = `
+            <iframe 
+                width="100%" 
+                height="400" 
+                src="https://www.youtube.com/embed/${videoId}?autoplay=0&playsinline=1&rel=0&modestbranding=1" 
+                frameborder="0" 
+                allow="autoplay; encrypted-media" 
+                allowfullscreen
+                style="min-height: 400px; border: none; border-radius: 8px;"
+            ></iframe>
+        `;
+        
+        youtubePlayer = {
+            destroy: function() {
+                playerContainer.innerHTML = '';
+            },
+            stopVideo: function() {
+                const iframe = playerContainer.querySelector('iframe');
+                if (iframe) {
+                    iframe.src = '';
+                }
+            }
+        };
+    }
+
+    function openVideoPlayer(videoId) {
+        closeAllModals();
+        document.getElementById('videoPlayerModal1').style.display = 'flex';
+        document.getElementById('modalOverlay').style.display = 'block';
+        
+        // Невелика затримка для рендерингу
+        setTimeout(() => {
+            createPlayer(videoId);
+        }, 100);
+    }
+
+    // Решта функцій залишається без змін
+    function closeAllModals() {
+        document.querySelectorAll('#theoryModal, #videoModal, #questionsModal, #videoPlayerModal1').forEach(m => {
+            m.style.display = 'none';
+        });
+    }
+
+    function closeAll() {
+        closeAllModals();
+        document.getElementById('modalOverlay').style.display = 'none';
+        if (youtubePlayer && typeof youtubePlayer.stopVideo === 'function') {
+            youtubePlayer.stopVideo();
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.body.classList.add('loaded');
+        document.getElementById('openTheoryBtn').onclick = () => { closeAll(); document.getElementById('theoryModal').style.display = 'flex'; document.getElementById('modalOverlay').style.display = 'block'; };
+        document.getElementById('openVideoBtn').onclick = () => { closeAll(); document.getElementById('videoModal').style.display = 'flex'; document.getElementById('modalOverlay').style.display = 'block'; };
+        document.getElementById('openQuestionsBtn').onclick = () => { closeAll(); document.getElementById('questionsModal').style.display = 'flex'; document.getElementById('modalOverlay').style.display = 'block'; };
+        
+        document.querySelectorAll('.video-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const videoId = card.getAttribute('data-video');
+                openVideoPlayer(videoId);
+            });
+        });
+
+        document.querySelectorAll('.close-btn, #modalOverlay').forEach(el => {
+            el.onclick = closeAll;
+        });
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeAll();
+        });
+
+        document.getElementById('closeVideoPlayerBtn1').onclick = closeAll;
+    });
+</script>
+</body>
+</html>
