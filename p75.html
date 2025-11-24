@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>75. Основні правила диференціювання. Диференціювання основних елементарних функцій</title>
+  <script>
+window.MathJax = {
+    tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true,
+        packages: {'[+]': ['noerrors']},
+        macros: {
+            // ТІЛЬКИ ТЕ, ЩО ТОБІ ТРЕБА — українська нотація
+            tg: ['\\operatorname{tg}', 0],
+            ctg: ['\\operatorname{ctg}', 0],
+            arctg: ['\\operatorname{arctg}', 0],
+            arcctg: ['\\operatorname{arcctg}', 0]
+        }
+    },
+    options: {
+        ignoreHtmlClass: "tex2jax_ignore|no-mathjax",
+        processHtmlClass: "tex2jax_process",
+        renderActions: {
+            /* прибираємо червоні помилки */
+            find_script_mathtex: [10, function () {}, false]
+        }
+    },
+    loader: {load: ['[tex]/noerrors']}
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" onerror="console.error('Failed to load MathJax')"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        *, *:before, *:after { box-sizing: border-box; }
+        body {
+            margin: 0;
+            background: radial-gradient(circle at center, #0b0e17 0%, #1a1f2e 40%, #2d3247 100%);
+            color: #d0d7e6;
+            font-family: 'Roboto Condensed', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        body.loaded { visibility: visible; opacity: 1; }
+
+        /* === ЗАГОЛОВОК === */
+        .title-box {
+            margin-top: 60px;
+            padding: 20px 40px;
+            background: linear-gradient(135deg, #1e2538, #2c344d);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.7), inset 0 0 15px rgba(70, 130, 255, 0.2);
+            border-radius: 16px;
+            max-width: 90%;
+            text-align: center;
+            border: 1px solid #3e506e;
+        }
+        .title-box h1 {
+            margin: 0;
+            font-size: 28px;
+            color: #00d4ff;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 12px rgba(0, 212, 255, 0.7);
+            letter-spacing: 1.5px;
+        }
+
+        /* === КАРТКИ РОЗДІЛІВ === */
+        .section-container {
+            margin-top: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 28px;
+        }
+        .section {
+            width: 260px;
+            height: 200px;
+            background: linear-gradient(145deg, #1a202e, #2a334a);
+            border-radius: 14px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.5), inset 0 0 10px rgba(0, 212, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #00aaff44;
+        }
+        .section:hover {
+            transform: translateY(-6px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(0, 212, 255, 0.3);
+            background: linear-gradient(145deg, #1e2738, #33405a);
+            border-color: #00d4ff;
+        }
+        .section h2 {
+            font-size: 20px;
+            color: #ffffff;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 6px rgba(0, 212, 255, 0.4);
+        }
+        .section img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 15px;
+            object-fit: cover;
+            border-radius: 8px;
+            filter: drop-shadow(0 0 8px #00d4ff) brightness(1.4);
+        }
+
+        /* === МОДАЛЬНІ ВІКНА === */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 5%; left: 5%; width: 90%; height: 90%;
+            background: linear-gradient(135deg, #1c2233, #2d3755);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6), inset 0 0 20px rgba(0, 212, 255, 0.15);
+            z-index: 1001;
+            overflow: hidden;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            border: 1px solid #00aaff66;
+        }
+        #modalOverlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10, 15, 30, 0.92);
+            z-index: 999;
+            backdrop-filter: blur(8px);
+        }
+        .modal-content {
+            padding: 20px;
+            flex-grow: 1;
+            background: #1f2638;
+            border-radius: 10px;
+            margin: 10px;
+            color: #d0d7e6;
+            width: calc(100% - 20px);
+            overflow-y: auto;
+            overflow-x: hidden;
+            display: block;
+            max-height: calc(100% - 60px);
+        }
+        .modal-header {
+            background: linear-gradient(0deg, #1c2233, #2d3755);
+            padding: 8px 12px;
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1002;
+            border-bottom: 1px solid #00aaff44;
+        }
+        .close-btn {
+            background: linear-gradient(135deg, #0066cc, #00aaff);
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Orbitron', sans-serif;
+            box-shadow: 0 2px 8px rgba(0, 102, 204, 0.5);
+        }
+        .close-btn:hover {
+            background: linear-gradient(135deg, #004d99, #0088cc);
+            transform: scale(1.06);
+            box-shadow: 0 4px 14px rgba(0, 102, 204, 0.7);
+        }
+
+        /* === ТЕОРІЯ === */
+        .theory-content h2 {
+            color: #00d4ff;
+            text-align: center;
+            text-shadow: 0 0 12px rgba(0, 212, 255, 0.6);
+            margin-bottom: 20px;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .theory-content h3 {
+            color: #4a9de9;
+            padding-bottom: 8px;
+            margin: 30px 0 20px 0;
+            font-family: 'Orbitron', sans-serif;
+            border-bottom: 3px solid transparent;
+            background-image: linear-gradient(to right, #ff9966, #ffbb66);
+            background-size: 100% 3px;
+            background-repeat: no-repeat;
+            background-position: left bottom;
+        }
+        .theory-content p, .theory-content li {
+            color: #d0d7e6;
+            font-size: clamp(18px, 3vw, 20px);
+            line-height: 1.7;
+            text-align: justify;
+        }
+        .example {
+            background: rgba(0, 212, 255, 0.12);
+            border-left: 4px solid #00d4ff;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 6px;
+            font-weight: bold;
+            color: #00eeff;
+        }
+        .solution {
+            background: rgba(0, 212, 255, 0.18);
+            border: 2px solid #00d4ff;
+            padding: 10px;
+            margin: 15px 0;
+            border-radius: 6px;
+            text-align: center;
+            color: #00ffcc;
+            font-weight: bold;
+        }
+        .math-notation-centered {
+            display: block;
+            text-align: center;
+            font-size: clamp(18px, 3vw, 20px);
+            margin: 12px 0;
+            color: #a0faff;
+        }
+        mjx-container { color: #a0faff !important; font-style: italic !important; }
+        mjx-container { font-size: clamp(18px, 3vw, 20px) !important; }
+                         .modal-content::-webkit-scrollbar { width: 6px; }
+        .modal-content::-webkit-scrollbar-track { background: transparent; }
+        .modal-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(#1e2538, #2c344d);
+            border-radius: 3px;
+        }
+
+        /* === ВІДЕО === */
+        .video-card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .video-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            width: 350px;
+            height: 250px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .video-card:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .video-card img {
+            width: 48px;
+            height: 48px;
+            flex-shrink: 0;
+        }
+        .video-card h3 {
+            margin: 0;
+            font-size: 1rem;
+            color: #2c3e50;
+            line-height: 1.4;
+        }
+        .video-player-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+        .video-player-container iframe {
+            width: 100%;
+            height: 450px;
+            border-radius: 12px;
+        }
+
+        /* === ПИТАННЯ === */
+        .question-card {
+            perspective: 1000px;
+            margin: 20px auto;
+            max-width: 964px;
+            width: 100%;
+            min-height: 150px;
+            cursor: pointer;
+        }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            min-height: 200px;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .question-card.flipped .card-inner { transform: rotateY(180deg); }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            min-height: 200px;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+            text-align: center;
+            border: 1px solid #00aaff44;
+        }
+        .card-front {
+            background: #1a202e;
+            color: #ffffff;
+        }
+        .card-back {
+            background: linear-gradient(135deg, #1c2233, #2d3755);
+            color: #d0d7e6;
+            transform: rotateY(180deg);
+            text-align: justify;
+            padding: 20px;
+        }
+        .card-front span, .card-back span {
+            font-size: clamp(17px, 3vw, 19px);
+            line-height: 1.4;
+        }
+
+        /* === ТРЕНАЖЕР === */
+        .trainer-container {
+            width: 90%;
+            max-width: 800px;
+            padding: 3vw 4vw;
+            text-align: center;
+            background: linear-gradient(135deg, #1a1f2e, #2a334a);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.2);
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100%;
+            border: 1px solid #00aaff44;
+        }
+        .question-circle {
+            width: clamp(80px, 15vw, 120px);
+            height: clamp(80px, 15vw, 120px);
+            margin: 0 auto 3vw;
+            background: linear-gradient(135deg, #0066cc, #00aaff);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.5);
+        }
+        .question-circle h3 {
+            color: #ffffff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(16px, 2.5vw, 20px);
+            margin: 0;
+            text-shadow: 0 0 6px rgba(0,0,0,0.5);
+        }
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2vw;
+            justify-content: center;
+            margin-bottom: 3vw;
+            width: 100%;
+        }
+        .option {
+            padding: 1.5vw 3vw;
+            border: 1.5px solid #00aaff;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #1f2638, #2d3755);
+            cursor: pointer;
+            font-size: clamp(15px, 3.5vw, 18px);
+            min-height: 45px;
+            max-width: 45%;
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+            transition: all 0.3s ease;
+            color: #d0d7e6;
+        }
+        .option:hover {
+            background: linear-gradient(135deg, #0066cc, #00aaff);
+            transform: scale(1.03);
+            border-color: #00d4ff;
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.4);
+        }
+        .option.selected {
+            background: linear-gradient(135deg, #00d4ff, #00eeff) !important;
+            color: #000 !important;
+            border: 2px solid #ffffff !important;
+            font-weight: bold;
+        }
+
+        button {
+            background: linear-gradient(135deg, #0066cc, #00aaff);
+            color: #ffffff;
+            border: none;
+            border-radius: 25px;
+            padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 24px);
+            font-size: clamp(16px, 3vw, 18px);
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.4);
+        }
+        button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #004d99, #0088cc);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 102, 204, 0.5);
+        }
+        button:disabled { background: #444; cursor: not-allowed; }
+
+        .feedback {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(24px, 5.8vw, 30px);
+            font-family: 'Orbitron', sans-serif;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+            z-index: 1001;
+            opacity: 0;
+            transition: all 0.3s ease;
+            text-align: center;
+            border: 2px solid transparent;
+        }
+        .feedback.show { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+        .correct-feedback { color: #000; background: linear-gradient(135deg, #00d4ff, #00eeff); border-color: #00eeff; }
+        .incorrect-feedback { color: #fff; background: linear-gradient(135deg, #cc0000, #ff1a1a); border-color: #ff1a1a; }
+
+        /* === МЕДАЛЬ З ТРИЗУБОМ === */
+        .completion-emoji {
+            position: relative;
+            display: inline-block;
+            width: clamp(56px, 12vw, 96px);
+            height: clamp(56px, 12vw, 96px);
+            vertical-align: middle;
+            margin: 0 auto 3vw;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1c2526, #2e3a3b);
+            border: 3px dashed #ffd700;
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+            overflow: hidden;
+            animation: medalAppear 0.8s ease-out;
+        }
+        .completion-emoji::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><filter id='s' x='-50%' y='-50%' width='200%' height='200%'><feDropShadow dx='0' dy='2' stdDeviation='2' flood-color='%23000000' flood-opacity='0.25'/></filter></defs><rect x='30' y='0' width='60' height='40' rx='4' fill='%23007ACC'/><rect x='30' y='20' width='60' height='20' rx='4' fill='%23FFD700'/><g transform='translate(60,70)'><polygon points='0,-26 6,-6 26,-6 9,6 15,26 0,14 -15,26 -9,6 -26,-6 -6,-6' fill='%23FFD700' filter='url(%23s)'/></g></svg>");
+            background-size: 75%;
+            background-repeat: no-repeat;
+            background-position: center 60%;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+            animation: medalBounce 1.2s ease-out 0.3s both;
+        }
+        @keyframes medalAppear {
+            0% { transform: scale(0.3) rotate(-180deg); opacity: 0; }
+            60% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes medalBounce {
+            0% { transform: translateY(-120px) rotate(-30deg) scale(0.4); opacity: 0; }
+            60% { transform: translateY(15px) rotate(10deg) scale(1.15); opacity: 1; }
+            80% { transform: translateY(-8px) rotate(-5deg) scale(1.05); }
+            100% { transform: translateY(0) rotate(0) scale(1); }
+        }
+
+        .completion-message {
+            background: linear-gradient(145deg, #1c2533, #2d3848);
+            border: 2.5px solid #ffffff;
+            border-radius: 15px;
+            padding: clamp(12px, 3vw, 18px);
+            box-shadow: 0 6px 12px rgba(255,77,77,0.4);
+            margin: 2vw auto;
+            max-width: 90%;
+            text-align: center;
+        }
+        .completion-message h2 {
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        .completion-message p { color: #ffffff; }
+
+        #completionModal .modal-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+        #completionModal .completion-message {
+            text-align: center;
+            max-width: 500px;
+        }
+
+        /* === НАВІГАЦІЯ === */
+        .navigation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px auto;
+            max-width: 1000px;
+        }
+        .nav-button {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #1f2638, #2d3755);
+            color: #d0d7e6;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid #00aaff44;
+            font-weight: bold;
+        }
+        .nav-button:hover {
+            background: linear-gradient(135deg, #0066cc, #00aaff);
+            color: #ffffff;
+            transform: scale(1.03);
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.4);
+        }
+        .nav-button svg { margin-right: 8px; fill: currentColor; }
+
+        /* === АДАПТИВНІСТЬ === */
+        @media (max-width: 768px) {
+            .title-box { margin-top: 40px; padding: 15px 20px; }
+            .title-box h1 { font-size: 24px; }
+            .section-container { flex-direction: column; align-items: center; gap: 20px; }
+            .section { width: 80%; height: 180px; }
+            .modal { top: 2%; left: 2%; width: 96%; height: 96%; }
+            .options-container { flex-direction: column; }
+            .option { max-width: 100%; }
+            .video-card-container { grid-template-columns: 1fr; }
+            .video-card { padding: 15px; }
+            .video-card img { width: 40px; height: 40px; }
+            .video-card h3 { font-size: 1rem; }
+            .video-player-container iframe { height: 250px; }
+        }
+        @media (max-width: 480px) {
+            .title-box h1 { font-size: 22px; }
+            .section { width: 90%; height: 150px; }
+            .section h2 { font-size: 16px; }
+            mjx-container { font-size: clamp(16px, 3vw, 17px) !important; }
+            #trainerModal .options-container mjx-container { font-size: clamp(15px, 2.5vw, 16px) !important; }
+            .example { font-size: 1.0rem; }
+            .theory-content h2 { font-size: 18px !important; }
+            .feedback { font-size: clamp(16px, 3vw, 17px); }
+            .question-text { font-size: 14px; }
+            .option { font-size: 13px; padding: 10px 12px; min-height: 45px; }
+            .question-circle h3 {
+            font-size: clamp(12px, 1.6vw, 13px);
+            
+        }
+        }
+
+        /* ДОДАТКОВІ СТИЛІ ДЛЯ ДИФЕРЕНЦІЮВАННЯ */
+        .definition {
+            background: rgba(74, 157, 233, 0.1);
+            border-left: 4px solid #4a9de9;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        strong {
+            color: #ff9966;
+        }
+        .solution-title {
+            text-align: center !important;
+            display: block !important;
+            width: 100%;
+        }
+        .rule-box {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid #00d4ff;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .derivative-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .derivative-table th, .derivative-table td {
+            border: 1px solid #4a9de9;
+            padding: 12px;
+            text-align: center;
+        }
+        .derivative-table th {
+            background: rgba(74, 157, 233, 0.2);
+            color: #00d4ff;
+        }
+             /* Поліпшення прокрутки для мобільних пристроїв */
+.modal {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+}
+
+.theory-content {
+    /* Дозволяємо природню прокрутку */
+    overflow: visible;
+    height: auto;
+    min-height: 100%;
+}
+
+/* Фікс для iOS Safari */
+@supports (-webkit-touch-callout: none) {
+    .modal-content {
+        padding-bottom: 40px; /* Додатковий простір для iOS */
+    }
+}
+ /* ТІЛЬКИ для мобільних - горизонтальна прокрутка */
+@media (max-width: 768px) {
+    .math-notation-centered {
+        overflow-x: auto; /* ТІЛЬКИ горизонтальна прокрутка на мобільних */
+        overflow-y: hidden; /* ЗАБОРОНЯЄМО вертикальну прокрутку */
+        white-space: nowrap; /* Забороняємо переноси на мобільних */
+        -webkit-overflow-scrolling: touch; /* Плавна прокрутка на iOS */
+        padding: 8px 0;
+        
+        /* Стильна голуба прокрутка тільки для мобільних */
+        scrollbar-width: thin;
+        scrollbar-color: #4a9de9 transparent;
+    }
+
+    /* Стилі для Webkit браузерів (Chrome, Safari, Edge) - тільки на мобільних */
+    .math-notation-centered::-webkit-scrollbar {
+        height: 6px; /* Тонка горизонтальна прокрутка */
+        width: 0; /* ЗАБОРОНЯЄМО вертикальну прокрутку */
+    }
+
+    .math-notation-centered::-webkit-scrollbar-track {
+        background: transparent; /* Прозорий трек */
+        border-radius: 3px;
+    }
+
+    .math-notation-centered::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #4a9de9, #66b3ff); /* Голубий градієнт */
+        border-radius: 3px;
+        box-shadow: 0 0 4px rgba(74, 157, 233, 0.5);
+    }
+
+    .math-notation-centered::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #66b3ff, #99ccff); /* Світліший при наведенні */
+    }
+    
+    /* ЗАБОРОНЯЄМО вертикальну прокрутку для всіх елементів */
+    .math-notation-centered::-webkit-scrollbar:vertical {
+        display: none; /* Повністю ховаємо вертикальну прокрутку */
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="title-box">
+        <h1>75. Основні правила диференціювання. Диференціювання основних елементарних функцій</h1>
+    </div>
+
+    <div class="section-container">
+        <div class="section" id="openTheoryBtn">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Книга" loading="lazy">
+            <h2>Теоретичні відомості</h2>
+        </div>
+        <div class="section" id="openVideoBtn">
+            <img src="https://img.icons8.com/fluency/96/video.png" alt="Відео" loading="lazy">
+            <h2>Відеоматеріали</h2>
+        </div>
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Картки" loading="lazy">
+            <h2>Питання і відповіді</h2>
+        </div>
+        <div class="section" id="openTrainerBtn">
+            <img src="https://img.icons8.com/fluency/96/flash-on.png" alt="Тренажер" loading="lazy">
+            <h2>Тренажер</h2>
+        </div>
+    </div>
+
+    <div class="navigation-buttons">
+        <a class="nav-button prev" href="{{ url_for('tema13') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            До теми 13
+        </a>
+        <a class="nav-button home" href="{{ url_for('home') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            На головну
+        </a>
+    </div>
+
+   <!-- ТЕОРІЯ -->
+<div id="theoryModal" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeTheoryBtn">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="theory-content">
+            <h2>Основні правила диференціювання</h2>
+            
+            <div class="definition">
+                <p><strong>Обчислення похідної функції</strong> за формулами значно простіше, ніж через означення з використанням границь. Для зручності позначатимемо функції \( u(x) \), \( v(x) \) як \( u \), \( v \), а їх похідні – як \( u' \), \( v' \).</p>
+            </div>
+
+            <h3>Таблиця похідних основних елементарних функцій</h3>
+            
+            <table class="derivative-table">
+                <thead>
+                    <tr>
+                        <th>Функція</th>
+                        <th>Похідна</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>\( C \)</td>
+                        <td>\( 0 \), де \( C \) – стала (число)</td>
+                    </tr>
+                    <tr>
+                        <td>\( x \)</td>
+                        <td>\( 1 \)</td>
+                    </tr>
+                    <tr>
+                        <td>\( kx + b \)</td>
+                        <td>\( k \)</td>
+                    </tr>
+                    <tr>
+                        <td>\( x^α \)</td>
+                        <td>\( α \cdot x^{α-1} \), \( α \in \mathbb{R} \)</td>
+                    </tr>
+                    <tr>
+                        <td>\( \frac{1}{x} \)</td>
+                        <td>\( -\frac{1}{x^2} \)</td>
+                    </tr>
+                    <tr>
+                        <td>\( \sqrt{x} \)</td>
+                        <td>\( \frac{1}{2\sqrt{x}} \)</td>
+                    </tr>
+                    <tr>
+                        <td>\( \sqrt[n]{x} \)</td>
+                        <td>\( \frac{1}{n \cdot \sqrt[n]{x^{n-1}}} \)</td>
+                    </tr>
+                    <tr>
+                        <td>\( \sqrt[n]{x^m} \)</td>
+                        <td>\( \frac{m}{n} \cdot x^{\frac{m}{n}-1} \)</td>
+                    </tr>
+                    <tr>
+                        <td>\( a^x \)</td>
+                        <td>\( a^x \cdot \ln a \)</td>
+                    </tr>
+                    <tr>
+                        <td>\( e^x \)</td>
+                        <td>\( e^x \)</td>
+                    </tr>
+                    <tr>
+                        <td>\( \log_a x \)</td>
+                        <td>\( \frac{1}{x \cdot \ln a} \)</td>
+                    </tr>
+                    <tr>
+                        <td>\( \ln x \)</td>
+                        <td>\( \frac{1}{x} \)</td>
+                    </tr>
+                    <tr>
+                        <td>\( \sin x \)</td>
+                        <td>\( \cos x \)</td>
+                    </tr>
+                    <tr>
+                        <td>\( \cos x \)</td>
+                        <td>\( -\sin x \)</td>
+                    </tr>
+                    <tr>
+                        <td>\( \operatorname{tg} x \)</td>
+                        <td>\( \frac{1}{\cos^2 x} \)</td>
+                    </tr>
+                    <tr>
+                        <td>\( \operatorname{ctg} x \)</td>
+                        <td>\( -\frac{1}{\sin^2 x} \)</td>
+                    </tr>
+                    <tr>
+                        <td>\( \arcsin x \)</td>
+                        <td>\( \frac{1}{\sqrt{1-x^2}} \)</td>
+                    </tr>
+                    <tr>
+                        <td>\( \arccos x \)</td>
+                        <td>\( -\frac{1}{\sqrt{1-x^2}} \)</td>
+                    </tr>
+                    <tr>
+                        <td>\( \operatorname{arctg} x \)</td>
+                        <td>\( \frac{1}{1+x^2} \)</td>
+                    </tr>
+                    <tr>
+                        <td>\( \operatorname{arcctg} x \)</td>
+                        <td>\( -\frac{1}{1+x^2} \)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Основні правила диференціювання</h3>
+            
+            <div class="definition">
+                <p>Нехай \( u(x) \) і \( v(x) \) - диференційовані функції, а \( C \) – стала (число). Тоді справджуються такі правила:</p>
+            </div>
+
+            <div class="rule-box">
+                <p><strong>1. Похідна суми (або різниці) функцій</strong></p>
+                <p class="math-notation-centered">\[ (u \pm v)' = u' \pm v' \]</p>
+                <p>Похідна суми (або різниці) функцій дорівнює сумі (або різниці) їхніх похідних.</p>
+                
+                <div class="example">
+                    <strong>Приклад 13.2:</strong> Знайти похідну функції \( y = x^{10} - \sqrt{x} + 2^x \)
+                </div>
+                <p class="solution-title"><strong>Розв'язання:</strong></p>
+                <p>За правилом (13.4) маємо:</p>
+                <p class="math-notation-centered">\[ y' = (x^{10})' - (\sqrt{x})' + (2^x)' = 10x^9 - \frac{1}{2\sqrt{x}} + 2^x \ln 2 \]</p>
+            </div>
+
+            <div class="rule-box">
+                <p><strong>2. Похідна добутку функції на сталу</strong></p>
+                <p class="math-notation-centered">\[ (C \cdot u)' = C \cdot u' \]</p>
+                <p>Похідна добутку функції на сталу дорівнює добутку цієї сталої на похідну функції.</p>
+                
+                <div class="example">
+                    <strong>Приклад 13.3:</strong> Знайти похідну функції \( y = 5x^6 + 3\cos x - \frac{1}{4} \arctan x \)
+                </div>
+                <p class="solution-title"><strong>Розв'язання:</strong></p>
+                <p>За правилами (13.4) і (13.5) обчислюємо:</p>
+                <p class="math-notation-centered">\[ y' = (5x^6)' + (3\cos x)' - \left(\frac{1}{4} \arctan x\right)' \]</p>
+                <p class="math-notation-centered">\[ y' = 5 \cdot 6x^5 + 3 \cdot (-\sin x) - \frac{1}{4} \cdot \frac{1}{1+x^2} \]</p>
+                <p class="math-notation-centered">\[ y' = 30x^5 - 3\sin x - \frac{1}{4(1+x^2)} \]</p>
+            </div>
+
+            <div class="rule-box">
+                <p><strong>3. Похідна добутку двох функцій</strong></p>
+                <p class="math-notation-centered">\[ (u \cdot v)' = u' \cdot v + u \cdot v' \]</p>
+                <p>Похідна добутку двох функцій дорівнює сумі добутку похідної першої функції на другу та добутку похідної другої функції на першу.</p>
+                
+                <div class="example">
+                    <strong>Приклад 13.4:</strong> Знайти похідну функції \( y = (x^4 + 2)\cos x \)
+                </div>
+                <p class="solution-title"><strong>Розв'язання:</strong></p>
+                <p>За правилом (13.6) маємо:</p>
+                <p class="math-notation-centered">\[ y' = (x^4 + 2)' \cos x + (x^4 + 2)(\cos x)' \]</p>
+                <p class="math-notation-centered">\[ y' = 4x^3 \cos x + (x^4 + 2)(-\sin x) \]</p>
+                <p class="math-notation-centered">\[ y' = 4x^3 \cos x - (x^4 + 2)\sin x \]</p>
+            </div>
+
+            <div class="rule-box">
+                <p><strong>4. Похідна частки двох функцій</strong></p>
+                <p class="math-notation-centered">\[ \left(\frac{u}{v}\right)' = \frac{u' \cdot v - u \cdot v'}{v^2} \]</p>
+                <p>Похідна частки двох функцій дорівнює дробу, у чисельнику якого знаходиться різниця добутку похідної чисельника на знаменник і добутку похідної знаменника на чисельник, а в знаменнику – квадрат знаменника.</p>
+                
+                <div class="example">
+                    <strong>Приклад 13.5:</strong> Знайти похідну функції \( y = \frac{\arcsin x}{1 - x^2} \)
+                </div>
+                <p class="solution-title"><strong>Розв'язання:</strong></p>
+                <p>За правилом (13.7) маємо:</p>
+                <p class="math-notation-centered">\[ y' = \left(\frac{\arcsin x}{1 - x^2}\right)' = \frac{(\arcsin x)'(1 - x^2) - (1 - x^2)' \arcsin x}{(1 - x^2)^2} \]</p>
+                <p class="math-notation-centered">\[ y' = \frac{\frac{1}{\sqrt{1 - x^2}} \cdot (1 - x^2) - (-2x) \arcsin x}{(1 - x^2)^2} \]</p>
+                <p class="math-notation-centered">\[ y' = \frac{\sqrt{1 - x^2} + 2x \cdot \arcsin x}{(1 - x^2)^2} \]</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+            
+    <!-- ВІДЕО -->
+    <div id="videoModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-card-container" id="videoList">
+                <div class="video-card" data-video="https://www.youtube.com/embed/dgCglwNEfKI">
+                    <img src="https://img.icons8.com/fluency/48/play.png" alt="Відео">
+                    <h3>Правила обчислення похідних. Арифметичні операції над похідними</h3>
+                </div>
+                            </div>
+
+            <div class="video-player-container" id="videoPlayer" style="display:none;">
+                <iframe id="youtubeIframe" src="" frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+   <!-- ПИТАННЯ -->
+<div id="questionsModal" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeQuestionsBtn">× Закрити</button>
+    </div>
+    <div class="modal-content">
+
+        <!-- 1–20 — таблиця похідних -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>1. \( (C)' = \)</span></div>
+                <div class="card-back"><span>\( 0 \) (де \( C \) — стала)</span></div>
+            </div>
+        </div>
+
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>2. \( (x)' = \)</span></div>
+                <div class="card-back"><span>\( 1 \)</span></div>
+            </div>
+        </div>
+
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>3. \( (kx + b)' = \)</span></div>
+                <div class="card-back"><span>\( k \)</span></div>
+            </div>
+        </div>
+
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>4. \( (x^\alpha)' = \)</span></div>
+                <div class="card-back"><span>\( \alpha x^{\alpha-1} \) (\( \alpha \in \mathbb{R} \))</span></div>
+            </div>
+        </div>
+
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>5. \( \left(\dfrac{1}{x}\right)' = \)</span></div>
+                <div class="card-back"><span>\( -\dfrac{1}{x^2} \)</span></div>
+            </div>
+        </div>
+
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>6. \( (\sqrt{x})' = \)</span></div>
+                <div class="card-back"><span>\( \dfrac{1}{2\sqrt{x}} \)</span></div>
+            </div>
+        </div>
+
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>7. \( (a^x)' = \)</span></div>
+                <div class="card-back"><span>\( a^x \ln a \)</span></div>
+            </div>
+        </div>
+
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>8. \( (e^x)' = \)</span></div>
+                <div class="card-back"><span>\( e^x \)</span></div>
+            </div>
+        </div>
+
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>9. \( (\ln x)' = \)</span></div>
+                <div class="card-back"><span>\( \dfrac{1}{x} \)</span></div>
+            </div>
+        </div>
+
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>10. \( (\sin x)' = \)</span></div>
+                <div class="card-back"><span>\( \cos x \)</span></div>
+            </div>
+        </div>
+
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>11. \( (\cos x)' = \)</span></div>
+                <div class="card-back"><span>\( -\sin x \)</span></div>
+            </div>
+        </div>
+
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>12. \( \operatorname({tg} x )'\)</span></div>
+                <div class="card-back"><span>\( \dfrac{1}{\cos^2 x} \)</span></div>
+            </div>
+        </div>
+
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>13. \( (\arcsin x)' = \)</span></div>
+                <div class="card-back"><span>\( \dfrac{1}{\sqrt{1-x^2}} \)</span></div>
+            </div>
+        </div>
+
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>14. \( (\arccos x)' = \)</span></div>
+                <div class="card-back"><span>\( -\dfrac{1}{\sqrt{1-x^2}} \)</span></div>
+            </div>
+        </div>
+
+        <!-- Правила диференціювання -->
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>15. Правило похідної суми (різниці)</span></div>
+                <div class="card-back"><span>\( (u \pm v)' = u' \pm v' \)</span></div>
+            </div>
+        </div>
+
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>16. Правило сталої перед функцією</span></div>
+                <div class="card-back"><span>\( (Cu)' = C \cdot u' \)</span></div>
+            </div>
+        </div>
+
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>17. Правило похідної добутку</span></div>
+                <div class="card-back"><span>\( (u \cdot v)' = u' v + u v' \)</span></div>
+            </div>
+        </div>
+
+        <div class="question-card" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front"><span>18. Правило похідної частки</span></div>
+                <div class="card-back"><span>\( \left(\dfrac{u}{v}\right)' = \dfrac{u' v - u v'}{v^2} \)</span></div>
+            </div>
+        </div>
+
+                 <div class="question-card" onclick="this.classList.toggle('flipped')">
+    <div class="card-inner">
+        <div class="card-front">
+            <span>19. Чому обчислення похідної за таблицею і правилами простіше, ніж через означення?</span>
+        </div>
+        <div class="card-back">
+            <span>Тому що не треба щоразу обчислювати границю 
+            \[ \lim\limits_{\Delta x \to 0} \frac{f(x + \Delta x) - f(x)}{\Delta x} \]
+            </span>
+        </div>
+    </div>
+</div>
+
+       
+    </div>
+</div>
+
+    <!-- ТРЕНАЖЕР -->
+    <div id="trainerModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeTrainerBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="trainer-container">
+                <div class="question-circle">
+                    <h3 id="questionNumber">Питання 1</h3>
+                </div>
+                <p id="questionText" class="math-notation-centered"></p>
+                <div class="options-container" id="optionsContainer"></div>
+                <button id="submitAnswer" disabled>Підтвердити</button>
+                <div id="feedback" class="feedback"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ЗАВЕРШЕННЯ -->
+    <div id="completionModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeCompletionBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="completion-message">
+                <div class="completion-emoji"></div>
+                <h2>МІСІЯ ВИКОНАНА!</h2>
+                <p>Ти — сталевий воїн диференціального числення!</p>
+                <p><strong>СЛАВА УКРАЇНІ!</strong></p>
+                <button id="resetTrainerBtn">Спробувати ще раз!</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalOverlay"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.body.classList.add('loaded');
+            const els = {
+                openTheoryBtn: document.getElementById('openTheoryBtn'),
+                openVideoBtn: document.getElementById('openVideoBtn'),
+                openQuestionsBtn: document.getElementById('openQuestionsBtn'),
+                openTrainerBtn: document.getElementById('openTrainerBtn'),
+                theoryModal: document.getElementById('theoryModal'),
+                videoModal: document.getElementById('videoModal'),
+                questionsModal: document.getElementById('questionsModal'),
+                trainerModal: document.getElementById('trainerModal'),
+                completionModal: document.getElementById('completionModal'),
+                closeTheoryBtn: document.getElementById('closeTheoryBtn'),
+                closeVideoBtn: document.getElementById('closeVideoBtn'),
+                closeQuestionsBtn: document.getElementById('closeQuestionsBtn'),
+                closeTrainerBtn: document.getElementById('closeTrainerBtn'),
+                closeCompletionBtn: document.getElementById('closeCompletionBtn'),
+                videoList: document.getElementById('videoList'),
+                videoPlayer: document.getElementById('videoPlayer'),
+                youtubeIframe: document.getElementById('youtubeIframe'),
+                modalOverlay: document.getElementById('modalOverlay'),
+                questionText: document.getElementById('questionText'),
+                optionsContainer: document.getElementById('optionsContainer'),
+                submitAnswer: document.getElementById('submitAnswer'),
+                feedback: document.getElementById('feedback'),
+                resetTrainerBtn: document.getElementById('resetTrainerBtn')
+            };
+
+            function toggleModal(modal, show) {
+                modal.style.display = show ? 'flex' : 'none';
+                els.modalOverlay.style.display = show ? 'block' : 'none';
+                document.body.style.overflow = show ? 'hidden' : 'auto';
+                if (show && window.MathJax?.typesetPromise) {
+                    MathJax.typesetPromise([modal]).catch(() => {});
+                }
+            }
+
+            els.openTheoryBtn.addEventListener('click', () => toggleModal(els.theoryModal, true));
+            els.openVideoBtn.addEventListener('click', () => toggleModal(els.videoModal, true));
+            els.openQuestionsBtn.addEventListener('click', () => toggleModal(els.questionsModal, true));
+            els.openTrainerBtn.addEventListener('click', () => { toggleModal(els.trainerModal, true); initTrainer(); });
+
+            [els.closeTheoryBtn, els.closeVideoBtn, els.closeQuestionsBtn, els.closeTrainerBtn, els.closeCompletionBtn].forEach(btn => {
+                btn.addEventListener('click', () => toggleModal(btn.closest('.modal'), false));
+            });
+
+            els.modalOverlay.addEventListener('click', () => {
+                document.querySelectorAll('.modal').forEach(m => toggleModal(m, false));
+            });
+
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') document.querySelectorAll('.modal').forEach(m => toggleModal(m, false));
+            });
+
+            // Обробник кліків на відеокартки
+            els.videoList.addEventListener('click', function(e) {
+                const videoCard = e.target.closest('.video-card');
+                if (!videoCard) return;
+                
+                const videoUrl = videoCard.getAttribute('data-video');
+                if (videoUrl) {
+                    els.videoList.style.display = 'none';
+                    els.videoPlayer.style.display = 'block';
+                    els.youtubeIframe.src = videoUrl;
+                    
+                    if (window.MathJax?.typesetPromise) {
+                        MathJax.typesetPromise([els.videoModal]);
+                    }
+                }
+            });
+
+            // Обробник закриття відеомодалки - скидаємо плеєр
+            els.closeVideoBtn.addEventListener('click', function() {
+                els.videoPlayer.style.display = 'none';
+                els.videoList.style.display = 'grid';
+                els.youtubeIframe.src = '';
+            });
+
+// === ТРЕНАЖЕР: 3 рівні (100% працює) ===
+let selected = null;
+let correctIndex = null;
+let stage = 1; // 1, 2 або 3
+
+function getRandomInt(min, max, excludeZero = false) {
+    let num;
+    do {
+        num = Math.floor(Math.random() * (max - min + 1)) + min;
+    } while (excludeZero && num === 0);
+    return num;
+}
+
+function formatCoeff(k) {
+    if (k === 1) return '';
+    if (k === -1) return '-';
+    return k;
+}
+
+function formatPower(n) {
+    if (n === 1) return 'x';
+    return `x^{${n}}`;
+}
+
+function formatDerivative(coeff, power) {
+    if (power === 0) return coeff.toString();
+    if (power === 1) {
+        if (coeff === 1) return 'x';
+        if (coeff === -1) return '-x';
+        return coeff + 'x';
+    }
+    if (coeff === 1) return `x^{${power}}`;
+    if (coeff === -1) return `-x^{${power}}`;
+    return coeff + `x^{${power}}`;
+}
+
+// === Питання 1 ===
+function generateQuestion1() {
+    const type = Math.floor(Math.random() * 3);
+    let func = '', correct = '';
+    const wrongs = [];
+
+    if (type === 0) { // стала
+        const c = getRandomInt(-100, 100, true);
+        func = `${c}`;
+        correct = "0";
+        wrongs.push(`${c}`, `${getRandomInt(-20,20,true)}`, "1");
+    } else if (type === 1) { // kx
+        const k = getRandomInt(-5, 5, true);
+        func = formatDerivative(k, 1);
+        correct = formatCoeff(k);
+        if (correct === '') correct = '1';
+        if (correct === '-') correct = '-1';
+        
+        wrongs.push(
+            formatCoeff(-k) || '1', 
+            "0", 
+            formatDerivative(k, 1)
+        );
+    } else { // kx^n
+        const k = getRandomInt(-5, 5, true);
+        const n = getRandomInt(2, 10);
+        func = formatDerivative(k, n);
+        
+        const nk = k * n;
+        const newPower = n - 1;
+        correct = formatDerivative(nk, newPower);
+        
+        wrongs.push(
+            formatDerivative(-nk, newPower),
+            formatDerivative(k, n),
+            formatDerivative(nk, n)
+        );
+    }
+
+    const text = `Яка похідна функції \\( f(x) = ${func} \\)?`;
+    const options = [correct, ...wrongs].sort(() => Math.random() - 0.5);
+    correctIndex = options.indexOf(correct);
+    return { text, options };
+}
+
+// === ПИТАННЯ 2 (суми/різниці - 13 прикладів) ===
+function generateQuestion2() {
+    const questions = [
+        { text: "Яка похідна функції: <br> \\(y = x^{10} - \\sqrt{x}\\)?", correct: 0 },
+        { text: "Яка похідна функції: <br> \\(y = \\cos x - \\dfrac{1}{4}\\,\\arctg x\\)?", correct: 0 },
+        { text: "Яка похідна функції: <br> \\(y = -3e^{x} + \\ctg x\\)?", correct: 0 },
+        { text: "Яка похідна функції: <br> \\(y = 3^{x} - 5\\ln x\\)?", correct: 0 },
+        { text: "Яка похідна функції: <br> \\(y = 2\\arccos x - \\dfrac{1}{x}\\)?", correct: 0 },
+        { text: "Яка похідна функції: <br> \\(y = 5\\log_{5} x - \\arcsin x\\)?", correct: 0 },
+        { text: "Яка похідна функції: <br> \\(y = -4x^{4} - \\sin x\\)?", correct: 0 },
+        { text: "Яка похідна функції: <br> \\(y = -4\\arctg x + \\sin x\\)?", correct: 0 },
+        { text: "Яка похідна функції: <br> \\(y = -2\\sqrt{x} + \\cos x\\)?", correct: 0 },
+        { text: "Яка похідна функції: <br> \\(y = 3x^{5} - 4^{x}\\)?", correct: 0 },
+        { text: "Яка похідна функції: <br> \\(y = -\\arcctg x - \\dfrac{2}{x}\\)?", correct: 0 },
+        { text: "Яка похідна функції: <br> \\(y = 3\\ln x + \\cos x\\)?", correct: 0 },
+        { text: "Яка похідна функції: <br> \\(y = x^{-3} - 3e^{x}\\)?", correct: 0 }
+    ];
+
+    const options = [
+        ["10x^{9} - \\dfrac{1}{2\\sqrt{x}}", "10x^{9} - \\dfrac{1}{\\sqrt{x}}", "10x^{9} - 2\\sqrt{x}", "10x - \\dfrac{1}{2\\sqrt{x}}"],
+        ["-\\sin x - \\dfrac{1}{4(1+x^{2})}", "\\sin x - \\dfrac{1}{4(1+x^{2})}", "\\sin x + \\dfrac{1}{4(1+x^{2})}", "-\\sin x + \\dfrac{1}{4(1+x^{2})}"],
+        ["-3e^{x} - \\dfrac{1}{1+x^{2}}", "-3e^{x} + \\dfrac{1}{1+x^{2}}", "-e^{x} - \\dfrac{1}{1+x^{2}}", "3e^{x} - \\dfrac{1}{1+x^{2}}"],
+        ["3^{x}\\ln 3 - \\dfrac{5}{x}", "3^{x}\\ln 3 + \\dfrac{5}{x}", "3^{x} - \\dfrac{5}{x}", "3^{x}\\ln 3 - \\dfrac{1}{x}"],
+        ["-\\dfrac{2}{\\sqrt{1-x^{2}}} + \\dfrac{1}{x^{2}}", "\\dfrac{2}{\\sqrt{1-x^{2}}} + \\dfrac{1}{x^{2}}", "-\\dfrac{2}{\\sqrt{1-x^{2}}} - \\dfrac{1}{x^{2}}", "\\dfrac{2}{\\sqrt{1-x^{2}}} - \\dfrac{1}{x^{2}}"],
+        ["\\dfrac{5}{x\\ln 5} - \\dfrac{1}{\\sqrt{1-x^{2}}}", "\\dfrac{5}{x} - \\dfrac{1}{\\sqrt{1-x^{2}}}", "\\dfrac{1}{x\\ln 5} - \\dfrac{1}{\\sqrt{1-x^{2}}}", "\\dfrac{1}{\\ln 5} - \\dfrac{1}{\\sqrt{1-x^{2}}}"],
+        ["-16x^{3} - \\cos x", "-x^{3} - \\cos x", "16x^{3} - \\cos x", "-16x^{3} + \\cos x"],
+        ["-\\dfrac{4}{1+x^{2}} + \\cos x", "-\\dfrac{4}{1+x^{2}} - \\cos x", "-\\dfrac{4}{4+x^{2}} + \\cos x", "\\dfrac{4}{4+x^{2}} + \\cos x"],
+        ["-\\dfrac{1}{2\\sqrt{x}} - \\sin x", "-\\dfrac{2}{\\sqrt{x}} - \\sin x", "-\\dfrac{1}{\\sqrt{x}} - \\sin x", "-\\dfrac{1}{\\sqrt{x}} + \\sin x"],
+        ["15x^{4} - 4^{x}\\ln 4", "15x^{4} - 4^{x}", "15x^{5} - 4^{x}\\ln 4", "15x^{4} + 4^{x}\\ln 4"],
+        ["\\dfrac{1}{1+x^{2}} + \\dfrac{2}{x^{2}}", "\\dfrac{1}{1+x^{2}} - \\dfrac{2}{x^{2}}", "-\\dfrac{1}{1+x^{2}} + \\dfrac{2}{x^{2}}", "-\\dfrac{1}{1+x^{2}} - \\dfrac{2}{x^{2}}"],
+        ["\\dfrac{3}{x} - \\sin x", "\\dfrac{1}{3x} - \\sin x", "-\\dfrac{3}{x} + \\sin x", "\\dfrac{3}{x} + \\sin x"],
+        ["-3x^{-4} - 3e^{x}", "-3x^{-2} - 3e^{x}", "-3x^{-4} - e^{x}", "-3x^{4} - 3e^{x}}"]
+    ];
+
+    const i = Math.floor(Math.random() * questions.length);
+    const shuffled = options[i].map((opt, idx) => ({opt, idx})).sort(() => Math.random() - 0.5);
+    correctIndex = shuffled.findIndex(x => x.idx === questions[i].correct);
+    return { text: questions[i].text, options: shuffled.map(x => x.opt) };
+}
+
+// === ПИТАННЯ 3 (добутки - 10 прикладів) ===
+function generateQuestion3() {
+    const questions = [
+        { text: "Яка похідна функції: <br> \\(y = (e^{x}-5)\\tg x\\)?", correct: 0 },
+        { text: "Яка похідна функції: <br> \\(y = (\\arctg x + 6)x^{3}\\)?", correct: 0 },
+        { text: "Яка похідна функції: <br> \\(y = x^{2}(\\ln x - 8)\\)?", correct: 0 },
+        { text: "Яка похідна функції: <br> \\(y = (x^{5}-5)\\cos x\\)?", correct: 0 },
+        { text: "Яка похідна функції: <br> \\(y = \\arcctg x (\\sqrt{x}+8)\\)?", correct: 0 },
+        { text: "Яка похідна функції: <br> \\(y = x^{2}(2^{x}+7)\\)?", correct: 0 },
+        { text: "Яка похідна функції: <br> \\(y = (\\sin x + 5)\\sqrt{x}\\)?", correct: 0 },
+        { text: "Яка похідна функції: <br> \\(y = e^{x}(\\arctg x - 2)\\)?", correct: 0 },
+        { text: "Яка похідна функції: <br> \\(y = \\cos x(\\sin x - 1)\\)?", correct: 0 },
+        { text: "Яка похідна функції: <br> \\(y = (\\tg x - 3)\\arctg x\\)?", correct: 0 }
+    ];
+
+    const options = [
+        ["e^{x}\\tg x + \\dfrac{e^{x}-5}{\\cos^{2} x}", 
+         "e^{x}\\tg x - \\dfrac{e^{x}-5}{\\cos^{2} x}", 
+         "(e^{x}-5)\\tg x + \\dfrac{e^{x}}{\\cos^{2} x}", 
+         "\\dfrac{e^{x}-5}{\\cos^{2} x} + e^{x}"],
+        ["\\dfrac{x^{3}}{1+x^{2}} + 3x^{2}(\\arctg x + 6)", 
+         "\\dfrac{1}{1+x^{2}} + 3x^{2}(\\arctg x + 6)", 
+         "\\dfrac{1}{1+x^{2}} + 6 + 3x^{2}(\\arctg x + 6)", 
+         "\\dfrac{x^{3}}{1+x^{2}} + \\dfrac{3x^{2}}{1+x^{2}}"],
+        ["2x(\\ln x - 8) + \\dfrac{1}{x}", 
+         "2x(\\ln x - 8) + x^{2}\\left(\\dfrac{1}{x} - 8\\right)", 
+         "2x(\\ln x - 8) - \\dfrac{1}{x}", 
+         "2x\\ln x + \\dfrac{1}{x}"],
+        ["5x^{4}\\cos x - (x^{5}-5)\\sin x", 
+         "5x^{4}\\cos x + (x^{5}-5)\\sin x", 
+         "(5x^{4}-5)\\cos x - (x^{5}-5)\\sin x", 
+         "-5x^{4}\\sin x - x^{5}\\sin x"],
+        ["-\\dfrac{\\sqrt{x}+8}{1+x^{2}} + \\dfrac{\\arcctg x}{2\\sqrt{x}}", 
+         "-\\dfrac{\\sqrt{x}+8}{1+x^{2}} + \\dfrac{\\arcctg x}{2\\sqrt{x}+8}", 
+         "\\dfrac{\\sqrt{x}+8}{1+x^{2}} + \\dfrac{\\arcctg x}{2\\sqrt{x}}", 
+         "-\\dfrac{\\sqrt{x}+8}{1+x^{2}} + \\dfrac{\\arcctg x}{2\\sqrt{x}}"],
+        ["2x(2^{x}+7) + x^{2}\\cdot 2^{x}\\ln 2", 
+         "2x(2^{x}+7) + x^{2}(2^{x}\\ln 2 + 7)", 
+         "2x\\cdot 2^{x} + x^{2}\\cdot 2^{x}\\ln 2", 
+         "2x(2^{x}+7) + x^{2}\\cdot 2^{x}"],
+        ["\\sqrt{x}\\cos x + \\dfrac{\\sin x + 5}{2\\sqrt{x}}", 
+         "\\dfrac{\\sin x + 5}{\\sqrt{x}} + \\sqrt{x}\\cos x", 
+         "\\sqrt{x}\\cos x + \\dfrac{\\sin x}{2\\sqrt{x}}", 
+         "\\sqrt{x}\\cos x + \\dfrac{\\sin x + 5}{\\sqrt{x}}"],
+        ["e^{x}(\\arctg x - 2) + \\dfrac{e^{x}}{1+x^{2}}", 
+         "e^{x}\\arctg x + \\dfrac{e^{x}}{1+x^{2}}", 
+         "e^{x}(\\arctg x - 2) - \\dfrac{e^{x}}{1+x^{2}}", 
+         "e^{x}(\\arctg x - 2) + \\dfrac{1}{1+x^{2}}"],
+        ["-\\sin x(\\sin x - 1) + \\cos^{2} x", 
+         "\\sin x(\\sin x - 1) + \\cos^{2} x", 
+         "-\\sin x(\\sin x - 1) + \\cos x(\\cos x - 1)", 
+         "-\\sin x(\\cos x - 1) + \\cos^{2} x"],
+        ["\\dfrac{\\arctg x}{\\cos^{2} x} + \\dfrac{\\tg x - 3}{1+x^{2}}", 
+         "\\dfrac{\\arctg x}{\\cos^{2} x} + \\dfrac{\\tg x}{1+x^{2}}", 
+         "\\dfrac{\\arctg x}{\\cos^{2} x} - \\dfrac{\\tg x - 3}{1+x^{2}}", 
+         "\\dfrac{\\arctg x}{\\cos^{2} x} + \\dfrac{1}{1+x^{2}}"]
+    ];
+
+    const i = Math.floor(Math.random() * questions.length);
+    const shuffled = options[i].map((opt, idx) => ({opt, idx})).sort(() => Math.random() - 0.5);
+    correctIndex = shuffled.findIndex(x => x.idx === questions[i].correct);
+    return { text: questions[i].text, options: shuffled.map(x => x.opt) };
+}
+
+// === ПИТАННЯ 4 (частки - 10 прикладів) ===
+function generateQuestion4() {
+    const questions = [
+        { text: "Яка похідна функції: <br> \\(y = \\dfrac{\\arcsin x}{x^{2}}\\)?", correct: 0 },
+        { text: "Яка похідна функції: <br> \\(y = \\dfrac{\\cos x}{\\sqrt{x}}\\)?", correct: 0 },
+        { text: "Яка похідна функції: <br> \\(y = \\dfrac{\\ln x}{x}\\)?", correct: 0 },
+        { text: "Яка похідна функції: <br> \\(y = \\dfrac{\\arcsin x}{x}\\)?", correct: 0 },
+        { text: "Яка похідна функції: <br> \\(y = \\dfrac{\\cos x}{\\ln x}\\)?", correct: 0 },
+        { text: "Яка похідна функції: <br> \\(y = \\dfrac{\\sqrt{x}}{\\ctg x}\\)?", correct: 0 },
+        { text: "Яка похідна функції: <br> \\(y = \\dfrac{2^{x}}{\\ln x}\\)?", correct: 0 },
+        { text: "Яка похідна функції: <br> \\(y = \\dfrac{\\arccos x}{\\tg x}\\)?", correct: 0 },
+        { text: "Яка похідна функції: <br> \\(y = \\dfrac{\\ctg x}{x^{2}}\\)?", correct: 0 },
+        { text: "Яка похідна функції: <br> \\(y = \\dfrac{2x}{\\ln x}\\)?", correct: 0 }
+    ];
+
+    const options = [
+        ["\\dfrac{\\dfrac{x^{2}}{\\sqrt{1-x^{2}}} - 2x\\arcsin x}{x^{4}}", 
+         "\\dfrac{x^{2} - 2x\\arcsin x}{x^{4}\\sqrt{1-x^{2}}}", 
+         "\\dfrac{\\dfrac{x^{2}}{\\sqrt{1-x^{2}}} + 2x\\arcsin x}{x^{4}}", 
+         "\\dfrac{\\dfrac{x^{2}}{\\sqrt{1-x^{2}}} - 2x\\arcsin x}{x^{2}}"],
+        ["\\dfrac{-\\sqrt{x}\\sin x - \\dfrac{\\cos x}{2\\sqrt{x}}}{x}", 
+         "\\dfrac{\\sqrt{x}\\sin x - \\dfrac{\\cos x}{2\\sqrt{x}}}{x}", 
+         "\\dfrac{-\\sqrt{x}\\sin x - \\dfrac{\\cos x}{2\\sqrt{x}}}{\\sqrt{x}}", 
+         "\\dfrac{-2\\sqrt{x}\\sin x - \\cos x}{2x\\sqrt{x}}"],
+        ["\\dfrac{1 - \\ln x}{x^{2}}", 
+         "\\dfrac{1 - \\ln x}{x}", 
+         "\\dfrac{1 + \\ln x}{x^{2}}", 
+         "\\dfrac{\\dfrac{1}{x} - \\ln x}{x^{2}}"],
+        ["\\dfrac{\\dfrac{x}{\\sqrt{1-x^{2}}} - \\arcsin x}{x^{2}}", 
+         "\\dfrac{\\dfrac{1}{\\sqrt{1-x^{2}}} - \\arcsin x}{x^{2}}", 
+         "\\dfrac{\\dfrac{x}{\\sqrt{1-x^{2}}} + \\arcsin x}{x^{2}}", 
+         "\\dfrac{x - \\sqrt{1-x^{2}}\\arcsin x}{x^{2}}"],
+        ["\\dfrac{-\\sin x\\ln x - \\dfrac{\\cos x}{x}}{(\\ln x)^{2}}", 
+         "\\dfrac{-\\sin x\\ln x + \\dfrac{\\cos x}{x}}{(\\ln x)^{2}}", 
+         "\\dfrac{\\sin x\\ln x - \\dfrac{\\cos x}{x}}{(\\ln x)^{2}}", 
+         "\\dfrac{\\sin x\\ln x + \\dfrac{\\cos x}{x}}{(\\ln x)^{2}}"],
+        ["\\dfrac{\\dfrac{\\ctg x}{2\\sqrt{x}} + \\dfrac{\\sqrt{x}}{\\sin^{2} x}}{\\ctg^{2} x}", 
+         "\\dfrac{\\dfrac{\\ctg x}{2\\sqrt{x}} - \\dfrac{\\sqrt{x}}{\\sin^{2} x}}{\\ctg^{2} x}", 
+         "\\dfrac{\\dfrac{\\ctg x}{\\sqrt{x}} + \\dfrac{\\sqrt{x}}{\\sin^{2} x}}{\\ctg^{2} x}", 
+         "\\dfrac{\\sin x\\cos x + 2x}{2\\sqrt{x}\\cos x}"],
+        ["\\dfrac{2^{x}\\ln 2\\cdot\\ln x - \\dfrac{2^{x}}{x}}{(\\ln x)^{2}}", 
+         "\\dfrac{2^{x}\\ln x - \\dfrac{2^{x}}{x}}{(\\ln x)^{2}}", 
+         "\\dfrac{2^{x}\\ln 2\\cdot\\ln x - \\dfrac{2^{x}\\ln 2}{x}}{(\\ln x)^{2}}", 
+         "\\dfrac{2^{x}\\ln 2\\cdot\\ln x - 2^{x}}{x\\ln x}"],
+        ["\\dfrac{-\\dfrac{\\tg x}{\\sqrt{1-x^{2}}} - \\dfrac{\\arccos x}{\\cos^{2} x}}{\\tg^{2} x}", 
+         "\\dfrac{\\dfrac{\\tg x}{\\sqrt{1-x^{2}}} - \\dfrac{\\arccos x}{\\cos^{2} x}}{\\tg^{2} x}", 
+         "\\dfrac{-\\dfrac{\\tg x}{\\sqrt{1-x^{2}}} + \\dfrac{\\arccos x}{\\cos^{2} x}}{\\tg^{2} x}", 
+         "\\dfrac{-\\dfrac{\\tg x}{\\sqrt{1-x^{2}}} - \\dfrac{1}{\\cos^{2} x}}{\\tg^{2} x}"],
+        ["\\dfrac{-\\dfrac{x^{2}}{\\sin^{2} x} - 2x\\ctg x}{x^{4}}", 
+         "\\dfrac{\\dfrac{x^{2}}{\\sin^{2} x} - 2x\\ctg x}{x^{4}}", 
+         "\\dfrac{-\\dfrac{x^{2}}{\\sin^{2} x} + 2x\\ctg x}{x^{4}}", 
+         "\\dfrac{\\dfrac{x^{2}}{\\sin^{2} x} + 2x\\ctg x}{x^{4}}"],
+        ["\\dfrac{2\\ln x - 2}{(\\ln x)^{2}}", 
+         "\\dfrac{-2\\ln x + 2}{(\\ln x)^{2}}", 
+         "\\dfrac{2\\ln x - \\dfrac{2}{x}}{(\\ln x)^{2}}", 
+         "\\dfrac{2 - \\dfrac{2}{x}}{(\\ln x)^{2}}"]
+    ];
+
+    const i = Math.floor(Math.random() * questions.length);
+    const shuffled = options[i].map((opt, idx) => ({opt, idx})).sort(() => Math.random() - 0.5);
+    correctIndex = shuffled.findIndex(x => x.idx === questions[i].correct);
+    return { text: questions[i].text, options: shuffled.map(x => x.opt) };
+}
+
+            // === ПИТАННЯ 5 (похідна в точці - 10 прикладів) ===
+function generateQuestion5() {
+    const questions = [
+        { 
+            text: "Чому дорівнює похідна функції <br> \\(y = 3x^{2} - \\sqrt{x}\\) <br> в точці \\(x_0 = 1\\)?", 
+            correct: 0 
+        },
+        { 
+            text: "Чому дорівнює похідна функції <br> \\(y = 5x + \\arctg x\\) <br> в точці \\(x_0 = 2\\)?", 
+            correct: 0 
+        },
+        { 
+            text: "Чому дорівнює похідна функції <br> \\(y = x^{2} - \\dfrac{1}{x}\\)<br> в точці \\(x_0 = -1\\)?", 
+            correct: 0 
+        },
+        { 
+            text: "Чому дорівнює похідна функції <br> \\(y = -2e^{x} + \\sin x\\) <br> в точці \\(x_0 = 0\\)?", 
+            correct: 0 
+        },
+        { 
+            text: "Чому дорівнює похідна функції <br> \\(y = 2\\ln x - \\dfrac{1}{x}\\) <br> в точці \\(x_0 = 1\\)?", 
+            correct: 0 
+        },
+        { 
+            text: "Чому дорівнює похідна функції <br> \\(y = 4\\sqrt{x} + 6\\arctg x\\) <br> в точці \\(x_0 = 1\\)?", 
+            correct: 0 
+        },
+        { 
+            text: "Чому дорівнює похідна функції <br> \\(y = -4x^{4} - \\sin x\\) <br> в точці \\(x_0 = 0\\)?", 
+            correct: 0 
+        },
+        { 
+            text: "Чому дорівнює похідна функції <br> \\(y = -4\\arctg x + \\dfrac{1}{x}\\) <br> в точці \\(x_0 = -1\\)?", 
+            correct: 0 
+        },
+        { 
+            text: "Чому дорівнює похідна функції \\(y = -2\\tg x + \\cos x\\) в точці \\(x_0 = 0\\)?", 
+            correct: 0 
+        },
+        { 
+            text: "Чому дорівнює похідна функції <br> \\(y = -\\arcctg x - \\dfrac{2}{x}\\) <br> в точці \\(x_0 = -1\\)?", 
+            correct: 0 
+        }
+    ];
+
+    const options = [
+        ["5,5", "6", "2", "5"],
+        ["5,2", "10 + \\arctg 2", "4,8", "5,5"],
+        ["2", "-2", "0", "-1"],
+        ["-1", "-2", "1", "0"],
+        ["-1", "1", "0", "3"],
+        ["5", "-1", "8", "-4"],
+        ["-1", "1", "0", "-4"],
+        ["-3", "-1", "1", "3"],
+        ["-2", "1", "0", "-1"],
+        ["2,5", "1,5", "-2,5", "-1,5"]
+    ];
+
+    const i = Math.floor(Math.random() * questions.length);
+    const shuffled = options[i].map((opt, idx) => ({opt, idx})).sort(() => Math.random() - 0.5);
+    correctIndex = shuffled.findIndex(x => x.idx === questions[i].correct);
+    return { text: questions[i].text, options: shuffled.map(x => x.opt) };
+}
+            
+// === Відображення питання ===
+function displayQuestion() {
+    const q = stage === 1 ? generateQuestion1() :
+              stage === 2 ? generateQuestion2() :
+              stage === 3 ? generateQuestion3() :
+              stage === 4 ? generateQuestion4() :
+              generateQuestion5(); // Додано питання 5
+
+    document.getElementById('questionNumber').textContent = `Питання ${stage}`;
+    document.getElementById('questionText').innerHTML = `<p class="question-text">${q.text}</p>`;
+
+    const cont = document.getElementById('optionsContainer');
+    cont.innerHTML = "";
+    q.options.forEach((opt, i) => {
+        const div = document.createElement('div');
+        div.className = 'option';
+        div.dataset.value = i;
+        div.innerHTML = `\\( ${opt} \\)`;
+        cont.appendChild(div);
+    });
+
+    selected = null;
+    document.getElementById('submitAnswer').disabled = true;
+    document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+
+    MathJax.typesetPromise([document.getElementById('questionText'), cont]).catch(err => console.log(err));
+}
+
+// Вибір відповіді
+document.getElementById('optionsContainer').addEventListener('click', e => {
+    const opt = e.target.closest('.option');
+    if (!opt) return;
+    document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+    opt.classList.add('selected');
+    selected = opt.dataset.value;
+    document.getElementById('submitAnswer').disabled = false;
+});
+
+// Підтвердження відповіді
+document.getElementById('submitAnswer').addEventListener('click', () => {
+    if (selected === null) return;
+
+    const isCorrect = parseInt(selected) === correctIndex;
+
+    const fb = document.getElementById('feedback');
+    fb.textContent = isCorrect ? '✓ Ціль уражена!' : '✗ Промах! Спробуй ще!';
+    fb.className = `feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'} show`;
+
+    setTimeout(() => {
+        fb.classList.remove('show');
+        if (isCorrect) {
+            if (stage === 5) { // Змінено з 4 на 5
+                toggleModal(document.getElementById('trainerModal'), false);
+                toggleModal(document.getElementById('completionModal'), true);
+            } else {
+                stage++;
+                displayQuestion();
+            }
+        } else {
+            displayQuestion(); // залишаємося на цьому ж рівні
+        }
+    }, 1200);
+});
+
+// Повернутися на полігон
+document.getElementById('resetTrainerBtn').addEventListener('click', () => {
+    toggleModal(document.getElementById('completionModal'), false);
+    stage = 1;
+    toggleModal(document.getElementById('trainerModal'), true);
+    displayQuestion();
+});
+
+// Ініціалізація тренажера
+function initTrainer() {
+    stage = 1;
+    displayQuestion();
+}
+
+// Ініціалізація при завантаженні
+document.addEventListener('DOMContentLoaded', function() {
+    initTrainer();
+});
+        });
+    </script>
+</body>
+</html>
