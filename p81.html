@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>81. Правило Лопіталя</title>
+
+    <!-- MathJax -->
+    <script>
+    window.MathJax = {
+        tex: {
+            inlineMath: [['\\(', '\\)']],
+            displayMath: [['\\[', '\\]']],
+            processEscapes: true,
+            packages: {'[+]': ['noerrors']}
+        },
+        loader: {load: ['[tex]/noerrors']}
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        *, *:before, *:after { box-sizing: border-box; }
+        body {
+            margin: 0;
+            background: radial-gradient(circle at center, #0a0f0d 0%, #111a15 50%, #1e2b22 100%);
+            color: #d0e0d5;
+            font-family: 'Roboto Condensed', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        body.loaded { visibility: visible; opacity: 1; }
+
+        .title-box {
+            margin-top: 60px;
+            padding: 22px 50px;
+            background: linear-gradient(135deg, #1e2b22, #2d3f34);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.7);
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid #3d5a45;
+        }
+        .title-box h1 {
+            margin: 0;
+            font-size: 30px;
+            color: #8ab86a;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 12px rgba(138,184,106,0.6);
+        }
+
+        .section-container {
+            margin-top: 50px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            max-width: 1100px;
+        }
+        .section {
+            width: 280px;
+            height: 210px;
+            background: linear-gradient(145deg, #1e2b22, #2d3f34);
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid rgba(138,184,106,0.2);
+        }
+        .section:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 15px 35px rgba(138,184,106,0.3);
+            border-color: #8ab86a;
+        }
+        .section h2 { 
+            font-size: 21px; 
+            color: #ffffff; 
+            font-family: 'Orbitron', sans-serif; 
+            margin-top: 15px;
+        }
+        .section img { 
+            width: 70px; 
+            height: 70px; 
+            filter: brightness(1.4) drop-shadow(0 0 10px #8ab86a); 
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 5%; left: 5%; width: 90%; height: 90%;
+            background: linear-gradient(135deg, #1e2b22, #2d3f34);
+            border-radius: 18px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.7);
+            z-index: 1001;
+            overflow: hidden;
+            flex-direction: column;
+            border: 2px solid #3d5a45;
+        }
+        #modalOverlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 999;
+            backdrop-filter: blur(8px);
+        }
+        .modal-content {
+            padding: 25px;
+            flex-grow: 1;
+            overflow-y: auto;
+            color: #d0e0d5;
+        }
+        .modal-header {
+            background: linear-gradient(0deg, #1e2b22, #2d3f34);
+            padding: 10px 15px;
+            display: flex;
+            justify-content: flex-end;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            border-bottom: 1px solid #3d5a45;
+        }
+        .close-btn {
+            background: linear-gradient(135deg, #3d5a45, #8ab86a);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 20px;
+            font-size: 17px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        }
+        .close-btn:hover { 
+            background: linear-gradient(135deg, #2e4a35, #6a8f50); 
+            transform: scale(1.05);
+        }
+
+        .theory-content h2, .theory-content h3 { 
+            color: #8ab86a; 
+            text-shadow: 0 0 10px rgba(138,184,106,0.5);
+            text-align: center; 
+            font-family: 'Orbitron', sans-serif; 
+        }
+        .theory-content p, .theory-content li { 
+            font-size: clamp(18px, 3vw, 20px); 
+            line-height: 1.8; 
+            text-align: justify; 
+            margin: 18px 0; 
+        }
+        .example {
+            background: rgba(138,184,106,0.1);
+            border-left: 5px solid #8ab86a;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 10px;
+        }
+        .example strong { 
+            color: #ffa500; 
+            display: block; 
+            margin-bottom: 12px; 
+            font-size: 20px; 
+        }
+        .answer { 
+            color: #8ab86a !important; 
+            font-weight: bold; 
+            margin-top: 15px; 
+            font-size: 19px; 
+            text-align: center; 
+        }
+
+        .math-notation-centered { 
+            display: block; 
+            text-align: center; 
+            font-size: clamp(20px, 4vw, 22px); 
+            margin: 25px 0; 
+            color: #ffff99; 
+        }
+        mjx-container { color: #ffff99 !important; }
+
+        .navigation-buttons { 
+            display: flex; 
+            justify-content: center; 
+            gap: 30px; 
+            margin: 60px 0 40px; 
+            flex-wrap: wrap;
+        }
+        .nav-button {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #2d3f34, #3d5a45);
+            color: #d0e0d5;
+            padding: 16px 32px;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+            border: 1px solid rgba(138,184,106,0.4);
+            transition: all 0.4s ease;
+        }
+        .nav-button:hover {
+            background: linear-gradient(135deg, #3d5a45, #8ab86a);
+            color: #fff;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(138,184,106,0.4);
+        }
+        .nav-button svg { margin-right: 12px; fill: currentColor; width: 26px; height: 26px; }
+
+        /* Відео */
+        .video-card {
+            width: 360px;
+            height: 240px;
+            background: linear-gradient(135deg, #1e2b22, #2d3f34);
+            border-radius: 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            border: 2px solid rgba(138,184,106,0.3);
+        }
+        .video-card:hover {
+            transform: scale(1.08);
+            border-color: #8ab86a;
+            box-shadow: 0 15px 40px rgba(138,184,106,0.4);
+        }
+        .play-icon { width: 80px; height: 80px; filter: drop-shadow(0 0 12px #8ab86a); }
+ .video-card h3 {
+            color: #4da6ff;
+            margin: 15px 0 0;
+            font-size: 18px;
+        }
+        /* Флеш-картки
+        .question-card {
+            perspective: 1200px;
+            margin: 30px auto;
+            max-width: 1000px;
+            min-height: 200px;
+            cursor: pointer;
+        }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            min-height: 200px;
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .question-card.flipped .card-inner { transform: rotateY(180deg); }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            border: 2px solid rgba(138,184,106,0.4);
+        }
+        .card-front {
+            background: linear-gradient(135deg, #1e2b22, #2d3f34);
+            color: #ffffff;
+        }
+        .card-back {
+            background: linear-gradient(135deg, #2d3f34, #3d5a45);
+            color: #d0e0d5;
+            transform: rotateY(180deg);
+        }
+
+        @media (max-width: 768px) {
+            .title-box h1 { font-size: 22px; padding: 18px 30px; }
+            .section { width: 90%; height: 180px; }
+            .nav-button { font-size: 16px; padding: 14px 24px; }
+            .navigation-buttons { gap: 15px; }
+        }
+            /* СУЧАСНА СМУГА ПРОКРУТКИ — тільки в модальних вікнах */
+.modal-content::-webkit-scrollbar {
+    width: 12px;                     /* товщина смуги */
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: #0f1511;             /* темний фон треку */
+    border-radius: 10px;
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.6);
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, 
+                #3d5a45 0%, 
+                #8ab86a 50%, 
+                #3d5a45 100%);
+    border-radius: 10px;
+    border: 2px solid #1e2b22;       /* «окантування» під фон модалки */
+    box-shadow: 
+        0 0 12px rgba(138,184,106,0.6),
+        inset 0 0 8px rgba(0,0,0,0.5);
+    transition: all 0.3s ease;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: #2d3f34;
+}
+
+/* Ефект при наведенні — яскравіше світіння */
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, 
+                #4a6b50 0%, 
+                #a0d680 60%, 
+                #4a6b50 100%);
+    box-shadow: 
+        0 0 20px rgba(138,184,106,0.9),
+        inset 0 0 10px rgba(0,0,0,0.6);
+    transform: scale(1.05);
+}
+
+/* Для Firefox (трохи інший синтаксис) */
+.modal-content {
+    scrollbar-width: thin;                     /* thin | auto | none */
+    scrollbar-color: #8ab86a #1e2b22;          /* thumb track */
+}
+    /* ФЛЕШ-КАРТКИ — військово-оливковий стиль (під Правило Лопіталя) */
+.question-card {
+    perspective: 1200px;
+    margin: 30px auto;
+    max-width: 1000px;
+    width: 100%;
+    min-height: 200px;
+    cursor: pointer;
+    transition: transform 0.4s ease;
+}
+
+.question-card:hover {
+    transform: translateY(-10px);
+}
+
+.card-inner {
+    position: relative;
+    width: 100%;
+    min-height: 200px;
+    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+    border-radius: 18px;
+}
+
+.question-card.flipped .card-inner {
+    transform: rotateY(180deg);
+}
+
+/* Лицьова сторона (питання) */
+.card-front,
+.card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    border: 2px solid rgba(138, 184, 106, 0.35);
+    transition: all 0.4s ease;
+}
+
+/* Лицьова сторона */
+.card-front {
+    background: linear-gradient(135deg, #1e2b22, #2d3f34);
+    color: #ffffff;
+}
+
+/* Зворотна сторона (відповідь) */
+.card-back {
+    background: linear-gradient(135deg, #2d3f34, #3d5a45);
+    color: #e0f0e0;
+    transform: rotateY(180deg);
+}
+
+/* Ховер-ефекти */
+.card-front:hover {
+    border-color: #8ab86a;
+    box-shadow: 0 15px 40px rgba(138, 184, 106, 0.35);
+}
+
+.card-back:hover {
+    border-color: #a0d680;
+    box-shadow: 0 15px 40px rgba(138, 184, 106, 0.45);
+}
+
+/* Текст */
+.card-front span,
+.card-back span {
+    font-size: clamp(18px, 3.5vw, 21px);
+    line-height: 1.7;
+    font-weight: 500;
+    text-align: center;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+}
+
+/* Формули в відповідях — жовті, як у теорії */
+.card-back mjx-container {
+    color: #ffff99 !important;
+    font-style: italic !important;
+}
+
+/* Іконки в кутах */
+.card-front::after {
+    content: "?";
+    position: absolute;
+    bottom: 18px;
+    right: 25px;
+    font-size: 32px;
+    font-weight: bold;
+    opacity: 0.7;
+    color: #8ab86a;
+    transition: all 0.3s ease;
+}
+
+.card-front:hover::after {
+    opacity: 1;
+    transform: scale(1.2);
+    text-shadow: 0 0 15px #8ab86a;
+}
+
+.card-back::after {
+    content: "💡";
+    position: absolute;
+    bottom: 18px;
+    right: 25px;
+    font-size: 28px;
+    opacity: 0.8;
+    color: #a0d680;
+    transition: all 0.3s ease;
+}
+
+.card-back:hover::after {
+    opacity: 1;
+    transform: scale(1.15);
+    text-shadow: 0 0 15px #a0d680;
+}
+
+/* Верхня смужка-акцент */
+.card-front::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #8ab86a, #a0d680, #8ab86a);
+    border-radius: 18px 18px 0 0;
+    opacity: 0.9;
+}
+
+.card-back::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #a0d680, #8ab86a, #6a8f50);
+    border-radius: 18px 18px 0 0;
+    opacity: 0.9;
+}
+
+/* Мобільна адаптація */
+@media (max-width: 768px) {
+    .question-card {
+        min-height: 170px;
+        margin: 20px auto;
+    }
+    .card-front, .card-back {
+        padding: 22px;
+        border-radius: 14px;
+    }
+    .card-front span, .card-back span {
+        font-size: 17px;
+        line-height: 1.6;
+    }
+    .card-front::after, .card-back::after {
+        font-size: 24px;
+        bottom: 14px;
+        right: 18px;
+    }
+}
+
+     /* Адаптивність */
+        @media (max-width: 768px) {
+            .title-box h1 { font-size: 19px; }
+            .section-container { flex-direction: column; align-items: center; }
+            .section { width: 85%; height: 180px; }
+            .modal { top: 2%; left: 2%; width: 96%; height: 96%; }
+            .math-notation-centered { font-size: clamp(14px, 2.8vw, 16px); }
+            .theory-content p, li { font-size: clamp(18px, 3vw, 19px); }
+            .example strong { font-size: 18px; }
+            .theory-content h2, h3 { font-size: clamp(18px, 3vw, 19px); }
+            .section h2 { font-size: 17px; }
+            .navigation-buttons { 
+                flex-direction: row !important;
+                gap: 14px;
+                justify-content: center;
+                padding: 0 15px;
+            }
+            .nav-button {
+                font-size: 14px;
+                padding: 12px 18px;
+                min-width: 140px;
+                justify-content: center;
+            }
+            /* 1. Формули в теорії (центровані великі) */
+    .math-notation-centered {
+        font-size: clamp(17px, 4.5vw, 19px) !important;
+        margin: 22px 0;
+    }
+
+    /* 2. Формули всередині абзаців і прикладів */
+    .theory-content mjx-container,
+    .example mjx-container {
+        font-size: clamp(16px, 4.2vw, 18px) !important;
+    }
+
+        }
+        @media (max-width: 480px) {
+            .nav-button {
+                font-size: 13px;
+                padding: 10px 14px;
+                min-width: 120px;
+            }
+            .navigation-buttons { gap: 10px; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="title-box">
+        <h1>81. Правило Лопіталя</h1>
+    </div>
+
+   <div class="section-container">
+        <div class="section" id="openTheoryBtn">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Теорія">
+            <h2>Теоретичні відомості</h2>
+        </div>
+        <div class="section" id="openVideoBtn">
+            <img src="https://img.icons8.com/fluency/96/video.png" alt="Відео">
+            <h2>Відеоматеріали</h2>
+        </div>
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Питання">
+            <h2>Питання і відповіді</h2>
+        </div>
+    </div>
+
+    <div class="navigation-buttons">
+        <a class="nav-button prev" href="{{ url_for('tema13') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+            До теми 13
+        </a>
+        <a class="nav-button home" href="{{ url_for('home') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            На головну
+        </a>
+    </div>
+
+   <!-- Теорія -->
+<div id="theoryModal" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeTheoryBtn">× Закрити</button>
+    </div>
+    <div class="modal-content theory-content">
+
+        <h2>Правило Лопіталя</h2>
+
+        <p style="text-align:justify;">
+            <strong>Правило Лопіталя</strong> — метод математичного аналізу для обчислення границь, що призводять до невизначеностей типу 
+            \(\dfrac{0}{0}\) або \(\dfrac{\infty}{\infty}\). Названо на честь французького математика 
+            <strong>Гійома Франсуа Антуана, маркіза де Лопіталя</strong> (1661–1704).
+        </p>
+
+        <h3>Формулювання правила</h3>
+        <p>Нехай функції \(f(x)\) та \(g(x)\) визначені та диференційовні в околі точки \(a\) (крім, можливо, самої точки \(a\)) 
+        і \(g'(x) \neq 0\) в цьому околі.</p>
+        <p>Якщо границя</p>
+        <div class="math-notation-centered">
+            \[ \lim_{x \to a} \frac{f(x)}{g(x)} \]
+        </div>
+        <p>має невизначений вигляд \(\dfrac{0}{0}\) або \(\dfrac{\infty}{\infty}\), і існує границя</p>
+        <div class="math-notation-centered">
+            \[ \lim_{x \to a} \frac{f'(x)}{g'(x)} = L \quad (L \text{ — скінченне або } \pm\infty) \]
+        </div>
+        <p>то</p>
+        <div class="math-notation-centered">
+            \[ \lim_{x \to a} \frac{f(x)}{g(x)} = \lim_{x \to a} \frac{f'(x)}{g'(x)} = L \quad (13.15) \]
+        </div>
+
+        <h3>Сутність правила</h3>
+        <p class="math-notation-centered" style="font-size:20px;color:#ffff99;margin:30px 0;">
+            Границя відношення функцій дорівнює границі відношення їхніх похідних (за умови виконання умов теореми)
+        </p>
+
+        <h3>Важливі зауваження</h3>
+        <ol style="font-size:19px;line-height:1.8;">
+            <li><strong>Повторне застосування.</strong> Якщо \(\dfrac{f'(x)}{g'(x)}\) знову дає \(\dfrac{0}{0}\) або \(\dfrac{\infty}{\infty}\), 
+                правило можна застосовувати до похідних вищих порядків:</li>
+            <div class="math-notation-centered">
+                \[ \lim \frac{f(x)}{g(x)} = \lim \frac{f'(x)}{g'(x)} = \lim \frac{f''(x)}{g''(x)} = \dots \]
+            </div>
+            <li><strong>Точка \(a = \infty\).</strong> Правило працює і при \(x \to \infty\) або \(x \to -\infty\).</li>
+            <li><strong>Інші типи невизначеностей</strong> зводяться до \(\dfrac{0}{0}\) або \(\dfrac{\infty}{\infty}\):</li>
+        </ol>
+        <ul style="margin-left:40px;font-size:18px;">
+            <li>\(0 \cdot \infty\) → переписати як \(\dfrac{f(x)}{1/g(x)}\) або \(\dfrac{g(x)}{1/f(x)}\)</li>
+            <li>\(\infty - \infty\) → привести до спільного знаменника</li>
+            <li>\(1^\infty,\ 0^0,\ \infty^0\) → логарифмування: \(f(x)^{g(x)} = e^{g(x)\ln f(x)}\)</li>
+        </ul>
+
+         <div class="example">
+            <strong>
+                <span style="color:#ffa500;">Приклад 13.14.</span>
+                <span style="color:#ffffff;">
+            Обчислити границі за правилом Лопіталя:</span><br>
+
+            <span style="color:#ffa500;">1)</span> \(\displaystyle \lim_{x\to0} \dfrac{e^x - 1}{\sin x}\) <br>
+             <span style="color:#ffffff;">Підставимо \(x = 0\): \(\dfrac{e^0 - 1}{\sin 0} = \dfrac{0}{0}\).
+            <div class="math-notation-centered">
+                \[ \lim_{x \to 0} \dfrac{e^x - 1}{\sin x} \overset{\text{Лопіталь}}{=}
+                \lim_{x \to 0} \dfrac{e^x}{\cos x} = \dfrac{e^0}{\cos 0} = \dfrac{1}{1} = 1 \]
+            </div>
+
+             <span style="color:#ffa500;">2)</span> \(\displaystyle \lim_{x \to \pi/2} \dfrac{\sin x - 1}{\cos x}\)<br>
+             <span style="color:#ffffff;">Підставимо \(x = \dfrac{\pi}{2}\): \(\dfrac{0}{0}\).</span><br>
+            <div class="math-notation-centered">
+                \[ \lim_{x \to \pi/2} \dfrac{\sin x - 1}{\cos x} \overset{\text{Лопіталь}}{=}
+                \lim_{x \to \pi/2} \dfrac{\cos x}{-\sin x} = \dfrac{\cos \frac{\pi}{2}}{-\sin \frac{\pi}{2}} = \dfrac{0}{-1} = 0 \]
+            </div>
+
+            <div class="answer">
+                Відповідь: 1) 1;&emsp;&emsp;2) 0.
+            </div>
+        </div>
+
+        <!-- Додатковий приклад (за бажанням можеш залишити або прибрати) -->
+        <div class="example">
+            <strong>Приклад повторного застосування.</strong> \(\displaystyle \lim_{x \to 0} \dfrac{1 - \cos x}{x^2}\)
+<br>
+            <div class="math-notation-centered">
+               \[ \dfrac{0}{0} \to \dfrac{\sin x}{2x} \quad \dfrac{0}{0} \to \dfrac{\cos x}{2} \to \dfrac{1}{2}\]
+            </div>
+            <div class="answer">Відповідь: \(\dfrac{1}{2}\)</div>
+        </div>
+
+        <div style="background:rgba(138,184,106,0.12);border:2px dashed #8ab86a;padding:30px;border-radius:16px;margin:40px 0;text-align:center;">
+            <h3 style="color:#8ab86a;margin-top:0;">Ключова формула (13.15)</h3>
+            <div class="math-notation-centered" style="font-size:24px;color:#ffff99;">
+                \[\lim_{x \to a} \frac{f(x)}{g(x)} = \lim_{x \to a} \frac{f'(x)}{g'(x)}\]
+                <br>за умов \(\frac{0}{0}\) або \(\frac{\infty}{\infty}\)
+            </div>
+        </div>
+
+    </div>
+</div>
+    <!-- Відео -->
+    <div id="videoModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoBtn">× Закрити</button>
+        </div>
+        <div class="modal-content" style="padding:20px 10px;">
+
+            <div id="videoList" style="display:flex;justify-content:center;flex-wrap:wrap;gap:30px;">
+                <div class="video-card" data-url="https://www.youtube.com/embed/lvxZY-iiTHE">
+                    <img src="https://img.icons8.com/fluency/96/play.png" class="play-icon">
+                    <h3>Правило Лопіталя. Приклади</h3>
+                </div>
+            </div>
+
+            <div id="videoPlayer" style="display:none;width:90%;max-width:1000px;aspect-ratio:16/9;margin:40px auto;border-radius:18px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,0.8);">
+                <iframe id="youtubePlayer"
+                        width="100%" height="100%"
+                        src=""
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- Питання-відповіді -->
+    <div id="questionsModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeQuestionsBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div style="max-width:1000px;margin:0 auto;">
+
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>1. Які два основні типи невизначеності дозволяють застосовувати правило Лопіталя?</span></div>
+                        <div class="card-back"><span>\(\frac{0}{0}\) та \(\frac{\infty}{\infty}\)</span></div>
+                    </div>
+                </div>
+
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>2. Що треба зробити з дробом, щоб застосувати правило?</span></div>
+                        <div class="card-back"><span>Знайти похідні чисельника і знаменника окремо і взяти границю від нового дробу</span></div>
+                    </div>
+                </div>
+
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>3. Чи можна застосовувати правило багаторазово?</span></div>
+                        <div class="card-back"><span>Так, доки знову отримуємо невизначеність одного з двох типів</span></div>
+                    </div>
+                </div>
+
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>4. Як обчислити \(\displaystyle \lim_{x\to0} \frac{1-\cos x}{x^2}\)?</span></div>
+                        <div class="card-back"><span>Двічі Лопіталь: \(\frac{\sin x}{2x} \to \frac{\cos x}{2} \to \frac{1}{2}\)</span></div>
+                    </div>
+                </div>
+
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>5. Чи завжди правило Лопіталя дає правильну відповідь?</span></div>
+                        <div class="card-back"><span>Ні, треба перевіряти умови теореми (наявність похідних і \(g'(x)\neq0\))</span></div>
+                    </div>
+                </div>
+
+                <!-- Додай ще скільки потрібно карток -->
+            </div>
+        </div>
+    </div>
+
+    <div id="modalOverlay"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.add('loaded');
+
+            const modals = {
+                theory: document.getElementById('theoryModal'),
+                video: document.getElementById('videoModal'),
+                questions: document.getElementById('questionsModal')
+            };
+            const overlay = document.getElementById('modalOverlay');
+            const videoList = document.getElementById('videoList');
+            const videoPlayer = document.getElementById('videoPlayer');
+            const youtubeIframe = document.getElementById('youtubePlayer');
+
+            const openModal = m => { m.style.display = 'flex'; overlay.style.display = 'block'; document.body.style.overflow = 'hidden'; };
+            const closeModal = m => { m.style.display = 'none'; overlay.style.display = 'none'; document.body.style.overflow = 'auto'; };
+
+            document.getElementById('openTheoryBtn').onclick = () => openModal(modals.theory);
+            document.getElementById('openVideoBtn').onclick = () => {
+                openModal(modals.video);
+                videoPlayer.style.display = 'none';
+                videoList.style.display = 'flex';
+                youtubeIframe.src = '';
+            };
+            document.getElementById('openQuestionsBtn').onclick = () => openModal(modals.questions);
+
+            // Запуск відео
+            document.querySelectorAll('.video-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const url = card.dataset.url;
+                    videoList.style.display = 'none';
+                    videoPlayer.style.display = 'block';
+                    youtubeIframe.src = url + '?rel=0&autoplay=0';
+                });
+            });
+
+            // Правильне закриття відео
+            function closeVideoModal() {
+                youtubeIframe.src = '';
+                videoPlayer.style.display = 'none';
+                videoList.style.display = 'flex';
+                closeModal(modals.video);
+            }
+
+            document.getElementById('closeVideoBtn').onclick = closeVideoModal;
+            overlay.onclick = () => {
+                if (modals.video.style.display === 'flex') closeVideoModal();
+                else document.querySelectorAll('.modal').forEach(m => m.style.display === 'flex' && closeModal(m));
+            };
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') {
+                    if (modals.video.style.display === 'flex') closeVideoModal();
+                    else document.querySelectorAll('.modal').forEach(m => m.style.display === 'flex' && closeModal(m));
+                }
+            });
+
+            document.querySelectorAll('.close-btn:not(#closeVideoBtn)').forEach(btn => {
+                btn.onclick = () => closeModal(btn.closest('.modal'));
+            });
+        });
+    </script>
+</body>
+</html>
