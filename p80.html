@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>80. Механічний зміст похідної</title>
+
+    <!-- MathJax -->
+    <script>
+    window.MathJax = {
+        tex: {
+            inlineMath: [['\\(', '\\)']],
+            displayMath: [['\\[', '\\]']],
+            processEscapes: true,
+            packages: {'[+]': ['noerrors']},
+            macros: {
+                tg: ['\\operatorname{tg}', 0],
+                ctg: ['\\operatorname{ctg}', 0],
+                arctg: ['\\operatorname{arctg}', 0],
+                arcctg: ['\\operatorname{arcctg}', 0]
+            }
+        },
+        options: { ignoreHtmlClass: "tex2jax_ignore|no-mathjax", processHtmlClass: "tex2jax_process" },
+        loader: {load: ['[tex]/noerrors']}
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        *, *:before, *:after { box-sizing: border-box; }
+        body {
+            margin: 0;
+            background: radial-gradient(circle at center, #0a0a0a 0%, #1a1a1a 40%, #2b2b2b 100%);
+            color: #e0e0e0;
+            font-family: 'Roboto Condensed', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        body.loaded { visibility: visible; opacity: 1; }
+
+        .title-box {
+            margin-top: 60px;
+            padding: 20px 40px;
+            background: linear-gradient(135deg, #1c2526, #2e3a3b);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid #3e4a4b;
+        }
+        .title-box h1 {
+            margin: 0;
+            font-size: 28px;
+            color: #4da6ff;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 8px rgba(77,166,255,0.5);
+        }
+
+        .section-container {
+            margin-top: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+            max-width: 1000px;
+        }
+        .section {
+            width: 260px;
+            height: 200px;
+            background: linear-gradient(145deg, #1e2a2b, #2c3e40);
+            border-radius: 14px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.45);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            border: 1px solid rgba(77,166,255,0.15);
+        }
+        .section:hover {
+            transform: scale(1.06);
+            box-shadow: 0 10px 25px rgba(77,166,255,0.25);
+        }
+        .section h2 { font-size: 20px; color: #ffffff; font-family: 'Orbitron', sans-serif; }
+        .section img { width: 60px; height: 60px; margin-bottom: 15px; filter: brightness(1.3) drop-shadow(0 0 6px #4da6ff); }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 5%; left: 5%; width: 90%; height: 90%;
+            background: linear-gradient(135deg, #2b3a3b, #3e5c5e);
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            z-index: 1001;
+            overflow: hidden;
+            flex-direction: column;
+            border: 1px solid rgba(77,166,255,0.2);
+        }
+        #modalOverlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 999;
+            backdrop-filter: blur(6px);
+        }
+        .modal-content {
+            padding: 20px;
+            flex-grow: 1;
+            overflow-y: auto;
+            color: #e0e0e0;
+        }
+        .modal-header {
+            background: linear-gradient(0deg, #2b3a3b, #3e5c5e);
+            padding: 8px 12px;
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            position: sticky;
+            top: 0;
+            z-index: 1002;
+            border-bottom: 1px solid rgba(77,166,255,0.2);
+        }
+        .close-btn {
+            background: linear-gradient(135deg, #1a66cc, #4da6ff);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            box-shadow: 0 2px 8px rgba(26,102,204,0.4);
+        }
+        .close-btn:hover { background: linear-gradient(135deg, #004080, #1a66cc); transform: scale(1.05); }
+
+        .theory-content h2, h3 { color: #4da6ff; text-shadow: 0 0 10px rgba(77,166,255,0.5); text-align: center; font-family: 'Orbitron', sans-serif; }
+        .theory-content p, li { font-size: clamp(18px, 3vw, 20px); line-height: 1.7; text-align: justify; margin: 15px 0; }
+        .example {
+            background: rgba(77,166,255,0.1);
+            border-left: 4px solid #4da6ff;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .example strong { color: #ffa500; display: block; margin-bottom: 10px; font-size: 19px; }
+        .answer { color: #4da6ff !important; font-weight: bold; margin-top: 10px; font-size: 18px; text-align: center; }
+
+        .math-notation-centered { display: block; text-align: center; font-size: clamp(19px, 3.5vw, 20px); margin: 22px 0; color: #ffff99; }
+        mjx-container { color: #ffff99 !important; font-style: italic !important; }
+
+        .navigation-buttons { 
+            display: flex; 
+            justify-content: center; 
+            gap: 25px; 
+            margin: 50px 0 30px; 
+        }
+        .nav-button {
+            display: flex; 
+            align-items: center; 
+            background: linear-gradient(135deg, #2b3a3b, #3e5c5e);
+            color: #e0e0e0; 
+            padding: 14px 28px; 
+            border-radius: 12px; 
+            text-decoration: none;
+            font-weight: bold; 
+            font-size: 17px;
+            border: 1px solid rgba(77,166,255,0.3);
+            transition: all 0.3s ease;
+        }
+        .nav-button:hover { 
+            background: linear-gradient(135deg, #1a66cc, #4da6ff); 
+            color: #fff; 
+            transform: scale(1.07); 
+            box-shadow: 0 6px 20px rgba(77,166,255,0.4);
+        }
+        .nav-button svg { margin-right: 10px; fill: currentColor; width: 22px; height: 22px; }
+
+        /* Адаптивність */
+        @media (max-width: 768px) {
+            .title-box h1 { font-size: 19px; }
+            .section-container { flex-direction: column; align-items: center; }
+            .section { width: 85%; height: 180px; }
+            .modal { top: 2%; left: 2%; width: 96%; height: 96%; }
+            .math-notation-centered { font-size: clamp(14px, 2.8vw, 16px); }
+            .theory-content p, li { font-size: clamp(18px, 3vw, 19px); }
+            .example strong { font-size: 18px; }
+            .theory-content h2, h3 { font-size: clamp(18px, 3vw, 19px); }
+            .section h2 { font-size: 17px; }
+            .navigation-buttons { 
+                flex-direction: row !important;
+                gap: 14px;
+                justify-content: center;
+                padding: 0 15px;
+            }
+            .nav-button {
+                font-size: 14px;
+                padding: 12px 18px;
+                min-width: 140px;
+                justify-content: center;
+            }
+        }
+        @media (max-width: 480px) {
+            .nav-button {
+                font-size: 13px;
+                padding: 10px 14px;
+                min-width: 120px;
+            }
+            .navigation-buttons { gap: 10px; }
+        }
+
+        /* Смуга прокрутки */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: transparent; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: rgba(77,166,255,0.4); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(77,166,255,0.7); }
+
+        /* Відео картка */
+        .video-card {
+            width: 340px;
+            height: 220px;
+            background: linear-gradient(135deg, #1e2a2b, #2c3e40);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(77,166,255,0.2);
+            padding: 20px;
+            text-align: center;
+        }
+        .video-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(77,166,255,0.3);
+            border-color: #4da6ff;
+        }
+        .video-card h3 {
+            color: #4da6ff;
+            margin: 15px 0 0;
+            font-size: 18px;
+        }
+        .play-icon {
+            width: 72px;
+            height: 72px;
+            filter: drop-shadow(0 0 10px #4da6ff);
+        }
+
+        /* Флеш-картки */
+        .question-card {
+            perspective: 1000px;
+            margin: 25px auto;
+            max-width: 964px;
+            width: 100%;
+            min-height: 180px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .question-card:hover {
+            transform: translateY(-5px);
+        }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            min-height: 180px;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .question-card.flipped .card-inner { 
+            transform: rotateY(180deg); 
+        }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            border: 2px solid rgba(77,166,255,0.3);
+            transition: all 0.3s ease;
+        }
+        .card-front {
+            background: linear-gradient(135deg, #1c2526, #2e3a3b);
+            color: #ffffff;
+        }
+        .card-front:hover {
+            border-color: rgba(77,166,255,0.6);
+            box-shadow: 0 10px 30px rgba(77,166,255,0.2);
+        }
+        .card-back {
+            background: linear-gradient(135deg, #2b3a3b, #3e5c5e);
+            color: #e0e0e0;
+            transform: rotateY(180deg);
+            text-align: center;
+            padding: 25px;
+            border-color: rgba(77,166,255,0.5);
+        }
+        .card-back:hover {
+            border-color: rgba(77,166,255,0.8);
+            box-shadow: 0 10px 30px rgba(77,166,255,0.3);
+        }
+        .card-front span, .card-back span {
+            font-size: clamp(18px, 3vw, 20px);
+            line-height: 1.6;
+            font-weight: 500;
+            font-family: 'Roboto Condensed', sans-serif;
+        }
+        .card-front span {
+            color: #ffffff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .card-back span {
+            color: #e0e0e0;
+            width: 100%;
+        }
+        .card-front::after {
+            content: "❓";
+            position: absolute;
+            bottom: 15px;
+            right: 20px;
+            font-size: 20px;
+            opacity: 0.7;
+            color: #4da6ff;
+            transition: opacity 0.3s ease;
+        }
+        .card-front:hover::after {
+            opacity: 1;
+        }
+        .card-back::after {
+            content: "💡";
+            position: absolute;
+            bottom: 15px;
+            right: 20px;
+            font-size: 20px;
+            opacity: 0.7;
+            color: #4da6ff;
+            transition: opacity 0.3s ease;
+        }
+        .card-back:hover::after {
+            opacity: 1;
+        }
+        .card-back mjx-container {
+            color: #ffff99 !important;
+            font-style: italic !important;
+            transition: color 0.3s ease;
+        }
+        @media (max-width: 768px) {
+            .question-card {
+                min-height: 160px;
+                margin: 15px auto;
+            }
+            .card-front, .card-back {
+                padding: 20px;
+                border-radius: 12px;
+            }
+            .card-front span, .card-back span {
+                font-size: 16px;
+                line-height: 1.5;
+            }
+            .card-front::after,
+            .card-back::after {
+                bottom: 10px;
+                right: 15px;
+                font-size: 16px;
+            }
+        }
+        .card-front::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4da6ff, #99ccff);
+            border-radius: 16px 16px 0 0;
+            opacity: 0.8;
+        }
+        .card-back::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #99ccff, #4da6ff);
+            border-radius: 16px 16px 0 0;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="title-box">
+        <h1>80. Механічний зміст похідної</h1>
+    </div>
+
+    <div class="section-container">
+        <div class="section" id="openTheoryBtn">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Теорія">
+            <h2>Теоретичні відомості</h2>
+        </div>
+        <div class="section" id="openVideoBtn">
+            <img src="https://img.icons8.com/fluency/96/video.png" alt="Відео">
+            <h2>Відеоматеріали</h2>
+        </div>
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Питання">
+            <h2>Питання і відповіді</h2>
+        </div>
+    </div>
+
+    <div class="navigation-buttons">
+         <a class="nav-button prev" href="{{ url_for('tema13') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+            До теми 13
+        </a>
+        <a class="nav-button home" href="{{ url_for('home') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            На головну
+        </a>
+    </div>
+
+   <!-- Теорія -->
+<div id="theoryModal" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeTheoryBtn">× Закрити</button>
+    </div>
+    <div class="modal-content theory-content">
+
+        <h2>Механічний зміст похідної</h2>
+
+        <p style="text-align:justify;">
+            Механічний зміст похідної пов'язаний із описом руху матеріальних об'єктів через поняття швидкості та прискорення.
+        </p>
+
+        <h3>Швидкість</h3>
+        <p style="text-align:justify;">
+            Нехай матеріальна точка \( M_0 \) рухається прямолінійно за законом \( s = f(t) \), де \( s \) – шлях, пройдений точкою до моменту часу \( t \) (рис. 13.4). У момент часу \( t \) точка перебуває в положенні \( M \) і має шлях \( s = f(t) \).
+        </p>
+        <img src="/static/figure13.4.jpg" alt="Швидкість" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+    
+        <p style="text-align:justify;">
+            Щоб знайти швидкість точки в момент часу \( t \), розглянемо її переміщення за малий проміжок часу \( \Delta t \). Точка переміщається з положення \( M \) в положення \( M_1 \), проходячи додатковий шлях \( \Delta s \). Тоді:
+        </p>
+        
+        <div class="math-notation-centered">
+            \[ t_1 = t + \Delta t, \quad s_1 = f(t_1) = f(t + \Delta t) = s + \Delta s \]
+        </div>
+        
+        <p style="text-align:justify;">
+            Приріст шляху за проміжок часу \( \Delta t \) дорівнює:
+        </p>
+        
+        <div class="math-notation-centered">
+            \[ \Delta s = f(t_1) - f(t) = f(t + \Delta t) - f(t) \]
+        </div>
+        
+        <p style="text-align:justify;">
+            Середня швидкість руху точки на відрізку \( MM_1 \) визначається як:
+        </p>
+        
+        <div class="math-notation-centered">
+            \[ v_{\text{сер.}} = \frac{\Delta s}{\Delta t} = \frac{f(t + \Delta t) - f(t)}{\Delta t} \]
+        </div>
+        
+        <p style="text-align:justify;">
+            Ця величина є приблизною характеристикою швидкості на інтервалі часу \( \Delta t \). Чим менший проміжок \( \Delta t \), тим точніше середня швидкість відображає миттєву швидкість на момент часу \( t \).
+        </p>
+        
+        <p style="text-align:justify;">
+            Якщо \( \Delta t \to 0 \), то середня швидкість \( v_{\text{сер.}} \) наближається до миттєвої швидкості \( v_{\text{мит.}} \), яка визначається як:
+        </p>
+        
+        <div class="math-notation-centered">
+            \[ v_{\text{мит.}} = \lim_{\Delta t \to 0} v_{\text{сер.}} = \lim_{\Delta t \to 0} \frac{\Delta s}{\Delta t} = \lim_{\Delta t \to 0} \frac{f(t + \Delta t) - f(t)}{\Delta t} \]
+        </div>
+        
+        <p style="text-align:justify;">
+            Таким чином, миттєва швидкість – це границя відношення приросту шляху \( \Delta s \) до приросту часу \( \Delta t \) при \( \Delta t \to 0 \).
+        </p>
+        
+        <p style="text-align:justify;">
+            Якщо закон руху задано функцією \( s = s(t) \), то швидкість у будь-який момент часу \( t \) обчислюється як похідна:
+        </p>
+        
+        <div class="math-notation-centered">
+            \[ v(t) = s'(t) \quad (13.13) \]
+        </div>
+
+        <h3>Прискорення</h3>
+        <p style="text-align:justify;">
+            Прискорення – це швидкість зміни швидкості з часом. Воно визначається як похідна від швидкості:
+        </p>
+        
+        <div class="math-notation-centered">
+            \[ a(t) = v'(t) = s''(t) \quad (13.14) \]
+        </div>
+        
+        <p style="text-align:justify;">
+            де \( s''(t) \) – друга похідна функції \( s(t) \), тобто \( s''(t) = (s'(t))' \).
+        </p>
+
+        <!-- Приклад 13.14 -->
+        <div class="example">
+            <strong>
+                <span style="color:#ffa500;">Приклад 13.14.</span>
+                <span style="color:#ffffff;">
+                    Матеріальна точка рухається прямолінійно за законом \( s(t) = 3t^2 + t - 2 \), 
+                    де \( s \) – шлях в метрах, а \( t \) – час в секундах. Знайти швидкість точки в момент часу \( t = 2 \) с.
+                </span>
+            </strong>
+            
+            <p><strong>Розв'язок:</strong></p>
+            <p>Швидкість визначається як похідна від шляху:</p>
+            <div class="math-notation-centered">
+                \[ v(t) = s'(t) = (3t^2 + t - 2)' = 6t + 1 \ \text{(м/с)} \]
+            </div>
+            <p>Обчислимо швидкість в момент часу \( t = 2 \):</p>
+            <div class="math-notation-centered">
+                \[ v(2) = 6 \cdot 2 + 1 = 13 \ \text{(м/с)} \]
+            </div>
+
+            <div class="answer">
+                <p> Відповідь. \( v(2) = 13 \ \text{м/с} \).</p>
+            </div>
+        </div>
+
+        <!-- Додатковий приклад -->
+        <div class="example">
+            <strong>
+                <span style="color:#ffa500;">Додатковий приклад.</span>
+                <span style="color:#ffffff;">
+                    Знайти прискорення точки в момент часу \( t = 2 \) с, якщо вона рухається за законом \( s(t) = 2t^3 - t^2 + 5 \).
+                </span>
+            </strong>
+            
+            <p><strong>Розв'язок:</strong></p>
+            <p>1. Знаходимо швидкість:</p>
+            <div class="math-notation-centered">
+                \[ v(t) = s'(t) = (2t^3 - t^2 + 5)' = 6t^2 - 2t \]
+            </div>
+            <p>2. Знаходимо прискорення:</p>
+            <div class="math-notation-centered">
+                \[ a(t) = v'(t) = (6t^2 - 2t)' = 12t - 2 \]
+            </div>
+            <p>3. Обчислюємо прискорення при \( t = 2 \):</p>
+            <div class="math-notation-centered">
+                \[ a(2) = 12 \cdot 2 - 2 = 24 - 2 = 22 \ \text{(м/с²)} \]
+            </div>
+
+            <div class="answer">
+                <p> Відповідь. \( a(2) = 22 \ \text{м/с²} \).</p>
+            </div>
+        </div>
+
+        <!-- Підсумок -->
+        <div style="background:linear-gradient(135deg,rgba(77,166,255,0.15),rgba(77,166,255,0.05)); border:2px dashed #4da6ff; padding:25px; border-radius:16px; margin:40px 0; text-align:center;">
+            <h3 style="color:#4da6ff;">Ключові формули</h3>
+            <div class="math-notation-centered">
+                Швидкість: &nbsp; \( v(t) = \dfrac{ds}{dt} = s'(t) \)<br><br>
+                Прискорення: &nbsp; \( a(t) = \dfrac{dv}{dt} = v'(t) = s''(t) \)
+            </div>
+        </div>
+
+        <!-- Пояснення геометричної інтерпретації -->
+        <div style="background: rgba(255, 165, 0, 0.1); border-left: 4px solid #ffa500; padding: 15px; margin: 20px 0; border-radius: 8px;">
+            <h3 style="color:#ffa500; text-align:left;">Пояснення:</h3>
+            <p style="text-align:justify;">
+                <strong>Миттєва швидкість</strong> – це похідна шляху за часом. Вона показує, як швидко змінюється положення тіла в просторі в даний момент часу.
+            </p>
+            <p style="text-align:justify;">
+                <strong>Прискорення</strong> – це похідна швидкості за часом (друга похідна шляху). Воно показує, як швидко змінюється швидкість руху тіла.
+            </p>
+            <p style="text-align:justify;">
+                У військовій техніці ці поняття мають особливе значення: вони дозволяють розраховувати траєкторії снарядів, швидкість руху техніки, гальмівний шлях тощо.
+            </p>
+        </div>
+
+    </div>
+</div>
+
+    <!-- Відео -->
+    <div id="videoModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoBtn">× Закрити</button>
+        </div>
+        <div class="modal-content" style="padding:20px 10px;">
+
+            <!-- Картка з єдиним відео (спочатку видно) -->
+            <div id="videoList" style="display:flex;justify-content:center;">
+                <div class="video-card" data-url="https://www.youtube.com/embed/5NgmyXcc0Ck">
+                    <img src="https://img.icons8.com/fluency/96/play.png" class="play-icon">
+                    <h3>Фізичний ( механічний ) зміст похідної</h3>
+                </div>
+            </div>
+
+            <!-- Плеєр (спочатку прихований) -->
+            <div id="videoPlayer" style="display:none;width:90%;max-width:960px;aspect-ratio:16/9;margin:30px auto;border-radius:16px;overflow:hidden;box-shadow:0 15px 40px rgba(0,0,0,0.7);">
+                <iframe id="youtubePlayer"
+                        width="100%" height="100%"
+                        src=""
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen></iframe>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Питання-відповіді (флеш-картки) -->
+    <div id="questionsModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeQuestionsBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div style="max-width:964px;margin:0 auto;">
+
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>1. Який механічний зміст першої похідної від шляху за часом?</span></div>
+                        <div class="card-back"><span>Миттєва швидкість руху: \( v(t) = s'(t) \)</span></div>
+                    </div>
+                </div>
+
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>2. Який механічний зміст другої похідної від шляху за часом?</span></div>
+                        <div class="card-back"><span>Прискорення руху: \( a(t) = s''(t) \)</span></div>
+                    </div>
+                </div>
+
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>3. Як пов'язані швидкість та прискорення через похідні?</span></div>
+                        <div class="card-back"><span>Прискорення — це похідна від швидкості за часом: \( a(t) = v'(t) \)</span></div>
+                    </div>
+                </div>
+
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>4. Тіло рухається за законом \( s(t) = 3t^2 \). Знайти швидкість при \( t = 3 \) с.</span></div>
+                        <div class="card-back"><span>\( v(t) = s'(t) = 6t \), \( v(3) = 18 \ \text{м/с} \)</span></div>
+                    </div>
+                </div>
+
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>5. Що означає від'ємна швидкість?</span></div>
+                        <div class="card-back"><span>Рух у напрямку, протилежному додатному напрямку осі координат</span></div>
+                    </div>
+                </div>
+
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>6. Як знайти середню швидкість на проміжку \( [t_1, t_2] \)?</span></div>
+                        <div class="card-back"><span>\( v_{\text{сер}} = \dfrac{s(t_2) - s(t_1)}{t_2 - t_1} \)</span></div>
+                    </div>
+                </div>
+
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>7. Якщо \( s(t) = 5t - t^2 \), знайти момент зупинки тіла.</span></div>
+                        <div class="card-back"><span>Тіло зупиняється при \( v(t) = 0 \): \( v(t) = 5 - 2t = 0 \), \( t = 2.5 \ \text{с} \)</span></div>
+                    </div>
+                </div>
+
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>8. Що означає додатне прискорення?</span></div>
+                        <div class="card-back"><span>Швидкість збільшується з часом</span></div>
+                    </div>
+                </div>
+
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>9. Що означає від'ємне прискорення?</span></div>
+                        <div class="card-back"><span>Швидкість зменшується з часом (гальмування)</span></div>
+                    </div>
+                </div>
+
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>10. Як знайти максимальну швидкість, якщо задано закон руху \( s(t) \)?</span></div>
+                        <div class="card-back"><span>Знайти максимум функції \( v(t) = s'(t) \) (через похідну \( v'(t) = 0 \))</span></div>
+                    </div>
+                </div>
+
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>11. У яких одиницях вимірюється похідна шляху за часом?</span></div>
+                        <div class="card-back"><span>М/с (метри за секунду) — одиниці швидкості</span></div>
+                    </div>
+                </div>
+
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>12. Який фізичний зміст похідної будь-якої величини за часом?</span></div>
+                        <div class="card-back"><span>Швидкість зміни цієї величини з часом</span></div>
+                    </div>
+                </div>
+
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>13. Знайти прискорення, якщо \( v(t) = 3t^2 + 2t \).</span></div>
+                        <div class="card-back"><span>\( a(t) = v'(t) = 6t + 2 \ \text{м/с}^2 \)</span></div>
+                    </div>
+                </div>
+
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>14. Як визначити характер руху (прискорений чи сповільнений)?</span></div>
+                        <div class="card-back"><span>Якщо \( v(t) \cdot a(t) > 0 \) — прискорений, якщо \( < 0 \) — сповільнений</span></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="modalOverlay"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.add('loaded');
+
+            const modals = {
+                theory: document.getElementById('theoryModal'),
+                video: document.getElementById('videoModal'),
+                questions: document.getElementById('questionsModal')
+            };
+            const overlay = document.getElementById('modalOverlay');
+
+            const videoList = document.getElementById('videoList');
+            const videoPlayer = document.getElementById('videoPlayer');
+            const youtubeIframe = document.getElementById('youtubePlayer');
+
+            const openModal = m => { 
+                m.style.display = 'flex'; 
+                overlay.style.display = 'block'; 
+                document.body.style.overflow = 'hidden'; 
+            };
+            
+            const closeModal = m => { 
+                m.style.display = 'none'; 
+                overlay.style.display = 'none'; 
+                document.body.style.overflow = 'auto'; 
+            };
+
+            document.getElementById('openTheoryBtn').onclick = () => openModal(modals.theory);
+            document.getElementById('openVideoBtn').onclick = () => {
+                openModal(modals.video);
+                videoPlayer.style.display = 'none';
+                videoList.style.display = 'flex';
+                youtubeIframe.src = '';
+            };
+            document.getElementById('openQuestionsBtn').onclick = () => openModal(modals.questions);
+
+            // Клік по картці → запуск відео
+            document.querySelectorAll('.video-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const url = card.dataset.url;
+                    videoList.style.display = 'none';
+                    videoPlayer.style.display = 'block';
+                    youtubeIframe.src = url + '?rel=0&autoplay=0';
+                });
+            });
+
+            // Повне скидання відео при закритті
+            function resetAndCloseVideo() {
+                youtubeIframe.src = '';
+                videoPlayer.style.display = 'none';
+                videoList.style.display = 'flex';
+                closeModal(modals.video);
+            }
+
+            // Усі способи закриття
+            document.getElementById('closeVideoBtn').onclick = resetAndCloseVideo;
+            overlay.onclick = () => {
+                if (modals.video.style.display === 'flex') resetAndCloseVideo();
+                else document.querySelectorAll('.modal').forEach(closeModal);
+            };
+            
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape' && modals.video.style.display === 'flex') {
+                    resetAndCloseVideo();
+                } else if (e.key === 'Escape') {
+                    document.querySelectorAll('.modal').forEach(m => m.style.display === 'flex' && closeModal(m));
+                }
+            });
+
+            // Закриття теорії та питань
+            document.querySelectorAll('.close-btn:not(#closeVideoBtn)').forEach(btn => {
+                btn.onclick = () => closeModal(btn.closest('.modal'));
+            });
+        });
+    </script>
+</body>
+</html>
