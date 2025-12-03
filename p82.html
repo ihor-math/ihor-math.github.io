@@ -1,0 +1,1610 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>82. Зростання і спадання функції</title>
+    <script>
+window.MathJax = {
+    tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true,
+        packages: {'[+]': ['noerrors']},
+        macros: {
+            tg: ['\\operatorname{tg}', 0],
+            ctg: ['\\operatorname{ctg}', 0],
+            arctg: ['\\operatorname{arctg}', 0],
+            arcctg: ['\\operatorname{arcctg}', 0]
+        }
+    },
+    options: {
+        ignoreHtmlClass: "tex2jax_ignore|no-mathjax",
+        processHtmlClass: "tex2jax_process",
+        renderActions: {
+            find_script_mathtex: [10, function () {}, false]
+        }
+    },
+    loader: {load: ['[tex]/noerrors']}
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+<style>
+    *, *:before, *:after { box-sizing: border-box; }
+    body {
+        margin: 0;
+        background: radial-gradient(circle at center, #0a0a0a 0%, #1a1a1a 40%, #2b2b2b 100%);
+        color: #e0e0e0;
+        font-family: 'Roboto Condensed', sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }
+    body.loaded { visibility: visible; opacity: 1; }
+
+    .title-box {
+        margin-top: 60px;
+        padding: 20px 40px;
+        background: linear-gradient(135deg, #15252d, #1e3a4a);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+        border-radius: 16px;
+        text-align: center;
+        border: 1px solid #2e4a5b;
+    }
+    .title-box h1 {
+        margin: 0;
+        font-size: 28px;
+        color: #4da6ff;
+        font-family: 'Orbitron', sans-serif;
+        text-shadow: 0 0 8px rgba(77,166,255,0.5);
+    }
+
+    .section-container {
+        margin-top: 40px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 25px;
+    }
+    .section {
+        width: 260px;
+        height: 200px;
+        background: linear-gradient(145deg, #1a2a33, #253a48);
+        border-radius: 14px;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.45);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 15px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+        border: 1px solid rgba(77,166,255,0.15);
+    }
+    .section:hover {
+        transform: scale(1.06);
+        box-shadow: 0 10px 25px rgba(77,166,255,0.25);
+    }
+    .section h2 { font-size: 20px; color: #ffffff; font-family: 'Orbitron', sans-serif; }
+    .section img { width: 60px; height: 60px; margin-bottom: 15px; filter: brightness(1.3) drop-shadow(0 0 6px #4da6ff); }
+
+    .modal {
+        display: none;
+        position: fixed;
+        top: 5%; left: 5%; width: 90%; height: 90%;
+        background: linear-gradient(135deg, #1e2d36, #2d4658);
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        z-index: 1001;
+        overflow: hidden;
+        flex-direction: column;
+        border: 1px solid rgba(77,166,255,0.2);
+    }
+    #modalOverlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.85);
+        z-index: 999;
+        backdrop-filter: blur(6px);
+    }
+    .modal-content {
+        padding: 20px;
+        flex-grow: 1;
+        overflow-y: auto;
+        color: #e0e0e0;
+        width: 100%;
+    }
+    .modal-header {
+        background: linear-gradient(0deg, #1e2d36, #2d4658);
+        padding: 8px 12px;
+        display: flex;
+        justify-content: flex-end;
+        width: 100%;
+        position: sticky;
+        top: 0;
+        z-index: 1002;
+        border-bottom: 1px solid rgba(77,166,255,0.2);
+    }
+    .close-btn {
+        background: linear-gradient(135deg, #0066cc, #4da6ff);
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 6px 16px;
+        font-size: 16px;
+        cursor: pointer;
+        font-family: 'Orbitron', sans-serif;
+        box-shadow: 0 2px 8px rgba(0,102,204,0.4);
+    }
+    .close-btn:hover { background: linear-gradient(135deg, #004d99, #0066cc); transform: scale(1.05); }
+
+    .theory-content h2, .trainer-container h2 { 
+        color: #4da6ff; 
+        text-shadow: 0 0 10px rgba(77,166,255,0.5); 
+        text-align: center; 
+        font-family: 'Orbitron', sans-serif; 
+    }
+    .theory-content p, .theory-content li { 
+        font-size: clamp(18px, 3vw, 20px); 
+        line-height: 1.7; 
+        text-align: justify; 
+    }
+    .example {
+        background: rgba(77,166,255,0.1);
+        border-left: 4px solid #4da6ff;
+        padding: 12px;
+        margin: 15px 0;
+        border-radius: 6px;
+        color: #99ccff;
+        font-weight: bold;
+        font-size: 22px;
+    }
+    .solution {
+        background: rgba(77,166,255,0.15);
+        border: 2px solid #4da6ff;
+        padding: 12px;
+        margin: 15px 0;
+        border-radius: 6px;
+        text-align: center;
+        color: #4da6ff;
+        font-weight: bold;
+    }
+    .math-notation-centered {
+        display: block;
+        text-align: center;
+        font-size: clamp(20px, 3.5vw, 24px);
+        margin: 20px 0;
+        color: #ffff99;
+    }
+    mjx-container { color: #ffff99 !important; font-style: italic !important; }
+
+    .navigation-buttons { 
+        display: flex; 
+        justify-content: center; 
+        gap: 20px; 
+        margin: 40px 0; 
+    }
+    .nav-button {
+        display: flex; 
+        align-items: center; 
+        background: linear-gradient(135deg, #1a2a33, #253a48);
+        color: #e0e0e0; 
+        padding: 12px 24px; 
+        border-radius: 10px; 
+        text-decoration: none;
+        font-weight: bold; 
+        border: 1px solid rgba(77,166,255,0.3);
+        transition: all 0.3s ease;
+    }
+    .nav-button:hover { 
+        background: linear-gradient(135deg, #0066cc, #4da6ff); 
+        color: #fff; 
+        transform: scale(1.05); 
+    }
+    .nav-button svg { margin-right: 8px; fill: currentColor; width: 20px; height: 20px; }
+
+    @media (max-width: 768px) {
+        .title-box { margin-top: 40px; }
+        .title-box h1 { font-size: 24px; }
+        .section-container { flex-direction: column; align-items: center; }
+        .section { width: 80%; height: 180px; }
+        .modal { top: 2%; left: 2%; width: 96%; height: 96%; }
+        .theory-content h2, .trainer-container h2 { font-size: 20px;
+        
+    }
+    }
+
+    /* Стилі скролбару */
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { 
+        background: rgba(77, 166, 255, 0.3); 
+        border-radius: 10px;
+        border: 2px solid transparent;
+        background-clip: content-box;
+        transition: all 0.3s ease;
+    }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(77, 166, 255, 0.7); }
+    ::-webkit-scrollbar-thumb:active { background: #4da6ff; width: 12px; }
+    * { scrollbar-width: thin; scrollbar-color: rgba(77, 166, 255, 0.5) transparent; }
+
+    .formula-box {
+        background: rgba(77,166,255,0.1);
+        padding: 20px;
+        border-left: 4px solid #4da6ff;
+        border-radius: 8px;
+        margin: 20px auto;
+        max-width: 700px;
+        text-align: center;
+    }
+
+    #videoList { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; padding: 20px; }
+    .video-card {
+        width: 300px;
+        height: 250px;
+        background: #2c2c2c;
+        border-radius: 16px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 15px;
+        gap: 15px;
+        cursor: pointer;
+        transition: 0.3s ease;
+    }
+    .video-card:hover {
+        background: #333;
+        transform: translateY(-4px);
+        box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+    }
+    .video-card .play-icon { width: 64px; height: 64px; }
+    .video-card h3 { color: #f0f0f0; font-size: 1rem; line-height: 1.3; }
+
+    /* Стилі флеш-карток */
+    .question-card {
+        perspective: 1000px;
+        margin: 25px auto;
+        max-width: 964px;
+        width: 100%;
+        min-height: 180px;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+    .question-card:hover { transform: translateY(-5px); }
+    .card-inner {
+        position: relative;
+        width: 100%;
+        min-height: 180px;
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        transform-style: preserve-3d;
+    }
+    .question-card.flipped .card-inner { transform: rotateY(180deg); }
+    .card-front, .card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 25px;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+        text-align: center;
+        border: 2px solid rgba(77,166,255,0.3);
+        transition: all 0.3s ease;
+    }
+    .card-front {
+        background: linear-gradient(135deg, #15252d, #1e3a4a);
+        color: #ffffff;
+    }
+    .card-front:hover { border-color: rgba(77,166,255,0.6); box-shadow: 0 10px 30px rgba(77,166,255,0.2); }
+    .card-back {
+        background: linear-gradient(135deg, #1e2d36, #2d4658);
+        color: #e0e0e0;
+        transform: rotateY(180deg);
+        padding: 25px;
+        border-color: rgba(77,166,255,0.5);
+    }
+    .card-back:hover { border-color: rgba(77,166,255,0.8); box-shadow: 0 10px 30px rgba(77,166,255,0.3); }
+    .card-front span, .card-back span { font-size: clamp(18px, 3vw, 20px); line-height: 1.6; font-weight: 500; }
+    .card-front span { color: #ffffff; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); }
+    .card-back span { color: #e0e0e0; width: 100%; }
+    .card-front::after { content: "❓"; position: absolute; bottom: 15px; right: 20px; font-size: 20px; opacity: 0.7; color: #4da6ff; }
+    .card-back::after { content: "💡"; position: absolute; bottom: 15px; right: 20px; font-size: 20px; opacity: 0.7; color: #4da6ff; }
+
+    /* Стилі тренажера */
+    .trainer-container {
+        width: 90%;
+        max-width: 800px;
+        margin: auto;
+        padding: 30px;
+        background: linear-gradient(135deg, #1c1c1c, #2a2a2a);
+        border-radius: 16px;
+        border: 1px solid rgba(77,166,255,0.2);
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+    }
+    .question-circle {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 25px;
+        background: linear-gradient(135deg, #0066cc, #4da6ff);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 15px rgba(0,102,204,0.4);
+    }
+    .question-circle h3 { color: #fff; margin: 0; font-family: 'Orbitron', sans-serif; font-size: 20px; font-weight: 700; }
+    .options-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;        /* рівно дві колонки */
+    gap: 20px;
+    margin: 30px 0;
+    padding: 0 15px;
+    justify-items: center;
+}
+   .option {
+    width: 100%;                           /* займає всю ширину комірки */
+    min-height: 80px;                      /* щоб усі однакової висоти */
+    padding: 20px 15px;
+    border: 3px solid #0066cc;
+    border-radius: 14px;
+    background: #1a2a33;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.25s ease;
+    font-size: clamp(17px, 3vw, 19px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+                          /* Найголовніше — клік по всьому блоку */
+.option * { pointer-events: none !important; }
+.option { pointer-events: auto !important; }
+
+/* При наведенні та виборі */
+.option:hover:not(.selected) {
+    background: rgba(77,166,255,0.2);
+    border-color: #4da6ff;
+    transform: translateY(-4px);
+}
+    .option:hover { background: #0066cc; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,102,204,0.3); color: #fff; }
+    .option.selected {
+    background: linear-gradient(135deg, #0066cc, #4da6ff);
+    border-color: #4da6ff;
+    color: white;
+    box-shadow: 0 0 20px rgba(77,166,255,0.6);
+    transform: scale(1.03);
+}
+ .submit-btn {
+        background: linear-gradient(135deg, #0066cc, #4da6ff);
+        color: #fff;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 25px;
+        font-family: 'Orbitron', sans-serif;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+    }
+    .submit-btn:hover:not(:disabled) { background: linear-gradient(135deg, #004d99, #0066cc); transform: scale(1.05); box-shadow: 0 4px 15px rgba(0,102,204,0.4); }
+    .submit-btn:disabled { background: #666; cursor: not-allowed; opacity: 0.6; }
+    .feedback {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 30px;
+        padding: 20px 40px;
+        border-radius: 10px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 1002;
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    /* === МЕДАЛЬ З ТРИЗУБОМ === */
+        .completion-emoji {
+            position: relative;
+            display: inline-block;
+            width: clamp(56px, 12vw, 96px);
+            height: clamp(56px, 12vw, 96px);
+            vertical-align: middle;
+            margin: 0 auto 3vw;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1c2526, #2e3a3b);
+            border: 3px dashed #ffd700;
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+            overflow: hidden;
+            animation: medalAppear 0.8s ease-out;
+        }
+        .completion-emoji::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><filter id='s' x='-50%' y='-50%' width='200%' height='200%'><feDropShadow dx='0' dy='2' stdDeviation='2' flood-color='%23000000' flood-opacity='0.25'/></filter></defs><rect x='30' y='0' width='60' height='40' rx='4' fill='%23007ACC'/><rect x='30' y='20' width='60' height='20' rx='4' fill='%23FFD700'/><g transform='translate(60,70)'><polygon points='0,-26 6,-6 26,-6 9,6 15,26 0,14 -15,26 -9,6 -26,-6 -6,-6' fill='%23FFD700' filter='url(%23s)'/></g></svg>");
+            background-size: 75%;
+            background-repeat: no-repeat;
+            background-position: center 60%;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+            animation: medalBounce 1.2s ease-out 0.3s both;
+        }
+        @keyframes medalAppear {
+            0% { transform: scale(0.3) rotate(-180deg); opacity: 0; }
+            60% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes medalBounce {
+            0% { transform: translateY(-120px) rotate(-30deg) scale(0.4); opacity: 0; }
+            60% { transform: translateY(15px) rotate(10deg) scale(1.15); opacity: 1; }
+            80% { transform: translateY(-8px) rotate(-5deg) scale(1.05); }
+            100% { transform: translateY(0) rotate(0) scale(1); }
+        }
+
+        .completion-message {
+            background: linear-gradient(145deg, #1c2533, #2d3848);
+            border: 2.5px solid #ffffff;
+            border-radius: 15px;
+            padding: clamp(12px, 3vw, 18px);
+            box-shadow: 0 6px 12px rgba(255,77,77,0.4);
+            margin: 2vw auto;
+            max-width: 90%;
+            text-align: center;
+        }
+        .completion-message h2 {
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        .completion-message p { color: #ffffff; }
+
+        #completionModal .modal-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+        #completionModal .completion-message {
+            text-align: center;
+            max-width: 500px;
+        }
+    .reset-btn {
+        background: linear-gradient(135deg, #0066cc, #4da6ff);
+        color: #fff;
+        padding: 15px 35px;
+        border: none;
+        border-radius: 25px;
+        font-family: 'Orbitron', sans-serif;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 700;
+        margin-top: 20px;
+        transition: all 0.3s ease;
+    }
+    .reset-btn:hover { background: linear-gradient(135deg, #004d99, #0066cc); transform: scale(1.05); box-shadow: 0 4px 15px rgba(0,102,204,0.4); }
+
+    @media (max-width: 768px) {
+        .trainer-container { padding: 20px 15px; width: 95%; margin: 10px auto; }
+        .question-circle { width: 100px; height: 100px; margin: 0 auto 15px; }
+        .question-circle h3 { font-size: 16px; }
+        .options-container { gap: 10px; margin: 20px 0; }
+        .option { min-width: 100%; padding: 12px 15px; font-size: 16px; font-weight: 600; border-width: 3px; background: rgba(26,42,51,0.9); }
+        #questionText { font-size: 18px; margin: 10px 0; line-height: 1.3; }
+        .feedback { font-size: 20px; padding: 15px 25px; border-radius: 8px; text-shadow: 0 2px 4px rgba(0,0,0,0.7); }
+    }
+    #questionText { font-size: clamp(18px, 2.8vw, 20px); line-height: 1.4; margin: 15px 0; color: #ffff99; font-weight: 600; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+    mjx-container { font-size: 1.0em !important; color: #ffff99 !important; font-style: italic !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+                    .highlight { color: #4da6ff; font-weight: bold; }
+.pos { color: #7cff7c; font-weight: bold; }
+.neg { color: #ff6b6b; font-weight: bold; }
+
+.text-block p {
+    font-size: 18px;
+    line-height: 1.8;
+    margin: 18px 0;
+    text-align: justify;
+}
+
+.math-important {
+    background: rgba(77,166,255,0.2);
+    border: 2px solid #4da6ff;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 25px auto;
+    text-align: center;
+    font-size: 22px;
+    color: #ffff99;
+    font-weight: 500;
+}
+
+.math-big {
+    font-size: 20px;
+    color: #ffff99;
+    text-align: center;
+    margin: 20px 0;
+    padding: 15px;
+    background: rgba(77,166,255,0.15);
+    border-radius: 10px;
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 22px;
+    margin: 30px 0;
+}
+
+.card-deriv {
+    background: linear-gradient(135deg, #15252d, #1e3a4a);
+    padding: 22px;
+    border-radius: 14px;
+    border: 1px solid rgba(77,166,255,0.4);
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+}
+
+.section-title {
+    color: #4da6ff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 22px;
+    text-align: center;
+    margin: 35px 0 20px;
+    text-shadow: 0 0 10px rgba(77,166,255,0.4);
+}
+
+.bullet-blue li {
+    font-size: 18.5px;
+    margin: 12px 0;
+    padding-left: 8px;
+}
+
+.bullet-blue li::marker { color: #4da6ff; font-size: 22px; }
+
+.algo-box {
+    background: rgba(77,166,255,0.12);
+    border: 2px dashed #4da6ff;
+    border-radius: 14px;
+    padding: 25px;
+    margin: 30px 0;
+}
+
+.algo-list {
+    padding-left: 20px;
+    counter-reset: num;
+}
+
+.algo-list li {
+    position: relative;
+    padding-left: 45px;
+    margin: 20px 0;
+    font-size: 18.5px;
+    line-height: 1.7;
+}
+
+.algo-list li::before {
+    counter-increment: num;
+    content: counter(num) ")";
+    position: absolute;
+    left: 0;
+    color: #4da6ff;
+    font-weight: bold;
+    font-size: 22px;
+    font-family: 'Orbitron', sans-serif;
+}
+
+
+
+.final-answer {
+    background: linear-gradient(135deg, #004d99, #0066cc);
+    color: white;
+    padding: 22px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 21px;
+    font-weight: bold;
+    margin-top: 30px;
+    box-shadow: 0 6px 20px rgba(77,166,255,0.5);
+}
+.example-full {
+    background: rgba(77,166,255,0.08);
+    border: 2px solid rgba(77,166,255,0.3);
+    border-radius: 16px;
+    padding: 28px;
+    margin: 35px 0;
+    font-size: 19px;
+    line-height: 1.85;
+    text-align: justify;
+}
+
+.example-header-classic {
+    font-size: 22px;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px dashed rgba(77,166,255,0.4);
+    text-align: center;
+}
+
+.example-label {
+    color: #ffa500;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 24px;
+    padding: 6px 16px;
+    background: rgba(255,165,0,0.15);
+    border-radius: 8px;
+    margin-right: 12px;
+}
+
+.example-function {
+    color: #ffff99;
+    font-size: 22px;
+    font-style: italic;
+    margin: 0 8px;
+}
+
+.example-solution-text p {
+    margin: 18px 0;
+}
+
+.math-centered {
+    text-align: center;
+    font-size: 22px;
+    color: #ffff99;
+    background: rgba(77,166,255,0.15);
+    padding: 14px;
+    border-radius: 10px;
+    margin: 20px auto;
+    max-width: 90%;
+    border: 1px dashed rgba(77,166,255,0.4);
+}
+
+.marker {
+    color: #4da6ff;
+    font-weight: bold;
+    font-size: 22px;
+    margin-right: 8px;
+}
+
+.end-marker {
+    color: #4da6ff;
+    font-weight: bold;
+    font-size: 22px;
+    margin-left: 10px;
+}
+
+.example-answer {
+    background: linear-gradient(135deg, #004d99, #0066cc);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 21px;
+    font-weight: bold;
+    margin-top: 30px;
+    box-shadow: 0 6px 20px rgba(77,166,255,0.5);
+}
+/* ============================================= */
+/*        АДАПТИВНІСТЬ ДЛЯ МОБІЛЬНИХ (≤768px)     */
+/* ============================================= */
+@media (max-width: 768px) {
+
+    /* Загальні розміри тексту */
+    .theory-content p,
+    .example-full,
+    .example-solution-text p {
+        font-size: 17px !important;
+        line-height: 1.75 !important;
+    }
+
+    /* Заголовки */
+    .section-title,
+    .example-header-classic,
+    .example-label {
+        font-size: 20px !important;
+    }
+
+    .example-label {
+        display: inline-block;
+        padding: 6px 14px !important;
+        margin-bottom: 10px;
+    }
+
+    /* Формули по центру (з нового рядка) */
+    .math-centered,
+    .math-important {
+        font-size: 19px !important;
+        padding: 14px 10px !important;
+        margin: 18px auto !important;
+    }
+
+    .math-big {
+        font-size: 19px !important;
+        padding: 14px !important;
+    }
+
+    /* Функція в умові прикладу */
+    .example-function {
+        font-size: 19px !important;
+        display: block;
+        margin: 12px auto !important;
+        text-align: center;
+    }
+
+    /* Квадратики-маркери */
+    .marker, .end-marker {
+        font-size: 19px !important;
+    }
+
+    /* Карточки похідної (зростає/спадає/стала) */
+    .grid-3 {
+        grid-template-columns: 1fr !important;   /* одна колонка */
+        gap: 18px;
+    }
+
+    .card-deriv {
+        padding: 18px !important;
+    }
+
+    /* Алгоритм */
+    .algo-box {
+        padding: 20px !important;
+    }
+
+    .algo-list li {
+        font-size: 17px !important;
+        padding-left: 38px !important;
+    }
+
+    .algo-list li::before {
+        font-size: 19px !important;
+    }
+
+    /* Відповідь */
+    .final-answer,
+    .example-answer {
+        font-size: 19px !important;
+        padding: 18px !important;
+    }
+
+    .example-full {
+        padding: 20px !important;
+        margin: 25px 0 !important;
+    }
+
+    /* Зменшуємо відступи */
+    .example-header-classic {
+        padding-bottom: 12px !important;
+        margin-bottom: 20px !important;
+    }
+}
+    .video-modal-title {
+    text-align: center;
+    margin: 20px 0 30px;
+    padding: 20px;
+}
+
+.video-modal-title h2 {
+    font-size: 2.2rem;
+    color: #a4bdeb;
+    margin: 0 0 10px 0;
+    font-weight: 600;
+}
+  
+
+/* Дуже маленькі екрани (≤480px) – ще компактніше */
+@media (max-width: 480px) {
+
+    .theory-content p,
+    .example-full,
+    .example-solution-text p {
+        font-size: 18px !important;
+        line-height: 1.7 !important;
+    }
+
+    .math-centered,
+    .math-important {
+        font-size: 18px !important;
+        padding: 12px 8px !important;
+    }
+
+    .example-function {
+        font-size: 18px !important;
+    }
+
+    .example-label {
+        font-size: 18px !important;
+        padding: 5px 12px !important;
+    }
+
+    .section-title {
+        font-size: 18px !important;
+    }
+
+    .final-answer,
+    .example-answer {
+        font-size: 18px !important;
+        padding: 16px !important;
+    }
+
+    .marker, .end-marker {
+        font-size: 18px !important;
+    }
+    .video-modal-title h2 {
+    font-size: 0.1rem;
+       
+}
+}
+
+  
+
+
+/* Опціонально — тонка лінія під заголовком */
+.video-modal-title::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 4px;
+    background: #ff8c00;
+    margin: 20px auto 0;
+    border-radius: 2px;
+}
+    /* Головне правило — клік тільки по .option, а не по MathJax-вмісту */
+.option * {
+    pointer-events: none !important;
+}
+.option {
+    pointer-events: auto !important;   /* залишаємо тільки у батьківського блоку */
+}
+    /* На мобілці — одна колонка */
+@media (max-width: 768px) {
+    .options-container {
+        grid-template-columns: 1fr;        /* одна колонка */
+        gap: 18px;
+        padding: 0 10px;
+    }
+    .option {
+        min-height: 90px;
+        padding: 22px 15px;
+        font-size: 18px;
+    }
+}
+</style>
+</head>
+<body>
+    <div class="title-box">
+        <h1>82. Зростання і спадання функції</h1>
+    </div>
+
+    <div class="section-container">
+        <div class="section" id="openTheoryBtn">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Теорія">
+            <h2>Теоретичні відомості</h2>
+        </div>
+        <div class="section" id="openVideoBtn">
+            <img src="https://img.icons8.com/fluency/96/video.png" alt="Відео">
+            <h2>Відеоматеріали</h2>
+        </div>
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Питання">
+            <h2>Питання і відповіді</h2>
+        </div>
+        <div class="section" id="openTrainerBtn">
+            <img src="https://img.icons8.com/fluency/96/flash-on.png" alt="Тренажер">
+            <h2>Тренажер</h2>
+        </div>
+    </div>
+
+    <div class="navigation-buttons">
+        <a class="nav-button prev" href="{{ url_for('tema14') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+            До теми 14
+        </a>
+        <a class="nav-button home" href="{{ url_for('home') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            На головну
+        </a>
+    </div>
+
+ <!-- ТЕОРІЯ — Зростання і спадання функції (слово в слово з підручника, але дуже красиво) -->
+<div id="theoryModal" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeTheoryBtn">× Закрити</button>
+    </div>
+    <div class="modal-content theory-content">
+
+        <h2>Зростання і спадання функції</h2>
+
+        <div class="text-block">
+
+            <p><strong>Визначення.</strong> Функція <mjx-container class="MathJax">\(y = f(x)\)</mjx-container> називається <strong class="highlight">зростаючою</strong> на інтервалі <mjx-container class="MathJax">\((a;b)\)</mjx-container>, якщо більшому значенню аргументу відповідає більше значення функції. Тобто для будь-яких <mjx-container class="MathJax">\(x_1 < x_2\)</mjx-container> з інтервалу <mjx-container class="MathJax">\((a;b)\)</mjx-container> виконується нерівність:</p>
+            <div class="math-important">\[ f(x_1) < f(x_2) \]</div>
+
+            <p>Функція <mjx-container class="MathJax">\(y = f(x)\)</mjx-container> називається <strong class="highlight">спадною</strong> на інтервалі <mjx-container class="MathJax">\((a;b)\)</mjx-container>, якщо більшому значенню аргументу відповідає менше значення функції. Тобто для будь-яких <mjx-container class="MathJax">\(x_1 < x_2\)</mjx-container> з інтервалу <mjx-container class="MathJax">\((a;b)\)</mjx-container> виконується нерівність:</p>
+            <div class="math-important">\[ f(x_1) > f(x_2) \]</div>
+
+            <h3 class="section-title">Зв’язок із похідною</h3>
+
+            <div class="grid-3">
+                <div class="card-deriv">
+                    <p>Якщо функція <mjx-container class="MathJax">\(f(x)\)</mjx-container> <strong>зростає</strong> на інтервалі <mjx-container class="MathJax">\((a;b)\)</mjx-container>, то її похідна:</p>
+                    <div class="math-big">\[ f'(x) > 0 \quad (14.1) \]</div>
+                    <p>Геометрично: дотична утворює з віссю <mjx-container class="MathJax">\(Ox\)</mjx-container> <strong>гострий кут (рис. 14.1).</strong></p>
+    <img src="/static/figure14.1.jpg" alt="Зростає" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+    
+                </div>
+
+                <div class="card-deriv">
+                    <p>Якщо функція <mjx-container class="MathJax">\(f(x)\)</mjx-container> <strong>спадає</strong> на інтервалі <mjx-container class="MathJax">\((a;b)\)</mjx-container>, то її похідна:</p>
+                    <div class="math-big">\[ f'(x) < 0 \quad (14.2) \]</div>
+                    <p>Геометрично: дотична утворює з віссю <mjx-container class="MathJax">\(Ox\)</mjx-container> <strong>тупий кут (рис. 14.2).</strong></p>
+<img src="/static/figure14.2.jpg" alt="Спадає" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+    
+                </div>
+
+                <div class="card-deriv">
+                    <p>Функція <mjx-container class="MathJax">\(f(x)\)</mjx-container> є <strong>сталою</strong> на інтервалі <mjx-container class="MathJax">\((a;b)\)</mjx-container> тоді і тільки тоді, коли:</p>
+                    <div class="math-big">\[ f'(x) = 0 \quad (14.3) \]</div>
+                    <p>Геометрично: дотична <strong>паралельна</strong> осі <mjx-container class="MathJax">\(Ox\)</mjx-container> або збігається з нею (рис. 14.3).</p>
+<img src="/static/figure14.3.jpg" alt="Збігається" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+    
+                </div>
+            </div>
+
+            <h3 class="section-title">Проміжки монотонності</h3>
+            <p><strong>Проміжки монотонності</strong> — це інтервали, на яких функція є або лише зростаючою, або лише спадною.</p>
+            <p>Ці проміжки обмежені <strong>критичними точками</strong>, до яких належать:</p>
+            <ul class="bullet-blue">
+                <li>Стаціонарні точки — значення <mjx-container class="MathJax">\(x\)</mjx-container>, при яких <mjx-container class="MathJax">\(f'(x) = 0\)</mjx-container></li>
+                <li>Точки, де похідна <mjx-container class="MathJax">\(f'(x)\)</mjx-container> не існує</li>
+            </ul>
+
+            <div class="algo-box">
+                <h3 class="section-title">Як знайти проміжки зростання і спадання</h3>
+                
+                    <li>Знайти похідну <mjx-container class="MathJax">\(f'(x)\)</mjx-container></li>
+                    <li>Знайти критичні точки: розв’язати <mjx-container class="MathJax">\(f'(x) = 0\)</mjx-container> та знайти, де похідна не існує</li>
+                    <li>Розбити область визначення на інтервали за критичними точками</li>
+                    <li>Визначити знак похідної:
+                        <br><span class="pos">\(f'(x) > 0\)</span> — функція <strong>зростає</strong>
+                        <br><span class="neg">\(f'(x) < 0\)</span> — функція <strong>спадає</strong>
+                    </li>
+                
+            </div>
+
+           <div class="example-full">
+    <!-- Заголовок прикладу — як у підручнику -->
+    <div class="example-header-classic">
+        <span class="example-label">Приклад 14.1.</span>
+        Знайти інтервали монотонності і критичні точки функції 
+        <span class="example-function">\( y = 2x^2 - \ln x \).</span>
+    </div>
+
+    <!-- Весь розв’язок — одним блоком, як у книзі -->
+    <div class="example-solution-text">
+        <p>
+            <span class="marker">■</span> Область визначення <mjx-container class="MathJax">\(D(y)\)</mjx-container> даної функції <mjx-container class="MathJax">\(x > 0\)</mjx-container>. Знайдемо похідну:<br>
+            <div class="math-centered">\[ y' = (2x^2)' - (\ln x)' = 4x - \frac{1}{x}, \]</div>
+            <div class="math-centered">\[ y' = \frac{4x^2 - 1}{x}. \]</div>
+        </p>
+
+        <p>
+            Знайдемо критичні точки. Спочатку точки, у яких похідна дорівнює нулю — стаціонарні точки (де чисельник дорівнює нулю):<br>
+            <div class="math-centered">\[ y' = 0 \implies 4x^2 - 1 = 0, \]</div>
+            <div class="math-centered">\[ 4x^2 = 1, \]</div>
+            <div class="math-centered">\[ x^2 = \frac{1}{4}, \]</div>
+            <div class="math-centered">\[ 
+\begin{aligned}
+x_1 &= -\frac{1}{2} < 0 \notin D(y), \\ 
+x_2 &= \frac{1}{2}.
+\end{aligned}
+\]</div>
+        </p>
+
+        <p>
+            І точки, у яких похідна не існує (де знаменник дорівнює нулю). При <mjx-container class="MathJax">\(x = 0\)</mjx-container> похідна не існує, але враховуючи, що <mjx-container class="MathJax">\(x \neq 0\)</mjx-container> з області визначення, тому критичною точкою є <mjx-container class="MathJax">\(\frac{1}{2}\)</mjx-container>, яка задовольняє область визначення.
+        </p>
+
+        <p>
+            Числова вісь для <mjx-container class="MathJax">\(x > 0\)</mjx-container> ділиться точкою <mjx-container class="MathJax">\(x = \frac{1}{2}\)</mjx-container> на проміжки <mjx-container class="MathJax">\((0; \frac{1}{2})\)</mjx-container> і <mjx-container class="MathJax">\((\frac{1}{2}; +\infty)\) </mjx-container>(рис. 14.4).
+        </p>
+<img src="/static/figure14.4.jpg" alt="Проміжки" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+    
+        <p>
+            Визначаємо знаки похідної на кожному проміжку:<br>
+            <mjx-container class="MathJax">\((0; \frac{1}{2})\)</mjx-container>: <mjx-container class="MathJax">\(y'\left(\frac{1}{3}\right) = \frac{4}{3} - 3 = -\frac{5}{3} < 0\)</mjx-container>;<br>
+            <mjx-container class="MathJax">\((\frac{1}{2}; +\infty)\)</mjx-container>: <mjx-container class="MathJax">\(y'(1) = 4 - 1 = 3 > 0\)</mjx-container>.
+        </p>
+
+        <p>
+            Це означає, що на проміжку <mjx-container class="MathJax">\((0; \frac{1}{2})\)</mjx-container> дана функція <strong>спадає</strong>, а на інтервалі <mjx-container class="MathJax">\((\frac{1}{2}; +\infty)\)</mjx-container> — <strong>зростає</strong>.
+        </p>
+
+        <!-- Відповідь — як у підручнику -->
+        <div class="example-answer">
+            <strong>Відповідь.</strong> Критична точка: <mjx-container class="MathJax">\(x = \frac{1}{2}\)</mjx-container>; 
+            <mjx-container class="MathJax">\((0; \frac{1}{2})\)</mjx-container> — спадає, 
+            <mjx-container class="MathJax">\((\frac{1}{2}; +\infty)\)</mjx-container> — зростає. 
+            <span class="end-marker">■</span>
+        </div>
+    </div>
+</div>
+
+        </div>
+    </div>
+</div>
+
+   <!-- ВІДЕО -->
+<div id="videoModal" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeVideoBtn">× Закрити</button>
+    </div>
+    
+    <div class="modal-content">
+        <!-- Додаємо красивий заголовок -->
+        <div class="video-modal-title">
+            <h2>Оберіть відео</h2>
+                   </div>
+
+        <div id="videoList">
+            <div class="video-card" data-url="https://www.youtube.com/embed/xYYrRcg4O6E">
+                <img class="play-icon" src="https://img.icons8.com/fluency/96/play.png" alt="">
+                <h3>1. Знаходження критичних точок</h3>
+            </div>
+            <div class="video-card" data-url="https://www.youtube.com/embed/fa0--T8RC_8">
+                <img class="play-icon" src="https://img.icons8.com/fluency/96/play.png" alt="">
+                <h3>2. Знаходження проміжку зростання за заданою похідною</h3>
+            </div>
+            <div class="video-card" data-url="https://www.youtube.com/embed/WV1EWId1LOU">
+                <img class="play-icon" src="https://img.icons8.com/fluency/96/play.png" alt="">
+                <h3>3. Знаходження проміжку спадання за заданою похідною (англійською)</h3>
+            </div>
+        </div>
+
+        <div id="videoPlayer" style="display: none; width: 90vw; max-width: 960px; aspect-ratio: 16/9; margin: 20px auto;">
+            <iframe id="youtubePlayer" width="100%" height="100%" src="" frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+    <!-- ПИТАННЯ І ВІДПОВІДІ -->
+<div id="questionsModal" class="modal">
+    <div class="modal-header"><button class="close-btn" id="closeQuestionsBtn">× Закрити</button></div>
+    <div class="modal-content">
+        <div style="max-width:964px;margin:0 auto;">
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span>1. Що таке зростаюча функція?</span></div>
+                    <div class="card-back"><span>Функція, для якої з більшого аргументу випливає більше значення функції: \( x_2 > x_1 \Rightarrow f(x_2) > f(x_1) \).</span></div>
+                </div>
+            </div>
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span>2. Що таке спадна функція?</span></div>
+                    <div class="card-back"><span>Функція, для якої з більшого аргументу випливає менше значення функції: \( x_2 > x_1 \Rightarrow f(x_2) < f(x_1) \).</span></div>
+                </div>
+            </div>
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span>3. Що таке монотонна функція?</span></div>
+                    <div class="card-back"><span>Функція, яка на деякому проміжку тільки зростає або тільки спадає.</span></div>
+                </div>
+            </div>
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span>4. Яка достатня ознака зростання функції?</span></div>
+                    <div class="card-back"><span>Якщо \( f'(x) > 0 \) на проміжку, то функція зростає на цьому проміжку.</span></div>
+                </div>
+            </div>
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span>5. Яка достатня ознака спадання функції?</span></div>
+                    <div class="card-back"><span>Якщо \( f'(x) < 0 \) на проміжку, то функція спадає на цьому проміжку.</span></div>
+                </div>
+            </div>
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span>6. Що таке критичні точки функції?</span></div>
+                    <div class="card-back"><span>Точки, в яких похідна дорівнює нулю або не існує.</span></div>
+                </div>
+            </div>
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span>7. Як дослідити функцію на монотонність?</span></div>
+                    <div class="card-back"><span>1) Знайти похідну; 2) Знайти критичні точки; 3) Дослідити знак похідної на інтервалах.</span></div>
+                </div>
+            </div>
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span>8. На яких проміжках зростає функція \( f(x) = x^2 \)?</span></div>
+                    <div class="card-back"><span>На проміжку \( [0; +\infty) \), бо \( f'(x) = 2x \geq 0 \) при \( x \geq 0 \).</span></div>
+                </div>
+            </div>
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span>9. На яких проміжках спадає функція \( f(x) = -x^2 \)?</span></div>
+                    <div class="card-back"><span>На проміжку \( [0; +\infty) \), бо \( f'(x) = -2x \leq 0 \) при \( x \geq 0 \).</span></div>
+                </div>
+            </div>
+            <div class="question-card" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front"><span>10. Чи завжди зростаюча функція має додатну похідну?</span></div>
+                    <div class="card-back"><span>Ні, не завжди. Наприклад, \( f(x) = x^3 \) зростає на всій числовій прямій, але \( f'(0) = 0 \).</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- ТРЕНАЖЕР -->
+<div id="trainerModal" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeTrainerBtn">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="trainer-container">
+            <div class="question-circle">
+                <h3 id="questionNumber">Питання 1</h3>
+            </div>
+            <p id="questionText" class="math-notation-centered"></p>
+            <div class="options-container" id="optionsContainer"></div>
+            <button id="submitAnswer" class="submit-btn" disabled>Підтвердити</button>
+            <div id="feedback" class="feedback"></div>
+        </div>
+    </div>
+</div>
+
+    <!-- ЗАВЕРШЕННЯ -->
+<div id="completionModal" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeCompletionBtn">× Закрити</button>
+    </div>
+    <div class="modal-content">
+        <div class="completion-message">
+            <div class="completion-emoji"></div>
+            <h2>МІСІЯ ВИКОНАНА!</h2>
+            <p>Ти — майстер аналізу функцій!</p>
+            <p><strong>СЛАВА УКРАЇНІ!</strong></p>
+            <button id="resetTrainerBtn" class="reset-btn">Повернутися на полігон!</button>
+        </div>
+    </div>
+</div>
+
+    <div id="modalOverlay"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    document.body.classList.add('loaded');
+
+    const modals = {
+        theory: document.getElementById('theoryModal'),
+        video: document.getElementById('videoModal'),
+        questions: document.getElementById('questionsModal'),
+        trainer: document.getElementById('trainerModal'),
+        completion: document.getElementById('completionModal')
+    };
+    const overlay = document.getElementById('modalOverlay');
+
+    function openModal(m) { 
+        m.style.display = 'flex'; 
+        overlay.style.display = 'block'; 
+        document.body.style.overflow = 'hidden'; 
+    }
+    
+    function closeModal(m) { 
+        m.style.display = 'none'; 
+        overlay.style.display = 'none'; 
+        document.body.style.overflow = 'auto'; 
+    }
+
+    // Відкриття модалок
+    document.getElementById('openTheoryBtn').onclick = () => openModal(modals.theory);
+    document.getElementById('openVideoBtn').onclick = () => openModal(modals.video);
+    document.getElementById('openQuestionsBtn').onclick = () => openModal(modals.questions);
+    document.getElementById('openTrainerBtn').onclick = () => { 
+        openModal(modals.trainer); 
+        startTrainer(); 
+    };
+
+    // Універсальне закриття по хрестику
+    document.querySelectorAll('.close-btn').forEach(btn => {
+        btn.onclick = (e) => {
+            e.stopPropagation();
+            const modal = btn.closest('.modal');
+            if (modal.id !== 'videoModal') {
+                closeModal(modal);
+            }
+        };
+    });
+
+    // Закриття по оверлею і Esc
+    overlay.onclick = () => document.querySelectorAll('.modal').forEach(closeModal);
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.modal').forEach(m => m.style.display === 'flex' && closeModal(m));
+        }
+    });
+
+    // ВІДЕО
+    const videoList = document.getElementById('videoList');
+    const videoPlayer = document.getElementById('videoPlayer');
+    const youtubeIframe = document.getElementById('youtubePlayer');
+
+    document.querySelectorAll('.video-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const url = card.dataset.url;
+            videoList.style.display = 'none';
+            videoPlayer.style.display = 'block';
+            youtubeIframe.src = url + '?autoplay=0';
+        });
+    });
+
+    document.getElementById('closeVideoBtn').addEventListener('click', () => {
+        youtubeIframe.src = '';
+        videoPlayer.style.display = 'none';
+        videoList.style.display = 'flex';
+        closeModal(modals.video);
+    });
+
+// === ТРЕНАЖЕР: 3 РІВНІ ===
+let currentLevel = 1;  // 1=лінійна, 2=квадратична, 3=раціональна похідна
+
+let currentK, currentB;                    // рівень 1
+let currentA, currentBQuad, currentC;      // рівень 2
+let numA, numB, denC, denD;                // рівень 3: чисельник ax+b, знаменник cx+d
+let zeroNum, zeroDen;                      // корені чисельника і знаменника
+
+let isIncreasingQuestion = true;
+
+// === Початок ===
+function startTrainer() {
+    currentLevel = 1;
+    generateQuestion();
+}
+
+function resetTrainerState() {
+    currentLevel = 1;
+    document.getElementById('optionsContainer').innerHTML = '';
+    document.getElementById('submitAnswer').disabled = true;
+    const fb = document.getElementById('feedback');
+    fb.style.opacity = 0;
+    fb.textContent = '';
+    document.querySelectorAll('.option').forEach(d => d.classList.remove('selected'));
+}
+    
+// === Генерація питання ===
+function generateQuestion() {
+    isIncreasingQuestion = Math.random() < 0.5;
+    const action = isIncreasingQuestion ? "зростає" : "спадає";
+
+    if (currentLevel === 1) {
+        // === РІВЕНЬ 1: Лінійна ===
+        generateLinearFunction();
+        document.getElementById('questionText').innerHTML = 
+            `На якому проміжку ${action} функція \\\(${formatLinear()}\\\)?`;
+        document.getElementById('questionNumber').textContent = "Питання 1";
+
+        const correct = currentK > 0 
+            ? (isIncreasingQuestion ? "everywhere" : "nowhere")
+            : (isIncreasingQuestion ? "nowhere" : "everywhere");
+
+        renderOptions(getLinearOptions(), correct);
+
+    } else if (currentLevel === 2) {
+        // === РІВЕНЬ 2: Квадратична ===
+        generateQuadraticFunction();
+        document.getElementById('questionText').innerHTML = 
+            `На якому проміжку ${action} функція \\\(${formatQuadratic()}\\\)?`;
+        document.getElementById('questionNumber').textContent = "Питання 2";
+
+        const vTex = vertexToFraction(currentBQuad, currentA);
+        const correct = currentA > 0
+            ? (isIncreasingQuestion ? "right" : "left")
+            : (isIncreasingQuestion ? "left" : "right");
+
+        const options = [
+            { value: "everywhere", tex: "(-\\infty; +\\infty)" },
+            { value: "nowhere",    tex: "\\mathit{ніде}" },
+            { value: "left",       tex: `(-\\infty; ${vTex}]` },
+            { value: "right",      tex: `[${vTex}; +\\infty)` }
+        ];
+        renderOptions(options, correct);
+
+    } // === Оновлений блок рівня 3 у generateQuestion() ===
+else if (currentLevel === 3) {
+    generateRationalDerivative();
+
+    const a = Math.min(zeroNum, zeroDen);
+    const b = Math.max(zeroNum, zeroDen);
+
+    document.getElementById('questionText').innerHTML = 
+        `На якому проміжку функція ${action}, якщо \\\(f'(x) = ${formatRationalDerivative()}\\\)?`;
+    document.getElementById('questionNumber').textContent = "Питання 3";
+
+    const correctValue = isIncreasingQuestion
+        ? getCorrectIntervalForIncrease()
+        : (getCorrectIntervalForIncrease() === "sides" ? "middle" : "sides");
+
+    renderOptions(getRationalOptions(), correctValue);
+}
+
+    if (window.MathJax) MathJax.typesetPromise();
+}
+
+
+// Лінійна функція
+function generateLinearFunction() {
+    const sign = Math.random() < 0.5 ? -1 : 1;
+    const absK = Math.floor(Math.random() * 9) + 1;
+    currentK = sign * absK;
+    currentB = Math.floor(Math.random() * 19) - 9;
+}
+
+function formatLinear() {
+    let kStr = currentK === 1 ? "x" : currentK === -1 ? "-x" : currentK + "x";
+    let bStr = currentB > 0 ? ` + ${currentB}` : currentB < 0 ? ` - ${Math.abs(currentB)}` : "";
+    return `f(x) = ${kStr}${bStr}`;
+}
+
+function getLinearOptions() {
+    return [
+        { value: "everywhere", tex: "(-\\infty; +\\infty)" },
+        { value: "nowhere",    tex: "\\mathit{ніде}" },
+        { value: "negative",   tex: "(-\\infty; 0)" },
+        { value: "positive",   tex: "(0; +\\infty)" }
+    ];
+}
+
+// Квадратична функція
+function generateQuadraticFunction() {
+    const aSign = Math.random() < 0.5 ? -1 : 1;
+    const absA = Math.floor(Math.random() * 5) + 1;  // 1..5
+    currentA = aSign * absA;
+    currentBQuad = Math.floor(Math.random() * 11) - 5;  // -5..5
+    currentC = Math.floor(Math.random() * 19) - 9;      // -9..9
+}
+
+    
+// Точно перетворює вершину -b/(2a) у звичайний дріб (a, b — цілі)
+function vertexToFraction(b, a) {
+    // b — це currentBQuad, a — currentA (обидва цілі)
+    let numerator = -b;        // -b
+    let denominator = 2 * a;   // 2a
+
+    // Якщо знаменник від'ємний — переносимо мінус у чисельник
+    if (denominator < 0) {
+        numerator = -numerator;
+        denominator = -denominator;
+    }
+
+    // Скорочуємо дріб
+    const gcd = (x, y) => y ? gcd(y, x % y) : Math.abs(x);
+    const divisor = gcd(Math.abs(numerator), denominator);
+
+    numerator /= divisor;
+    denominator /= divisor;
+
+    // Повертаємо LaTeX
+    if (denominator === 1) {
+        return numerator.toString();
+    }
+    if (numerator === 0) {
+        return "0";
+    }
+    return numerator < 0
+        ? `-\\dfrac{${Math.abs(numerator)}}{${denominator}}`
+        : `\\dfrac{${numerator}}{${denominator}}`;
+}
+
+// === РІВЕНЬ 3: Генерація дробової похідної ===
+function generateRationalDerivative() {
+    // Корені — цілі від -6 до 6 (окрім 0 для знаменника, бо cx ≠ 0)
+    const rootsNum = [-6,-5,-4,-3,-2,-1,1,2,3,4,5,6];
+    const rootsDen = [-6,-5,-4,-3,-2,-1,1,2,3,4,5,6];
+
+    zeroNum = rootsNum[Math.floor(Math.random() * rootsNum.length)];
+    zeroDen = rootsDen[Math.floor(Math.random() * rootsDen.length)];
+
+    // Коефіцієнти біля x — від 1 до 3 (щоб не було нуля)
+    numA = [1,2,3][Math.floor(Math.random() * 3)] * (Math.random() < 0.5 ? 1 : -1);
+    denC = [1,2,3][Math.floor(Math.random() * 3)] * (Math.random() < 0.5 ? 1 : -1);
+
+    // Обчислюємо b і d
+    numB = -numA * zeroNum;
+    denD = -denC * zeroDen;
+}
+
+function formatRationalDerivative() {
+    const num = numA !== 0 ? `${numA > 0 && numB >= 0 ? '' : numA}x${numB > 0 ? ' + ' + numB : numB < 0 ? ' - ' + Math.abs(numB) : ''}`.trim() : Math.abs(numB);
+    const den = denC !== 0 ? `${denC}x${denD > 0 ? ' + ' + denD : denD < 0 ? ' - ' + Math.abs(denD) : ''}` : Math.abs(denD);
+
+    const numTex = numA === 1 ? `x${numB >= 0 ? ' + ' + numB : ' - ' + Math.abs(numB)}` :
+                   numA === -1 ? `-x${numB >= 0 ? ' + ' + numB : ' - ' + Math.abs(numB)}` :
+                   numB === 0 ? numA + 'x' : `${numA}x${numB > 0 ? ' + ' + numB : ' - ' + Math.abs(numB)}`;
+
+    const denTex = denC === 1 ? `x${denD >= 0 ? ' + ' + denD : ' - ' + Math.abs(denD)}` :
+                   denC === -1 ? `-x${denD >= 0 ? ' + ' + denD : ' - ' + Math.abs(denD)}` :
+                   denD === 0 ? denC + 'x' : `${denC}x${denD > 0 ? ' + ' + denD : ' - ' + Math.abs(denD)}`;
+
+    return `\\dfrac{${numTex}}{${denTex}}`;
+}
+
+// Проміжки знака похідної
+function getSignIntervals() {
+    // Визначаємо знак похідної ліворуч від обох коренів
+    const testPoint = Math.min(zeroNum, zeroDen) - 10;
+    const numVal = numA * testPoint + numB;
+    const denVal = denC * testPoint + denD;
+
+    const signAtLeft = (numVal > 0 && denVal > 0) || (numVal < 0 && denVal < 0) ? 1 : -1;
+
+    // Якщо ліворуч додатний → зростає на боках, якщо від'ємний → зростає в середині
+    const increasesOnSides = signAtLeft > 0;
+
+    return {
+        positive: increasesOnSides ? "leftRight" : "middle",
+        negative: increasesOnSides ? "middle" : "leftRight"
+    };
+}
+
+
+// === 4 варіанти — ТОЧНО ЯК ТИ ХОЧЕШ, БЕЗ ОБ’ЄДНАННЯ ===
+function getRationalOptions() {
+    const a = Math.min(zeroNum, zeroDen);
+    const b = Math.max(zeroNum, zeroDen);
+
+    return [
+        { value: "sides",          tex: `(-\\infty; ${a}) \\cup (${b}; +\\infty)` },
+        { value: "middle",         tex: `(${a}; ${b})` },
+        { value: "leftAndMiddle",  tex: `(-\\infty; ${a}) \\cup (${a}; ${b})` },
+        { value: "middleAndRight", tex: `(${a}; ${b}) \\cup (${b}; +\\infty)` }
+    ];
+}
+    
+// === Який варіант правильний при зростанні? ===
+function getCorrectIntervalForIncrease() {
+    const pole = zeroDen;   // точка розриву (знаменник = 0)
+    const zero = zeroNum;   // нуль похідної
+
+    // Точка далеко зліва
+    const testX = Math.min(pole, zero) - 10;
+    const signLeft = signOfDerivative(testX);
+
+    if (signLeft > 0) {
+        // Зростає на крайніх проміжках → варіант 1
+        return "sides";
+    } else {
+        // Зростає між нулем і полюсом → варіант 2
+        return "middle";
+    }
+}
+    
+// === Знак похідної (допоміжна) ===
+function signOfDerivative(x) {
+    const num = numA * x + numB;
+    const den = denC * x + denD;
+    if (Math.abs(den) < 1e-10) return 0; // на всяк випадок
+    return (num > 0 && den > 0) || (num < 0 && den < 0) ? 1 : -1;
+}
+
+    
+function formatQuadratic() {
+    let aStr = currentA === 1 ? "x^2" : currentA === -1 ? "-x^2" : currentA + "x^2";
+    let bStr = "";
+    if (currentBQuad !== 0) {
+        if (currentBQuad === 1) bStr = " + x";
+        else if (currentBQuad === -1) bStr = " - x";
+        else bStr = currentBQuad > 0 ? ` + ${currentBQuad}x` : ` - ${Math.abs(currentBQuad)}x`;
+    }
+    let cStr = currentC > 0 ? ` + ${currentC}` : currentC < 0 ? ` - ${Math.abs(currentC)}` : "";
+    return `f(x) = ${aStr}${bStr}${cStr}`;
+}
+
+// Універсальне створення варіантів (з клікабельністю)
+function renderOptions(optionsArray, correctValue) {
+    const container = document.getElementById('optionsContainer');
+    container.innerHTML = '';
+
+    const shuffled = optionsArray.sort(() => Math.random() - 0.5);
+
+    shuffled.forEach(opt => {
+        const div = document.createElement('div');
+        div.className = 'option';
+        div.innerHTML = `\\(${opt.tex}\\)`;
+        div.dataset.value = opt.value;
+
+        div.style.cssText = `
+            position: relative;
+            cursor: pointer;
+            user-select: none;
+            pointer-events: auto;
+        `;
+
+        const disableMathJaxPointer = () => {
+            div.querySelectorAll('*').forEach(el => el.style.pointerEvents = 'none');
+        };
+
+        if (window.MathJax) {
+            MathJax.typesetPromise([div]).then(disableMathJaxPointer);
+        } else {
+            disableMathJaxPointer();
+        }
+
+        div.addEventListener('click', (e) => {
+            e.stopPropagation();
+            container.querySelectorAll('.option').forEach(d => d.classList.remove('selected'));
+            div.classList.add('selected');
+            document.getElementById('submitAnswer').disabled = false;
+        });
+
+        container.appendChild(div);
+    });
+
+    // Зберігаємо правильну відповідь
+    window.currentCorrectAnswer = correctValue;
+}
+
+// === Перевірка відповіді (оновлено під 3 рівні) ===
+document.getElementById('submitAnswer').onclick = () => {
+    const selected = document.querySelector('.option.selected');
+    if (!selected) return;
+
+    const isCorrect = selected.dataset.value === window.currentCorrectAnswer;
+
+    const fb = document.getElementById('feedback');
+    fb.textContent = isCorrect ? '✓ Ціль уражена!' : '✗ Промах! Спробуй ще!';
+    fb.style.background = isCorrect ? '#2a9d8f' : '#e63946';
+    fb.style.opacity = 1;
+
+    if (isCorrect) {
+        if (currentLevel < 3) {
+            currentLevel++;
+            setTimeout(() => {
+                fb.style.opacity = 0;
+                setTimeout(generateQuestion, 350);
+            }, 1200);
+        } else {
+            setTimeout(() => {
+                closeModal(modals.trainer);
+                openModal(modals.completion);
+            }, 1200);
+        }
+    } else {
+        setTimeout(() => {
+            fb.style.opacity = 0;
+            document.querySelectorAll('.option').forEach(d => d.classList.remove('selected'));
+            document.getElementById('submitAnswer').disabled = true;
+            setTimeout(generateQuestion, 600);
+        }, 1500);
+    }
+};
+// === Повернутися на полігон ===
+document.getElementById('resetTrainerBtn').onclick = () => {
+    closeModal(modals.completion);
+    resetTrainerState();
+    generateQuestion();
+    modals.trainer.style.display = 'flex';
+};
+});
+</script>
+</body>
+</html>
