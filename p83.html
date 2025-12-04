@@ -1,0 +1,2594 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>83. Екстремум функції</title>
+    <script>
+window.MathJax = {
+    tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true,
+        packages: {'[+]': ['noerrors']},
+        macros: {
+            tg: ['\\operatorname{tg}', 0],
+            ctg: ['\\operatorname{ctg}', 0],
+            arctg: ['\\operatorname{arctg}', 0],
+            arcctg: ['\\operatorname{arcctg}', 0]
+        }
+    },
+    options: {
+        ignoreHtmlClass: "tex2jax_ignore|no-mathjax",
+        processHtmlClass: "tex2jax_process",
+        renderActions: {
+            find_script_mathtex: [10, function () {}, false]
+        }
+    },
+    loader: {load: ['[tex]/noerrors']}
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+<style>
+    *, *:before, *:after { box-sizing: border-box; }
+    body {
+        margin: 0;
+        background: radial-gradient(circle at center, #0a0a0a 0%, #1a1a1a 40%, #2b2b2b 100%);
+        color: #e0e0e0;
+        font-family: 'Roboto Condensed', sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }
+    body.loaded { visibility: visible; opacity: 1; }
+
+    .title-box {
+        margin-top: 60px;
+        padding: 20px 40px;
+        background: linear-gradient(135deg, #2d3a2a, #3a4a35);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+        border-radius: 16px;
+        text-align: center;
+        border: 1px solid #556b2f;
+    }
+    .title-box h1 {
+        margin: 0;
+        font-size: 28px;
+        color: #9acd32;
+        font-family: 'Orbitron', sans-serif;
+        text-shadow: 0 0 8px rgba(154,205,50,0.5);
+    }
+
+    .section-container {
+        margin-top: 40px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 25px;
+    }
+    .section {
+        width: 260px;
+        height: 200px;
+        background: linear-gradient(145deg, #2a332a, #354835);
+        border-radius: 14px;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.45);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 15px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+        border: 1px solid rgba(154,205,50,0.15);
+    }
+    .section:hover {
+        transform: scale(1.06);
+        box-shadow: 0 10px 25px rgba(154,205,50,0.25);
+    }
+    .section h2 { font-size: 20px; color: #ffffff; font-family: 'Orbitron', sans-serif; }
+    .section img { width: 60px; height: 60px; margin-bottom: 15px; filter: brightness(1.3) drop-shadow(0 0 6px #9acd32); }
+
+    .modal {
+        display: none;
+        position: fixed;
+        top: 5%; left: 5%; width: 90%; height: 90%;
+        background: linear-gradient(135deg, #2a332a, #3a4a35);
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        z-index: 1001;
+        overflow: hidden;
+        flex-direction: column;
+        border: 1px solid rgba(154,205,50,0.2);
+    }
+    #modalOverlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.85);
+        z-index: 999;
+        backdrop-filter: blur(6px);
+    }
+    .modal-content {
+        padding: 20px;
+        flex-grow: 1;
+        overflow-y: auto;
+        color: #e0e0e0;
+        width: 100%;
+    }
+    .modal-header {
+        background: linear-gradient(0deg, #2a332a, #3a4a35);
+        padding: 8px 12px;
+        display: flex;
+        justify-content: flex-end;
+        width: 100%;
+        position: sticky;
+        top: 0;
+        z-index: 1002;
+        border-bottom: 1px solid rgba(154,205,50,0.2);
+    }
+    .close-btn {
+        background: linear-gradient(135deg, #556b2f, #9acd32);
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 6px 16px;
+        font-size: 16px;
+        cursor: pointer;
+        font-family: 'Orbitron', sans-serif;
+        box-shadow: 0 2px 8px rgba(85,107,47,0.4);
+    }
+    .close-btn:hover { background: linear-gradient(135deg, #6b8e23, #556b2f); transform: scale(1.05); }
+
+    .theory-content h2, .trainer-container h2 { 
+        color: #9acd32; 
+        text-shadow: 0 0 10px rgba(154,205,50,0.5); 
+        text-align: center; 
+        font-family: 'Orbitron', sans-serif; 
+    }
+    .theory-content p, .theory-content li { 
+        font-size: clamp(18px, 3vw, 20px); 
+        line-height: 1.7; 
+        text-align: justify; 
+    }
+    .example {
+        background: rgba(154,205,50,0.1);
+        border-left: 4px solid #9acd32;
+        padding: 12px;
+        margin: 15px 0;
+        border-radius: 6px;
+        color: #c0e080;
+        font-weight: bold;
+        font-size: 22px;
+    }
+    .solution {
+        background: rgba(154,205,50,0.15);
+        border: 2px solid #9acd32;
+        padding: 12px;
+        margin: 15px 0;
+        border-radius: 6px;
+        text-align: center;
+        color: #9acd32;
+        font-weight: bold;
+    }
+    .math-notation-centered {
+        display: block;
+        text-align: center;
+        font-size: clamp(20px, 3.5vw, 24px);
+        margin: 20px 0;
+        color: #ffff99;
+    }
+    mjx-container { color: #ffff99 !important; font-style: italic !important; }
+
+    .navigation-buttons { 
+        display: flex; 
+        justify-content: center; 
+        gap: 20px; 
+        margin: 40px 0; 
+    }
+    .nav-button {
+        display: flex; 
+        align-items: center; 
+        background: linear-gradient(135deg, #2a332a, #354835);
+        color: #e0e0e0; 
+        padding: 12px 24px; 
+        border-radius: 10px; 
+        text-decoration: none;
+        font-weight: bold; 
+        border: 1px solid rgba(154,205,50,0.3);
+        transition: all 0.3s ease;
+    }
+    .nav-button:hover { 
+        background: linear-gradient(135deg, #6b8e23, #9acd32); 
+        color: #fff; 
+        transform: scale(1.05); 
+    }
+    .nav-button svg { margin-right: 8px; fill: currentColor; width: 20px; height: 20px; }
+
+    @media (max-width: 768px) {
+        .title-box { margin-top: 40px; }
+        .title-box h1 { font-size: 24px; }
+        .section-container { flex-direction: column; align-items: center; }
+        .section { width: 80%; height: 180px; }
+        .modal { top: 2%; left: 2%; width: 96%; height: 96%; }
+        .theory-content h2, .trainer-container h2 { font-size: 20px; }
+    }
+
+    /* Стилі скролбару */
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { 
+        background: rgba(154, 205, 50, 0.3); 
+        border-radius: 10px;
+        border: 2px solid transparent;
+        background-clip: content-box;
+        transition: all 0.3s ease;
+    }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(154, 205, 50, 0.7); }
+    ::-webkit-scrollbar-thumb:active { background: #9acd32; width: 12px; }
+    * { scrollbar-width: thin; scrollbar-color: rgba(154, 205, 50, 0.5) transparent; }
+
+    .formula-box {
+        background: rgba(154,205,50,0.1);
+        padding: 20px;
+        border-left: 4px solid #9acd32;
+        border-radius: 8px;
+        margin: 20px auto;
+        max-width: 700px;
+        text-align: center;
+    }
+
+    #videoList { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; padding: 20px; }
+    .video-card {
+        width: 300px;
+        height: 250px;
+        background: #2c2c2c;
+        border-radius: 16px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 15px;
+        gap: 15px;
+        cursor: pointer;
+        transition: 0.3s ease;
+    }
+    .video-card:hover {
+        background: #333;
+        transform: translateY(-4px);
+        box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+    }
+    .video-card .play-icon { width: 64px; height: 64px; }
+    .video-card h3 { color: #f0f0f0; font-size: 1rem; line-height: 1.3; }
+
+    /* Стилі флеш-карток */
+    .question-card {
+        perspective: 1000px;
+        margin: 25px auto;
+        max-width: 964px;
+        width: 100%;
+        min-height: 180px;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+    .question-card:hover { transform: translateY(-5px); }
+    .card-inner {
+        position: relative;
+        width: 100%;
+        min-height: 180px;
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        transform-style: preserve-3d;
+    }
+    .question-card.flipped .card-inner { transform: rotateY(180deg); }
+    .card-front, .card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 25px;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+        text-align: center;
+        border: 2px solid rgba(154,205,50,0.3);
+        transition: all 0.3s ease;
+    }
+    .card-front {
+        background: linear-gradient(135deg, #2d3a2a, #3a4a35);
+        color: #ffffff;
+    }
+    .card-front:hover { border-color: rgba(154,205,50,0.6); box-shadow: 0 10px 30px rgba(154,205,50,0.2); }
+    .card-back {
+        background: linear-gradient(135deg, #2a332a, #3a4a35);
+        color: #e0e0e0;
+        transform: rotateY(180deg);
+        padding: 25px;
+        border-color: rgba(154,205,50,0.5);
+    }
+    .card-back:hover { border-color: rgba(154,205,50,0.8); box-shadow: 0 10px 30px rgba(154,205,50,0.3); }
+    .card-front span, .card-back span { font-size: clamp(18px, 3vw, 20px); line-height: 1.6; font-weight: 500; }
+    .card-front span { color: #ffffff; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); }
+    .card-back span { color: #e0e0e0; width: 100%; }
+    .card-front::after { content: "❓"; position: absolute; bottom: 15px; right: 20px; font-size: 20px; opacity: 0.7; color: #9acd32; }
+    .card-back::after { content: "💡"; position: absolute; bottom: 15px; right: 20px; font-size: 20px; opacity: 0.7; color: #9acd32; }
+
+    /* Стилі тренажера */
+    .trainer-container {
+        width: 90%;
+        max-width: 800px;
+        margin: auto;
+        padding: 30px;
+        background: linear-gradient(135deg, #2a332a, #3a4a35);
+        border-radius: 16px;
+        border: 1px solid rgba(154,205,50,0.2);
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+    }
+    .question-circle {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 25px;
+        background: linear-gradient(135deg, #556b2f, #9acd32);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 15px rgba(85,107,47,0.4);
+    }
+    .question-circle h3 { color: #fff; margin: 0; font-family: 'Orbitron', sans-serif; font-size: 20px; font-weight: 700; }
+    .options-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin: 30px 0;
+        padding: 0 15px;
+        justify-items: center;
+    }
+    .option {
+        width: 100%;
+        min-height: 80px;
+        padding: 20px 15px;
+        border: 3px solid #556b2f;
+        border-radius: 14px;
+        background: #2a332a;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.25s ease;
+        font-size: clamp(17px, 3vw, 19px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    .option * { pointer-events: none !important; }
+    .option { pointer-events: auto !important; }
+    .option:hover:not(.selected) {
+        background: rgba(154,205,50,0.2);
+        border-color: #9acd32;
+        transform: translateY(-4px);
+    }
+    .option.selected {
+        background: linear-gradient(135deg, #556b2f, #9acd32);
+        border-color: #9acd32;
+        color: white;
+        box-shadow: 0 0 20px rgba(154,205,50,0.6);
+        transform: scale(1.03);
+    }
+    .submit-btn {
+        background: linear-gradient(135deg, #556b2f, #9acd32);
+        color: #fff;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 25px;
+        font-family: 'Orbitron', sans-serif;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+    }
+    .submit-btn:hover:not(:disabled) { background: linear-gradient(135deg, #6b8e23, #556b2f); transform: scale(1.05); box-shadow: 0 4px 15px rgba(85,107,47,0.4); }
+    .submit-btn:disabled { background: #666; cursor: not-allowed; opacity: 0.6; }
+    .feedback {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 30px;
+        padding: 20px 40px;
+        border-radius: 10px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 1002;
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    /* === МЕДАЛЬ З ТРИЗУБОМ === */
+    .completion-emoji {
+        position: relative;
+        display: inline-block;
+        width: clamp(56px, 12vw, 96px);
+        height: clamp(56px, 12vw, 96px);
+        vertical-align: middle;
+        margin: 0 auto 3vw;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #2a332a, #3a4a35);
+        border: 3px dashed #ffd700;
+        box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+        overflow: hidden;
+        animation: medalAppear 0.8s ease-out;
+    }
+    .completion-emoji::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><filter id='s' x='-50%' y='-50%' width='200%' height='200%'><feDropShadow dx='0' dy='2' stdDeviation='2' flood-color='%23000000' flood-opacity='0.25'/></filter></defs><rect x='30' y='0' width='60' height='40' rx='4' fill='%23007ACC'/><rect x='30' y='20' width='60' height='20' rx='4' fill='%23FFD700'/><g transform='translate(60,70)'><polygon points='0,-26 6,-6 26,-6 9,6 15,26 0,14 -15,26 -9,6 -26,-6 -6,-6' fill='%23FFD700' filter='url(%23s)'/></g></svg>");
+        background-size: 75%;
+        background-repeat: no-repeat;
+        background-position: center 60%;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+        animation: medalBounce 1.2s ease-out 0.3s both;
+    }
+    @keyframes medalAppear {
+        0% { transform: scale(0.3) rotate(-180deg); opacity: 0; }
+        60% { transform: scale(1.1); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes medalBounce {
+        0% { transform: translateY(-120px) rotate(-30deg) scale(0.4); opacity: 0; }
+        60% { transform: translateY(15px) rotate(10deg) scale(1.15); opacity: 1; }
+        80% { transform: translateY(-8px) rotate(-5deg) scale(1.05); }
+        100% { transform: translateY(0) rotate(0) scale(1); }
+    }
+
+    .completion-message {
+        background: linear-gradient(145deg, #2a332a, #3a4a35);
+        border: 2.5px solid #ffffff;
+        border-radius: 15px;
+        padding: clamp(12px, 3vw, 18px);
+        box-shadow: 0 6px 12px rgba(154,205,50,0.4);
+        margin: 2vw auto;
+        max-width: 90%;
+        text-align: center;
+    }
+    .completion-message h2 {
+        color: #ffffff;
+        text-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+    .completion-message p { color: #ffffff; }
+
+    #completionModal .modal-content {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px;
+    }
+    #completionModal .completion-message {
+        text-align: center;
+        max-width: 500px;
+    }
+    .reset-btn {
+        background: linear-gradient(135deg, #556b2f, #9acd32);
+        color: #fff;
+        padding: 15px 35px;
+        border: none;
+        border-radius: 25px;
+        font-family: 'Orbitron', sans-serif;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 700;
+        margin-top: 20px;
+        transition: all 0.3s ease;
+    }
+    .reset-btn:hover { background: linear-gradient(135deg, #6b8e23, #556b2f); transform: scale(1.05); box-shadow: 0 4px 15px rgba(85,107,47,0.4); }
+
+    @media (max-width: 768px) {
+        .trainer-container { padding: 20px 15px; width: 95%; margin: 10px auto; }
+        .question-circle { width: 100px; height: 100px; margin: 0 auto 15px; }
+        .question-circle h3 { font-size: 16px; }
+        .options-container { gap: 10px; margin: 20px 0; }
+        .option { min-width: 100%; padding: 12px 15px; font-size: 16px; font-weight: 600; border-width: 3px; background: rgba(42,51,42,0.9); }
+        #questionText { font-size: 18px; margin: 10px 0; line-height: 1.3; }
+        .feedback { font-size: 20px; padding: 15px 25px; border-radius: 8px; text-shadow: 0 2px 4px rgba(0,0,0,0.7); }
+    }
+    #questionText { font-size: clamp(18px, 2.8vw, 20px); line-height: 1.4; margin: 15px 0; color: #ffff99; font-weight: 600; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+    mjx-container { font-size: 0.9em !important; color: #ffff99 !important; font-style: italic !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+    .highlight { color: #9acd32; font-weight: bold; }
+    .pos { color: #7cff7c; font-weight: bold; }
+    .neg { color: #ff6b6b; font-weight: bold; }
+
+    .text-block p {
+        font-size: 18px;
+        line-height: 1.8;
+        margin: 18px 0;
+        text-align: justify;
+    }
+
+    .math-important {
+        background: rgba(154,205,50,0.2);
+        border: 2px solid #9acd32;
+        border-radius: 12px;
+        padding: 20px;
+        margin: 25px auto;
+        text-align: center;
+        font-size: 22px;
+        color: #ffff99;
+        font-weight: 500;
+    }
+
+    .math-big {
+        font-size: 20px;
+        color: #ffff99;
+        text-align: center;
+        margin: 20px 0;
+        padding: 15px;
+        background: rgba(154,205,50,0.15);
+        border-radius: 10px;
+    }
+
+   .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 22px;
+    margin: 30px 0;
+}
+
+/* АДАПТАЦІЯ ДЛЯ МОБІЛЬНИХ */
+/* ======================== */
+
+/* Планшети та невеликі екрани (≤1024px) */
+@media (max-width: 1024px) {
+    .grid-3 {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+        margin: 25px 0;
+    }
+}
+
+/* Планшети вертикально (≤768px) */
+@media (max-width: 768px) {
+    .grid-3 {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 18px;
+        margin: 22px 0;
+    }
+}
+
+/* Великі телефони (≤600px) - 2 колонки */
+@media (max-width: 600px) {
+    .grid-3 {
+        grid-template-columns: repeat(2, 1fr); /* Фіксовано 2 колонки */
+        gap: 16px;
+        margin: 20px 0;
+    }
+    
+    .card-deriv {
+        min-height: 280px; /* Збільшуємо висоту для кращого читання */
+    }
+}
+
+/* Середні телефони (≤480px) */
+@media (max-width: 480px) {
+    .grid-3 {
+        grid-template-columns: 1fr; /* Одна колонка */
+        gap: 15px;
+        margin: 18px 0;
+    }
+    
+    .card-deriv {
+        min-height: auto; /* Автоматична висота */
+        padding: 18px 15px !important;
+    }
+    
+    /* Для карток всередині .grid-3 */
+    .grid-3 .card-deriv h4 {
+        font-size: 1.1rem;
+        margin-bottom: 12px;
+    }
+    
+    .grid-3 .card-deriv p {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin: 10px 0;
+    }
+    
+    .grid-3 .card-deriv .math-big {
+        font-size: 0.95rem !important;
+        padding: 12px 8px !important;
+        margin: 15px 0 !important;
+    }
+}
+
+/* Маленькі телефони (≤360px) */
+@media (max-width: 360px) {
+    .grid-3 {
+        gap: 12px;
+        margin: 15px 0;
+    }
+    
+    .card-deriv {
+        padding: 15px 12px !important;
+        border-radius: 10px;
+    }
+    
+    .grid-3 .card-deriv h4 {
+        font-size: 1rem;
+    }
+    
+    .grid-3 .card-deriv p {
+        font-size: 0.9rem;
+    }
+}
+
+/* Особливості для мобільних */
+@media (max-width: 768px) {
+    .card-deriv {
+        text-align: center;
+    }
+    
+    /* Вирівнювання списків ліворуч на мобільних */
+    .grid-3 .card-deriv ul {
+        text-align: left;
+        padding-left: 20px;
+        margin: 10px 0;
+    }
+    
+    .grid-3 .card-deriv li {
+        margin: 8px 0;
+        font-size: 0.95rem;
+    }
+    
+    /* Покращуємо читабельність формул */
+    .grid-3 .math-big mjx-container {
+        font-size: 0.9em !important;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+    
+    /* Для дуже довгих формул додаємо горизонтальний скрол */
+    .grid-3 .card-deriv {
+        overflow: hidden;
+    }
+    
+    .grid-3 .math-big {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 5px;
+    }
+}
+
+/* Вертикальна орієнтація (портрет) */
+@media (max-width: 480px) and (orientation: portrait) {
+    .grid-3 {
+        margin: 20px -10px; /* Зменшуємо зовнішні відступи */
+    }
+    
+    .card-deriv {
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+}
+
+/* Горизонтальна орієнтація (ландшафт) */
+@media (max-width: 768px) and (orientation: landscape) {
+    .grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+    
+    .card-deriv {
+        min-height: 300px;
+    }
+}
+
+/* Додаткові покращення для доступності */
+@media (max-width: 768px) {
+    /* Збільшуємо області кліку для дотиків */
+    .card-deriv {
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+    
+    /* Краща читабельність тексту */
+    .grid-3 * {
+        -webkit-text-size-adjust: 100%; /* Запобігає авто-масштабуванню тексту */
+    }
+    
+    /* Оптимізація для швидкого рендерингу */
+    .grid-3 {
+        will-change: transform;
+        transform: translateZ(0);
+    }
+}
+
+    .card-deriv {
+        background: linear-gradient(135deg, #2d3a2a, #3a4a35);
+        padding: 22px;
+        border-radius: 14px;
+        border: 1px solid rgba(154,205,50,0.4);
+        text-align: center;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    }
+
+    .section-title {
+        color: #9acd32;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 22px;
+        text-align: center;
+        margin: 35px 0 20px;
+        text-shadow: 0 0 10px rgba(154,205,50,0.4);
+    }
+
+    .bullet-blue li {
+        font-size: 18.5px;
+        margin: 12px 0;
+        padding-left: 8px;
+    }
+
+    .bullet-blue li::marker { color: #9acd32; font-size: 22px; }
+
+    .algo-box {
+        background: rgba(154,205,50,0.12);
+        border: 2px dashed #9acd32;
+        border-radius: 14px;
+        padding: 25px;
+        margin: 30px 0;
+    }
+
+    .algo-list {
+        padding-left: 20px;
+        counter-reset: num;
+    }
+
+    .algo-list li {
+        position: relative;
+        padding-left: 45px;
+        margin: 20px 0;
+        font-size: 18.5px;
+        line-height: 1.7;
+    }
+
+    .algo-list li::before {
+        counter-increment: num;
+        content: counter(num) ")";
+        position: absolute;
+        left: 0;
+        color: #9acd32;
+        font-weight: bold;
+        font-size: 22px;
+        font-family: 'Orbitron', sans-serif;
+    }
+
+    .final-answer {
+        background: linear-gradient(135deg, #556b2f, #6b8e23);
+        color: white;
+        padding: 22px;
+        border-radius: 12px;
+        text-align: center;
+        font-size: 21px;
+        font-weight: bold;
+        margin-top: 30px;
+        box-shadow: 0 6px 20px rgba(154,205,50,0.5);
+    }
+    .example-full {
+        background: rgba(154,205,50,0.08);
+        border: 2px solid rgba(154,205,50,0.3);
+        border-radius: 16px;
+        padding: 28px;
+        margin: 35px 0;
+        font-size: 19px;
+        line-height: 1.85;
+        text-align: justify;
+    }
+
+    .example-header-classic {
+        font-size: 22px;
+        font-weight: bold;
+        color: white;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px dashed rgba(154,205,50,0.4);
+        text-align: center;
+    }
+
+    .example-label {
+        color: #ffa500;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 24px;
+        padding: 6px 16px;
+        background: rgba(255,165,0,0.15);
+        border-radius: 8px;
+        margin-right: 12px;
+    }
+
+    .example-function {
+        color: #ffff99;
+        font-size: 22px;
+        font-style: italic;
+        margin: 0 8px;
+    }
+
+    .example-solution-text p {
+        margin: 18px 0;
+    }
+
+    .math-centered {
+        text-align: center;
+        font-size: 22px;
+        color: #ffff99;
+        background: rgba(154,205,50,0.15);
+        padding: 14px;
+        border-radius: 10px;
+        margin: 20px auto;
+        max-width: 90%;
+        border: 1px dashed rgba(154,205,50,0.4);
+    }
+
+    .marker {
+        color: #9acd32;
+        font-weight: bold;
+        font-size: 22px;
+        margin-right: 8px;
+    }
+
+    .end-marker {
+        color: #9acd32;
+        font-weight: bold;
+        font-size: 22px;
+        margin-left: 10px;
+    }
+
+    .example-answer {
+        background: linear-gradient(135deg, #556b2f, #6b8e23);
+        color: white;
+        padding: 20px;
+        border-radius: 12px;
+        text-align: center;
+        font-size: 21px;
+        font-weight: bold;
+        margin-top: 30px;
+        box-shadow: 0 6px 20px rgba(154,205,50,0.5);
+    }
+    /* ============================================= */
+    /*        АДАПТИВНІСТЬ ДЛЯ МОБІЛЬНИХ (≤768px)     */
+    /* ============================================= */
+    @media (max-width: 768px) {
+
+        /* Загальні розміри тексту */
+        .theory-content p,
+        .example-full,
+        .example-solution-text p {
+            font-size: 17px !important;
+            line-height: 1.75 !important;
+        }
+
+        /* Заголовки */
+        .section-title,
+        .example-header-classic,
+        .example-label {
+            font-size: 20px !important;
+        }
+
+        .example-label {
+            display: inline-block;
+            padding: 6px 14px !important;
+            margin-bottom: 10px;
+        }
+
+        /* Формули по центру (з нового рядка) */
+        .math-centered,
+        .math-important {
+            font-size: 19px !important;
+            padding: 14px 10px !important;
+            margin: 18px auto !important;
+        }
+
+        .math-big {
+            font-size: 19px !important;
+            padding: 14px !important;
+        }
+
+        /* Функція в умові прикладу */
+        .example-function {
+            font-size: 19px !important;
+            display: block;
+            margin: 12px auto !important;
+            text-align: center;
+        }
+
+        /* Квадратики-маркери */
+        .marker, .end-marker {
+            font-size: 19px !important;
+        }
+
+        /* Карточки похідної (зростає/спадає/стала) */
+        .grid-3 {
+            grid-template-columns: 1fr !important;   /* одна колонка */
+            gap: 18px;
+        }
+
+        .card-deriv {
+            padding: 18px !important;
+        }
+
+        /* Алгоритм */
+        .algo-box {
+            padding: 20px !important;
+        }
+
+        .algo-list li {
+            font-size: 17px !important;
+            padding-left: 38px !important;
+        }
+
+        .algo-list li::before {
+            font-size: 19px !important;
+        }
+
+        /* Відповідь */
+        .final-answer,
+        .example-answer {
+            font-size: 19px !important;
+            padding: 18px !important;
+        }
+
+        .example-full {
+            padding: 20px !important;
+            margin: 25px 0 !important;
+        }
+
+        /* Зменшуємо відступи */
+        .example-header-classic {
+            padding-bottom: 12px !important;
+            margin-bottom: 20px !important;
+        }
+    }
+    .video-modal-title {
+        text-align: center;
+        margin: 20px 0 30px;
+        padding: 20px;
+    }
+
+    .video-modal-title h2 {
+        font-size: 2.2rem;
+        color: #9acd32;
+        margin: 0 0 10px 0;
+        font-weight: 600;
+    }
+
+    /* Дуже маленькі екрани (≤480px) – ще компактніше */
+    @media (max-width: 480px) {
+
+        .theory-content p,
+        .example-full,
+        .example-solution-text p {
+            font-size: 18px !important;
+            line-height: 1.7 !important;
+        }
+
+        .math-centered,
+        .math-important {
+            font-size: 18px !important;
+            padding: 12px 8px !important;
+        }
+
+        .example-function {
+            font-size: 18px !important;
+        }
+
+        .example-label {
+            font-size: 18px !important;
+            padding: 5px 12px !important;
+        }
+
+        .section-title {
+            font-size: 18px !important;
+        }
+
+        .final-answer,
+        .example-answer {
+            font-size: 18px !important;
+            padding: 16px !important;
+        }
+
+        .marker, .end-marker {
+            font-size: 18px !important;
+        }
+        .video-modal-title h2 {
+            font-size: 1.5rem;
+        }
+    }
+
+    /* Опціонально — тонка лінія під заголовком */
+    .video-modal-title::after {
+        content: '';
+        display: block;
+        width: 80px;
+        height: 4px;
+        background: #ff8c00;
+        margin: 20px auto 0;
+        border-radius: 2px;
+    }
+    /* На мобілці — одна колонка */
+    @media (max-width: 768px) {
+        .options-container {
+            grid-template-columns: 1fr;        /* одна колонка */
+            gap: 18px;
+            padding: 0 10px;
+        }
+        .option {
+            min-height: 90px;
+            padding: 22px 15px;
+            font-size: 18px;
+        }
+    }
+
+        /* СТИЛІ ДЛЯ SUMMARY/DETAILS У ВІЙСЬКОВІЙ ТЕМАТИЦІ */
+/* ==================== */
+details {
+    margin: 25px 0;
+    background: linear-gradient(135deg, rgba(42, 51, 42, 0.8), rgba(58, 72, 53, 0.9));
+    border-radius: 12px;
+    border: 1px solid rgba(154, 205, 50, 0.2);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+details:hover {
+    border-color: rgba(154, 205, 50, 0.4);
+    box-shadow: 0 8px 24px rgba(85, 107, 47, 0.25);
+}
+
+summary {
+    font-weight: 700;
+    padding: 18px 24px;
+    background: linear-gradient(135deg, #556b2f, #6b8e23);
+    border-radius: 10px 10px 0 0;
+    color: #ffffff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.15rem;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(85, 107, 47, 0.3);
+    cursor: pointer;
+    list-style: none;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+summary::-webkit-details-marker {
+    display: none;
+}
+
+summary::after {
+    content: "▼";
+    font-size: 0.9rem;
+    transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    color: #c0e080;
+    margin-left: 10px;
+    font-weight: bold;
+}
+
+details[open] summary::after {
+    transform: rotate(180deg);
+    color: #9acd32;
+}
+
+details[open] summary {
+    background: linear-gradient(135deg, #6b8e23, #556b2f);
+    border-radius: 10px 10px 0 0;
+    box-shadow: 0 4px 15px rgba(154, 205, 50, 0.3);
+}
+
+/* Контент всередині details */
+details .details-content {
+    padding: 24px;
+    color: #e0e0e0;
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    background: rgba(42, 51, 42, 0.7);
+    border-radius: 0 0 10px 10px;
+    animation: fadeIn 0.4s ease-out;
+    border-top: 1px solid rgba(154, 205, 50, 0.15);
+}
+
+details .details-content p {
+    margin: 16px 0;
+    text-align: justify;
+}
+
+details .details-content ul,
+details .details-content ol {
+    margin: 16px 0;
+    padding-left: 24px;
+}
+
+details .details-content li {
+    margin: 10px 0;
+    padding-left: 8px;
+    position: relative;
+}
+
+details .details-content li::before {
+    content: "•";
+    color: #9acd32;
+    font-weight: bold;
+    position: absolute;
+    left: -15px;
+}
+
+details .details-content strong {
+    color: #c0e080;
+    font-weight: 700;
+}
+
+details .details-content em {
+    color: #ffff99;
+    font-style: italic;
+}
+
+details .details-content .math-important {
+    background: rgba(154, 205, 50, 0.15);
+    border: 2px solid #9acd32;
+    border-radius: 10px;
+    padding: 18px;
+    margin: 20px auto;
+    text-align: center;
+    font-size: 1.1rem;
+    color: #ffff99;
+    font-family: 'MathJax_Math', 'Cambria Math', serif;
+}
+
+details .details-content .example {
+    background: rgba(85, 107, 47, 0.2);
+    border-left: 4px solid #9acd32;
+    padding: 16px;
+    margin: 20px 0;
+    border-radius: 8px;
+}
+
+details .details-content .highlight {
+    background: rgba(154, 205, 50, 0.2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #ffffff;
+}
+
+/* Стилі для таблиць всередині details */
+details .details-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    border: 1px solid rgba(154, 205, 50, 0.3);
+}
+
+details .details-content th {
+    background: rgba(85, 107, 47, 0.5);
+    color: #ffffff;
+    padding: 12px;
+    text-align: center;
+    font-family: 'Orbitron', sans-serif;
+    border-bottom: 2px solid #9acd32;
+}
+
+details .details-content td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid rgba(154, 205, 50, 0.2);
+}
+
+details .details-content tr:nth-child(even) {
+    background: rgba(85, 107, 47, 0.1);
+}
+
+/* Анімація відкриття */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Альтернативний стиль для summary - з іконкою щита */
+details.military summary::before {
+    content: "🛡️";
+    margin-right: 10px;
+    font-size: 1.1rem;
+}
+
+/* Стиль для попередження/уваги */
+details.warning summary {
+    background: linear-gradient(135deg, #8b4513, #a0522d);
+    box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+}
+
+details.warning .details-content {
+    background: rgba(139, 69, 19, 0.1);
+    border-left: 4px solid #8b4513;
+}
+
+/* Стиль для важливої інформації */
+details.important summary {
+    background: linear-gradient(135deg, #2e8b57, #3cb371);
+    box-shadow: 0 4px 12px rgba(46, 139, 87, 0.3);
+}
+
+details.important .details-content {
+    background: rgba(46, 139, 87, 0.1);
+    border-left: 4px solid #2e8b57;
+}
+
+/* ==================== */
+/* АДАПТИВНІСТЬ */
+/* ==================== */
+@media (max-width: 768px) {
+    details {
+        margin: 20px 0;
+        border-radius: 10px;
+    }
+    
+    summary {
+        padding: 16px 20px;
+        font-size: 1.05rem;
+    }
+    
+    details .details-content {
+        padding: 20px;
+        font-size: 1rem;
+    }
+    
+    summary::after {
+        font-size: 0.8rem;
+    }
+    
+    details .details-content ul,
+    details .details-content ol {
+        padding-left: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    details {
+        margin: 18px 0;
+        border-radius: 8px;
+    }
+    
+    summary {
+        padding: 14px 18px;
+        font-size: 1rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    summary::after {
+        align-self: flex-end;
+        margin-top: -20px;
+    }
+    
+    details .details-content {
+        padding: 18px;
+        font-size: 0.95rem;
+    }
+    
+    details .details-content ul,
+    details .details-content ol {
+        padding-left: 18px;
+    }
+    
+    details.military summary::before {
+        font-size: 1rem;
+    }
+}
+    .attention-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.attention-title::after {
+    content: "";
+    display: block;
+    width: 120px;
+    height: 5px;
+    background: linear-gradient(90deg, #ff9900, #ff5e00);
+    border-radius: 3px;
+    margin-top: 6px;
+}
+
+
+/* Стилі для блоку зауважень */
+.remarks-box {
+    background: linear-gradient(135deg, rgba(85, 107, 47, 0.2), rgba(154, 205, 50, 0.1));
+    border: 2px solid rgba(154, 205, 50, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 25px 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.remarks-title {
+    color: #9acd32;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    text-shadow: 0 0 8px rgba(154, 205, 50, 0.3);
+    border-bottom: 2px dashed rgba(154, 205, 50, 0.4);
+    padding-bottom: 8px;
+}
+
+.remarks-content p {
+    margin: 12px 0;
+    padding-left: 10px;
+    border-left: 3px solid rgba(154, 205, 50, 0.5);
+    padding-left: 15px;
+}
+
+.remarks-content strong {
+    color: #c0e080;
+    margin-right: 5px;
+}
+
+/* Адаптивність для мобільних */
+@media (max-width: 768px) {
+   
+    .remarks-box {
+        padding: 18px;
+        margin: 20px 0;
+    }
+    
+    .remarks-title {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+   
+    
+    .remarks-box {
+        padding: 15px;
+    }
+    
+    .remarks-title {
+        font-size: 1rem;
+    }
+}
+    /* ========= ТІЛЬКИ ЦЕНТРАЛЬНІ ВЕЛИКІ ФОРМУЛИ — горизонтальний скрол на мобілці ========= */
+@media (max-width: 768px) {
+    /* 1. Блоки, які містять відображувані формули ( \[ ... \] ) */
+    mjx-container[JAXELEMENT="display"] {
+        display: block !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        padding-bottom: 12px;
+        margin: 20px 0;
+        scrollbar-width: thin;
+        scrollbar-color: #9acd32 #2a332a;
+    }
+
+    /* 2. Твої власні класи центральних формул */
+    .math-centered,
+    .math-important,
+    .math-big,
+    .example-full .math-centered,
+    .final-answer,
+    .example-answer {
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        padding: 8px 0;
+    }
+
+    /* Гарний тонкий скролбар тільки для цих блоків */
+    mjx-container[JAXELEMENT="display"]::-webkit-scrollbar,
+    .math-centered::-webkit-scrollbar,
+    .math-important::-webkit-scrollbar {
+        height: 6px;
+    }
+    mjx-container[JAXELEMENT="display"]::-webkit-scrollbar-thumb,
+    .math-centered::-webkit-scrollbar-thumb,
+    .math-important::-webkit-scrollbar-thumb {
+        background: rgba(154, 205, 50, 0.7);
+        border-radius: 3px;
+    }
+    mjx-container[JAXELEMENT="display"]::-webkit-scrollbar-thumb:hover,
+    .math-centered::-webkit-scrollbar-thumb:hover,
+    .math-important::-webkit-scrollbar-thumb:hover {
+        background: #9acd32;
+    }
+}
+</style>
+</head>
+<body>
+    <div class="title-box">
+        <h1>83. Екстремум функції</h1>
+    </div>
+
+    <div class="section-container">
+        <div class="section" id="openTheoryBtn">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Теорія">
+            <h2>Теоретичні відомості</h2>
+        </div>
+        <div class="section" id="openVideoBtn">
+            <img src="https://img.icons8.com/fluency/96/video.png" alt="Відео">
+            <h2>Відеоматеріали</h2>
+        </div>
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Питання">
+            <h2>Питання і відповіді</h2>
+        </div>
+        <div class="section" id="openTrainerBtn">
+            <img src="https://img.icons8.com/fluency/96/flash-on.png" alt="Тренажер">
+            <h2>Тренажер</h2>
+        </div>
+    </div>
+
+    <div class="navigation-buttons">
+        <a class="nav-button prev" href="{{ url_for('tema14') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+            До теми 14
+        </a>
+        <a class="nav-button home" href="{{ url_for('home') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            На головну
+        </a>
+    </div>
+
+    <!-- ТЕОРІЯ — Екстремум функції -->
+    <div id="theoryModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeTheoryBtn">× Закрити</button>
+        </div>
+        <div class="modal-content theory-content">
+
+<details class="warning">
+    <summary>Що таке екстремум функції?</summary>
+    <div class="details-content">
+            <h2>Екстремум функції</h2>
+<div class="text-block">
+    <p><strong>Екстремум функції</strong> – це точка, у якій функція досягає свого найбільшого (максимуму) або найменшого (мінімуму) значення в деякому околі. У математичному аналізі екстремуми показують, де функція «розвертається» – змінює зростання на спадання чи навпаки. Для їх знаходження використовують похідну, яка показує, як змінюється функція в кожній точці.</p>
+
+    <p><strong>Визначення 1.</strong> Точка <mjx-container class="MathJax">\(x_0\)</mjx-container> називається <strong class="highlight">точкою максимуму</strong> функції <mjx-container class="MathJax">\(y=f(x)\)</mjx-container>, якщо в деякому околі <mjx-container class="MathJax">\(x_0\)</mjx-container>, для всіх <mjx-container class="MathJax">\(x \neq x_0\)</mjx-container> з цього околу виконується нерівність: <mjx-container class="MathJax">\(f(x) < f(x_0)\)</mjx-container> (рис. 14.5).</p>
+<img src="/static/figure14.5.jpg" alt="Максимум" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+    <p>Значення функції <mjx-container class="MathJax">\(f(x_0)\)</mjx-container> називається <strong class="highlight">максимумом функції</strong>.</p>
+    
+    <p><strong>Визначення 2.</strong> Точка <mjx-container class="MathJax">\(x_0\)</mjx-container> називається <strong class="highlight">точкою мінімуму</strong> функції <mjx-container class="MathJax">\(y=f(x)\)</mjx-container>, якщо в деякому околі <mjx-container class="MathJax">\(x_0\)</mjx-container>, для всіх <mjx-container class="MathJax">\(x \neq x_0\)</mjx-container> з цього околу виконується нерівність <mjx-container class="MathJax">\(f(x) > f(x_0)\)</mjx-container> (рис. 14.6).</p>
+
+    <p>Значення <mjx-container class="MathJax">\(f(x_0)\)</mjx-container> називається <strong class="highlight">мінімумом функції</strong>.</p>
+<img src="/static/figure14.6.jpg" alt="Мінімум" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+    <p>Точки максимуму та мінімуму називають <strong class="highlight">точками екстремуму</strong> і позначають <mjx-container class="MathJax">\(x_{\text{max}}\)</mjx-container> або <mjx-container class="MathJax">\(x_{\text{min}}\)</mjx-container>, а відповідні значення функції – <strong class="highlight">екстремумами функції</strong> і позначають <mjx-container class="MathJax">\(y_{\text{max}} = f(x_{\text{max}})\)</mjx-container> або <mjx-container class="MathJax">\(y_{\text{min}} = f(x_{\text{min}})\)</mjx-container>. Вони є локальними екстремумами, тобто найбільшими чи найменшими лише в околі точки, а не на всій області визначення функції. Функція <mjx-container class="MathJax">\(y=f(x)\)</mjx-container> може мати кілька таких точок.</p>
+
+    <h3 class="section-title">Зв'язок із похідною. Необхідна умова існування екстремуму</h3>
+    <p><strong>Якщо функція <mjx-container class="MathJax">\(y=f(x)\)</mjx-container> має екстремум в точці <mjx-container class="MathJax">\(x_0\)</mjx-container>, то її похідна <mjx-container class="MathJax">\(f'(x_0) = 0\)</mjx-container> або <mjx-container class="MathJax">\(f'(x_0)\)</mjx-container> не існує.</strong> Таку точку <mjx-container class="MathJax">\(x_0\)</mjx-container> називають <strong class="highlight">критичною точкою</strong>.</p>
+
+    <div class="example">
+        <p class="attention-title"><strong>Звернути увагу:</strong></p><p>
+ці умови не є достатніми для існування екстремуму. Функція може мати нульову похідну в точці, але ця точка не обов'язково є точкою екстремуму.
+    Наприклад, у функції <mjx-container class="MathJax">\(y=x^3\)</mjx-container> в точці <mjx-container class="MathJax">\((0;0)\)</mjx-container>
+    похідна дорівнює нулю, але екстремуму немає – це точка перегину (рис. 14.7).</p>
+    <img src="/static/figure14.7.jpg" alt="Кубічна парабола" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+    </div>
+
+    <p>Щоб перевірити, чи має функція в критичній точці екстремум, необхідно додаткове дослідження. Для цього використовують достатні умови існування екстремуму.</p>
+
+    <h3 class="section-title">Достатні умови існування екстремуму</h3>
+
+    <div class="grid-3">
+       
+    <div class="card-deriv">
+        <h4>Перша достатня умова</h4>
+        <p><strong>Якщо неперервна функція <mjx-container class="MathJax">\(y=f(x)\)</mjx-container> має похідну у всіх точках інтервалу, що містить критичну точку <mjx-container class="MathJax">\(x_0\)</mjx-container>, (крім, можливо, самої <mjx-container class="MathJax">\(x_0\)</mjx-container>) і похідна <mjx-container class="MathJax">\(f'(x)\)</mjx-container> змінює знак з «плюса на мінус» при переході через точку <mjx-container class="MathJax">\(x_0\)</mjx-container>, то функція в цій точці має максимум (рис. 14.8).</strong></p>
+<img src="/static/figure14.8.jpg" alt="Максимум_2" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+        <p><strong>Якщо ж похідна змінює знак з «мінуса на плюс», то функція має мінімум (рис. 14.9).</strong></p>
+<img src="/static/figure14.9.jpg" alt="Мінімум_2" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+       
+    </div>
+
+    <div class="card-deriv">
+        <h4>Друга достатня умова</h4>
+        <p><strong>Якщо в точці <mjx-container class="MathJax">\(x_0\)</mjx-container> перша похідна <mjx-container class="MathJax">\(f'(x_0)=0\)</mjx-container>, а друга похідна <mjx-container class="MathJax">\(f''(x_0) \neq 0\)</mjx-container>, то при <mjx-container class="MathJax">\(f''(x_0) < 0\)</mjx-container> функція має максимум, а при <mjx-container class="MathJax">\(f''(x_0) > 0\)</mjx-container> – мінімум.</strong></p>
+        <div class="math-big">
+            \[
+            \begin{cases}
+            f'(x_0) = 0, \ f''(x_0) < 0 & \Rightarrow \text{максимум} \\
+            f'(x_0) = 0, \ f''(x_0) > 0 & \Rightarrow \text{мінімум} \\
+            f'(x_0) = 0, \ f''(x_0) = 0 & \Rightarrow \text{не застосовується}
+            \end{cases}
+            \]
+        </div>
+    </div>
+</div>
+
+<div class="remarks-box">
+    <h4 class="remarks-title">📝 Зауваження:</h4>
+    <div class="remarks-content">
+        <p><strong>1.</strong> Якщо <mjx-container class="MathJax">\(x_0\)</mjx-container> – точка розриву функції, вона не може бути точкою екстремуму, навіть якщо похідна змінює знак при переході через неї, через порушення неперервності.</p>
+        <p><strong>2.</strong> Якщо в критичній точці <mjx-container class="MathJax">\(x_0\)</mjx-container> друга похідна <mjx-container class="MathJax">\(f''(x_0)=0\)</mjx-container> або <mjx-container class="MathJax">\(f''(x_0)\)</mjx-container> не існує, то друга достатня умова не застосовується.</p>
+    </div>
+</div>
+   
+
+    <div class="algo-box">
+        <h3 class="section-title">Алгоритм знаходження екстремумів функції</h3>
+        <ol class="algo-list">
+            <li>Знайти область визначення функції <mjx-container class="MathJax">\(D(f)\)</mjx-container>.</li>
+            <li>Знайти похідну <mjx-container class="MathJax">\(f'(x)\)</mjx-container> функції.</li>
+            <li>Знайти критичні точки:
+                <ul style="margin: 10px 0 10px 20px;">
+                    <li>Розв'язати рівняння <mjx-container class="MathJax">\(f'(x) = 0\)</mjx-container> (стаціонарні точки)</li>
+                    <li>Знайти точки, де похідна <mjx-container class="MathJax">\(f'(x)\)</mjx-container> не існує</li>
+                </ul>
+            </li>
+            <li>Відібрати критичні точки, що належать області визначення <mjx-container class="MathJax">\(D(f)\)</mjx-container>.</li>
+            <li>Дослідити знак похідної <mjx-container class="MathJax">\(f'(x)\)</mjx-container> на інтервалах, на які критичні точки розбивають область визначення.</li>
+            <li>За першою достатньою умовою визначити характер кожної критичної точки:
+                <ul style="margin: 10px 0 10px 20px;">
+                    <li>Якщо похідна змінює знак з "+" на "−" → точка максимуму</li>
+                    <li>Якщо похідна змінює знак з "−" на "+" → точка мінімуму</li>
+                    <li>Якщо похідна не змінює знак → екстремуму немає</li>
+                </ul>
+            </li>
+            <li>Обчислити значення функції <mjx-container class="MathJax">\(f(x)\)</mjx-container> в точках екстремуму.</li>
+            <li>Записати відповідь: координати точок екстремуму та значення екстремумів.</li>
+        </ol>
+        <p style="text-align: center; margin-top: 20px; color: #c0e080; font-style: italic;">* Для перевірки можна використати другу достатню умову, якщо вона застосовна.</p>
+    </div>
+</div>
+    </div>
+                                                   </details>
+                                                   <details class="warning">
+    <summary>Приклади знаходження екстремуму</summary>
+    <div class="details-content">
+        <!-- Приклад 14.2 -->
+        <div class="example-full">
+            <div class="example-header-classic">
+                <span class="example-label">Приклад 14.2.</span>
+                Визначити проміжки монотонності та точки екстремуму функції 
+                <span class="example-function">\( y = 2x + 3\sqrt[3]{x^2} \).</span>
+            </div>
+            <div class="example-solution-text">
+                <p>
+                    <span class="marker">■</span> Область визначення функції: <mjx-container class="MathJax">\(x \in (-\infty; +\infty)\)</mjx-container>. Знайдемо похідну функції:<br>
+                    <div class="math-centered">\[ y' = (2x + 3x^{2/3})' = 2 + 3 \cdot \frac{2}{3} x^{-1/3} = 2 + \frac{2}{\sqrt[3]{x}}, \]</div>
+                    <div class="math-centered">\[ y' = \frac{2\sqrt[3]{x} + 2}{\sqrt[3]{x}}. \]</div>
+                </p>
+                <p>
+                    Знайдемо критичні точки. Спочатку точки у яких похідна дорівнює нулю (стаціонарні точки):<br>
+                    <div class="math-centered">\[ y' = 0 \implies 2\sqrt[3]{x} + 2 = 0, \]</div>
+                    <div class="math-centered">\[ \sqrt[3]{x} = -1 \implies x = -1. \]</div>
+                </p>
+                <p>
+                    Потім знаходимо точки у яких похідна не існує: <mjx-container class="MathJax">\(\sqrt[3]{x} = 0 \implies x = 0\)</mjx-container>.<br>
+                    Отже, критичними точками є <mjx-container class="MathJax">\(x = -1\)</mjx-container> та <mjx-container class="MathJax">\(x = 0\)</mjx-container>.
+                </p>
+                <p>
+                    Розбиваємо всю числову вісь на інтервали, враховуючи критичні точки <mjx-container class="MathJax">\(x = -1\)</mjx-container> та <mjx-container class="MathJax">\(x = 0\)</mjx-container>, і визначаємо знак похідної на кожному з інтервалів (рис. 14.10).
+                </p>
+<img src="/static/figure14.10.jpg" alt="Приклад" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+      
+                <p>
+                    Для <mjx-container class="MathJax">\(x \in (-\infty; -1)\)</mjx-container> та <mjx-container class="MathJax">\(x \in (0; +\infty)\)</mjx-container>, похідна додатна, отже функція зростає на цих інтервалах. Для <mjx-container class="MathJax">\(x \in (-1; 0)\)</mjx-container>, отже функція спадає на цьому інтервалі.
+                </p>
+                <p>
+                    При переході через критичну точку <mjx-container class="MathJax">\(x = -1\)</mjx-container> похідна змінює знак з «+» на «–», отже в цій точці функція має максимум. При переході через точку <mjx-container class="MathJax">\(x = 0\)</mjx-container> похідна змінює знак з «–» на «+», отже в цій точці функція має мінімум.
+                </p>
+                <p>
+                    Обчислюємо значення функції в критичних точках:<br>
+                    <div class="math-centered">\[ y_{\text{max}} = y(-1) = 2 \cdot (-1) + 3\sqrt[3]{(-1)^2} = -2 + 3 = 1, \]</div>
+                    <div class="math-centered">\[ y_{\text{min}} = y(0) = 2 \cdot 0 + 3\sqrt[3]{0^2} = 0 + 0 = 0. \]</div>
+                </p>
+                <p>
+                    Тоді т. <mjx-container class="MathJax">\((-1;1)\)</mjx-container> – max, т. <mjx-container class="MathJax">\((0;0)\)</mjx-container> – min.
+                </p>
+                <div class="example-answer">
+                    <strong>Відповідь.</strong> <mjx-container class="MathJax">\((-\infty; -1) \cup (0; +\infty)\)</mjx-container> – зростає, <mjx-container class="MathJax">\((-1; 0)\)</mjx-container> – спадає, т. <mjx-container class="MathJax">\((-1;1)\)</mjx-container> – max, т. <mjx-container class="MathJax">\((0;0)\)</mjx-container> – min. 
+                    <span class="end-marker">■</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Приклад 14.3 -->
+        <div class="example-full" style="margin-top: 40px;">
+            <div class="example-header-classic">
+                <span class="example-label">Приклад 14.3.</span>
+                Використовуючи другу похідну, дослідити на екстремум функцію 
+                <span class="example-function">\( y = x^2 e^{-x} \).</span>
+            </div>
+            <div class="example-solution-text">
+                <p>
+                    <span class="marker">■</span> Область визначення функції: <mjx-container class="MathJax">\(x \in \mathbb{R}\)</mjx-container>.<br>
+                    Знайдемо першу похідну функції:<br>
+                    <div class="math-centered">\[ y' = (x^2 e^{-x})' = 2xe^{-x} - x^2 e^{-x} = (2x - x^2) e^{-x}. \]</div>
+                </p>
+                <p>
+                    Знайдемо критичні точки:<br>
+                    <div class="math-centered">\[ y' = 0 \implies 2x - x^2 = 0, \]</div>
+                    <div class="math-centered">\[ x(2 - x) = 0 \implies x_1 = 0, \ x_2 = 2. \]</div>
+                    Отже, критичні точки: <mjx-container class="MathJax">\(x_1 = 0, \ x_2 = 2\)</mjx-container>.
+                </p>
+                <p>
+                    Знайдемо другу похідну функції:<br>
+                    <div class="math-centered">\[ y'' = ((2x - x^2) e^{-x})' = (2 - 2x) e^{-x} - (2x - x^2) e^{-x} = (x^2 - 4x + 2) e^{-x}. \]</div>
+                </p>
+                <p>
+                    Обчислюємо значення другої похідної в цих точках:<br>
+                    <div class="math-centered">\[ y''(0) = (0^2 - 4 \cdot 0 + 2) e^0 = 2 \cdot 1 = 2 > 0 \text{ – т. min}, \]</div>
+                    <div class="math-centered">\[ y''(2) = (2^2 - 4 \cdot 2 + 2) e^{-2} = -2e^{-2} < 0 \text{ – т. max}. \]</div>
+                </p>
+                <p>
+                    Знайдемо значення функції в критичних точках:<br>
+                    <div class="math-centered">\[ y_{\text{min}} = y(0) = 0 \cdot e^0 = 0, \]</div>
+                    <div class="math-centered">\[ y_{\text{max}} = y(2) = 4e^{-2}. \]</div>
+                </p>
+                <p>
+                    Отже, т. <mjx-container class="MathJax">\((2; 4e^{-2})\)</mjx-container> – max, т. <mjx-container class="MathJax">\((0; 0)\)</mjx-container> – min.
+                </p>
+                <div class="example-answer">
+                    <strong>Відповідь.</strong> т. <mjx-container class="MathJax">\((2; 4e^{-2})\)</mjx-container> – max, т. <mjx-container class="MathJax">\((0; 0)\)</mjx-container> – min. 
+                    <span class="end-marker">■</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</details>
+        
+                                                   </div>
+            
+    </div>
+
+    <!-- ВІДЕО -->
+    <div id="videoModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-modal-title">
+                <h2>Оберіть відео</h2>
+            </div>
+            <div id="videoList">
+                <div class="video-card" data-url="https://www.youtube.com/embed/NoFiQzzLgwU">
+                    <img class="play-icon" src="https://img.icons8.com/fluency/96/play.png" alt="">
+                    <h3>1. Екстремуми функції</h3>
+                </div>
+                <div class="video-card" data-url="https://www.youtube.com/embed/d6mjkwrtFZg">
+                    <img class="play-icon" src="https://img.icons8.com/fluency/96/play.png" alt="">
+                    <h3>2. Приклади. Дослідження на екстремум</h3>
+                </div>
+               
+            </div>
+            <div id="videoPlayer" style="display: none; width: 90vw; max-width: 960px; aspect-ratio: 16/9; margin: 20px auto;">
+                <iframe id="youtubePlayer" width="100%" height="100%" src="" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- ПИТАННЯ І ВІДПОВІДІ -->
+    <div id="questionsModal" class="modal">
+        <div class="modal-header"><button class="close-btn" id="closeQuestionsBtn">× Закрити</button></div>
+        <div class="modal-content">
+            <div style="max-width:964px;margin:0 auto;">
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>1. Що таке точка максимуму функції?</span></div>
+                        <div class="card-back"><span>Точка, в якій значення функції більше, ніж у всіх сусідніх точках.</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>2. Що таке точка мінімуму функції?</span></div>
+                        <div class="card-back"><span>Точка, в якій значення функції менше, ніж у всіх сусідніх точках.</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>3. Які точки називаються критичними?</span></div>
+                        <div class="card-back"><span>Точки, де похідна дорівнює нулю або не існує.</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>4. Яка необхідна умова екстремуму?</span></div>
+                        <div class="card-back"><span>Якщо точка екстремуму, то вона обов’язково є критичною точкою.</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>5. Яка перша достатня ознака екстремуму?</span></div>
+                        <div class="card-back"><span>Якщо похідна змінює знак з \( «+»\) на \(«–»\), то точка максимуму; з \(«–»\) на \( «+»\) — мінімуму.</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>6. Яка друга достатня ознака екстремуму?</span></div>
+                        <div class="card-back"><span>У стаціонарній точці: \( f''(x_0) > 0 \) — мінімум, \( f''(x_0) < 0 \) — максимум.</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>7. Чи може точка, де похідна не існує, бути точкою екстремуму?</span></div>
+                        <div class="card-back"><span>Так, наприклад, \( y = |x| \) має мінімум у точці \( x = 0 \), де похідна не існує.</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>8. Як знайти екстремуми функції?</span></div>
+                        <div class="card-back"><span>Знайти критичні точки, дослідити знак похідної, визначити характер точок.</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>9. Що таке стаціонарна точка?</span></div>
+                        <div class="card-back"><span>Точка, де похідна дорівнює нулю.</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>10. Чи завжди стаціонарна точка є точкою екстремуму?</span></div>
+                        <div class="card-back"><span>Ні, наприклад, \( y = x^3 \) має стаціонарну точку \( x = 0 \), але це не екстремум.</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ТРЕНАЖЕР -->
+    <div id="trainerModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeTrainerBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="trainer-container">
+                <div class="question-circle">
+                    <h3 id="questionNumber">Питання 1</h3>
+                </div>
+                <p id="questionText" class="math-notation-centered"></p>
+                <div class="options-container" id="optionsContainer"></div>
+                <button id="submitAnswer" class="submit-btn" disabled>Підтвердити</button>
+                <div id="feedback" class="feedback"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ЗАВЕРШЕННЯ -->
+    <div id="completionModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeCompletionBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="completion-message">
+                <div class="completion-emoji"></div>
+                <h2>МІСІЯ ВИКОНАНА!</h2>
+                <p>Ти — майстер аналізу екстремумів!</p>
+                <p><strong>СЛАВА УКРАЇНІ!</strong></p>
+                <button id="resetTrainerBtn" class="reset-btn">Повернутися на полігон!</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalOverlay"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.add('loaded');
+
+            const modals = {
+                theory: document.getElementById('theoryModal'),
+                video: document.getElementById('videoModal'),
+                questions: document.getElementById('questionsModal'),
+                trainer: document.getElementById('trainerModal'),
+                completion: document.getElementById('completionModal')
+            };
+            const overlay = document.getElementById('modalOverlay');
+
+            function openModal(m) { 
+                m.style.display = 'flex'; 
+                overlay.style.display = 'block'; 
+                document.body.style.overflow = 'hidden'; 
+            }
+            
+            function closeModal(m) { 
+                m.style.display = 'none'; 
+                overlay.style.display = 'none'; 
+                document.body.style.overflow = 'auto'; 
+            }
+
+            // Відкриття модалок
+            document.getElementById('openTheoryBtn').onclick = () => openModal(modals.theory);
+            document.getElementById('openVideoBtn').onclick = () => openModal(modals.video);
+            document.getElementById('openQuestionsBtn').onclick = () => openModal(modals.questions);
+            document.getElementById('openTrainerBtn').onclick = () => { 
+                openModal(modals.trainer); 
+                startTrainer(); 
+            };
+
+            // Універсальне закриття по хрестику
+            document.querySelectorAll('.close-btn').forEach(btn => {
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    const modal = btn.closest('.modal');
+                    if (modal.id !== 'videoModal') {
+                        closeModal(modal);
+                    }
+                };
+            });
+
+            // Закриття по оверлею і Esc
+            overlay.onclick = () => document.querySelectorAll('.modal').forEach(closeModal);
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('.modal').forEach(m => m.style.display === 'flex' && closeModal(m));
+                }
+            });
+
+            // ВІДЕО
+            const videoList = document.getElementById('videoList');
+            const videoPlayer = document.getElementById('videoPlayer');
+            const youtubeIframe = document.getElementById('youtubePlayer');
+
+            document.querySelectorAll('.video-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const url = card.dataset.url;
+                    videoList.style.display = 'none';
+                    videoPlayer.style.display = 'block';
+                    youtubeIframe.src = url + '?autoplay=0';
+                });
+            });
+
+            document.getElementById('closeVideoBtn').addEventListener('click', () => {
+                youtubeIframe.src = '';
+                videoPlayer.style.display = 'none';
+                videoList.style.display = 'flex';
+                closeModal(modals.video);
+            });
+
+                                  // === ТРЕНАЖЕР: 2 послідовні питання (повністю динамічні відповіді) ===
+           // === ТРЕНАЖЕР: 3 послідовні питання ===
+let stage = 1; // 1, 2 або 3
+let currentDerivative = '';
+let correctCount = 0;
+let isMin = true;           // true = мінімум, false = максимум
+let cubicFunc = '';
+let correctX = '';          // наприклад "2/3" або "-1"
+
+            // ГЛОБАЛЬНІ ЗМІННІ ДЛЯ ПИТАННЯ 3
+let currentQuadFunc = "";
+let correctYValue = "";
+let isQuadMin = true;
+let quadA, quadB, quadC, quadX;
+
+
+            // === ПИТАННЯ 1: скільки екстремумів ===
+            const countOptions = [
+                { text: "Жодний", value: 0 },
+                { text: "В одній", value: 1 },
+                { text: "У двох", value: 2 },
+                { text: "У трьох", value: 3 }
+            ];
+
+            function rand(min, max) {
+                const r = Math.floor(Math.random() * (max - min + 1)) + min;
+                return r === 0 ? (Math.random() < 0.5 ? -1 : 1) : r;
+            }
+
+           // Генерація випадкової похідної (до 3 різних коренів)
+            function generateDerivative() {
+                const patterns = [
+                    // 1 корінь
+                    () => `x`,
+                    () => `x^2`,
+                    () => `(x-${rand(-5,5)})`,
+                    () => `x(x-${rand(-6,6)})`,
+                    
+                    // 2 корені
+                    () => `x(x-${rand(-5,5)})(x-${rand(-5,5)})`,
+                    () => `x^2(x-${rand(-5,5)})`,
+                    () => `(x-${rand(-5,5)})(x-${rand(-5,5)})`,
+                    
+                    // 3 корені
+                    () => `x(x-${rand(-5,5)})(x-${rand(-5,5)})(x-${rand(-5,5)})`,
+                    () => `(x-${rand(-5,5)})(x-${rand(-5,5)})(x-${rand(-5,5)})`,
+                    () => `x^2(x-${rand(-5,5)})(x-${rand(-5,5)})`
+                ];
+                
+                // Випадковий шаблон
+                const pattern = patterns[Math.floor(Math.random() * patterns.length)];
+                let expr = pattern();
+                
+                // Уникаємо повторення коренів і нуля там, де не треба
+                expr = expr.replace(/\-\-+/g, '+').replace(/\+\++/g, '+');
+                if (expr.includes('x-0')) expr = expr.replace('x-0', 'x');
+                if (expr.includes('x+0')) expr = expr.replace('x+0', 'x');
+                
+                // Випадково міняємо знаки (щоб не завжди одні плюси)
+                if (Math.random() < 0.4) {
+                    expr = expr.replace(/x/g, '(x+1)').replace(/\(x\+1\)/g, 'x'); // просто для різноманітності
+                }
+                
+                currentDerivative = expr;
+                isMinimumQuestion = Math.random() < 0.5;
+                return `f'(x) = ${expr}`;
+            }
+            // Підрахунок кількості локальних екстремумів (за першою похідною)
+            function countExtrema() {
+                // Знаходимо всі різні корені
+                const roots = new Set();
+                const matches = currentDerivative.match(/\(x[+\-]\d+\)/g) || [];
+                matches.forEach(m => {
+                    const num = parseInt(m.match(/[+\-]\d+/)?.[0] || '0');
+                    roots.add(-num);
+                });
+                
+
+                // Додаємо x=0 якщо є x або x²
+                if (currentDerivative.includes('x') && !currentDerivative.includes('(x')) {
+                    roots.add(0);
+                }
+                
+                const distinctRoots = Array.from(roots).sort((a,b) => a-b);
+                
+                // Кожен окремий корінь з непарною кратністю → екстремум
+                let extremaCount = 0;
+                distinctRoots.forEach(root => {
+                    const regex = new RegExp(`x${root >= 0 ? (root === 0 ? '' : '\\+' + root) : root}`, 'g');
+                    const power = (currentDerivative.match(/x\^2/g) || []).length * 2 + (currentDerivative.match(/x(?![\^\+])/g) || []).length;
+                    const isOdd = power % 2 === 1;
+                    if (isOdd) extremaCount++;
+                });
+                
+                // Простий спосіб: кожен окремий корінь похідної → потенційний екстремум
+                // Але кратність парна → не екстремум (наприклад x²(x-1) → x=0 не екстремум)
+                let count = 0;
+                distinctRoots.forEach(root => {
+                    let multiplicity = 0;
+                    if (root === 0) {
+                        multiplicity += (currentDerivative.match(/x\^2/g) || []).length * 2;
+                        multiplicity += (currentDerivative.match(/x(?![\^\+-\d])/g) || []).length;
+                    } else {
+                        const str = root > 0 ? `(x-${root})` : `(x+${-root})`;
+                        multiplicity += (currentDerivative.match(new RegExp(str, 'g')) || []).length;
+                    }
+                    if (multiplicity % 2 === 1) count++;
+                });
+                
+                return count;
+            }
+
+
+                      
+                       // === ПИТАННЯ 2: f(x) = ax³ + bx² + c (a, b ≠ 0) ===
+function generateCubicAndAnswer() {
+    let a, b, c;
+
+    // a ≠ 0
+    do { a = rand(-7, 7); } while (a === 0);
+
+    // b ≠ 0
+    do { b = rand(-9, 9); } while (b === 0);
+
+    // c - будь-яке (вільний член)
+    c = rand(-15, 15);
+
+    // === Функція для спрощення дробу ===
+    function simplifyFraction(num, den) {
+        const gcd = (x, y) => y ? gcd(y, x % y) : Math.abs(x);
+        const g = gcd(Math.abs(num), Math.abs(den));
+        num /= g;
+        den /= g;
+        
+        if (den < 0) {
+            num = -num;
+            den = -den;
+        }
+        
+        return { num, den };
+    }
+
+    // === Функція для форматування дробу в рядок ===
+    function formatFraction(num, den) {
+        if (den === 1) {
+            return num.toString();
+        } else {
+            return `${num}/${den}`;
+        }
+    }
+
+   // === Красивий запис для LaTeX ===
+    // Для x³: якщо a=1 пишемо "x³", якщо a=-1 пишемо "-x³", інакше "ax³"
+    const aTex = (a === 1) ? '' : (a === -1) ? '-' : `${a}`;
+    
+    // Для x²: якщо b=1 пишемо "+x²", якщо b=-1 пишемо "-x²", інакше "+bx²" або "bx²"
+    let bTex;
+    if (b > 0) {
+        bTex = (b === 1) ? '+x^2' : `+${b}x^2`;
+    } else { // b < 0
+        bTex = (b === -1) ? '-x^2' : `${b}x^2`; // мінус вже є в числі
+    }
+    
+    // Для вільного члена: якщо c > 0 пишемо "+c", якщо c < 0 пишемо "c", якщо c=0 - нічого
+    const cTex = (c > 0) ? `+${c}` : (c < 0 ? `${c}` : "");
+
+    // Складаємо функцію
+    cubicFunc = `${aTex}x^3${bTex}${cTex}`;
+    
+    // Видаляємо початковий "+" якщо є (тільки якщо aTex пустий і bTex починається з +)
+    if (cubicFunc.startsWith('+')) cubicFunc = cubicFunc.slice(1);
+
+    // === Знаходимо точки екстремуму ===
+    // Похідна: f'(x) = 3ax² + 2bx = x(3ax + 2b)
+    // Критичні точки: f'(x) = 0
+    // 1) x = 0
+    // 2) 3ax + 2b = 0 => x = -2b/(3a)
+    
+    // Обчислюємо обидві критичні точки
+    const crit1 = "0"; // Перша критична точка
+    
+    // Друга критична точка: x = -2b/(3a)
+    let num2 = -2 * b;
+    let den2 = 3 * a;
+    const simplified2 = simplifyFraction(num2, den2);
+    const crit2 = formatFraction(simplified2.num, simplified2.den);
+    
+    // Зберігаємо обидві критичні точки
+    criticalPoints = [crit1, crit2];
+    
+    // Визначаємо, яка з точок є мінімумом/максимумом
+    // Друга похідна: f''(x) = 6ax + 2b
+    
+    // Обчислюємо знак другої похідної в критичних точках
+    // Для x = 0: f''(0) = 2b
+    // Для x = -2b/(3a): f'' = 6a*(-2b/(3a)) + 2b = -4b + 2b = -2b
+    
+    const fdd1 = 2 * b; // f''(0)
+    const fdd2 = -2 * b; // f''(-2b/(3a))
+    
+    // Визначаємо характер кожної точки
+    const isMin1 = fdd1 > 0; // Якщо f''(0) > 0 - мінімум, інакше максимум
+    const isMin2 = fdd2 > 0; // Якщо f''(-2b/(3a)) > 0 - мінімум
+    
+    // Для питання ми запитуємо про точку мінімуму чи максимуму
+    // Виберемо одну з точок випадково
+    const askForMin = Math.random() < 0.5;
+    
+    // Якщо запитуємо про мінімум
+    if (askForMin) {
+        isMin = true;
+        // Знаходимо точку, де f''(x) > 0
+        correctX = isMin1 ? crit1 : crit2;
+        correctIndex = isMin1 ? 0 : 1;
+    } 
+    // Якщо запитуємо про максимум
+    else {
+        isMin = false;
+        // Знаходимо точку, де f''(x) < 0
+        correctX = fdd1 < 0 ? crit1 : crit2;
+        correctIndex = fdd1 < 0 ? 0 : 1;
+    }
+    
+    // Запам'ятовуємо функцію для відображення
+    currentCubicFunc = cubicFunc;
+
+    return correctX;
+}
+
+  
+          // === Генерація 3 неправильних відповідей (включаючи обидві критичні точки) ===
+function generateWrongXAnswers() {
+    const wrongs = new Set();
+
+    // Функція для спрощення дробу
+    function simplifyFraction(num, den) {
+        const gcd = (x, y) => y ? gcd(y, x % y) : Math.abs(x);
+        const g = gcd(Math.abs(num), Math.abs(den));
+        num /= g;
+        den /= g;
+        
+        if (den < 0) {
+            num = -num;
+            den = -den;
+        }
+        
+        return { num, den };
+    }
+
+    // Функція для форматування дробу
+    function formatFraction(num, den) {
+        if (den === 1) {
+            return num.toString();
+        } else {
+            return `${num}/${den}`;
+        }
+    }
+
+     // Додаємо обидві критичні точки до неправильних відповідей
+    // Правильна вже є серед них, іншу додаємо як неправильну
+    const otherCriticalPoint = criticalPoints[correctIndex === 0 ? 1 : 0];
+    wrongs.add(otherCriticalPoint);
+    
+    // Генеруємо ще 2 неправильні відповіді
+    while (wrongs.size < 3) {
+        const choice = Math.random();
+
+        if (choice < 0.5) {
+            // Цілі числа від -5 до 5 (окрім правильної та іншої критичної)
+            const val = rand(-5, 5);
+            const valStr = val.toString();
+            if (!wrongs.has(valStr) && valStr !== correctX && valStr !== otherCriticalPoint) {
+                wrongs.add(valStr);
+            }
+        }
+        else {
+            // Дроби типу ±1/2, ±2/3, ±3/4 тощо
+            let n = rand(-8, 8);
+            if (n === 0) n = rand(1, 8) * (Math.random() < 0.5 ? 1 : -1);
+            const d = rand(2, 7);
+            
+            // Спрощуємо дріб
+            const simplified = simplifyFraction(n, d);
+            const str = formatFraction(simplified.num, simplified.den);
+            
+            if (str !== correctX && str !== otherCriticalPoint && !wrongs.has(str)) {
+                wrongs.add(str);
+            }
+        }
+    }
+    
+    // Перетворюємо в масив і видаляємо правильну відповідь (якщо вона там є)
+    const wrongArray = Array.from(wrongs);
+    return wrongArray;
+}
+
+// === ПИТАННЯ 3: f(x) = ax² + bx + c, де x_екстремуму ЦІЛЕ ===
+function generateQuadraticAndAnswer() {
+    let a, b, c, xExtremum;
+    
+    // a ≠ 0 (визначає, мінімум чи максимум)
+    do { a = rand(-5, 5); } while (a === 0);
+
+    // Виберемо випадкове ціле x від -4 до 4 (але не 0, щоб було цікавіше)
+    do {
+        xExtremum = rand(-4, 4);
+    } while (xExtremum === 0);
+    
+    // Обчислюємо b з формули x = -b/(2a) => b = -2a * x
+    b = -2 * a * xExtremum;
+    
+    // Перевіряємо, чи b не дуже велике
+    if (Math.abs(b) > 12) {
+        // Якщо b занадто велике, обмежимо x
+        xExtremum = rand(-3, 3);
+        if (xExtremum === 0) xExtremum = 1;
+        b = -2 * a * xExtremum;
+    }
+    
+    // c - будь-яке ціле
+    c = rand(-10, 10);
+    
+    // Зберігаємо параметри в глобальних змінних
+    quadA = a;
+    quadB = b;
+    quadC = c;
+    quadX = xExtremum;
+
+    // === Визначаємо, чи запитуємо мінімум чи максимум ===
+    isQuadMin = a > 0; // a > 0 - мінімум, a < 0 - максимум
+    
+    // === КРАСИВИЙ ЗАПИС ДЛЯ LaTeX (як у другому питанні) ===
+    const aTex = (a === 1) ? '' : (a === -1) ? '-' : `${a}`;
+    
+    // Для x
+    let bTex;
+    if (b > 0) {
+        bTex = (b === 1) ? '+x' : `+${b}x`;
+    } else if (b < 0) {
+        bTex = (b === -1) ? '-x' : `${b}x`;
+    } else {
+        bTex = ''; // b = 0 (малоймовірно, але хай буде)
+    }
+    
+    // Для вільного члена
+    const cTex = (c > 0) ? `+${c}` : (c < 0 ? `${c}` : "");
+
+    // Складаємо функцію для відображення
+    let funcDisplay = `${aTex}x^2${bTex}${cTex}`;
+    
+    // Видаляємо початковий "+" якщо є
+    if (funcDisplay.startsWith('+')) funcDisplay = funcDisplay.slice(1);
+    
+    // Зберігаємо LaTeX-рядок
+    currentQuadFunc = funcDisplay;
+
+    // === ОБЧИСЛЮЄМО ЕКСТРЕМУМ (y) ===
+    const yExtremum = a * xExtremum * xExtremum + b * xExtremum + c;
+    
+    // Форматуємо результат y
+    if (Number.isInteger(yExtremum)) {
+        correctYValue = yExtremum.toString();
+    } else {
+        // Якщо y вийшов дробовим
+        for (let den = 2; den <= 10; den++) {
+            if (Math.abs(yExtremum * den - Math.round(yExtremum * den)) < 0.0001) {
+                const num = Math.round(yExtremum * den);
+                const gcd = (x, y) => y ? gcd(y, x % y) : Math.abs(x);
+                const g = gcd(Math.abs(num), den);
+                const simpleNum = num / g;
+                const simpleDen = den / g;
+                
+                if (simpleDen === 1) {
+                    correctYValue = simpleNum.toString();
+                } else {
+                    correctYValue = `${simpleNum}/${simpleDen}`;
+                }
+                break;
+            }
+        }
+        
+        if (!correctYValue) {
+            correctYValue = Math.round(yExtremum * 100) / 100;
+            correctYValue = correctYValue.toString();
+        }
+    }
+    
+    return correctYValue;
+}
+
+
+// === ДОДАЄМО ФУНКЦІЮ renderYOptions (якщо її ще немає) ===
+function renderSimpleOptions(answers) {
+    const container = document.getElementById('optionsContainer');
+    container.innerHTML = '';
+    
+    answers.forEach((answer) => {
+        const div = document.createElement('div');
+        div.className = 'option';
+        
+        // Форматуємо відповідь для LaTeX
+        let texAnswer;
+        if (answer.includes('/')) {
+            const parts = answer.split('/');
+            texAnswer = `\\dfrac{${parts[0]}}{${parts[1]}}`;
+        } else {
+            texAnswer = answer;
+        }
+        div.innerHTML = `\\( ${texAnswer} \\)`; // Видалено "y = "
+        div.dataset.value = answer;
+        div.style.cssText = `position: relative; cursor: pointer; user-select: none; pointer-events: auto;`;
+        
+        const disableMathJaxPointer = () => {
+            div.querySelectorAll('*').forEach(el => el.style.pointerEvents = 'none');
+        };
+
+        if (window.MathJax) {
+            MathJax.typesetPromise([div]).then(disableMathJaxPointer);
+        } else {
+            disableMathJaxPointer();
+        }
+
+        div.addEventListener('click', (e) => {
+            e.stopPropagation();
+            container.querySelectorAll('.option').forEach(d => d.classList.remove('selected'));
+            div.classList.add('selected');
+            document.getElementById('submitAnswer').disabled = false;
+        });
+
+        container.appendChild(div);
+    });
+    
+    document.getElementById('submitAnswer').disabled = true;
+    const fb = document.getElementById('feedback');
+    fb.style.opacity = 0;
+    fb.textContent = '';
+}
+
+    
+
+// === Генерація неправильних відповідей (y-значення) ===
+function generateWrongYAnswers() {
+    const wrongs = new Set();
+    
+    let correctNum;
+    if (correctYValue.includes('/')) {
+        const parts = correctYValue.split('/');
+        correctNum = parseInt(parts[0]) / parseInt(parts[1]);
+    } else {
+        correctNum = parseFloat(correctYValue);
+    }
+    
+    while (wrongs.size < 3) {
+        const choice = Math.random();
+        let wrongVal;
+        
+        if (choice < 0.4) {
+            const shift = rand(1, 5) * (Math.random() < 0.5 ? 1 : -1);
+            wrongVal = correctNum + shift;
+        }
+        else if (choice < 0.7) {
+            wrongVal = -correctNum;
+            if (wrongVal === correctNum) wrongVal += 1;
+        }
+        else {
+            wrongVal = rand(-15, 15);
+            if (Math.abs(wrongVal - correctNum) < 2) {
+                wrongVal += (wrongVal < correctNum ? -3 : 3);
+            }
+        }
+        
+        let wrongStr;
+        if (Number.isInteger(wrongVal)) {
+            wrongStr = wrongVal.toString();
+        } else {
+            // Спробуємо представити як дріб
+            for (let den = 2; den <= 10; den++) {
+                if (Math.abs(wrongVal * den - Math.round(wrongVal * den)) < 0.0001) {
+                    const num = Math.round(wrongVal * den);
+                    const gcd = (x, y) => y ? gcd(y, x % y) : Math.abs(x);
+                    const g = gcd(Math.abs(num), den);
+                    const simpleNum = num / g;
+                    const simpleDen = den / g;
+                    
+                    if (simpleDen === 1) {
+                        wrongStr = simpleNum.toString();
+                    } else {
+                        wrongStr = `${simpleNum}/${simpleDen}`;
+                    }
+                    break;
+                }
+            }
+            if (!wrongStr) {
+                const rounded = Math.round(wrongVal * 100) / 100;
+                wrongStr = rounded.toString();
+            }
+        }
+        
+        if (wrongStr !== correctYValue) {
+            wrongs.add(wrongStr);
+        }
+    }
+    
+    return Array.from(wrongs);
+}
+
+
+
+            // === ВИВІД ПИТАНЬ ===
+            function showQuestion1() {
+                stage = 1;
+                generateDerivative();
+                correctCount = countExtrema();
+
+                document.getElementById('questionNumber').textContent = 'Питання 1/3';
+                document.getElementById('questionText').innerHTML = `
+                    Нехай <span style="color:#9acd32">f</span> — поліноміальна функція, а її похідна:<br><br>
+                    <div style="font-size:1.2em; color:#ffff99; background:rgba(154,205,50,0.18); padding:18px; border-radius:14px;">
+                        \\[ f'(x) = ${currentDerivative} \\]
+                    </div>
+                    У скількох точках функція має локальний 
+                    <strong style="color:${isMin ? '#22c55e' : '#ef4444'}">
+                        ${isMin ? 'мінімум' : 'максимум'}
+                    </strong>?
+                `;
+                renderCountOptions();
+            }
+
+           // === ВИВІД ПИТАННЯ 2 ===
+function showQuestion2() {
+    stage = 2;
+    generateCubicAndAnswer();
+    const wrongs = generateWrongXAnswers();
+    const allAnswers = [correctX, ...wrongs].sort(() => Math.random() - 0.5);
+
+    document.getElementById('questionNumber').textContent = 'Питання 2/3';
+    document.getElementById('questionText').innerHTML = `
+        Нехай<br><br>
+        <div style="font-size:1.2em; color:#ffff99; background:rgba(154,205,50,0.2); padding:20px; border-radius:16px; text-align:center;">
+            \\[ f(x) = ${cubicFunc} \\]
+        </div>
+        При якому значенні \\(x\\) функція має локальний 
+        <strong style="color:${isMin ? '#22c55e' : '#ef4444'}">
+            ${isMin ? 'мінімум' : 'максимум'}
+        </strong>?
+    `;
+
+    renderXOptions(allAnswers);
+}
+              // === ОНОВЛЕНА ФУНКЦІЯ ДЛЯ ПОКАЗУ ПИТАННЯ 3 ===
+function showQuestion3() {
+    stage = 3;
+    correctYValue = generateQuadraticAndAnswer();
+    const wrongs = generateWrongYAnswers();
+    
+    const allAnswers = [correctYValue, ...wrongs];
+    
+    for (let i = allAnswers.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [allAnswers[i], allAnswers[j]] = [allAnswers[j], allAnswers[i]];
+    }
+
+    document.getElementById('questionNumber').textContent = 'Питання 3/3';
+    
+    const extremumType = isQuadMin ? 'мінімум' : 'максимум';
+    const extremumColor = isQuadMin ? '#22c55e' : '#ef4444';
+    
+    // ПРАВИЛЬНИЙ HTML з LaTeX
+    document.getElementById('questionText').innerHTML = `
+        Нехай<br><br>
+        <div style="font-size:1.2em; color:#ffff99; background:rgba(154,205,50,0.2); padding:20px; border-radius:16px; text-align:center;">
+            \\[ f(x) = ${currentQuadFunc} \\]
+        </div>
+        Чому дорівнює <strong style="color:${extremumColor}">абсолютний ${extremumType}</strong> функції \\(f\\)?
+    `;
+
+    renderSimpleOptions(allAnswers);
+        // Додати в кінець showQuestion3()
+    if (window.MathJax) {
+        MathJax.typesetPromise();
+    }
+    
+    // І також в showQuestion2()
+    if (window.MathJax) {
+        MathJax.typesetPromise();
+    }
+}
+
+                
+            function renderCountOptions() {
+                const cont = document.getElementById('optionsContainer');
+                cont.innerHTML = '';
+                countOptions.forEach(o => {
+                    const div = document.createElement('div');
+                    div.className = 'option';
+                    div.textContent = o.text;
+                    div.dataset.value = o.value;
+                    div.onclick = () => selectOption(div);
+                    cont.appendChild(div);
+                });
+                disableSubmit();
+                MathJax.typesetPromise();
+            }
+
+            function renderXOptions(values) {
+                const cont = document.getElementById('optionsContainer');
+                cont.innerHTML = '';
+                values.forEach(val => {
+                    const div = document.createElement('div');
+                    div.className = 'option';
+                    const tex = val.includes('/') ? `\\dfrac{${val.split('/')[0]}}{${val.split('/')[1]}}` : val;
+                    div.innerHTML = `\\(${tex}\\)`;
+                    div.dataset.value = val;
+                    div.onclick = () => selectOption(div);
+                    cont.appendChild(div);
+                });
+                disableSubmit();
+                MathJax.typesetPromise();
+            }
+
+            function selectOption(el) {
+                document.querySelectorAll('.option').forEach(d => d.classList.remove('selected'));
+                el.classList.add('selected');
+                document.getElementById('submitAnswer').disabled = false;
+            }
+
+            function disableSubmit() {
+                document.getElementById('submitAnswer').disabled = true;
+                document.getElementById('feedback').style.opacity = 0;
+            }
+
+            // === ОНОВЛЮЄМО startTrainer для 3 питань ===
+function startTrainer() {
+    stage = 1;
+    showQuestion1();
+}
+
+            // === ПЕРЕВІРКА ===
+           document.getElementById('submitAnswer').onclick = () => {
+    const sel = document.querySelector('.option.selected');
+    if (!sel) return;
+
+    let user = sel.dataset.value;
+    let correct;
+    let isOk;
+
+    if (stage === 1) {
+        correct = correctCount;
+        isOk = parseInt(user) === correct;
+    } else if (stage === 2) {
+        correct = correctX;
+        isOk = user === correct;
+    } else if (stage === 3) {
+        correct = correctYValue;
+        if (user.includes('/') && correct.includes('/')) {
+            isOk = user === correct;
+        } else if (!user.includes('/') && !correct.includes('/')) {
+            isOk = parseInt(user) === parseInt(correct);
+        } else {
+            let userNum, userDen;
+            if (user.includes('/')) {
+                const parts = user.split('/');
+                userNum = parseInt(parts[0]);
+                userDen = parseInt(parts[1]);
+                user = (userNum / userDen).toString();
+            }
+            
+            let correctNum, correctDen;
+            if (correct.includes('/')) {
+                const parts = correct.split('/');
+                correctNum = parseInt(parts[0]);
+                correctDen = parseInt(parts[1]);
+                correct = (correctNum / correctDen).toString();
+            }
+            
+            isOk = parseFloat(user) === parseFloat(correct);
+        }
+    }
+
+    const fb = document.getElementById('feedback');
+    fb.textContent = isOk ? 'ВІРНО! Ціль уражена!' : 'Помилка! Спробуй ще!';
+    fb.style.background = isOk ? '#22c55e' : '#ef4444';
+    fb.style.opacity = 1;
+
+    if (isOk) {
+        if (stage === 1) {
+            setTimeout(() => { 
+                fb.style.opacity = 0; 
+                stage = 2;
+                showQuestion2(); 
+            }, 1400);
+        } else if (stage === 2) {
+            setTimeout(() => { 
+                fb.style.opacity = 0; 
+                stage = 3;
+                showQuestion3(); 
+            }, 1400);
+        } else {
+            setTimeout(() => {
+                closeModal(modals.trainer);
+                openModal(modals.completion);
+            }, 1400);
+        }
+    } else {
+        setTimeout(() => {
+            fb.style.opacity = 0;
+            if (stage === 1) {
+                showQuestion1();
+            } else if (stage === 2) {
+                showQuestion2();
+            } else if (stage === 3) {
+                showQuestion3();
+            }
+        }, 1600);
+    }
+};
+
+           document.getElementById('resetTrainerBtn').onclick = () => {
+    closeModal(modals.completion);
+    stage = 1; // Скидаємо до першого питання
+    showQuestion1();
+    openModal(modals.trainer);
+};
+        });
+    </script>
+</body>
+</html>
