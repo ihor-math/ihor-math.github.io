@@ -429,31 +429,64 @@
             margin: 0;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
         }
+        /* === МЕДАЛЬ З ТРИЗУБОМ === */
         .completion-emoji {
-            width: 15vw;
-            height: 15vw;
-            min-width: 80px;
-            min-height: 80px;
-            max-width: 120px;
-            max-height: 120px;
+            position: relative;
+            display: inline-block;
+            width: clamp(56px, 12vw, 96px);
+            height: clamp(56px, 12vw, 96px);
+            vertical-align: middle;
             margin: 0 auto 3vw;
             border-radius: 50%;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-            border: 2px dashed #ff0000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: linear-gradient(135deg, #2a2a2a, #3a4a45);
+            border: 3px dashed #ffd700;
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+            overflow: hidden;
+            animation: medalAppear 0.8s ease-out;
+        }
+        .completion-emoji::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><filter id='s' x='-50%' y='-50%' width='200%' height='200%'><feDropShadow dx='0' dy='2' stdDeviation='2' flood-color='%23000000' flood-opacity='0.25'/></filter></defs><rect x='30' y='0' width='60' height='40' rx='4' fill='%23007ACC'/><rect x='30' y='20' width='60' height='20' rx='4' fill='%23FFD700'/><g transform='translate(60,70)'><polygon points='0,-26 6,-6 26,-6 9,6 15,26 0,14 -15,26 -9,6 -26,-6 -6,-6' fill='%23FFD700' filter='url(%23s)'/></g></svg>");
+            background-size: 75%;
+            background-repeat: no-repeat;
+            background-position: center 60%;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+            animation: medalBounce 1.2s ease-out 0.3s both;
+        }
+        @keyframes medalAppear {
+            0% { transform: scale(0.3) rotate(-180deg); opacity: 0; }
+            60% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes medalBounce {
+            0% { transform: translateY(-120px) rotate(-30deg) scale(0.4); opacity: 0; }
+            60% { transform: translateY(15px) rotate(10deg) scale(1.15); opacity: 1; }
+            80% { transform: translateY(-8px) rotate(-5deg) scale(1.05); }
+            100% { transform: translateY(0) rotate(0) scale(1); }
         }
 
-        .completion-emoji::after {
-            content: '🎉';
-            font-size: clamp(40px, 8vw, 60px);
-            color: #ff0000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
+        .completion-message {
+            background: linear-gradient(145deg, #2a2a2a, #3a4a45);
+            border: 2.5px solid #ffffff;
+            border-radius: 15px;
+            padding: clamp(12px, 3vw, 18px);
+            box-shadow: 0 6px 12px rgba(240,216,92,0.4);
+            margin: 2vw auto;
+            max-width: 90%;
+            text-align: center;
         }
+        .completion-message h2 {
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        .completion-message p { 
+            color: #ffffff; 
+            margin: 10px 0;
+        }
+
+            
         .options-container {
             display: flex;
             flex-wrap: wrap;
@@ -535,27 +568,7 @@
             border-color: #b71c1c;
             animation: popInOut 1.5s ease-in-out;
         }
-        .completion-message {
-            font-family: 'Lora', serif;
-            font-weight: 700;
-            color: #1b5e20;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-            background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
-            border: 2.5px solid #1b5e20;
-            border-radius: 15px;
-            padding: clamp(12px, 3vw, 18px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.25);
-            margin: 2vw auto;
-            max-width: 90%;
-        }
-        .completion-message h2 {
-            font-size: clamp(22px, 4.5vw, 30px);
-            margin: 0 0 1vw;
-        }
-        .completion-message p {
-            font-size: clamp(18px, 3.5vw, 22px);
-            margin: 0;
-        }
+        
         .navigation-buttons {
             display: flex;
             justify-content: center;
@@ -1125,6 +1138,24 @@ mjx-container.math-notation-centered * {
     list-style-type: none;
     padding-left: 0;
 }
+.reset-btn {
+    background: linear-gradient(135deg, #6b5f2f, #f0d85c);
+    color: #fff;
+    padding: 15px 35px;
+    border: none;
+    border-radius: 25px;
+    font-family: 'Roboto', sans-serif;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+}
+.reset-btn:hover { 
+    background: linear-gradient(135deg, #8b7d3f, #6b5f2f); 
+    transform: scale(1.05); 
+    box-shadow: 0 4px 15px rgba(107,95,47,0.4); 
+}
 
     </style>
 </head>
@@ -1153,20 +1184,19 @@ mjx-container.math-notation-centered * {
     </div>
 
     <div class="navigation-buttons">
-       <a class="nav-button" href='tema1.html'>
+        <a class="nav-button" href='tema1.html'>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                 <path d="M15 18l-6-6 6-6"/>
             </svg>
             До теми 1
         </a>
-       <a class="nav-button" href='index.html'>
+        <a class="nav-button" href='index.html'>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                 <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
             </svg>
             На головну
         </a>
     </div>
-
 
     <div id="modalOverlay"></div>
 
@@ -1394,7 +1424,8 @@ mjx-container.math-notation-centered * {
     </div>
 
     <script>
-        const openTheoryBtn = document.getElementById('openTheoryBtn');
+    // ---------- ГЛОБАЛЬНІ ЗМІННІ МОДАЛЬНИХ ВІКОН ----------
+    const openTheoryBtn = document.getElementById('openTheoryBtn');
     const openVideoBtn = document.getElementById('openVideoBtn');
     const openQuestionsBtn = document.getElementById('openQuestionsBtn');
     const openTrainerBtn = document.getElementById('openTrainerBtn');
@@ -1417,17 +1448,502 @@ mjx-container.math-notation-centered * {
     const closeQuestionsBtn = document.getElementById('closeQuestionsBtn');
     const closeTrainerBtn = document.getElementById('closeTrainerBtn');
 
-         document.querySelectorAll('.video-card img').forEach(img => {
+    // ---------- ДОПОМІЖНІ ФУНКЦІЇ ----------
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function getRandomIntExcluding(min, max, excludeList) {
+        let num;
+        do {
+            num = getRandomInt(min, max);
+        } while (excludeList.includes(num));
+        return num;
+    }
+
+    function formatComplexNumber(a, b) {
+        let str = '';
+        if (a !== 0) {
+            str += a;
+            if (b > 0) str += '+';
+        }
+        if (b !== 0) {
+            if (b === 1) str += 'i';
+            else if (b === -1) str += '-i';
+            else str += b + 'i';
+        }
+        if (str === '') str = '0';
+        if (a === 0 && b !== 0) {
+            if (b === 1) str = 'i';
+            else if (b === -1) str = '-i';
+            else str = b + 'i';
+        }
+        return str;
+    }
+
+    // ---------- ГЕНЕРАЦІЯ ПИТАНЬ ----------
+    const questionGenerators = {
+        // Питання 1: Дійсна або уявна частина комплексного числа
+        q1: function() {
+            const types = ['дійсна', 'уявна'];
+            const type = types[Math.floor(Math.random() * types.length)];
+            
+            let a, b;
+            do {
+                a = getRandomIntExcluding(-5, 5, [0]);
+                b = getRandomIntExcluding(-5, 5, [0]);
+            } while (a === 0 && b === 0);
+            
+            const number = formatComplexNumber(a, b);
+            const questionText = (type === 'дійсна') 
+                ? `Дійсна частина \\( \\text{Re } z \\) комплексного числа \\( z = ${number} \\) дорівнює:`
+                : `Уявна частина \\( \\text{Im } z \\) комплексного числа \\( z = ${number} \\) дорівнює:`;
+            
+            const correctAnswer = (type === 'дійсна') ? a.toString() : b.toString();
+            
+            // Генеруємо варіанти
+            let options = [];
+            if (type === 'дійсна') {
+                options = [
+                    a.toString(),
+                    b.toString(),
+                    (a + b).toString(),
+                    (a - b).toString()
+                ];
+            } else {
+                options = [
+                    b.toString(),
+                    a.toString(),
+                    (a + b).toString(),
+                    (a * b).toString()
+                ];
+            }
+            
+            // Перемішуємо і обрізаємо до 4 унікальних варіантів
+            options = [...new Set(options)];
+            while (options.length < 4) {
+                const randomNum = getRandomIntExcluding(-8, 8, options.map(Number));
+                options.push(randomNum.toString());
+            }
+            
+            shuffleArray(options);
+            
+            return {
+                text: questionText,
+                options: options,
+                correct: correctAnswer,
+                type: 'single'
+            };
+        },
+        
+        // Питання 2: Визначення дійсної та уявної частин (два вводи)
+        q2: function() {
+            let a, b;
+            do {
+                a = getRandomIntExcluding(-8, 8, [0]);
+                b = getRandomIntExcluding(-8, 8, [0]);
+            } while (Math.abs(a) < 2 || Math.abs(b) < 2);
+            
+            const number = formatComplexNumber(a, b);
+            
+            return {
+                text: `У комплексному числі \\( z = ${number} \\) вкажіть:`,
+                inputs: [
+                    { label: 'Дійсна частина \\( \\text{Re } z = \\)', correct: a.toString() },
+                    { label: 'Уявна частина \\( \\text{Im } z = \\)', correct: b.toString() }
+                ],
+                type: 'double-input'
+            };
+        },
+        
+        // Питання 3: Визначення частин для чисел виду a+bi або bi
+        q3: function() {
+            const types = ['only-imaginary', 'mixed'];
+            const type = types[Math.floor(Math.random() * types.length)];
+            
+            let a, b;
+            if (type === 'only-imaginary') {
+                a = 0;
+                b = getRandomIntExcluding(-5, 5, [0, 1, -1]);
+            } else {
+                do {
+                    a = getRandomIntExcluding(-5, 5, [0]);
+                    b = getRandomIntExcluding(-5, 5, [0]);
+                } while (a === 0 || b === 0);
+            }
+            
+            const number = formatComplexNumber(a, b);
+            
+            return {
+                text: `У комплексному числі \\( z = ${number} \\) вкажіть:`,
+                inputs: [
+                    { label: '\\( \\text{Re } z = \\)', correct: a.toString() },
+                    { label: '\\( \\text{Im } z = \\)', correct: b.toString() }
+                ],
+                type: 'double-input'
+            };
+        },
+        
+        // Питання 4: Протилежне число
+        q4: function() {
+            let a, b;
+            do {
+                a = getRandomIntExcluding(-6, 6, [0]);
+                b = getRandomIntExcluding(-6, 6, [0]);
+            } while (Math.abs(a) < 2 || Math.abs(b) < 2);
+            
+            const z = formatComplexNumber(a, b);
+            const opposite = formatComplexNumber(-a, -b);
+            
+            const question = `Вказати число, протилежне до комплексного числа \\( z = ${z} \\)`;
+            
+            // Генеруємо варіанти
+            const wrong1 = formatComplexNumber(a, -b); // спряжене
+            const wrong2 = formatComplexNumber(-a, b);
+            const wrong3 = formatComplexNumber(b, a); // переставлені
+            
+            let options = [
+                `\\(-z = ${opposite}\\)`,
+                `\\(-z = ${wrong1}\\)`,
+                `\\(-z = ${wrong2}\\)`,
+                `\\(-z = ${wrong3}\\)`
+            ];
+            
+            shuffleArray(options);
+            
+            return {
+                text: question,
+                options: options,
+                correct: `\\(-z = ${opposite}\\)`,
+                type: 'single'
+            };
+        },
+        
+        // Питання 5: Спряжене число
+        q5: function() {
+            let a, b;
+            do {
+                a = getRandomIntExcluding(-6, 6, [0]);
+                b = getRandomIntExcluding(-6, 6, [0]);
+            } while (Math.abs(a) < 2 || Math.abs(b) < 2);
+            
+            const z = formatComplexNumber(a, b);
+            const conjugate = formatComplexNumber(a, -b);
+            
+            const question = `Вказати число, спряжене до комплексного числа \\( z = ${z} \\)`;
+            
+            // Генеруємо варіанти
+            const wrong1 = formatComplexNumber(-a, b); // протилежне спряжене
+            const wrong2 = formatComplexNumber(-a, -b); // протилежне
+            const wrong3 = formatComplexNumber(b, a); // переставлені
+            
+            let options = [
+                `\\(\\overline{z} = ${conjugate}\\)`,
+                `\\(\\overline{z} = ${wrong1}\\)`,
+                `\\(\\overline{z} = ${wrong2}\\)`,
+                `\\(\\overline{z} = ${wrong3}\\)`
+            ];
+            
+            shuffleArray(options);
+            
+            return {
+                text: question,
+                options: options,
+                correct: `\\(\\overline{z} = ${conjugate}\\)`,
+                type: 'single'
+            };
+        },
+        
+        // Питання 6: Корінь з від'ємного числа
+        q6: function() {
+            const squares = [4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144];
+            const n = squares[Math.floor(Math.random() * squares.length)];
+            const sqrtN = Math.sqrt(n);
+            
+            const question = `Перетворити корінь з від'ємного числа у вигляд із використанням уявної одиниці \\( i \\):<br>
+                \\( \\pm \\sqrt{-${n}} = \\pm \\)`;
+            
+            const correct = `${sqrtN}i`;
+            
+            // Генеруємо варіанти для множинного вибору
+            const wrong1 = `${sqrtN}`;
+            const wrong2 = `${n}i`;
+            const wrong3 = `-${sqrtN}i`;
+            
+            let options = [correct, wrong1, wrong2, wrong3];
+            shuffleArray(options);
+            
+            return {
+                text: question,
+                options: options,
+                correct: correct,
+                type: 'single'
+            };
+        },
+        
+// Питання 7: Розв'язання квадратного рівняння - ПОВНІСТЮ ВИПРАВЛЕНА ВЕРСІЯ
+q7: function() {
+    // Генеруємо рівняння з комплексними коренями
+    // Оберемо лише позитивні значення для a, щоб уникнути подвійних мінусів
+    let a = getRandomInt(1, 4); // a буде від 1 до 4 (додатнє)
+    let b = getRandomInt(1, 5); // b буде від 1 до 5 (додатнє)
+    
+    // Обчислюємо коефіцієнти рівняння: x² - 2ax + (a²+b²) = 0
+    const p = -2 * a; // це буде від'ємне число
+    const q = a*a + b*b;
+    
+    const question = `Знайти корені рівняння \\( x^2 ${p >= 0 ? '+' : ''}${p}x + ${q} = 0 \\)`;
+    
+    // Правильна відповідь завжди має вигляд: a ± bi, де a > 0
+    const correct = `\\( ${a} \\pm ${b}i \\)`;
+    
+    // Генеруємо неправильні варіанти
+    const wrongOptions = [];
+    
+    // Варіант 1: помилковий знак перед a (мінус замість плюса)
+    wrongOptions.push(`\\( -${a} \\pm ${b}i \\)`);
+    
+    // Варіант 2: помилкова уявна частина
+    wrongOptions.push(`\\( ${a} \\pm ${b+1}i \\)`);
+    
+    // Варіант 3: помилкова дійсна частина
+    wrongOptions.push(`\\( ${a+1} \\pm ${b}i \\)`);
+    
+    // Варіант 4: неправильний формат (без ±)
+    wrongOptions.push(`\\( ${a} + ${b}i \\)`);
+    
+    // Варіант 5: подвійний ± (як у вашій оригінальній помилці)
+    wrongOptions.push(`\\( \\pm ${a} \\pm ${b}i \\)`);
+    
+    // Беремо 3 випадкові неправильні варіанти
+    shuffleArray(wrongOptions);
+    const selectedWrongOptions = wrongOptions.slice(0, 3);
+    
+    let options = [correct, ...selectedWrongOptions];
+    shuffleArray(options);
+    
+    return {
+        text: question,
+        options: options,
+        correct: correct,
+        type: 'single'
+    };
+}
+    };
+
+    // ---------- СИСТЕМА ТРЕНАЖЕРА ----------
+    let currentQuestion = 'q1';
+    let generatedQuestions = {};
+    let attemptCounts = {
+        q1: 0, q2: 0, q3: 0, q4: 0, 
+        q5: 0, q6: 0, q7: 0
+    };
+    
+    function generateNewQuestion(questionType) {
+        generatedQuestions[questionType] = questionGenerators[questionType]();
+        return generatedQuestions[questionType];
+    }
+    
+    function getCurrentQuestion() {
+        if (!generatedQuestions[currentQuestion]) {
+            generateNewQuestion(currentQuestion);
+        }
+        return generatedQuestions[currentQuestion];
+    }
+    
+    function moveToNextQuestion() {
+        const questionOrder = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7'];
+        const currentIndex = questionOrder.indexOf(currentQuestion);
+        
+        if (currentIndex < questionOrder.length - 1) {
+            currentQuestion = questionOrder[currentIndex + 1];
+            generateNewQuestion(currentQuestion);
+            return true;
+        } else {
+            currentQuestion = 'end';
+            return false;
+        }
+    }
+    
+    function moveToSameQuestion() {
+        generateNewQuestion(currentQuestion);
+    }
+
+    // ---------- РЕНДЕРИНГ ПИТАНЬ ----------
+    function renderQuestion() {
+        const trainerContent = document.getElementById('trainerContent');
+        if (!trainerContent) return;
+        
+        if (currentQuestion === 'end') {
+            trainerContent.innerHTML = `
+                <div class="completion-message">
+                    <div class="completion-emoji"></div>
+                    <h2>МІСІЯ ВИКОНАНА!</h2>
+                    <p>Ти впевнено працюєш із алгебраїчною формою комплексних чисел!</p>
+                    <p><strong>СЛАВА УКРАЇНІ!</strong></p>
+                    <button id="resetTrainerBtn" class="reset-btn">Повернутися на полігон!</button>
+                </div>
+            `;
+            return;
+        }
+        
+        const q = getCurrentQuestion();
+        const questionNumber = currentQuestion.charAt(1);
+        
+        let contentHTML = '';
+        
+        // Шапка з номером питання
+        contentHTML += `
+            <div class="question-circle">
+                <h3>Питання ${questionNumber}</h3>
+            </div>
+            <p>${q.text}</p>
+        `;
+        
+        if (q.type === 'single') {
+            // Одиночний вибір
+            contentHTML += `
+                <div class="options-container">
+                    ${q.options.map(opt => `<div class="option" data-answer="${opt}">${opt}</div>`).join('')}
+                </div>
+            `;
+        } else if (q.type === 'double-input') {
+            // Два поля вводу
+            contentHTML += `
+                <div class="input-container">
+                    ${q.inputs.map((input, idx) => `
+                        <div class="input-group">
+                            <label>${input.label}</label>
+                            <input type="text" id="input${idx}" class="inline-input" />
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        contentHTML += `
+            <button onclick="checkAnswer()" id="submitBtn">Відповісти</button>
+            <div class="result" id="result"></div>
+        `;
+        
+        trainerContent.innerHTML = contentHTML;
+        
+        // Рендеримо MathJax
+        if (typeof MathJax !== 'undefined') {
+            MathJax.typesetPromise().catch(err => console.error('MathJax Error:', err));
+        }
+        
+        // Додаємо обробники подій
+        if (q.type === 'single') {
+            const options = document.querySelectorAll('.option');
+            options.forEach(opt => {
+                opt.addEventListener('click', () => {
+                    options.forEach(o => o.classList.remove('selected'));
+                    opt.classList.add('selected');
+                });
+            });
+        } else if (q.type === 'double-input') {
+            const inputs = document.querySelectorAll('.inline-input');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            // Перевірка заповнення всіх полів
+            function checkInputs() {
+                const allFilled = Array.from(inputs).every(input => input.value.trim() !== '');
+                if (submitBtn) submitBtn.disabled = !allFilled;
+            }
+            
+            inputs.forEach(input => {
+                input.addEventListener('input', checkInputs);
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && submitBtn && !submitBtn.disabled) {
+                        checkAnswer();
+                    }
+                });
+            });
+            
+            checkInputs(); // Початкова перевірка
+        }
+    }
+
+    // ---------- ПЕРЕВІРКА ВІДПОВІДЕЙ ----------
+    function normalizeInput(input) {
+        return input.trim().toLowerCase().replace(/\s+/g, '');
+    }
+    
+    function showFeedback(isCorrect) {
+        const feedbackDiv = document.createElement('div');
+        feedbackDiv.className = isCorrect ? 'feedback correct-feedback' : 'feedback incorrect-feedback';
+        feedbackDiv.innerHTML = isCorrect ? '✅ ВІРНО! Ціль уражена!' : '❌ Промах! Спробуй ще!';
+        document.body.appendChild(feedbackDiv);
+        
+        setTimeout(() => {
+            feedbackDiv.remove();
+            
+            if (isCorrect) {
+                const hasNext = moveToNextQuestion();
+                if (hasNext) {
+                    renderQuestion();
+                } else {
+                    renderQuestion(); // показуємо завершення
+                }
+            } else {
+                moveToSameQuestion();
+                renderQuestion();
+            }
+        }, 1500);
+    }
+    
+    function checkAnswer() {
+        const q = getCurrentQuestion();
+        const resultDiv = document.getElementById('result');
+        if (resultDiv) resultDiv.innerHTML = '';
+        
+        let isCorrect = false;
+        
+        if (q.type === 'single') {
+            const selected = document.querySelector('.option.selected');
+            if (!selected) {
+                if (resultDiv) resultDiv.innerHTML = '<div class="result-text">Оберіть варіант відповіді.</div>';
+                return;
+            }
+            isCorrect = selected.dataset.answer === q.correct;
+        } else if (q.type === 'double-input') {
+            const inputs = document.querySelectorAll('.inline-input');
+            const answers = Array.from(inputs).map(input => normalizeInput(input.value));
+            
+            isCorrect = q.inputs.every((input, idx) => {
+                const userAnswer = answers[idx];
+                const correctAnswer = normalizeInput(input.correct);
+                return userAnswer === correctAnswer;
+            });
+        }
+        
+        attemptCounts[currentQuestion]++;
+        
+        showFeedback(isCorrect);
+    }
+
+    // ---------- МОДАЛЬНІ ВІКНА ----------
+    document.querySelectorAll('.video-card img').forEach(img => {
         img.onerror = () => {
             img.src = 'https://img.icons8.com/color/48/video-camera.png';
         };
     });
 
-        function isModalVisible(modal) {
-        return modal.style.display === 'flex';
+    function isModalVisible(modal) {
+        return modal && modal.style.display === 'flex';
     }
 
     function openModal(modal, btn) {
+        if (!modal || !btn) return;
         modal.style.display = 'flex';
         overlay.style.display = 'block';
         btn.setAttribute('aria-pressed', 'true');
@@ -1439,6 +1955,7 @@ mjx-container.math-notation-centered * {
     }
 
     function closeModal(modal, btn) {
+        if (!modal || !btn) return;
         modal.style.display = 'none';
         overlay.style.display = 'none';
         btn.setAttribute('aria-pressed', 'false');
@@ -1449,19 +1966,34 @@ mjx-container.math-notation-centered * {
         if (player) {
             player.src = player.src;
         }
-        videoModal.style.display = 'none';
+        if (videoModal) videoModal.style.display = 'none';
         overlay.style.display = 'none';
-        openModal(mainModal, btn);
+        if (mainModal && btn) openModal(mainModal, btn);
     }
 
-        openTheoryBtn.addEventListener('click', () => openModal(theoryModal, openTheoryBtn));
+    // ---------- ОБРОБНИКИ ПОДІЙ ----------
+    openTheoryBtn.addEventListener('click', () => openModal(theoryModal, openTheoryBtn));
     openVideoBtn.addEventListener('click', () => openModal(videoModal, openVideoBtn));
     openQuestionsBtn.addEventListener('click', () => openModal(questionsModal, openQuestionsBtn));
-    openTrainerBtn.addEventListener('click', () => openModal(trainerModal, openTrainerBtn));
+    openTrainerBtn.addEventListener('click', () => {
+        // Скидаємо стан тренажера
+        currentQuestion = 'q1';
+        generatedQuestions = {};
+        attemptCounts = {
+            q1: 0, q2: 0, q3: 0, q4: 0, 
+            q5: 0, q6: 0, q7: 0
+        };
+        generateNewQuestion('q1');
+        
+        openModal(trainerModal, openTrainerBtn);
+        renderQuestion();
+    });
+    
     closeTheoryBtn.addEventListener('click', () => closeModal(theoryModal, openTheoryBtn));
     closeVideoBtn.addEventListener('click', () => closeModal(videoModal, openVideoBtn));
     closeQuestionsBtn.addEventListener('click', () => closeModal(questionsModal, openQuestionsBtn));
     closeTrainerBtn.addEventListener('click', () => closeModal(trainerModal, openTrainerBtn));
+    
     closeVideoPlayerBtn1.addEventListener('click', () => closeVideoPlayerModal(videoPlayerModal1, youtubePlayer1, videoModal, openVideoBtn));
     closeVideoPlayerBtn2.addEventListener('click', () => closeVideoPlayerModal(videoPlayerModal2, youtubePlayer2, videoModal, openVideoBtn));
     closeVideoPlayerBtn3.addEventListener('click', () => closeVideoPlayerModal(videoPlayerModal3, youtubePlayer3, videoModal, openVideoBtn));
@@ -1476,7 +2008,7 @@ mjx-container.math-notation-centered * {
         closeVideoPlayerModal(videoPlayerModal3, youtubePlayer3, videoModal, openVideoBtn);
     });
 
-        document.querySelectorAll('.video-card').forEach(card => {
+    document.querySelectorAll('.video-card').forEach(card => {
         card.addEventListener('click', () => {
             const videoId = card.dataset.video;
             if (videoId === '1') {
@@ -1495,413 +2027,55 @@ mjx-container.math-notation-centered * {
                 { modal: videoPlayerModal1, player: youtubePlayer1 },
                 { modal: videoPlayerModal2, player: youtubePlayer2 },
                 { modal: videoPlayerModal3, player: youtubePlayer3 },
-                { modal: theoryModal, player: null },
-                { modal: videoModal, player: null },
-                { modal: questionsModal, player: null },
-                { modal: trainerModal, player: null }
+                { modal: theoryModal },
+                { modal: videoModal },
+                { modal: questionsModal },
+                { modal: trainerModal }
             ];
             const activeModal = modals.find(m => isModalVisible(m.modal));
             if (activeModal) {
                 if (activeModal.player) {
                     closeVideoPlayerModal(activeModal.modal, activeModal.player, videoModal, openVideoBtn);
                 } else {
-                    closeModal(activeModal.modal, document.querySelector(`[aria-controls="${activeModal.modal.id}"]`) || openTheoryBtn);
+                    const btn = 
+                        activeModal.modal === theoryModal ? openTheoryBtn :
+                        activeModal.modal === videoModal ? openVideoBtn :
+                        activeModal.modal === questionsModal ? openQuestionsBtn :
+                        activeModal.modal === trainerModal ? openTrainerBtn : null;
+                    closeModal(activeModal.modal, btn);
                 }
             }
         }
     });
 
-        if (typeof MathJax === 'undefined') {
-        console.error('MathJax not loaded');
-        document.getElementById('trainerContent').innerHTML = '<p>Помилка: MathJax не завантажено. Перевірте підключення до інтернету або CDN.</p>';
-    }
-
-        const question1Variants = [
-        {
-            question: 'Дійсна частина \\( \\text{Re } z \\) комплексного числа \\( z = -2i \\) дорівнює',
-            options: ['-2', '2', '0', '1'],
-            correct: '0'
-        },
-        {
-            question: 'Уявна частина \\( \\text{Im } z \\) комплексного числа \\( z = 2i + 3 \\) дорівнює',
-            options: ['3', '1', '2', '-2'],
-            correct: '2'
-        },
-        {
-            question: 'Дійсна частина \\( \\text{Re } z \\) комплексного числа \\( z = -5 + 4i \\) дорівнює',
-            options: ['4', '-5', '-1', '1'],
-            correct: '-5'
+    // Кнопка скидання тренажера
+    document.addEventListener('click', function(e) {
+        if (e.target && e.target.id === 'resetTrainerBtn') {
+            currentQuestion = 'q1';
+            generatedQuestions = {};
+            attemptCounts = {
+                q1: 0, q2: 0, q3: 0, q4: 0, 
+                q5: 0, q6: 0, q7: 0
+            };
+            generateNewQuestion('q1');
+            renderQuestion();
         }
-    ];
-
-    const question2Variants = [
-        {
-            question: 'У комплексному числі \\( z = 3 - 7i \\)',
-            inputs: [
-                { label: 'Дійсною частиною є:', correct: '3' },
-                { label: 'Уявною частиною є:', correct: '-7' }
-            ]
-        },
-        {
-            question: 'У комплексному числі \\( z = -12 + 0.5i \\)',
-            inputs: [
-                { label: 'Дійсною частиною є:', correct: '-12' },
-                { label: 'Уявною частиною є:', correct: '0.5' }
-            ]
-        },
-        {
-            question: 'У комплексному числі \\( z = 1.2 - 0.5i \\)',
-            inputs: [
-                { label: 'Дійсною частиною є:', correct: '1.2' },
-                { label: 'Уявною частиною є:', correct: '-0.5' }
-            ]
-        }
-    ];
-
-    const question3Variants = [
-        {
-            question: 'У комплексному числі \\( z = -i \\)',
-            inputs: [
-                { label: '\\( \\text{Re } z = \\)', correct: '0' },
-                { label: '\\( \\text{Im } z = \\)', correct: '-1' }
-            ]
-        },
-        {
-            question: 'У комплексному числі \\( z = -2i + 3 \\)',
-            inputs: [
-                { label: '\\( \\text{Re } z = \\)', correct: '3' },
-                { label: '\\( \\text{Im } z = \\)', correct: '-2' }
-            ]
-        },
-        {
-            question: 'У комплексному числі \\( z = -7 + 5i \\)',
-            inputs: [
-                { label: '\\( \\text{Re } z = \\)', correct: '-7' },
-                { label: '\\( \\text{Im } z = \\)', correct: '5' }
-            ]
-        }
-    ];
-
-    const question4Variants = [
-        {
-            question: 'Вказати число, протилежне до комплексного числа \\( z = -1 + 2i \\)',
-            options: ['\\(-z = 2 - i\\)', '\\(-z = 1 - 2i\\)', '\\(-z = -1 - 2i\\)', '\\(-z = 1 + 2i\\)'],
-            correct: '\\(-z = 1 - 2i\\)'
-        },
-        {
-            question: 'Вказати число, протилежне до комплексного числа \\( z = 8 - i \\)',
-            options: ['\\(-z = 1 + 8i\\)', '\\(-z = 8 + i\\)', '\\(-z = -8 - i\\)', '\\(-z = -8 + i\\)'],
-            correct: '\\(-z = -8 + i\\)'
-        },
-        {
-            question: 'Вказати число, протилежне до комплексного числа \\( z = -6 - 11i \\)',
-            options: ['\\(-z = 6 + 11i\\)', '\\(-z = 6 - 11i\\)', '\\(-z = -6 + 11i\\)', '\\(-z = 11 + 6i\\)'],
-            correct: '\\(-z = 6 + 11i\\)'
-        }
-    ];
-
-    const question5Variants = [
-        {
-            question: 'Вказати число, спряжене до комплексного числа \\( z = 7 - i \\)',
-            options: ['\\(\\overline{z} = -7 + i\\)', '\\(\\overline{z} = -7 - i\\)', '\\(\\overline{z} = 7 + i\\)', '\\(\\overline{z} = -1 - 7i\\)'],
-            correct: '\\(\\overline{z} = 7 + i\\)'
-        },
-        {
-            question: 'Вказати число, спряжене до комплексного числа \\( z = -1 + 3i \\)',
-            options: ['\\(\\overline{z} = 1 - 3i\\)', '\\(\\overline{z} = -1 - 3i\\)', '\\(\\overline{z} = -1 + 3i\\)', '\\(\\overline{z} = 1 + 3i\\)'],
-            correct: '\\(\\overline{z} = -1 - 3i\\)'
-        },
-        {
-            question: 'Вказати число, спряжене до комплексного числа \\( z = -5 - 10i \\)',
-            options: ['\\(\\overline{z} = -10 + 5i\\)', '\\(\\overline{z} = 5 - 10i\\)', '\\(\\overline{z} = 5 + 10i\\)', '\\(\\overline{z} = -5 + 10i\\)'],
-            correct: '\\(\\overline{z} = -5 + 10i\\)'
-        }
-    ];
-
-    const question6Variants = [
-        {
-            question: 'Перетворити корінь з від’ємного числа у вигляд із використанням уявної одиниці \\( і \\) <br> \\( \\pm \\sqrt{-64} = \\pm \\) <input type="text" id="input0" class="inline-input" /><span class="answer-icon"></span>',
-            correct: '8i',
-            attemptsLeft: 2
-        },
-        {
-            question: 'Перетворити корінь з від’ємного числа у вигляд із використанням уявної одиниці \\( і \\) <br> \\( \\pm \\sqrt{-100} = \\pm \\) <input type="text" id="input0" class="inline-input" /><span class="answer-icon"></span>',
-            correct: '10i',
-            attemptsLeft: 2
-        },
-        {
-            question: 'Перетворити корінь з від’ємного числа у вигляд із використанням уявної одиниці \\( і \\) <br> \\( \\pm \\sqrt{-144} = \\pm \\) <input type="text" id="input0" class="inline-input" /><span class="answer-icon"></span>',
-            correct: '12i',
-            attemptsLeft: 2
-        }
-    ];
-
-    const question7Variants = [
-        {
-            question: 'Знайти корені рівняння \\( x^2 - 2x + 5 = 0 \\)',
-            options: ['\\( 1 \\pm 2i \\)', '\\( \\pm 1 \\pm 2i \\)', '\\( \\pm 1 + 2i \\)', '\\( \\pm 1 - 2i \\)'],
-            correct: '\\( 1 \\pm 2i \\)'
-        },
-        {
-            question: 'Знайти корені рівняння \\( x^2 + 6x + 10 = 0 \\)',
-            options: ['\\( \\pm 3 - i \\)', '\\( \\pm 3 \\pm i \\)', '\\( -3 \\pm i \\)', '\\( 3 \\pm i \\)'],
-            correct: '\\( -3 \\pm i \\)'
-        },
-        {
-            question: 'Знайти корені рівняння \\( x^2 + 4x + 13 = 0 \\)',
-            options: ['\\( \\pm 2 - 3i \\)', '\\( \\pm 2 \\pm 3i \\)', '\\( -2 + 3i \\)', '\\( -2 \\pm 3i \\)'],
-            correct: '\\( -2 \\pm 3i \\)'
-        }
-    ];
-
-    const questions = [
-        { type: 'multiple-choice', variants: question1Variants },
-        { type: 'input', variants: question2Variants },
-        { type: 'input', variants: question3Variants },
-        { type: 'multiple-choice', variants: question4Variants },
-        { type: 'multiple-choice', variants: question5Variants },
-        { type: 'input', variants: question6Variants },
-        { type: 'multiple-choice', variants: question7Variants }
-    ];
-
-    let currentQuestionIndex = 0;
-    let currentVariantIndex = 0;
-    let score = 0;
-
-    function normalizeInput(input) {
-        let normalized = input.trim().toLowerCase().replace(/\s+/g, '');
-        const ukrToLat = { 'і': 'i', 'ї': 'i', 'є': 'ye', 'ґ': 'g' };
-        normalized = normalized.split('').map(char => ukrToLat[char] || char).join('');
-        normalized = normalized.replace(/[±+]/g, '');
-        return normalized;
-    }
-
-    function loadQuestion() {
-        const trainerContent = document.getElementById('trainerContent');
-        if (currentQuestionIndex >= questions.length) {
-            trainerContent.innerHTML = `
-                <div class="completion-emoji"></div>
-                <div class="completion-message">
-                    <h2>Тренування завершено!</h2>
-                    <p>Молодець!</p>
-                </div>
-                <button onclick="resetTrainer()">Спробувати ще раз</button>
-            `;
-            if (typeof MathJax !== 'undefined') {
-                MathJax.typesetPromise().catch(err => console.error('MathJax error:', err));
-            }
-            return;
-        }
-
-        const q = questions[currentQuestionIndex];
-        const variant = q.variants[currentVariantIndex];
-
-        try {
-            if (q.type === 'multiple-choice') {
-                trainerContent.innerHTML = `
-                    <div class="question-circle">
-                        <h3>Питання ${currentQuestionIndex + 1}</h3>
-                    </div>
-                    <p>${variant.question}</p>
-                    <div class="options-container">
-                        ${variant.options.map(opt => `<div class="option">${opt}</div>`).join('')}
-                    </div>
-                    <button id="submitAnswer" disabled>Перевірити</button>
-                    <div class="result"></div>
-                `;
-                if (typeof MathJax !== 'undefined') {
-                    MathJax.typesetPromise().catch(err => console.error('MathJax error:', err));
-                }
-                const options = document.querySelectorAll('.option');
-                let selectedOption = null;
-                options.forEach(opt => {
-                    opt.addEventListener('click', () => {
-                        options.forEach(o => o.classList.remove('selected'));
-                        opt.classList.add('selected');
-                        selectedOption = opt.textContent;
-                        document.getElementById('submitAnswer').disabled = false;
-                    });
-                });
-                document.getElementById('submitAnswer').addEventListener('click', () => {
-                    const resultDiv = document.querySelector('.result');
-                    const feedback = document.createElement('div');
-                    feedback.className = 'feedback';
-                    const correctIndex = variant.options.indexOf(variant.correct);
-                    const selectedIndex = Array.from(options).findIndex(opt => opt.classList.contains('selected'));
-                    if (selectedIndex === correctIndex) {
-                        score++;
-                        feedback.className += ' correct-feedback';
-                        feedback.textContent = '✅ Правильно!';
-                        currentQuestionIndex++;
-                        currentVariantIndex = 0;
-                    } else {
-                        feedback.className += ' incorrect-feedback';
-                        feedback.textContent = '❌ Неправильно';
-                        currentVariantIndex = (currentVariantIndex + 1) % q.variants.length;
-                    }
-                    document.body.appendChild(feedback);
-                    feedback.style.opacity = '1';
-                    setTimeout(() => {
-                        feedback.style.opacity = '0';
-                        setTimeout(() => feedback.remove(), 500);
-                        loadQuestion();
-                    }, 1500);
-                });
-            } else if (q.type === 'input') {
-                if (currentQuestionIndex === 5) { // Питання 6
-                    trainerContent.innerHTML = `
-                        <div class="question-circle">
-                            <h3>Питання ${currentQuestionIndex + 1}</h3>
-                        </div>
-                        <p>${variant.question}</p>
-                                                <button id="submitAnswer" disabled>Перевірити</button>
-                        <div class="result"></div>
-                    `;
-                } else {
-                    trainerContent.innerHTML = `
-                        <div class="question-circle">
-                            <h3>Питання ${currentQuestionIndex + 1}</h3>
-                        </div>
-                        <p>${variant.question}</p>
-                        <div class="input-container">
-                            ${variant.inputs.map((input, idx) => `
-                                <div class="input-group">
-                                    <label>${input.label}</label>
-                                    <input type="text" id="input${idx}" />
-                                </div>
-                            `).join('')}
-                        </div>
-                        <button id="submitAnswer" disabled>Перевірити</button>
-                        <div class="result"></div>
-                    `;
-                }
-                if (typeof MathJax !== 'undefined') {
-                    MathJax.typesetPromise().catch(err => console.error('MathJax error:', err));
-                }
-
-                // Ініціалізація inputs після генерації HTML
-                let inputs;
-                if (currentQuestionIndex === 5) {
-                    const input = document.getElementById('input0');
-                    if (!input) {
-                        console.error('Input element with id "input0" not found');
-                        return;
-                    }
-                    inputs = [input];
-                } else {
-                    inputs = variant.inputs.map((_, idx) => document.getElementById(`input${idx}`));
-                }
-
-                // Перевірка на існування всіх inputs
-                if (inputs.some(inp => !inp)) {
-                    console.error('One or more input elements not found');
-                    return;
-                }
-
-                inputs.forEach(input => {
-                    input.addEventListener('input', () => {
-                        const allFilled = inputs.every(inp => inp.value.trim() !== '');
-                        document.getElementById('submitAnswer').disabled = !allFilled;
-                    });
-                    input.addEventListener('keypress', (e) => {
-                        if (e.key === 'Enter') {
-                            const allFilled = inputs.every(inp => inp.value.trim() !== '');
-                            if (allFilled) {
-                                document.getElementById('submitAnswer').click();
-                            }
-                        }
-                    });
-                });
-
-                document.getElementById('submitAnswer').addEventListener('click', () => {
-                    const resultDiv = document.querySelector('.result');
-                    const feedback = document.createElement('div');
-                    feedback.className = 'feedback';
-                    const answers = inputs.map(inp => normalizeInput(inp.value));
-                    let allCorrect;
-
-                    if (currentQuestionIndex === 5) { // Питання 6
-                        const userAnswer = answers[0];
-                        const correctAnswer = normalizeInput(variant.correct);
-                        console.log('User answer:', userAnswer);
-                        console.log('Correct answer:', correctAnswer);
-                        console.log('Attempts left:', variant.attemptsLeft);
-                        allCorrect = userAnswer === correctAnswer;
-                        if (allCorrect) {
-                            score++;
-                            feedback.className += ' correct-feedback';
-                            feedback.textContent = '✅ Правильно!';
-                            currentQuestionIndex++;
-                            currentVariantIndex = 0;
-                        } else {
-                            feedback.className += ' incorrect-feedback';
-                            feedback.textContent = '❌ Неправильно';
-                            variant.attemptsLeft--;
-                            if (variant.attemptsLeft <= 0) {
-                                currentQuestionIndex++;
-                                currentVariantIndex = 0;
-                            } else {
-                                currentVariantIndex = (currentVariantIndex + 1) % q.variants.length;
-                            }
-                        }
-                    } else {
-                        allCorrect = variant.inputs.every((input, idx) => {
-                            const userAnswer = parseFloat(answers[idx].replace(',', '.'));
-                            const correctAnswer = parseFloat(input.correct);
-                            return !isNaN(userAnswer) && Math.abs(userAnswer - correctAnswer) < 0.0001;
-                        });
-                        if (allCorrect) {
-                            score++;
-                            feedback.className += ' correct-feedback';
-                            feedback.textContent = '✅ Правильно!';
-                            currentQuestionIndex++;
-                            currentVariantIndex = 0;
-                        } else {
-                            feedback.className += ' incorrect-feedback';
-                            feedback.textContent = '❌ Неправильно';
-                            currentVariantIndex = (currentVariantIndex + 1) % q.variants.length;
-                        }
-                    }
-
-                    document.body.appendChild(feedback);
-                    feedback.style.opacity = '1';
-                    setTimeout(() => {
-                        feedback.style.opacity = '0';
-                        setTimeout(() => feedback.remove(), 500);
-                        loadQuestion();
-                    }, 1500);
-                });
-            }
-        } catch (error) {
-            console.error('Error in loadQuestion:', error);
-            trainerContent.innerHTML = '<p>Виникла помилка при завантаженні питання. Спробуйте ще раз.</p>';
-        }
-    }
-
-    function resetTrainer() {
-        currentQuestionIndex = 0;
-        currentVariantIndex = 0;
-        score = 0;
-        // Скидаємо attemptsLeft для всіх варіантів питання 6
-        question6Variants.forEach(variant => {
-            variant.attemptsLeft = 2;
-        });
-        loadQuestion();
-    }
-
-    openTrainerBtn.addEventListener('click', () => {
-        openModal(trainerModal, openTrainerBtn);
-        loadQuestion();
     });
 
     // Обробка кліків для карток питань
     document.querySelectorAll('.question-card').forEach(card => {
         card.addEventListener('click', () => {
             const inner = card.querySelector('.card-inner');
-            inner.classList.toggle('flipped');
+            if (inner) inner.classList.toggle('flipped');
         });
     });
 
+    // Запускаємо MathJax при завантаженні
+    window.addEventListener('load', () => {
+        if (typeof MathJax !== 'undefined') {
+            MathJax.typesetPromise().catch(err => console.error('MathJax error:', err));
+        }
+    });
 </script>
 </body>
 </html>
