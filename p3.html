@@ -313,26 +313,64 @@
             margin: 0;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
         }
+         /* === МЕДАЛЬ З ТРИЗУБОМ === */
         .completion-emoji {
-            width: clamp(80px, 15vw, 120px);
-            height: clamp(80px, 15vw, 120px);
+            position: relative;
+            display: inline-block;
+            width: clamp(56px, 12vw, 96px);
+            height: clamp(56px, 12vw, 96px);
+            vertical-align: middle;
             margin: 0 auto 3vw;
             border-radius: 50%;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-            border: 2px dashed #ff0000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: linear-gradient(135deg, #2a2a2a, #3a4a45);
+            border: 3px dashed #ffd700;
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+            overflow: hidden;
+            animation: medalAppear 0.8s ease-out;
         }
         .completion-emoji::after {
-            content: '🎉';
-            font-size: clamp(40px, 8vw, 60px);
-            color: #ff0000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><filter id='s' x='-50%' y='-50%' width='200%' height='200%'><feDropShadow dx='0' dy='2' stdDeviation='2' flood-color='%23000000' flood-opacity='0.25'/></filter></defs><rect x='30' y='0' width='60' height='40' rx='4' fill='%23007ACC'/><rect x='30' y='20' width='60' height='20' rx='4' fill='%23FFD700'/><g transform='translate(60,70)'><polygon points='0,-26 6,-6 26,-6 9,6 15,26 0,14 -15,26 -9,6 -26,-6 -6,-6' fill='%23FFD700' filter='url(%23s)'/></g></svg>");
+            background-size: 75%;
+            background-repeat: no-repeat;
+            background-position: center 60%;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+            animation: medalBounce 1.2s ease-out 0.3s both;
         }
+        @keyframes medalAppear {
+            0% { transform: scale(0.3) rotate(-180deg); opacity: 0; }
+            60% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes medalBounce {
+            0% { transform: translateY(-120px) rotate(-30deg) scale(0.4); opacity: 0; }
+            60% { transform: translateY(15px) rotate(10deg) scale(1.15); opacity: 1; }
+            80% { transform: translateY(-8px) rotate(-5deg) scale(1.05); }
+            100% { transform: translateY(0) rotate(0) scale(1); }
+        }
+
+        .completion-message {
+            background: linear-gradient(145deg, #2a2a2a, #3a4a45);
+            border: 2.5px solid #ffffff;
+            border-radius: 15px;
+            padding: clamp(12px, 3vw, 18px);
+            box-shadow: 0 6px 12px rgba(240,216,92,0.4);
+            margin: 2vw auto;
+            max-width: 90%;
+            text-align: center;
+        }
+        .completion-message h2 {
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        .completion-message p { 
+            color: #ffffff; 
+            margin: 10px 0;
+        }
+
+            
         .options-container {
             display: flex;
             flex-wrap: wrap;
@@ -393,27 +431,7 @@ button:disabled {
             font-size: clamp(14px, 2vw, 16px);
             font-family: 'Lora', serif;
         }
-        .completion-message {
-            font-family: 'Lora', serif;
-            font-weight: 700;
-            color: #1b5e20;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-            background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
-            border: 2.5px solid #1b5e20;
-            border-radius: 15px;
-            padding: clamp(12px, 3vw, 18px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.25);
-            margin: 2vw auto;
-            max-width: 90%;
-        }
-        .completion-message h2 {
-            font-size: clamp(22px, 4.5vw, 30px);
-            margin: 0 0 1vw;
-        }
-        .completion-message p {
-            font-size: clamp(18px, 3.5vw, 22px);
-            margin: 0;
-        }
+        
         .math-notation-centered {
     display: block;
     text-align: center;
@@ -984,6 +1002,203 @@ button:disabled {
         }
              
             )
+            /* СТИЛІ ДЛЯ ПРОКРУТКИ МОДАЛЬНИХ ВІКОН */
+#theoryModal .modal-content,
+#questionsModal .modal-content,
+#trainerModal .modal-content,
+#videoModal .modal-content {
+    scrollbar-width: thin;
+    scrollbar-color: #800000 #f0f0f0;
+}
+
+/* Для вебкіт браузерів (Chrome, Safari, Edge) */
+#theoryModal .modal-content::-webkit-scrollbar,
+#questionsModal .modal-content::-webkit-scrollbar,
+#trainerModal .modal-content::-webkit-scrollbar,
+#videoModal .modal-content::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+#theoryModal .modal-content::-webkit-scrollbar-track,
+#questionsModal .modal-content::-webkit-scrollbar-track,
+#trainerModal .modal-content::-webkit-scrollbar-track,
+#videoModal .modal-content::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 4px;
+}
+
+#theoryModal .modal-content::-webkit-scrollbar-thumb,
+#questionsModal .modal-content::-webkit-scrollbar-thumb,
+#trainerModal .modal-content::-webkit-scrollbar-thumb,
+#videoModal .modal-content::-webkit-scrollbar-thumb {
+    background: #800000;
+    border-radius: 4px;
+    border: 2px solid #f0f0f0;
+}
+
+#theoryModal .modal-content::-webkit-scrollbar-thumb:hover,
+#questionsModal .modal-content::-webkit-scrollbar-thumb:hover,
+#trainerModal .modal-content::-webkit-scrollbar-thumb:hover,
+#videoModal .modal-content::-webkit-scrollbar-thumb:hover {
+    background: #5f0000;
+}
+
+/* Спеціальні стилі для довгих математичних формул у details */
+#theoryModal details .modal-content p {
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 10px; /* Додаємо місце для прокрутки */
+    margin-bottom: 10px;
+}
+
+#theoryModal details .modal-content p::-webkit-scrollbar {
+    height: 6px;
+}
+
+#theoryModal details .modal-content p::-webkit-scrollbar-track {
+    background: #f8f9fa;
+    border-radius: 3px;
+}
+
+#theoryModal details .modal-content p::-webkit-scrollbar-thumb {
+    background: #006064;
+    border-radius: 3px;
+}
+
+#theoryModal details .modal-content p::-webkit-scrollbar-thumb:hover {
+    background: #004d4d;
+}
+
+/* Для Firefox */
+#theoryModal details .modal-content p {
+    scrollbar-width: thin;
+    scrollbar-color: #006064 #f8f9fa;
+}
+
+/* Стилі для карток питань з горизонтальною прокруткою */
+#questionsModal .question-card:nth-child(12) .card-back {
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #800000 #f0f0f0;
+    white-space: nowrap;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: left;
+    padding: 10px 15px;
+}
+
+#questionsModal .question-card:nth-child(12) .card-back::-webkit-scrollbar {
+    height: 6px;
+}
+
+#questionsModal .question-card:nth-child(12) .card-back::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 3px;
+}
+
+#questionsModal .question-card:nth-child(12) .card-back::-webkit-scrollbar-thumb {
+    background: #800000;
+    border-radius: 3px;
+    border: 1px solid #f0f0f0;
+}
+
+#questionsModal .question-card:nth-child(12) .card-back::-webkit-scrollbar-thumb:hover {
+    background: #5f0000;
+}
+
+/* Плавна прокрутка для всіх модальних вікон */
+#theoryModal .modal-content,
+#questionsModal .modal-content,
+#trainerModal .modal-content,
+#videoModal .modal-content {
+    scroll-behavior: smooth;
+}
+
+/* Для мобільних пристроїв - трошки ширша прокрутка для зручності */
+@media (max-width: 768px) {
+    #theoryModal .modal-content::-webkit-scrollbar,
+    #questionsModal .modal-content::-webkit-scrollbar,
+    #trainerModal .modal-content::-webkit-scrollbar,
+    #videoModal .modal-content::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+    
+    #theoryModal details .modal-content p::-webkit-scrollbar {
+        height: 8px;
+    }
+    
+    #questionsModal .question-card:nth-child(12) .card-back::-webkit-scrollbar {
+        height: 8px;
+    }
+}
+
+/* Анімація при появі прокрутки */
+@keyframes scrollbarAppear {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+#theoryModal .modal-content::-webkit-scrollbar-thumb,
+#questionsModal .modal-content::-webkit-scrollbar-thumb,
+#trainerModal .modal-content::-webkit-scrollbar-thumb,
+#videoModal .modal-content::-webkit-scrollbar-thumb {
+    animation: scrollbarAppear 0.3s ease-out;
+}
+
+.reset-btn {
+  background: linear-gradient(135deg, #6b48ff, #00ddeb);
+  color: white;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 25px;
+  font-family: 'Lora', serif;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(107, 72, 255, 0.4);
+}
+
+.reset-btn:hover {
+  background: linear-gradient(135deg, #5a3ce6, #00c4d0);
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(107, 72, 255, 0.6);
+}
+
+.completion-message {
+  background: linear-gradient(145deg, #1a1a3d, #2c3e50);
+  border: 3px solid #ffd700;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+  margin: 40px auto;
+  max-width: 80%;
+  text-align: center;
+  animation: fadeIn 0.8s ease-out;
+}
+
+.completion-message h2 {
+  color: #ffd700;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  font-size: 28px;
+  margin-bottom: 20px;
+  font-family: 'Merriweather', serif;
+}
+
+.completion-message p {
+  color: #ffffff;
+  margin: 15px 0;
+  font-size: 18px;
+  line-height: 1.5;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
     </style>
 </head>
 <body>
@@ -1010,22 +1225,20 @@ button:disabled {
         </div>
     </div>
 
-  <div class="navigation-buttons">
+    <div class="navigation-buttons">
         <a class="nav-button" href='tema1.html'>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                 <path d="M15 18l-6-6 6-6"/>
             </svg>
             До теми 1
         </a>
-         <a class="nav-button" href='index.html'>
-
+        <a class="nav-button" href='index.html'>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                 <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
             </svg>
             На головну
         </a>
     </div>
-
 
     <div id="modalOverlay"></div>
 
@@ -1072,7 +1285,7 @@ button:disabled {
                     <p><span class="formula-line">б) <em class="math-notation">\( (3.2 - 1.5i) - (0.8 - 1.4i) - (3.8 + i) + (-2.5 - 2.4i) = -3.9 - 3.5i \)</em>. \( \triangleleft \)</span></p>
                 </div>
             </details>
-             <details class="multiplication">
+            <details class="multiplication">
                 <summary>Множення</summary>
                 <div>
 <h3>Множення комплексного числа на дійсне число</h3>
@@ -1361,9 +1574,68 @@ const closeVideoPlayerBtn2 = document.getElementById('closeVideoPlayerBtn2');
 const closeVideoPlayerBtn3 = document.getElementById('closeVideoPlayerBtn3');
 const modalOverlay = document.getElementById('modalOverlay');
 
-// Масив питань, розділений на сім груп
-const questions = [
-  // Група 1: Додавання комплексних чисел (multiple choice)
+
+// Додайте цей код в секцію JavaScript після всіх обробників подій
+
+// Покращення прокрутки для модальних вікон
+function enhanceModalScrolling() {
+    const modals = [theoryModal, questionsModal, trainerModal, videoModal];
+    
+    modals.forEach(modal => {
+        if (!modal) return;
+        
+        const content = modal.querySelector('.modal-content');
+        if (!content) return;
+        
+        // Додаємо клас при наведенні для кращої видимості прокрутки
+        content.addEventListener('mouseenter', () => {
+            content.style.scrollbarWidth = 'thin';
+        });
+        
+        // Плавна прокрутка до початку при відкритті
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal || e.target.classList.contains('close-btn')) {
+                setTimeout(() => {
+                    content.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+                }, 100);
+            }
+        });
+    });
+}
+
+// Ініціалізація покращеної прокрутки при завантаженні
+window.addEventListener('load', enhanceModalScrolling);
+
+// Також додаємо для карток питань
+document.querySelectorAll('.question-card').forEach(card => {
+    const cardBack = card.querySelector('.card-back');
+    if (cardBack && cardBack.scrollWidth > cardBack.clientWidth) {
+        // Якщо контент ширший за контейнер, додаємо індикатор прокрутки
+        cardBack.style.position = 'relative';
+        
+        // Додаємо градієнт на краях для індикації прокрутки
+        cardBack.style.background = `
+            linear-gradient(to right, #006064 0%, #006064 95%, transparent 100%),
+            linear-gradient(to left, #006064 0%, #006064 95%, transparent 100%)
+        `;
+        cardBack.style.backgroundSize = '50px 100%, 50px 100%';
+        cardBack.style.backgroundRepeat = 'no-repeat';
+        cardBack.style.backgroundPosition = 'left center, right center';
+    }
+});
+    
+
+// ТРЕНАЖЕР - ГРУПОВА ВЕРСІЯ
+let currentQuestionNumber = 1; // Поточний номер питання (1-7)
+let currentGroupIndex = 0; // Індекс поточної групи (0-6)
+let currentQuestionInGroup = 0; // Поточне питання в групі
+let questionsInGroup = []; // Питання поточної групи
+let totalQuestions = 0; // Загальна кількість пройдених питань
+let correctAnswers = 0; // Правильних відповідей загалом
+
+// Групи питань
+const questionGroups = [
+  // Група 0: Додавання (multiple choice) - для Питання 1
   [
     {
       type: 'multiple',
@@ -1382,9 +1654,28 @@ const questions = [
       question: 'Сумою комплексних чисел \\((7 + 5i) + (-7 - 6i)\\) є число:',
       options: ['\\(17 - i\\)', '\\(-i\\)', '\\(14 + i\\)', '\\(i\\)'],
       correct: '\\(-i\\)'
+    },
+    {
+      type: 'multiple',
+      question: 'Сумою комплексних чисел \\((3 - 4i) + (1 - 4i)\\) є число:',
+      options: ['\\(4 - 8i\\)', '\\(4\\)', '\\(4 + 8i\\)', '\\(4 - 16i\\)'],
+      correct: '\\(4 - 8i\\)'
+    },
+    {
+      type: 'multiple',
+      question: 'Сумою комплексних чисел \\((-1 - 2i) + (-1 - 2i)\\) є число:',
+      options: ['\\(-2 + 4i\\)', '\\(0\\)', '\\(-2 - 4i\\)', '\\(2 - 4i\\)'],
+      correct: '\\(-2 - 4i\\)'
+    },
+    {
+      type: 'multiple',
+      question: 'Сумою комплексних чисел \\((-3 - i) + (3 + 2i)\\) є число:',
+      options: ['\\(-6 + i\\)', '\\(i\\)', '\\(-6 - i\\)', '\\(- i\\)'],
+      correct: '\\(i\\)'
     }
   ],
-  // Група 2: Віднімання комплексних чисел (multiple choice)
+  
+  // Група 1: Віднімання (multiple choice) - для Питання 2
   [
     {
       type: 'multiple',
@@ -1403,9 +1694,22 @@ const questions = [
       question: 'Різницею комплексних чисел \\((-2 - 3i) - (4 + 7i)\\) є число:',
       options: ['\\(-6 - 10i\\)', '\\(2 + 4i\\)', '\\(2 - 4i\\)', '\\(-6 - 4i\\)'],
       correct: '\\(-6 - 10i\\)'
+    },
+    {
+      type: 'multiple',
+      question: 'Різницею комплексних чисел \\((2 + 6i) - (-3 - i)\\) є число:',
+      options: ['\\(1 - 5i\\)', '\\(-1 + 5i\\)', '\\(5 - 7i\\)', '\\(5 + 7i\\)'],
+      correct: '\\(5 + 7i\\)'
+    },
+    {
+      type: 'multiple',
+      question: 'Різницею комплексних чисел \\((-6 + 6i) - (6 - 6i)\\) є число:',
+      options: ['\\(0\\)', '\\(12i\\)', '\\(- 12i\\)', '\\(-12\\)'],
+      correct: '\\(12i\\)'
     }
   ],
-  // Група 3: Додавання комплексних чисел (input)
+  
+  // Група 2: Додавання (input) - для Питання 3
   [
     {
       type: 'input',
@@ -1421,9 +1725,25 @@ const questions = [
       type: 'input',
       question: 'Записати результат суми комплексних чисел \\(z_1 = 2 + i\\) та \\(z_2 = -6 - 2i\\).',
       correct: '-4-i'
+    },
+    {
+      type: 'input',
+      question: 'Записати результат суми комплексних чисел \\(z_1 = -6 + 2i\\) та \\(z_2 = -6 - 2i\\).',
+      correct: '-12'
+    },
+    {
+      type: 'input',
+      question: 'Записати результат суми комплексних чисел \\(z_1 = 4 - i\\) та \\(z_2 = -5 + 3i\\).',
+      correct: '-1+2i'
+    },
+    {
+      type: 'input',
+      question: 'Записати результат суми комплексних чисел \\(z_1 = -3i\\) та \\(z_2 = 4 + i\\).',
+      correct: '4-2i'
     }
   ],
-  // Група 4: Віднімання комплексних чисел (input)
+  
+  // Група 3: Віднімання (input) - для Питання 4
   [
     {
       type: 'input',
@@ -1439,45 +1759,88 @@ const questions = [
       type: 'input',
       question: 'Записати результат різниці комплексних чисел \\(z_1 = 8 - 4i\\) та \\(z_2 = -3 + i\\).',
       correct: '11-5i'
+    },
+    {
+      type: 'input',
+      question: 'Записати результат різниці комплексних чисел \\(z_1 = -6 + i\\) та \\(z_2 = -2i\\).',
+      correct: '-6+3i'
+    },
+    {
+      type: 'input',
+      question: 'Записати результат різниці комплексних чисел \\(z_1 = 2 - 2i\\) та \\(z_2 = 1 - 4i\\).',
+      correct: '1+2i'
     }
   ],
-  // Група 5: Змішані дії (input, два поля)
+  
+  // Група 4: Змішані дії (input, два поля) - для Питання 5
   [
     {
       type: 'input_two_fields',
-      question: 'Виконати змішані дії з комплексними числами: \\((2 + 3i) + (-8 + 5i) - (3 - 6i)\\). Ввести дійсну та уявну частини отриманого комплексного числа.',
+      question: 'Виконати змішані дії: \\((2 + 3i) + (-8 + 5i) - (3 - 6i)\\). Ввести дійсну та уявну частини.',
       correct: ['-9', '14']
     },
     {
       type: 'input_two_fields',
-      question: 'Виконати змішані дії: \\((-4 + i) - (-3 + 2i) + (6 - 7i)\\). Ввести дійсну та уявну частини отриманого комплексного числа.',
+      question: 'Виконати змішані дії: \\((-4 + i) - (-3 + 2i) + (6 - 7i)\\). Ввести дійсну та уявну частини.',
       correct: ['5', '-8']
     },
     {
       type: 'input_two_fields',
-      question: 'Виконати змішані дії: \\((8 - 6i) + (5 - i) - (-13 - 8i)\\). Ввести дійсну та уявну частини отриманого комплексного числа.',
+      question: 'Виконати змішані дії: \\((8 - 6i) + (5 - i) - (-13 - 8i)\\). Ввести дійсну та уявну частини.',
       correct: ['26', '1']
+    },
+    {
+      type: 'input_two_fields',
+      question: 'Виконати змішані дії: \\((3 - 4i) - (5 + 2i) + (-1 + 7i)\\). Ввести дійсну та уявну частини.',
+      correct: ['-3', '1']
+    },
+    {
+      type: 'input_two_fields',
+      question: 'Виконати змішані дії: \\((-2 + 5i) + (4 - 3i) - (1 + 2i)\\). Ввести дійсну та уявну частини.',
+      correct: ['1', '0']
+    },
+    {
+      type: 'input_two_fields',
+      question: 'Виконати змішані дії: \\((7 + 2i) - (-3 - 4i) + (5 - 6i)\\). Ввести дійсну та уявну частини.',
+      correct: ['15', '0']
     }
   ],
-  // Група 6: Множення комплексних чисел (input, два поля)
+  
+  // Група 5: Множення (input, два поля) - для Питання 6
   [
     {
       type: 'input_two_fields',
-      question: 'Знайти добуток комплексних чисел: \\((4 - 5i) \\cdot (3 + 2i)\\). Ввести дійсну та уявну частини отриманого комплексного числа.',
+      question: 'Знайти добуток: \\((4 - 5i) \\cdot (3 + 2i)\\). Ввести дійсну та уявну частини.',
       correct: ['22', '-7']
     },
     {
       type: 'input_two_fields',
-      question: 'Знайти добуток комплексних чисел: \\((3 + 2i) \\cdot (4 - i)\\). Ввести дійсну та уявну частини отриманого комплексного числа.',
+      question: 'Знайти добуток: \\((3 + 2i) \\cdot (4 - i)\\). Ввести дійсну та уявну частини.',
       correct: ['14', '5']
     },
     {
       type: 'input_two_fields',
-      question: 'Знайти добуток комплексних чисел: \\((-3 + i) \\cdot (-1 + 4i)\\). Ввести дійсну та уявну частини отриманого комплексного числа.',
+      question: 'Знайти добуток: \\((-3 + i) \\cdot (-1 + 4i)\\). Ввести дійсну та уявну частини.',
       correct: ['-1', '-13']
+    },
+    {
+      type: 'input_two_fields',
+      question: 'Знайти добуток: \\((2 + 3i) \\cdot (1 - 4i)\\). Ввести дійсну та уявну частини.',
+      correct: ['14', '-5']
+    },
+    {
+      type: 'input_two_fields',
+      question: 'Знайти добуток: \\((-1 + 2i) \\cdot (3 - i)\\). Ввести дійсну та уявну частини.',
+      correct: ['-1', '7']
+    },
+    {
+      type: 'input_two_fields',
+      question: 'Знайти добуток: \\((5 - 2i) \\cdot (-3 + 4i)\\). Ввести дійсну та уявну частини.',
+      correct: ['-7', '26']
     }
   ],
-  // Група 7: Ділення комплексних чисел (multiple choice)
+  
+  // Група 6: Ділення (multiple choice) - для Питання 7
   [
     {
       type: 'multiple',
@@ -1495,24 +1858,366 @@ const questions = [
       type: 'multiple',
       question: 'Часткою комплексних чисел \\(\\frac{-3 - i}{2 + 2i}\\) є число:',
       options: ['\\(1 - i\\)', '\\(-1 - i\\)', '\\(-2i\\)', '\\(-1 + \\frac{1}{2}i\\)'],
-correct: '\\(-1 + \\frac{1}{2}i\\)'
+      correct: '\\(-1 + \\frac{1}{2}i\\)'
+    },
+    {
+      type: 'multiple',
+      question: 'Часткою комплексних чисел \\(\\frac{2 + 3i}{1 - i}\\) є число:',
+      options: ['\\(-\\frac{1}{2} + \\frac{5}{2}i\\)', '\\(5 + i\\)', '\\(1 + 2i\\)', '\\(-\\frac{5}{2} + \\frac{1}{2}i\\)'],
+      correct: '\\(-\\frac{1}{2} + \\frac{5}{2}i\\)'
+    },
+    {
+      type: 'multiple',
+      question: 'Часткою комплексних чисел \\(\\frac{4 - 2i}{2 + i}\\) є число:',
+      options: ['\\(\\frac{6}{5} - \\frac{8}{5}i\\)', '\\(2 - 4i\\)', '\\(1 - 2i\\)', '\\(\\frac{10}{3} - \\frac{2}{3}i\\)'],
+      correct: '\\(\\frac{6}{5} - \\frac{8}{5}i\\)'
+    },
+    {
+      type: 'multiple',
+      question: 'Часткою комплексних чисел \\(\\frac{3i}{2 - i}\\) є число:',
+      options: ['\\(-\\frac{3}{5} + \\frac{6}{5}i\\)', '\\(\\frac{3}{2}i\\)', '\\(1 + \\frac{3}{2}i\\)', '\\(-\\frac{6}{5} + \\frac{3}{5}i\\)'],
+      correct: '\\(-\\frac{3}{5} + \\frac{6}{5}i\\)'
     }
   ]
 ];
-let currentGroupIndex = 0; // Поточна група питань
-let currentVariantIndex = 0; // Поточний варіант у групі
-let selectedVariants = [];
 
+// Функція для завантаження групи питань на основі номера питання
+function loadGroupForQuestion(questionNumber) {
+  // Питання 1 -> Група 0
+  // Питання 2 -> Група 1
+  // Питання 3 -> Група 2
+  // і т.д.
+  currentGroupIndex = questionNumber - 1;
+  
+  if (currentGroupIndex >= 0 && currentGroupIndex < questionGroups.length) {
+    questionsInGroup = [...questionGroups[currentGroupIndex]];
+    
+    // Перемішуємо питання в групі
+    for (let i = questionsInGroup.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [questionsInGroup[i], questionsInGroup[j]] = [questionsInGroup[j], questionsInGroup[i]];
+    }
+    
+    currentQuestionInGroup = 0;
+  }
+}
+
+// Функція для завантаження питання
+function loadQuestion() {
+  const trainerContent = document.getElementById('trainerContent');
+  
+  // Перевірка завершення всіх питань
+  if (currentQuestionNumber > questionGroups.length) {
+    trainerContent.innerHTML = `
+      <div class="completion-emoji"></div>
+      <div class="completion-message">
+        <h2>МІСІЮ ВИКОНАНО!</h2>
+        <p>Ти пройшов усі типи завдань з комплексними числами!</p>
+        <p><strong>СЛАВА УКРАЇНІ!</strong></p>
+        <button onclick="resetTrainer()" class="reset-btn">Назад на полігон!</button>
+      </div>`;
+    typesetMathJax();
+    return;
+  }
+  
+  // Завантажуємо групу для поточного питання
+  loadGroupForQuestion(currentQuestionNumber);
+  
+  const question = questionsInGroup[currentQuestionInGroup];
+  
+  let contentHtml = `
+    <div class="question-circle">
+      <h3>Питання ${currentQuestionNumber}</h3>
+    </div>
+    <div class="math-notation-centered">${question.question}</div>
+  `;
+
+  if (question.type === 'multiple') {
+    contentHtml += `
+      <div class="options-container">
+        ${question.options.map(opt => `
+          <div class="option" data-value="${opt.replace(/\\\(|\s*\\\)/g, '')}">${opt}</div>
+        `).join('')}
+      </div>
+      <button id="submitAnswer" disabled>Відповісти</button>
+    `;
+  } else if (question.type === 'input') {
+    contentHtml += `
+      <div class="input-container">
+        <div class="input-group">
+          <strong>Відповідь:</strong>
+          <input type="text" id="inputComplex" placeholder="Введіть у форматі a+bi або a-bi">
+        </div>
+      </div>
+      <button id="submitAnswer">Відповісти</button>
+    `;
+  } else if (question.type === 'input_two_fields') {
+    contentHtml += `
+      <div class="input-container">
+        <div class="input-group">
+          <strong>Re z =</strong>
+          <input type="text" id="inputReal" placeholder="Введіть дійсну частину">
+        </div>
+      </div>
+      <div class="input-container">
+        <div class="input-group">
+          <strong>Im z =</strong>
+          <input type="text" id="inputImaginary" placeholder="Введіть уявну частину">
+        </div>
+      </div>
+      <button id="submitAnswer">Відповісти</button>
+    `;
+  }
+
+  contentHtml += `<div class="result"></div>`;
+  trainerContent.innerHTML = contentHtml;
+
+  // Додаємо обробники подій
+  if (question.type === 'multiple') {
+    const options = document.querySelectorAll('.option');
+    options.forEach(opt => {
+      opt.addEventListener('click', () => {
+        options.forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        document.getElementById('submitAnswer').disabled = false;
+      });
+    });
+    
+    document.getElementById('submitAnswer').addEventListener('click', () => {
+      const selected = document.querySelector('.option.selected');
+      if (selected) {
+        checkAnswer(selected.dataset.value);
+      }
+    });
+  } else if (question.type === 'input') {
+    const input = document.getElementById('inputComplex');
+    const submitBtn = document.getElementById('submitAnswer');
+    
+    input.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && input.value.trim()) {
+        checkInputAnswer();
+      }
+    });
+    
+    submitBtn.addEventListener('click', checkInputAnswer);
+  } else if (question.type === 'input_two_fields') {
+    const inputReal = document.getElementById('inputReal');
+    const inputImaginary = document.getElementById('inputImaginary');
+    const submitBtn = document.getElementById('submitAnswer');
+    
+    const checkInputs = () => {
+      if (inputReal.value.trim() && inputImaginary.value.trim()) {
+        submitBtn.disabled = false;
+      } else {
+        submitBtn.disabled = true;
+      }
+    };
+    
+    inputReal.addEventListener('input', checkInputs);
+    inputImaginary.addEventListener('input', checkInputs);
+    inputReal.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && inputReal.value.trim() && inputImaginary.value.trim()) {
+        checkInputTwoFieldsAnswer();
+      }
+    });
+    inputImaginary.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && inputReal.value.trim() && inputImaginary.value.trim()) {
+        checkInputTwoFieldsAnswer();
+      }
+    });
+    
+    submitBtn.addEventListener('click', checkInputTwoFieldsAnswer);
+    checkInputs(); // Початкова перевірка
+  }
+
+  typesetMathJax();
+}
+
+// Функції перевірки відповідей
+function checkAnswer(selectedOption) {
+  const question = questionsInGroup[currentQuestionInGroup];
+  const feedback = document.createElement('div');
+  feedback.className = 'feedback';
+  document.body.appendChild(feedback);
+
+  const cleanSelected = selectedOption ? selectedOption.replace(/\\\(|\s*\\\)/g, '') : '';
+  const cleanCorrect = question.correct.replace(/\\\(|\s*\\\)/g, '');
+
+  if (cleanSelected === cleanCorrect) {
+    correctAnswers++;
+    totalQuestions++;
+    feedback.textContent = '✅ ВІРНО! Ціль уражена!';
+    feedback.classList.add('correct-feedback');
+    // Переходимо до наступного питання
+    currentQuestionNumber++;
+  } else {
+    feedback.textContent = '❌ Промах! Спробуй ще!';
+    feedback.classList.add('incorrect-feedback');
+    totalQuestions++;
+    
+    // Генеруємо новий приклад ТІЛЬКИ для питання 1
+    if (currentQuestionNumber === 1) {
+      loadGroupForQuestion(currentQuestionNumber); // Завантажуємо нову групу
+    }
+    // Залишаємося на тому ж питанні
+  }
+
+  feedback.style.opacity = '1';
+  setTimeout(() => {
+    feedback.style.opacity = '0';
+    setTimeout(() => {
+      feedback.remove();
+      loadQuestion();
+    }, 500);
+  }, 1500);
+}
+
+function checkInputAnswer() {
+  const question = questionsInGroup[currentQuestionInGroup];
+  const inputComplex = normalizeComplexInput(document.getElementById('inputComplex').value);
+  const correctComplex = normalizeComplexInput(question.correct);
+  const feedback = document.createElement('div');
+  feedback.className = 'feedback';
+  document.body.appendChild(feedback);
+
+  if (inputComplex === correctComplex) {
+    correctAnswers++;
+    totalQuestions++;
+    feedback.textContent = '✅ ВІРНО! Ціль уражена!';
+    feedback.classList.add('correct-feedback');
+    // Переходимо до наступного питання
+    currentQuestionNumber++;
+  } else {
+    feedback.textContent = '❌ Промах! Спробуй ще!';
+    feedback.classList.add('incorrect-feedback');
+    totalQuestions++;
+    // Залишаємося на тому ж питанні
+  }
+
+  feedback.style.opacity = '1';
+  setTimeout(() => {
+    feedback.style.opacity = '0';
+    setTimeout(() => {
+      feedback.remove();
+      loadQuestion();
+    }, 500);
+  }, 1500);
+}
+
+function checkInputTwoFieldsAnswer() {
+  const question = questionsInGroup[currentQuestionInGroup];
+  const inputReal = document.getElementById('inputReal').value.trim();
+  const inputImaginary = document.getElementById('inputImaginary').value.trim();
+  const feedback = document.createElement('div');
+  feedback.className = 'feedback';
+  document.body.appendChild(feedback);
+
+  if (inputReal === question.correct[0] && inputImaginary === question.correct[1]) {
+    correctAnswers++;
+    totalQuestions++;
+    feedback.textContent = '✅ ВІРНО! Ціль уражена!';
+    feedback.classList.add('correct-feedback');
+    // Переходимо до наступного питання
+    currentQuestionNumber++;
+  } else {
+    feedback.textContent = '❌ Промах! Спробуй ще!';
+    feedback.classList.add('incorrect-feedback');
+    totalQuestions++;
+    // Залишаємося на тому ж питанні
+  }
+
+  feedback.style.opacity = '1';
+  setTimeout(() => {
+    feedback.style.opacity = '0';
+    setTimeout(() => {
+      feedback.remove();
+      loadQuestion();
+    }, 500);
+  }, 1500);
+}
+
+// Функція скидання тренажера
+function resetTrainer() {
+  currentQuestionNumber = 1;
+  currentGroupIndex = 0;
+  currentQuestionInGroup = 0;
+  totalQuestions = 0;
+  correctAnswers = 0;
+  
+  loadQuestion();
+}
+
+// Функція для нормалізації вводу комплексних чисел
+function normalizeComplexInput(input) {
+  let normalized = input.trim().toLowerCase().replace(/\s+/g, '');
+  normalized = normalized.replace(/і/g, 'i');
+  normalized = normalized.replace(/([0-9])([+-])/g, '$1$2');
+  normalized = normalized.replace(/[^0-9+\-i]/g, '');
+  normalized = normalized.replace(/-\+/g, '-').replace(/\+-/g, '-');
+  if (!normalized.includes('i')) {
+    normalized += normalized.length > 0 ? '+0i' : '0+0i';
+  }
+  if (normalized.endsWith('i')) normalized = normalized.replace('i', '1i');
+  if (normalized.includes('-i')) normalized = normalized.replace('-i', '-1i');
+  if (normalized.includes('+i')) normalized = normalized.replace('+i', '+1i');
+  if (normalized.startsWith('i') || normalized.startsWith('-i') || normalized.startsWith('+i')) {
+    normalized = '0' + normalized;
+  }
+  return normalized;
+}
+
+// Функція для рендерингу MathJax
+function typesetMathJax(attempts = 5, delay = 100) {
+  if (window.MathJax && MathJax.typesetPromise) {
+    MathJax.typesetPromise(['#trainerContent']).then(() => {
+      console.log('MathJax обробив формули');
+    }).catch(err => {
+      console.error('MathJax error:', err);
+      document.getElementById('trainerContent').innerHTML += `<div style="color: red;">Помилка обробки формул: ${err.message}</div>`;
+    });
+  } else if (attempts > 0) {
+    console.warn(`MathJax ще не завантажено. Спроба ${6 - attempts}`);
+    setTimeout(() => typesetMathJax(attempts - 1, delay * 2), delay);
+  } else {
+    console.error('MathJax не завантажено');
+    document.getElementById('trainerContent').innerHTML += `<div style="color: red;">Помилка: MathJax не завантажено.</div>`;
+  }
+}
+
+// Ініціалізація MathJax
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(', '\\)']],
+    displayMath: [['\\[', '\\]']],
+    processEscapes: true
+  },
+  startup: {
+    pageReady: () => {
+      return MathJax.startup.defaultPageReady().then(() => {
+        console.log('MathJax ініціалізовано');
+        if (trainerModal.style.display === 'flex') {
+          typesetMathJax();
+        }
+      }).catch(err => {
+        console.error('Помилка ініціалізації MathJax:', err);
+      });
+    }
+  }
+};
+
+// Обробник кнопки тренажера
+openTrainerBtn.addEventListener('click', () => {
+  resetTrainer();
+  toggleModal(trainerModal, true);
+});
+
+
+
+// Функція для відкриття/закриття модальних вікон
 function toggleModal(modal, show) {
   modal.style.display = show ? 'flex' : 'none';
   modalOverlay.style.display = show ? 'block' : 'none';
   document.body.style.overflow = show ? 'hidden' : 'auto';
-  if (show && modal === trainerModal) {
-    currentGroupIndex = 0;
-    currentVariantIndex = 0;
-    score = 0;
-    loadQuestion();
-  }
 }
 
 // Функція для зупинки відео
@@ -1543,7 +2248,6 @@ function stopVideo(player, playerName, playerId) {
 openTheoryBtn.addEventListener('click', () => toggleModal(theoryModal, true));
 openVideoBtn.addEventListener('click', () => toggleModal(videoModal, true));
 openQuestionsBtn.addEventListener('click', () => toggleModal(questionsModal, true));
-openTrainerBtn.addEventListener('click', () => toggleModal(trainerModal, true));
 
 // Обробники для закриття модалей
 closeTheoryBtn.addEventListener('click', () => toggleModal(theoryModal, false));
@@ -1654,261 +2358,7 @@ document.querySelectorAll('.video-card').forEach(card => {
   });
 });
 
-// Тренажер
-function normalizeComplexInput(input) {
-  let normalized = input.trim().toLowerCase().replace(/\s+/g, '');
-  normalized = normalized.replace(/і/g, 'i');
-  normalized = normalized.replace(/([0-9])([+-])/g, '$1$2');
-  normalized = normalized.replace(/[^0-9+\-i]/g, '');
-  normalized = normalized.replace(/-\+/g, '-').replace(/\+-/g, '-');
-  if (!normalized.includes('i')) {
-    normalized += normalized.length > 0 ? '+0i' : '0+0i';
-  }
-  if (normalized.endsWith('i')) normalized = normalized.replace('i', '1i');
-  if (normalized.includes('-i')) normalized = normalized.replace('-i', '-1i');
-  if (normalized.includes('+i')) normalized = normalized.replace('+i', '+1i');
-  if (normalized.startsWith('i') || normalized.startsWith('-i') || normalized.startsWith('+i')) {
-    normalized = '0' + normalized;
-  }
-  return normalized;
-}
 
-// Функція для випадкового перемішування елементів масиву
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
-}
-
-// Скинути тренажер і вибрати випадкові варіанти
-function resetTrainer() {
-  currentGroupIndex = 0; // обнулити індекс поточної групи
-  score = 0; // скинути рахунок
-
-  // Перемішати варіанти в кожній групі
-  questions.forEach(group => shuffleArray(group));
-
-  // Вибрати по одному випадковому індексу варіанта для кожної групи
-  selectedVariants = questions.map(() => Math.floor(Math.random() * 3));
-
-  loadQuestion(); // завантажити перше питання
-}
-
-
-function loadQuestion() {
-  const trainerContent = document.getElementById('trainerContent');
-  if (currentGroupIndex >= questions.length) {
-    trainerContent.innerHTML = `
-      <div class="completion-emoji"></div>
-      <div class="completion-message">
-        <h2>Тренування завершено!</h2>
-        <p>Молодець!</p>
-        <button onclick="resetTrainer()">Спробувати ще раз</button>
-      </div>`;
-    typesetMathJax();
-    return;
-  }
-  
-  const question = questions[currentGroupIndex][currentVariantIndex];
-  let contentHtml = `
-    <div class="question-circle"><h3>Питання ${currentGroupIndex + 1}</h3></div>
-    <div class="math-notation-centered">${question.question}</div>
-  `;
-
-  if (question.type === 'multiple') {
-    contentHtml += `
-      <div class="options-container">
-        ${question.options.map(opt => `
-          <div class="option" data-value="${opt.replace(/\\\(|\s*\\\)/g, '')}" onclick="selectOption(this, '${opt.replace(/\\\(|\s*\\\)/g, '')}')">${opt}</div>
-        `).join('')}
-      </div>
-      <button id="submitAnswer" disabled>Відповісти</button>
-    `;
-  } else if (question.type === 'input') {
-    contentHtml += `
-      <div class="input-container">
-        <div class="input-group">
-          <strong>Відповідь:</strong>
-          <input type="text" id="inputComplex" placeholder="Введіть у форматі a+bi або a-bi">
-        </div>
-      </div>
-      <button id="submitAnswer">Відповісти</button>
-    `;
-  } else if (question.type === 'input_two_fields') {
-    contentHtml += `
-      <div class="input-container">
-        <div class="input-group">
-          <strong>Re z =</strong>
-          <input type="text" id="inputReal" placeholder="Введіть дійсну частину">
-        </div>
-      </div>
-      <div class="input-container">
-        <div class="input-group">
-          <strong>Im z =</strong>
-          <input type="text" id="inputImaginary" placeholder="Введіть уявну частину">
-        </div>
-      </div>
-      <button id="submitAnswer">Відповісти</button>
-    `;
-  }
-
-  contentHtml += `<div class="result"></div>`;
-  trainerContent.innerHTML = contentHtml;
-
-  
- // Додаємо обробники подій після створення DOM
-  if (question.type === 'multiple') {
-    document.getElementById('submitAnswer').addEventListener('click', () => checkAnswer(document.querySelector('.option.selected')?.dataset?.value));
-  } else if (question.type === 'input') {
-    document.getElementById('submitAnswer').addEventListener('click', checkInputAnswer);
-  } else if (question.type === 'input_two_fields') {
-    document.getElementById('submitAnswer').addEventListener('click', checkInputTwoFieldsAnswer);
-  }
-
-
-  // Викликаємо MathJax для рендерингу формул
-  typesetMathJax();
-}
-function typesetMathJax(attempts = 5, delay = 100) {
-  if (window.MathJax && MathJax.typesetPromise) {
-    MathJax.typesetPromise(['#trainerContent']).then(() => {
-      console.log('MathJax обробив формули');
-    }).catch(err => {
-      console.error('MathJax error:', err);
-      document.getElementById('trainerContent').innerHTML += `<div style="color: red;">Помилка обробки формул: ${err.message}</div>`;
-    });
-  } else if (attempts > 0) {
-    console.warn(`MathJax ще не завантажено. Спроба ${6 - attempts}`);
-    setTimeout(() => typesetMathJax(attempts - 1, delay * 2), delay);
-  } else {
-    console.error('MathJax не завантажено');
-    document.getElementById('trainerContent').innerHTML += `<div style="color: red;">Помилка: MathJax не завантажено.</div>`;
-  }
-}
-
-function selectOption(element, selectedOption) {
-  document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
-  element.classList.add('selected');
-  const submitBtn = document.getElementById('submitAnswer');
-  submitBtn.disabled = false;
-}
-
-function checkAnswer(selectedOption) {
-  const question = questions[currentGroupIndex][currentVariantIndex];
-  const feedback = document.createElement('div');
-  feedback.className = 'feedback';
-  document.body.appendChild(feedback);
-
-  const cleanSelected = selectedOption ? selectedOption.replace(/\\\(|\s*\\\)/g, '') : '';
-  const cleanCorrect = question.correct.replace(/\\\(|\s*\\\)/g, '');
-
-  if (cleanSelected === cleanCorrect) {
-    score++;
-    feedback.textContent = '✅ Правильно!';
-    feedback.classList.add('correct-feedback');
-    currentGroupIndex++;
-    currentVariantIndex = 0;
-  } else {
-    feedback.textContent = '❌ Неправильно.';
-    feedback.classList.add('incorrect-feedback');
-    currentVariantIndex = (currentVariantIndex + 1) % questions[currentGroupIndex].length;
-  }
-
-  feedback.style.opacity = '1';
-  setTimeout(() => {
-    feedback.style.opacity = '0';
-    setTimeout(() => {
-      feedback.remove();
-      loadQuestion();
-    }, 500);
-  }, 1500);
-}
-
-function checkInputAnswer() {
-  const question = questions[currentGroupIndex][currentVariantIndex];
-  const inputComplex = normalizeComplexInput(document.getElementById('inputComplex').value);
-  const correctComplex = normalizeComplexInput(question.correct);
-  const feedback = document.createElement('div');
-  feedback.className = 'feedback';
-  document.body.appendChild(feedback);
-
-  if (inputComplex === correctComplex) {
-    score++;
-    feedback.textContent = '✅ Правильно!';
-    feedback.classList.add('correct-feedback');
-    currentGroupIndex++;
-    currentVariantIndex = 0;
-  } else {
-    feedback.textContent = '❌ Неправильно. Спробуйте ще раз!';
-    feedback.classList.add('incorrect-feedback');
-    currentVariantIndex = (currentVariantIndex + 1) % questions[currentGroupIndex].length;
-  }
-
-  feedback.style.opacity = '1';
-  setTimeout(() => {
-    feedback.style.opacity = '0';
-    setTimeout(() => {
-      feedback.remove();
-      loadQuestion();
-    }, 500);
-  }, 1500);
-}
-
-function checkInputTwoFieldsAnswer() {
-  const question = questions[currentGroupIndex][currentVariantIndex];
-  const inputReal = document.getElementById('inputReal').value.trim();
-  const inputImaginary = document.getElementById('inputImaginary').value.trim();
-  const feedback = document.createElement('div');
-  feedback.className = 'feedback';
-  document.body.appendChild(feedback);
-
-  if (inputReal === question.correct[0] && inputImaginary === question.correct[1]) {
-    score++;
-    feedback.textContent = '✅ Правильно!';
-    feedback.classList.add('correct-feedback');
-    currentGroupIndex++;
-    currentVariantIndex = 0;
-  } else {
-    feedback.textContent = '❌ Неправильно. Спробуйте ще раз!';
-    feedback.classList.add('incorrect-feedback');
-    currentVariantIndex = (currentVariantIndex + 1) % questions[currentGroupIndex].length;
-  }
-
-  feedback.style.opacity = '1';
-  setTimeout(() => {
-    feedback.style.opacity = '0';
-    setTimeout(() => {
-      feedback.remove();
-      loadQuestion();
-    }, 500);
-  }, 1500);
-}
-
-// Ініціалізація MathJax
-window.MathJax = {
-  tex: {
-    inlineMath: [['\\(', '\\)']],
-    displayMath: [['\\[', '\\]']],
-    processEscapes: true
-  },
-  startup: {
-    pageReady: () => {
-      return MathJax.startup.defaultPageReady().then(() => {
-        console.log('MathJax ініціалізовано');
-        // Рендеримо формули одразу після ініціалізації
-        if (trainerModal.style.display === 'flex') {
-          typesetMathJax();
-        }
-      }).catch(err => {
-        console.error('Помилка ініціалізації MathJax:', err);
-        document.getElementById('trainerContent').innerHTML += `<div style="color: red;">Помилка ініціалізації MathJax: ${err.message}</div>`;
-      });
-    }
-  }
-};
 </script>
 </body>
 </html>
-
