@@ -379,26 +379,65 @@ body.loaded {
             margin: 0;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
         }
+        /* === МЕДАЛЬ З ТРИЗУБОМ === */
         .completion-emoji {
-            width: clamp(80px, 15vw, 120px);
-            height: clamp(80px, 15vw, 120px);
+            position: relative;
+            display: inline-block;
+            width: clamp(56px, 12vw, 96px);
+            height: clamp(56px, 12vw, 96px);
+            vertical-align: middle;
             margin: 0 auto 3vw;
             border-radius: 50%;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-            border: 2px dashed #fb7185;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: linear-gradient(135deg, #2a2a2a, #3a4a45);
+            border: 3px dashed #ffd700;
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+            overflow: hidden;
+            animation: medalAppear 0.8s ease-out;
         }
         .completion-emoji::after {
-            content: '🎉';
-            font-size: clamp(40px, 8vw, 60px);
-            color: #fb7185;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><filter id='s' x='-50%' y='-50%' width='200%' height='200%'><feDropShadow dx='0' dy='2' stdDeviation='2' flood-color='%23000000' flood-opacity='0.25'/></filter></defs><rect x='30' y='0' width='60' height='40' rx='4' fill='%23007ACC'/><rect x='30' y='20' width='60' height='20' rx='4' fill='%23FFD700'/><g transform='translate(60,70)'><polygon points='0,-26 6,-6 26,-6 9,6 15,26 0,14 -15,26 -9,6 -26,-6 -6,-6' fill='%23FFD700' filter='url(%23s)'/></g></svg>");
+            background-size: 75%;
+            background-repeat: no-repeat;
+            background-position: center 60%;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+            animation: medalBounce 1.2s ease-out 0.3s both;
         }
+        @keyframes medalAppear {
+            0% { transform: scale(0.3) rotate(-180deg); opacity: 0; }
+            60% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes medalBounce {
+            0% { transform: translateY(-120px) rotate(-30deg) scale(0.4); opacity: 0; }
+            60% { transform: translateY(15px) rotate(10deg) scale(1.15); opacity: 1; }
+            80% { transform: translateY(-8px) rotate(-5deg) scale(1.05); }
+            100% { transform: translateY(0) rotate(0) scale(1); }
+        }
+
+        .completion-message {
+            background: linear-gradient(145deg, #2a2a2a, #3a4a45);
+            border: 2.5px solid #ffffff;
+            border-radius: 15px;
+            padding: clamp(12px, 3vw, 18px);
+            box-shadow: 0 6px 12px rgba(240,216,92,0.4);
+            margin: 2vw auto;
+            max-width: 90%;
+            text-align: center;
+        }
+        .completion-message h2 {
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        .completion-message p { 
+            color: #ffffff; 
+            margin: 10px 0;
+        }
+
+
+            
         .options-container {
             display: flex;
             flex-wrap: wrap;
@@ -1314,6 +1353,245 @@ body.loaded {
         min-width: 100px;
     }
 }
+
+
+ /* СТИЛІ ДЛЯ ПРОКРУТКИ МОДАЛЬНИХ ВІКОН */
+#theoryModal .modal-content,
+#questionsModal .modal-content,
+#trainerModal .modal-content,
+#videoModal .modal-content {
+    scrollbar-width: thin;
+    scrollbar-color: #800000 #f0f0f0;
+}
+
+/* Для вебкіт браузерів (Chrome, Safari, Edge) */
+#theoryModal .modal-content::-webkit-scrollbar,
+#questionsModal .modal-content::-webkit-scrollbar,
+#trainerModal .modal-content::-webkit-scrollbar,
+#videoModal .modal-content::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+#theoryModal .modal-content::-webkit-scrollbar-track,
+#questionsModal .modal-content::-webkit-scrollbar-track,
+#trainerModal .modal-content::-webkit-scrollbar-track,
+#videoModal .modal-content::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 4px;
+}
+
+#theoryModal .modal-content::-webkit-scrollbar-thumb,
+#questionsModal .modal-content::-webkit-scrollbar-thumb,
+#trainerModal .modal-content::-webkit-scrollbar-thumb,
+#videoModal .modal-content::-webkit-scrollbar-thumb {
+    background: #800000;
+    border-radius: 4px;
+    border: 2px solid #f0f0f0;
+}
+
+#theoryModal .modal-content::-webkit-scrollbar-thumb:hover,
+#questionsModal .modal-content::-webkit-scrollbar-thumb:hover,
+#trainerModal .modal-content::-webkit-scrollbar-thumb:hover,
+#videoModal .modal-content::-webkit-scrollbar-thumb:hover {
+    background: #5f0000;
+}
+
+/* Спеціальні стилі для довгих математичних формул у details */
+#theoryModal details .modal-content p {
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 10px; /* Додаємо місце для прокрутки */
+    margin-bottom: 10px;
+}
+
+#theoryModal details .modal-content p::-webkit-scrollbar {
+    height: 6px;
+}
+
+#theoryModal details .modal-content p::-webkit-scrollbar-track {
+    background: #f8f9fa;
+    border-radius: 3px;
+}
+
+#theoryModal details .modal-content p::-webkit-scrollbar-thumb {
+    background: #006064;
+    border-radius: 3px;
+}
+
+#theoryModal details .modal-content p::-webkit-scrollbar-thumb:hover {
+    background: #004d4d;
+}
+
+/* Для Firefox */
+#theoryModal details .modal-content p {
+    scrollbar-width: thin;
+    scrollbar-color: #006064 #f8f9fa;
+}
+
+/* Стилі для карток питань з горизонтальною прокруткою */
+#questionsModal .question-card:nth-child(12) .card-back {
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #800000 #f0f0f0;
+    white-space: nowrap;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: left;
+    padding: 10px 15px;
+}
+
+#questionsModal .question-card:nth-child(12) .card-back::-webkit-scrollbar {
+    height: 6px;
+}
+
+#questionsModal .question-card:nth-child(12) .card-back::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 3px;
+}
+
+#questionsModal .question-card:nth-child(12) .card-back::-webkit-scrollbar-thumb {
+    background: #800000;
+    border-radius: 3px;
+    border: 1px solid #f0f0f0;
+}
+
+#questionsModal .question-card:nth-child(12) .card-back::-webkit-scrollbar-thumb:hover {
+    background: #5f0000;
+}
+
+/* Плавна прокрутка для всіх модальних вікон */
+#theoryModal .modal-content,
+#questionsModal .modal-content,
+#trainerModal .modal-content,
+#videoModal .modal-content {
+    scroll-behavior: smooth;
+}
+
+/* Для мобільних пристроїв - трошки ширша прокрутка для зручності */
+@media (max-width: 768px) {
+    #theoryModal .modal-content::-webkit-scrollbar,
+    #questionsModal .modal-content::-webkit-scrollbar,
+    #trainerModal .modal-content::-webkit-scrollbar,
+    #videoModal .modal-content::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+    
+    #theoryModal details .modal-content p::-webkit-scrollbar {
+        height: 8px;
+    }
+    
+    #questionsModal .question-card:nth-child(12) .card-back::-webkit-scrollbar {
+        height: 8px;
+    }
+}
+
+/* Анімація при появі прокрутки */
+@keyframes scrollbarAppear {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+#theoryModal .modal-content::-webkit-scrollbar-thumb,
+#questionsModal .modal-content::-webkit-scrollbar-thumb,
+#trainerModal .modal-content::-webkit-scrollbar-thumb,
+#videoModal .modal-content::-webkit-scrollbar-thumb {
+    animation: scrollbarAppear 0.3s ease-out;
+}
+
+/* Темніший шрифт для тренажера геометричної інтерпретації */
+#trainerModal .modal-content {
+    color: #1a1a1a !important;
+}
+
+#trainerModal .math-notation-centered {
+    color: #1a1a1a !important;
+    font-weight: 600;
+    font-size: clamp(18px, 3vw, 20px);
+}
+
+#trainerModal .option {
+    color: #1a1a1a !important;
+    font-weight: 500;
+    background: #ffedd5;
+    padding: 1.8vw 2.8vw;
+    border: 1.5px solid #a855f7;
+    border-radius: 10px;
+    text-align: center;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    flex: 1 1 auto;
+    min-width: 150px;
+    max-width: 70%;
+}
+
+#trainerModal .option:hover {
+    background: #fed7aa;
+    transform: scale(1.03);
+}
+
+#trainerModal .option.selected {
+    background-color: #FFFF00 !important;
+    color: #000000 !important;
+    border: 2px solid #FFD700 !important;
+    font-weight: bold;
+}
+
+#trainerModal .input-group strong {
+    color: #1a1a1a !important;
+}
+
+#trainerModal .input-container input {
+    color: #1a1a1a !important;
+}
+
+#trainerModal .completion-message {
+    background: linear-gradient(145deg, #1e3a8a, #0ea5e9);
+    color: #ffffff !important;
+    border: 2.5px solid #ffffff;
+}
+
+#trainerModal .completion-message h2 {
+    color: #FFD700 !important;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    font-size: clamp(22px, 4.5vw, 30px);
+}
+
+#trainerModal .completion-message p {
+    color: #ffffff !important;
+    font-size: clamp(18px, 3.5vw, 22px);
+    margin: 10px 0;
+}
+
+/* Для кращої видимості формул у тренажері */
+#trainerModal mjx-container {
+    color: #1a1a1a !important;
+}
+
+/* Кнопка "Назад на полігон!" */
+.reset-btn {
+    background: linear-gradient(135deg, #6b48ff, #00ddeb);
+    color: white;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 25px;
+    font-family: 'Lora', serif;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(107, 72, 255, 0.4);
+}
+
+.reset-btn:hover {
+    background: linear-gradient(135deg, #5a3ce6, #00c4d0);
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(107, 72, 255, 0.6);
+}
+
     </style>
 </head> 
 <body>
@@ -1345,13 +1623,13 @@ body.loaded {
     </div>
 
     <div class="navigation-buttons">
-        <a class="nav-button" href='tema1.html'>
+        <a class="nav-button" href='tema4.html'>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                 <path d="M15 18l-6-6 6-6"/>
             </svg>
             До теми 1
         </a>
-       <a class="nav-button" href='index.html'>
+        <a class="nav-button" href='index.html'>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                 <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
             </svg>
@@ -1956,11 +2234,12 @@ document.addEventListener('DOMContentLoaded', function () {
     if (currentGroupIndex >= 5) {
         trainerContent.innerHTML = `
             <div class="completion-emoji"></div>
-            <div class="completion-message">
-                <h2>Тренування завершено!</h2>
-                <p>Молодець!</p>
-                <button id="resetTrainerBtn">Спробувати ще раз</button>
-            </div>`;
+      <div class="completion-message">
+        <h2>МІСІЮ ВИКОНАНО!</h2>
+        <p>Тепер ти справжній експерт комплексної площини!</p>
+        <p><strong>СЛАВА УКРАЇНІ!</strong></p>
+        <button onclick="resetTrainer()" class="reset-btn">Назад на полігон!</button>
+      </div>`;
         typesetMathJax();
 
         const resetButton = document.getElementById('resetTrainerBtn');
@@ -2044,7 +2323,7 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('Correct value:', normalizedCorrect);
         console.log('Is correct:', isCorrect);
 
-        showFeedback(isCorrect ? '✅ Правильно!' : '❌ Неправильно. Спробуйте ще раз!', isCorrect);
+        showFeedback(isCorrect ? '✅ ВІРНО! Ціль уражена!' : '❌ Промах! Спробуй ще!', isCorrect);
 
         if (isCorrect) {
             score++;
@@ -2246,22 +2525,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
         elements.exercise1Btn?.addEventListener('click', () => {
             console.log('Перехід до vpr1.html');
-            window.location.href = "vpr1.html";
+            window.location.href = "{{ url_for('vpr1') }}";
         });
 
         elements.exercise2Btn?.addEventListener('click', () => {
             console.log('Перехід до vpr2.html');
-            window.location.href = "vpr2.html";
+            window.location.href = "{{ url_for('vpr2') }}";
         });
 
         elements.exercise3Btn?.addEventListener('click', () => {
             console.log('Перехід до vpr3.html');
-            window.location.href = "vpr3.html";
+            window.location.href = "{{ url_for('vpr3') }}";
         });
 
         elements.exercise4Btn?.addEventListener('click', () => {
             console.log('Перехід до vpr4.html');
-            window.location.href = "vpr4.html";
+            window.location.href = "{{ url_for('vpr4') }}";
         });
 
         elements.modalOverlay?.addEventListener('click', () => {
@@ -2322,6 +2601,10 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         typesetMathJax();
+        
+        // Робимо функцію resetTrainer доступною глобально для кнопки
+        window.resetTrainer = resetTrainer;
+        
     } catch (error) {
         console.error('Error initializing event listeners:', error);
         alert('Сталася помилка при ініціалізації сторінки. Перевірте консоль для деталей.');
