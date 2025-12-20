@@ -975,6 +975,152 @@ mjx-container.math-notation-centered * {
         font-size: 16px !important;
     }
 }
+        /* Додайте ці стилі в розділ CSS */
+
+/* СТИЛІ ДЛЯ ПРОКРУТКИ МОДАЛЬНИХ ВІКОН */
+#theoryModal .modal-content,
+#questionsModal .modal-content,
+#trainerModal .modal-content,
+#videoModal .modal-content {
+    scrollbar-width: thin;
+    scrollbar-color: #800000 #f0f0f0;
+}
+
+/* Для вебкіт браузерів (Chrome, Safari, Edge) */
+#theoryModal .modal-content::-webkit-scrollbar,
+#questionsModal .modal-content::-webkit-scrollbar,
+#trainerModal .modal-content::-webkit-scrollbar,
+#videoModal .modal-content::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+#theoryModal .modal-content::-webkit-scrollbar-track,
+#questionsModal .modal-content::-webkit-scrollbar-track,
+#trainerModal .modal-content::-webkit-scrollbar-track,
+#videoModal .modal-content::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 4px;
+}
+
+#theoryModal .modal-content::-webkit-scrollbar-thumb,
+#questionsModal .modal-content::-webkit-scrollbar-thumb,
+#trainerModal .modal-content::-webkit-scrollbar-thumb,
+#videoModal .modal-content::-webkit-scrollbar-thumb {
+    background: #800000;
+    border-radius: 4px;
+    border: 2px solid #f0f0f0;
+}
+
+#theoryModal .modal-content::-webkit-scrollbar-thumb:hover,
+#questionsModal .modal-content::-webkit-scrollbar-thumb:hover,
+#trainerModal .modal-content::-webkit-scrollbar-thumb:hover,
+#videoModal .modal-content::-webkit-scrollbar-thumb:hover {
+    background: #5f0000;
+}
+
+/* Спеціальні стилі для довгих математичних формул у details */
+#theoryModal details .modal-content p {
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 10px; /* Додаємо місце для прокрутки */
+    margin-bottom: 10px;
+}
+
+#theoryModal details .modal-content p::-webkit-scrollbar {
+    height: 6px;
+}
+
+#theoryModal details .modal-content p::-webkit-scrollbar-track {
+    background: #f8f9fa;
+    border-radius: 3px;
+}
+
+#theoryModal details .modal-content p::-webkit-scrollbar-thumb {
+    background: #006064;
+    border-radius: 3px;
+}
+
+#theoryModal details .modal-content p::-webkit-scrollbar-thumb:hover {
+    background: #004d4d;
+}
+
+/* Для Firefox */
+#theoryModal details .modal-content p {
+    scrollbar-width: thin;
+    scrollbar-color: #006064 #f8f9fa;
+}
+
+/* Стилі для карток питань з горизонтальною прокруткою */
+#questionsModal .question-card:nth-child(12) .card-back {
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #800000 #f0f0f0;
+    white-space: nowrap;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: left;
+    padding: 10px 15px;
+}
+
+#questionsModal .question-card:nth-child(12) .card-back::-webkit-scrollbar {
+    height: 6px;
+}
+
+#questionsModal .question-card:nth-child(12) .card-back::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 3px;
+}
+
+#questionsModal .question-card:nth-child(12) .card-back::-webkit-scrollbar-thumb {
+    background: #800000;
+    border-radius: 3px;
+    border: 1px solid #f0f0f0;
+}
+
+#questionsModal .question-card:nth-child(12) .card-back::-webkit-scrollbar-thumb:hover {
+    background: #5f0000;
+}
+
+/* Плавна прокрутка для всіх модальних вікон */
+#theoryModal .modal-content,
+#questionsModal .modal-content,
+#trainerModal .modal-content,
+#videoModal .modal-content {
+    scroll-behavior: smooth;
+}
+
+/* Для мобільних пристроїв - трошки ширша прокрутка для зручності */
+@media (max-width: 768px) {
+    #theoryModal .modal-content::-webkit-scrollbar,
+    #questionsModal .modal-content::-webkit-scrollbar,
+    #trainerModal .modal-content::-webkit-scrollbar,
+    #videoModal .modal-content::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+    
+    #theoryModal details .modal-content p::-webkit-scrollbar {
+        height: 8px;
+    }
+    
+    #questionsModal .question-card:nth-child(12) .card-back::-webkit-scrollbar {
+        height: 8px;
+    }
+}
+
+/* Анімація при появі прокрутки */
+@keyframes scrollbarAppear {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+#theoryModal .modal-content::-webkit-scrollbar-thumb,
+#questionsModal .modal-content::-webkit-scrollbar-thumb,
+#trainerModal .modal-content::-webkit-scrollbar-thumb,
+#videoModal .modal-content::-webkit-scrollbar-thumb {
+    animation: scrollbarAppear 0.3s ease-out;
+}
     </style>
 </head>
 <body>
@@ -1196,6 +1342,55 @@ mjx-container.math-notation-centered * {
         const closeVideoBtn = document.getElementById('closeVideoBtn');
         const closeQuestionsBtn = document.getElementById('closeQuestionsBtn');
         const closeTrainerBtn = document.getElementById('closeTrainerBtn');
+
+        // Додайте цей код в секцію JavaScript після всіх обробників подій
+
+// Покращення прокрутки для модальних вікон
+function enhanceModalScrolling() {
+    const modals = [theoryModal, questionsModal, trainerModal, videoModal];
+    
+    modals.forEach(modal => {
+        if (!modal) return;
+        
+        const content = modal.querySelector('.modal-content');
+        if (!content) return;
+        
+        // Додаємо клас при наведенні для кращої видимості прокрутки
+        content.addEventListener('mouseenter', () => {
+            content.style.scrollbarWidth = 'thin';
+        });
+        
+        // Плавна прокрутка до початку при відкритті
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal || e.target.classList.contains('close-btn')) {
+                setTimeout(() => {
+                    content.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+                }, 100);
+            }
+        });
+    });
+}
+
+// Ініціалізація покращеної прокрутки при завантаженні
+window.addEventListener('load', enhanceModalScrolling);
+
+// Також додаємо для карток питань
+document.querySelectorAll('.question-card').forEach(card => {
+    const cardBack = card.querySelector('.card-back');
+    if (cardBack && cardBack.scrollWidth > cardBack.clientWidth) {
+        // Якщо контент ширший за контейнер, додаємо індикатор прокрутки
+        cardBack.style.position = 'relative';
+        
+        // Додаємо градієнт на краях для індикації прокрутки
+        cardBack.style.background = `
+            linear-gradient(to right, #006064 0%, #006064 95%, transparent 100%),
+            linear-gradient(to left, #006064 0%, #006064 95%, transparent 100%)
+        `;
+        cardBack.style.backgroundSize = '50px 100%, 50px 100%';
+        cardBack.style.backgroundRepeat = 'no-repeat';
+        cardBack.style.backgroundPosition = 'left center, right center';
+    }
+});
 
         // ---------- ДОПОМІЖНІ ФУНКЦІЇ ----------
         function shuffleArray(array) {
@@ -1682,3 +1877,4 @@ q3: function() {
     </script>
 </body>
 </html>
+
