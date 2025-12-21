@@ -1682,6 +1682,30 @@ document.querySelectorAll('.question-card').forEach(card => {
         }
         return str;
     }
+        function formatComplexNumberBIplusA(a, b) {
+    let str = '';
+    
+    if (b !== 0) {
+        if (b === 1) str += 'i';
+        else if (b === -1) str += '-i';
+        else str += b + 'i';
+        
+        if (a > 0) str += '+';
+    }
+    
+    if (a !== 0) {
+        str += a;
+    }
+    
+    if (str === '') str = '0';
+    if (a === 0 && b !== 0) {
+        if (b === 1) str = 'i';
+        else if (b === -1) str = '-i';
+        else str = b + 'i';
+    }
+    
+    return str;
+}
 
     // ---------- ГЕНЕРАЦІЯ ПИТАНЬ ----------
     const questionGenerators = {
@@ -1758,33 +1782,34 @@ document.querySelectorAll('.question-card').forEach(card => {
             };
         },
         
-        // Питання 3: Визначення частин для чисел виду a+bi або bi
-        q3: function() {
-            const types = ['only-imaginary', 'mixed'];
-            const type = types[Math.floor(Math.random() * types.length)];
-            
-            let a, b;
-            if (type === 'only-imaginary') {
-                a = 0;
-                b = getRandomIntExcluding(-5, 5, [0, 1, -1]);
-            } else {
-                do {
-                    a = getRandomIntExcluding(-5, 5, [0]);
-                    b = getRandomIntExcluding(-5, 5, [0]);
-                } while (a === 0 || b === 0);
-            }
-            
-            const number = formatComplexNumber(a, b);
-            
-            return {
-                text: `У комплексному числі \\( z = ${number} \\) вкажіть:`,
-                inputs: [
-                    { label: '\\( \\text{Re } z = \\)', correct: a.toString() },
-                    { label: '\\( \\text{Im } z = \\)', correct: b.toString() }
-                ],
-                type: 'double-input'
-            };
-        },
+       // Питання 3: Визначення частин для чисел виду a+bi або bi
+q3: function() {
+    const types = ['only-imaginary', 'mixed'];
+    const type = types[Math.floor(Math.random() * types.length)];
+    
+    let a, b;
+    if (type === 'only-imaginary') {
+        a = 0;
+        b = getRandomIntExcluding(-5, 5, [0, 1, -1]);
+    } else {
+        do {
+            a = getRandomIntExcluding(-5, 5, [0]);
+            b = getRandomIntExcluding(-5, 5, [0]);
+        } while (a === 0 || b === 0);
+    }
+    
+    // ЗМІНИ ТУТ: використовуємо спеціальну функцію для форматування bi+a
+    const number = formatComplexNumberBIplusA(a, b);
+    
+    return {
+        text: `У комплексному числі \\( z = ${number} \\) вкажіть:`,
+        inputs: [
+            { label: '\\( \\text{Re } z = \\)', correct: a.toString() },
+            { label: '\\( \\text{Im } z = \\)', correct: b.toString() }
+        ],
+        type: 'double-input'
+    };
+},
         
         // Питання 4: Протилежне число
         q4: function() {
@@ -2273,5 +2298,6 @@ q7: function() {
 </script>
 </body>
 </html>
+
 
 
