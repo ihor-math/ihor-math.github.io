@@ -769,7 +769,7 @@ button:disabled {
             }
             button {
                 padding: 3vw 5vw;
-                font-size: clamp(12px, 3vw, 14px);
+                font-size: clamp(14px, 3vw, 16px);
             }
             .feedback {
         font-size: clamp(24px, 5.8vw, 32px); /* Збільшений шрифт */
@@ -1199,6 +1199,46 @@ button:disabled {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+  @media (max-width: 480px) {
+    .reset-btn {
+        padding: 12px 24px;
+        font-size: 16px;
+        min-width: 160px;
+        border-radius: 40px;
+    }
+    
+    .reset-btn::before {
+        font-size: 20px;
+    }
+    .completion-message h2 {
+  
+  font-size: 22px;
+  
+}
+
+.completion-message p {
+ 
+  font-size: 15px;
+  
+}
+
+}
+
+/* Анімація для кнопки */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.reset-btn {
+    animation: pulse 2s infinite;
+}
+
+.reset-btn:hover {
+    animation: none;
+}
     </style>
 </head>
 <body>
@@ -1232,7 +1272,7 @@ button:disabled {
             </svg>
             До теми 1
         </a>
-        <a class="nav-button" href='index.html'>
+       <a class="nav-button" href='index.html'>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                 <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
             </svg>
