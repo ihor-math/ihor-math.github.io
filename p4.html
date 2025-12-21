@@ -1000,7 +1000,7 @@ body.loaded {
             }
             button {
                 padding: 3vw 5vw;
-                font-size: clamp(12px, 3vw, 14px);
+                font-size: clamp(14px, 3vw, 15px);
             }
             .feedback {
                 font-size: clamp(24px, 5.8vw, 32px);
@@ -1233,10 +1233,11 @@ body.loaded {
                 max-width: 95%;
             }
             .feedback {
-                font-size: clamp(22px, 5.2vw, 28px);
+                font-size: clamp(22px, 5.2vw, 24px);
                 padding: clamp(10px, 3vw, 15px) clamp(15px, 4.5vw, 20px);
                 max-width: 95vw;
             }
+           
             .completion-message {
                 padding: clamp(10px, 3vw, 15px);
             }
@@ -1343,8 +1344,8 @@ body.loaded {
         font-size: inherit !important; /* Спадкування розміру шрифту від батьківського елемента */
     }
      #complexPlaneCanvas {
-        width: 150px;
-        height: 150px;
+        width: 200px;
+        height: 200px;
     }
       #trainerModal .option {
         font-size: clamp(16px, 2.8vw, 18px); /* Збільшено шрифт для маленьких екранів */
@@ -1507,7 +1508,7 @@ body.loaded {
 
 #trainerModal .math-notation-centered {
     color: #1a1a1a !important;
-    font-weight: 600;
+    font-weight: 400;
     font-size: clamp(18px, 3vw, 20px);
 }
 
@@ -1592,6 +1593,55 @@ body.loaded {
     box-shadow: 0 6px 20px rgba(107, 72, 255, 0.6);
 }
 
+    @media (max-width: 768px) {
+    /* Для варіантів відповідей у тренажері на мобільних */
+    #trainerModal .option {
+        padding: 3vw 4vw;
+        font-size: clamp(14px, 2.5vw, 16px);
+        min-width: 90%;
+        max-width: 95%;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        white-space: normal !important;
+        line-height: 1.3;
+    }
+    
+    /* Спеціально для формул MathJax у варіантах відповідей */
+    #trainerModal .option mjx-container {
+        font-size: 15px !important;
+        display: inline !important;
+        max-width: 100% !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+    }
+    
+    /* Для полотна на мобільних */
+    #complexPlaneCanvas {
+        width: 230px;
+        height: 230px;
+        max-width: 95%;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Для дуже малих екранів */
+    #trainerModal .option {
+        padding: 3.5vw 4.5vw;
+        font-size: clamp(13px, 2.4vw, 14px);
+        min-width: 95%;
+        max-width: 98%;
+    }
+    
+    #trainerModal .option mjx-container {
+        font-size: 14px !important;
+    }
+    
+    #complexPlaneCanvas {
+        width: 200px;
+        height: 200px;
+    }
+}
+
     </style>
 </head> 
 <body>
@@ -1623,7 +1673,7 @@ body.loaded {
     </div>
 
     <div class="navigation-buttons">
-       <a class="nav-button" href='tema1.html'>
+                <a class="nav-button" href='tema1.html'>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                 <path d="M15 18l-6-6 6-6"/>
             </svg>
@@ -2165,7 +2215,7 @@ document.addEventListener('DOMContentLoaded', function () {
             correct: correctAnswer,
             point: { x: a, y: b }
         };
-    } else if (groupIndex === 3) {
+     } else if (groupIndex === 3) {
         // Питання про суму z1 + z2
         const c = getRandomInt(-3, 3);
         const d = getRandomInt(-3, 3);
@@ -2619,5 +2669,3 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
                 
-
-
