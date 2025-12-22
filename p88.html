@@ -1,0 +1,3227 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>88-89. Первісна. Невизначений інтеграл</title>
+    <script>
+window.MathJax = {
+    tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true,
+        packages: {'[+]': ['noerrors']},
+        macros: {
+            tg: ['\\operatorname{tg}', 0],
+            ctg: ['\\operatorname{ctg}', 0],
+            arctg: ['\\operatorname{arctg}', 0],
+            arcctg: ['\\operatorname{arcctg}', 0]
+        }
+    },
+    options: {
+        ignoreHtmlClass: "tex2jax_ignore|no-mathjax",
+        processHtmlClass: "tex2jax_process",
+        renderActions: {
+            find_script_mathtex: [10, () => {}, false]
+        }
+    },
+    loader: {load: ['[tex]/noerrors']},
+    startup: {
+        ready: () => {
+            // Стандартна функція готовності MathJax
+            MathJax.startup.defaultReady();
+            // Після готовності — рендеримо всю сторінку
+            MathJax.typesetPromise().then(() => {
+                document.body.classList.add('loaded'); // Тільки тепер показуємо сторінку
+            });
+        }
+    }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+<style>
+    *, *:before, *:after { box-sizing: border-box; }
+    body {
+        margin: 0;
+        background: radial-gradient(circle at center, #0a0a0a 0%, #1a1a1a 40%, #2b2b2b 100%);
+        color: #e0e0e0;
+        font-family: 'Roboto Condensed', sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }
+    body.loaded { visibility: visible; opacity: 1; }
+
+    .title-box {
+        margin-top: 60px;
+        padding: 20px 40px;
+        background: linear-gradient(135deg, #1a2a3a, #2a3a4a);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+        border-radius: 16px;
+        text-align: center;
+        border: 1px solid #2f5f8b;
+    }
+    .title-box h1 {
+        margin: 0;
+        font-size: 28px;
+        color: #5cb8f0;
+        font-family: 'Orbitron', sans-serif;
+        text-shadow: 0 0 8px rgba(92,184,240,0.5);
+    }
+
+    .section-container {
+        margin-top: 40px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 25px;
+    }
+    .section {
+        width: 260px;
+        height: 200px;
+        background: linear-gradient(145deg, #2a2a2a, #353545);
+        border-radius: 14px;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.45);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 15px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+        border: 1px solid rgba(92,184,240,0.15);
+    }
+    .section:hover {
+        transform: scale(1.06);
+        box-shadow: 0 10px 25px rgba(92,184,240,0.25);
+    }
+    .section h2 { font-size: 20px; color: #ffffff; font-family: 'Orbitron', sans-serif; }
+    .section img { width: 60px; height: 60px; margin-bottom: 15px; filter: brightness(1.3) drop-shadow(0 0 6px #5cb8f0); }
+
+    .modal {
+        display: none;
+        position: fixed;
+        top: 5%; left: 5%; width: 90%; height: 90%;
+        background: linear-gradient(135deg, #2a2a2a, #3a454a);
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        z-index: 1001;
+        overflow: hidden;
+        flex-direction: column;
+        border: 1px solid rgba(92,184,240,0.2);
+    }
+    #modalOverlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.85);
+        z-index: 999;
+        backdrop-filter: blur(6px);
+    }
+    .modal-content {
+        padding: 20px;
+        flex-grow: 1;
+        overflow-y: auto;
+        color: #e0e0e0;
+        width: 100%;
+    }
+    .modal-header {
+        background: linear-gradient(0deg, #2a2a2a, #3a454a);
+        padding: 8px 12px;
+        display: flex;
+        justify-content: flex-end;
+        width: 100%;
+        position: sticky;
+        top: 0;
+        z-index: 1002;
+        border-bottom: 1px solid rgba(92,184,240,0.2);
+    }
+    .close-btn {
+        background: linear-gradient(135deg, #2f5f8b, #5cb8f0);
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 6px 16px;
+        font-size: 16px;
+        cursor: pointer;
+        font-family: 'Orbitron', sans-serif;
+        box-shadow: 0 2px 8px rgba(47,95,139,0.4);
+    }
+    .close-btn:hover { background: linear-gradient(135deg, #3b7fb0, #2f5f8b); transform: scale(1.05); }
+
+    .theory-content h2, .trainer-container h2 { 
+        color: #5cb8f0; 
+        text-shadow: 0 0 10px rgba(92,184,240,0.5); 
+        text-align: center; 
+        font-family: 'Orbitron', sans-serif; 
+    }
+    .theory-content p, .theory-content li { 
+        font-size: clamp(18px, 3vw, 20px); 
+        line-height: 1.7; 
+        text-align: justify; 
+    }
+    .example {
+        background: rgba(92,184,240,0.1);
+        border-left: 4px solid #5cb8f0;
+        padding: 12px;
+        margin: 15px 0;
+        border-radius: 6px;
+        color: #a8e6f0;
+        font-weight: bold;
+        font-size: 22px;
+    }
+    .solution {
+        background: rgba(92,184,240,0.15);
+        border: 2px solid #5cb8f0;
+        padding: 12px;
+        margin: 15px 0;
+        border-radius: 6px;
+        text-align: center;
+        color: #5cb8f0;
+        font-weight: bold;
+    }
+    .math-notation-centered {
+        display: block;
+        text-align: center;
+        font-size: clamp(22px, 3.5vw, 24px);
+        margin: 20px 0;
+        color: #99ccff;
+    }
+    mjx-container { color: #99ccff !important; font-style: italic !important; }
+
+    .navigation-buttons { 
+        display: flex; 
+        justify-content: center; 
+        gap: 20px; 
+        margin: 40px 0; 
+    }
+    .nav-button {
+        display: flex; 
+        align-items: center; 
+        background: linear-gradient(135deg, #2a2a2a, #353545);
+        color: #e0e0e0; 
+        padding: 12px 24px; 
+        border-radius: 10px; 
+        text-decoration: none;
+        font-weight: bold; 
+        border: 1px solid rgba(92,184,240,0.3);
+        transition: all 0.3s ease;
+    }
+    .nav-button:hover { 
+        background: linear-gradient(135deg, #3b7fb0, #5cb8f0); 
+        color: #fff; 
+        transform: scale(1.05); 
+    }
+    .nav-button svg { margin-right: 8px; fill: currentColor; width: 20px; height: 20px; }
+
+    @media (max-width: 768px) {
+        .title-box { margin-top: 40px; }
+        .title-box h1 { font-size: 20px; }
+        .section h2 { font-size: 18px; }
+        .section-container { flex-direction: column; align-items: center; }
+        .section { width: 80%; height: 180px; }
+        .modal { top: 2%; left: 2%; width: 96%; height: 96%; }
+        .theory-content h2, .trainer-container h2 { font-size: 18px; }
+    }
+
+    /* Стилі скролбару */
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { 
+        background: rgba(92, 184, 240, 0.3); 
+        border-radius: 10px;
+        border: 2px solid transparent;
+        background-clip: content-box;
+        transition: all 0.3s ease;
+    }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(92, 184, 240, 0.7); }
+    ::-webkit-scrollbar-thumb:active { background: #5cb8f0; width: 12px; }
+    * { scrollbar-width: thin; scrollbar-color: rgba(92, 184, 240, 0.5) transparent; }
+
+    .formula-box {
+        background: rgba(92,184,240,0.1);
+        padding: 20px;
+        border-left: 4px solid #5cb8f0;
+        border-radius: 8px;
+        margin: 20px auto;
+        max-width: 700px;
+        text-align: center;
+    }
+
+    #videoList { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; padding: 20px; }
+    .video-card {
+        width: 300px;
+        height: 250px;
+        background: #2c2c2c;
+        border-radius: 16px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 15px;
+        gap: 15px;
+        cursor: pointer;
+        transition: 0.3s ease;
+    }
+    .video-card:hover {
+        background: #333;
+        transform: translateY(-4px);
+        box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+    }
+    .video-card .play-icon { width: 64px; height: 64px; }
+    .video-card h3 { color: #f0f0f0; font-size: 1rem; line-height: 1.3; }
+
+    /* Стилі флеш-карток */
+    .question-card {
+        perspective: 1000px;
+        margin: 25px auto;
+        max-width: 964px;
+        width: 100%;
+        min-height: 180px;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+    .question-card:hover { transform: translateY(-5px); }
+    .card-inner {
+        position: relative;
+        width: 100%;
+        min-height: 180px;
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        transform-style: preserve-3d;
+    }
+    .question-card.flipped .card-inner { transform: rotateY(180deg); }
+    .card-front, .card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 25px;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+        text-align: center;
+        border: 2px solid rgba(92,184,240,0.3);
+        transition: all 0.3s ease;
+    }
+    .card-front {
+        background: linear-gradient(135deg, #2a2a2a, #3a454a);
+        color: #ffffff;
+    }
+    .card-front:hover { border-color: rgba(92,184,240,0.6); box-shadow: 0 10px 30px rgba(92,184,240,0.2); }
+    .card-back {
+        background: linear-gradient(135deg, #2a2a2a, #3a454a);
+        color: #e0e0e0;
+        transform: rotateY(180deg);
+        padding: 25px;
+        border-color: rgba(92,184,240,0.5);
+    }
+    .card-back:hover { border-color: rgba(92,184,240,0.8); box-shadow: 0 10px 30px rgba(92,184,240,0.3); }
+    .card-front span, .card-back span { font-size: clamp(18px, 3vw, 20px); line-height: 1.6; font-weight: 500; }
+    .card-front span { color: #ffffff; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); }
+    .card-back span { color: #e0e0e0; width: 100%; }
+    .card-front::after { content: "❓"; position: absolute; bottom: 15px; right: 20px; font-size: 20px; opacity: 0.7; color: #5cb8f0; }
+    .card-back::after { content: "💡"; position: absolute; bottom: 15px; right: 20px; font-size: 20px; opacity: 0.7; color: #5cb8f0; }
+
+    /* Стилі тренажера */
+    .trainer-container {
+        width: 90%;
+        max-width: 800px;
+        margin: auto;
+        padding: 30px;
+        background: linear-gradient(135deg, #2a2a2a, #3a454a);
+        border-radius: 16px;
+        border: 1px solid rgba(92,184,240,0.2);
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+    }
+    .question-circle {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 25px;
+        background: linear-gradient(135deg, #2f5f8b, #5cb8f0);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 15px rgba(47,95,139,0.4);
+    }
+    .question-circle h3 { color: #fff; margin: 0; font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700; }
+    .options-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin: 30px 0;
+        padding: 0 15px;
+        justify-items: center;
+    }
+    .option {
+        width: 100%;
+        min-height: 80px;
+        padding: 20px 15px;
+        border: 3px solid #2f5f8b;
+        border-radius: 14px;
+        background: #2a2a2a;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.25s ease;
+        font-size: clamp(17px, 3vw, 19px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    .option * { pointer-events: none !important; }
+    .option { pointer-events: auto !important; }
+    .option:hover:not(.selected) {
+        background: rgba(92,184,240,0.2);
+        border-color: #5cb8f0;
+        transform: translateY(-4px);
+    }
+    .option.selected {
+        background: linear-gradient(135deg, #2f5f8b, #5cb8f0);
+        border-color: #5cb8f0;
+        color: white;
+        box-shadow: 0 0 20px rgba(92,184,240,0.6);
+        transform: scale(1.03);
+    }
+    .submit-btn {
+        background: linear-gradient(135deg, #2f5f8b, #5cb8f0);
+        color: #fff;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 25px;
+        font-family: 'Orbitron', sans-serif;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+    }
+    .submit-btn:hover:not(:disabled) { background: linear-gradient(135deg, #3b7fb0, #2f5f8b); transform: scale(1.05); box-shadow: 0 4px 15px rgba(47,95,139,0.4); }
+    .submit-btn:disabled { background: #666; cursor: not-allowed; opacity: 0.6; }
+    .feedback {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 30px;
+        padding: 20px 40px;
+        border-radius: 10px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 1002;
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    /* === МЕДАЛЬ З ТРИЗУБОМ === */
+    .completion-emoji {
+        position: relative;
+        display: inline-block;
+        width: clamp(56px, 12vw, 96px);
+        height: clamp(56px, 12vw, 96px);
+        vertical-align: middle;
+        margin: 0 auto 3vw;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #2a2a2a, #3a454a);
+        border: 3px dashed #ffd700;
+        box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+        overflow: hidden;
+        animation: medalAppear 0.8s ease-out;
+    }
+    .completion-emoji::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><filter id='s' x='-50%' y='-50%' width='200%' height='200%'><feDropShadow dx='0' dy='2' stdDeviation='2' flood-color='%23000000' flood-opacity='0.25'/></filter></defs><rect x='30' y='0' width='60' height='40' rx='4' fill='%23007ACC'/><rect x='30' y='20' width='60' height='20' rx='4' fill='%23FFD700'/><g transform='translate(60,70)'><polygon points='0,-26 6,-6 26,-6 9,6 15,26 0,14 -15,26 -9,6 -26,-6 -6,-6' fill='%23FFD700' filter='url(%23s)'/></g></svg>");
+       background-size: 75%;
+        background-repeat: no-repeat;
+        background-position: center 60%;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+        animation: medalBounce 1.2s ease-out 0.3s both;
+    }
+    @keyframes medalAppear {
+        0% { transform: scale(0.3) rotate(-180deg); opacity: 0; }
+        60% { transform: scale(1.1); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes medalBounce {
+        0% { transform: translateY(-120px) rotate(-30deg) scale(0.4); opacity: 0; }
+        60% { transform: translateY(15px) rotate(10deg) scale(1.15); opacity: 1; }
+        80% { transform: translateY(-8px) rotate(-5deg) scale(1.05); }
+        100% { transform: translateY(0) rotate(0) scale(1); }
+    }
+
+    .completion-message {
+        background: linear-gradient(145deg, #2a2a2a, #3a454a);
+        border: 2.5px solid #ffffff;
+        border-radius: 15px;
+        padding: clamp(12px, 3vw, 18px);
+        box-shadow: 0 6px 12px rgba(92,184,240,0.4);
+        margin: 2vw auto;
+        max-width: 90%;
+        text-align: center;
+    }
+    .completion-message h2 {
+        color: #ffffff;
+        text-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+    .completion-message p { color: #ffffff; }
+
+    #completionModal .modal-content {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px;
+    }
+    #completionModal .completion-message {
+        text-align: center;
+        max-width: 500px;
+    }
+    .reset-btn {
+        background: linear-gradient(135deg, #2f5f8b, #5cb8f0);
+        color: #fff;
+        padding: 15px 35px;
+        border: none;
+        border-radius: 25px;
+        font-family: 'Orbitron', sans-serif;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 700;
+        margin-top: 20px;
+        transition: all 0.3s ease;
+    }
+    .reset-btn:hover { background: linear-gradient(135deg, #3b7fb0, #2f5f8b); transform: scale(1.05); box-shadow: 0 4px 15px rgba(47,95,139,0.4); }
+
+    @media (max-width: 768px) {
+        .trainer-container { padding: 20px 15px; width: 95%; margin: 10px auto; }
+        .question-circle { width: 100px; height: 100px; margin: 0 auto 15px; }
+        .question-circle h3 { font-size: 16px; }
+        .options-container { gap: 10px; margin: 20px 0; }
+        .option { min-width: 100%; padding: 12px 15px; font-size: 16px; font-weight: 600; border-width: 3px; background: rgba(42,42,42,0.9); }
+        #questionText { font-size: 18px; margin: 10px 0; line-height: 1.3; }
+        .feedback { font-size: 20px; padding: 15px 25px; border-radius: 8px; text-shadow: 0 2px 4px rgba(0,0,0,0.7); }
+    }
+    #questionText { font-size: clamp(18px, 2.8vw, 20px); line-height: 1.4; margin: 15px 0; color: #99ccff; font-weight: 600; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+    mjx-container { font-size: 0.9em !important; color: #99ccff !important; font-style: italic !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+    .highlight { color: #5cb8f0; font-weight: bold; }
+    .pos { color: #7cff7c; font-weight: bold; }
+    .neg { color: #ff6b6b; font-weight: bold; }
+
+    .text-block p {
+        font-size: 18px;
+        line-height: 1.8;
+        margin: 18px 0;
+        text-align: justify;
+    }
+
+    .math-important {
+        background: rgba(92,184,240,0.1);
+        border: 2px solid #5cb8f0;
+        border-radius: 12px;
+        padding: 20px;
+        margin: 25px auto;
+        text-align: center;
+        font-size: 22px;
+        color: #99ccff;
+        font-weight: 500;
+    }
+
+    .math-big {
+        font-size: 20px;
+        color: #99ccff;
+        text-align: center;
+        margin: 20px 0;
+        padding: 15px;
+        background: rgba(92,184,240,0.15);
+        border-radius: 10px;
+    }
+
+   .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 22px;
+    margin: 30px 0;
+}
+
+/* АДАПТАЦІЯ ДЛЯ МОБІЛЬНИХ */
+/* ======================== */
+
+/* Планшети та невеликі екрани (≤1024px) */
+@media (max-width: 1024px) {
+    .grid-3 {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+        margin: 25px 0;
+    }
+}
+
+/* Планшети вертикально (≤768px) */
+@media (max-width: 768px) {
+    .grid-3 {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 18px;
+        margin: 22px 0;
+    }
+}
+
+/* Великі телефони (≤600px) - 2 колонки */
+@media (max-width: 600px) {
+    .grid-3 {
+        grid-template-columns: repeat(2, 1fr); /* Фіксовано 2 колонки */
+        gap: 16px;
+        margin: 20px 0;
+    }
+    
+    .card-deriv {
+        min-height: 280px; /* Збільшуємо висоту для кращого читання */
+    }
+}
+
+/* Середні телефони (≤480px) */
+@media (max-width: 480px) {
+    .grid-3 {
+        grid-template-columns: 1fr; /* Одна колонка */
+        gap: 15px;
+        margin: 18px 0;
+    }
+    
+    .card-deriv {
+        min-height: auto; /* Автоматична висота */
+        padding: 18px 15px !important;
+    }
+    
+    /* Для карток всередині .grid-3 */
+    .grid-3 .card-deriv h4 {
+        font-size: 1.1rem;
+        margin-bottom: 12px;
+    }
+    
+    .grid-3 .card-deriv p {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin: 10px 0;
+    }
+    
+    .grid-3 .card-deriv .math-big {
+        font-size: 1.0rem !important;
+        padding: 12px 8px !important;
+        margin: 15px 0 !important;
+    }
+}
+
+/* Маленькі телефони (≤360px) */
+@media (max-width: 360px) {
+    .grid-3 {
+        gap: 12px;
+        margin: 15px 0;
+    }
+    
+    .card-deriv {
+        padding: 15px 12px !important;
+        border-radius: 10px;
+    }
+    
+    .grid-3 .card-deriv h4 {
+        font-size: 1rem;
+    }
+    
+    .grid-3 .card-deriv p {
+        font-size: 0.9rem;
+    }
+}
+
+/* Особливості для мобільних */
+@media (max-width: 768px) {
+    .card-deriv {
+        text-align: center;
+    }
+    
+    /* Вирівнювання списків ліворуч на мобільних */
+    .grid-3 .card-deriv ul {
+        text-align: left;
+        padding-left: 20px;
+        margin: 10px 0;
+    }
+    
+    .grid-3 .card-deriv li {
+        margin: 8px 0;
+        font-size: 0.95rem;
+    }
+    
+    /* Покращуємо читабельність формул */
+    .grid-3 .math-big mjx-container {
+        font-size: 0.9em !important;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+    
+    /* Для дуже довгих формул додаємо горизонтальний скрол */
+    .grid-3 .card-deriv {
+        overflow: hidden;
+    }
+    
+    .grid-3 .math-big {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 5px;
+    }
+}
+
+/* Вертикальна орієнтація (портрет) */
+@media (max-width: 480px) and (orientation: portrait) {
+    .grid-3 {
+        margin: 20px -10px; /* Зменшуємо зовнішні відступи */
+    }
+    
+    .card-deriv {
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+}
+
+/* Горизонтальна орієнтація (ландшафт) */
+@media (max-width: 768px) and (orientation: landscape) {
+    .grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+    
+    .card-deriv {
+        min-height: 300px;
+    }
+}
+
+/* Додаткові покращення для доступності */
+@media (max-width: 768px) {
+    /* Збільшуємо області кліку для дотиків */
+    .card-deriv {
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+    
+    /* Краща читабельність тексту */
+    .grid-3 * {
+        -webkit-text-size-adjust: 100%; /* Запобігає авто-масштабуванню тексту */
+    }
+    
+    /* Оптимізація для швидкого рендерингу */
+    .grid-3 {
+        will-change: transform;
+        transform: translateZ(0);
+    }
+}
+
+    .card-deriv {
+        background: linear-gradient(135deg, #2a2a2a, #3a454a);
+        padding: 22px;
+        border-radius: 14px;
+        border: 1px solid rgba(92,184,240,0.4);
+        text-align: center;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    }
+
+    .section-title {
+        color: #5cb8f0;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 22px;
+        text-align: center;
+        margin: 35px 0 20px;
+        text-shadow: 0 0 10px rgba(92,184,240,0.4);
+    }
+
+    .bullet-blue li {
+        font-size: 18.5px;
+        margin: 12px 0;
+        padding-left: 8px;
+    }
+
+    .bullet-blue li::marker { color: #5cb8f0; font-size: 22px; }
+
+    .algo-box {
+        background: rgba(92,184,240,0.12);
+        border: 2px dashed #5cb8f0;
+        border-radius: 14px;
+        padding: 25px;
+        margin: 30px 0;
+    }
+
+    .algo-list {
+        padding-left: 20px;
+        counter-reset: num;
+    }
+
+    .algo-list li {
+        position: relative;
+        padding-left: 45px;
+        margin: 20px 0;
+        font-size: 18.5px;
+        line-height: 1.7;
+    }
+
+    .algo-list li::before {
+        counter-increment: num;
+        content: counter(num) ")";
+        position: absolute;
+        left: 0;
+        color: #5cb8f0;
+        font-weight: bold;
+        font-size: 22px;
+        font-family: 'Orbitron', sans-serif;
+    }
+
+    .final-answer {
+        background: linear-gradient(135deg, #2f5f8b, #3b7fb0);
+        color: white;
+        padding: 22px;
+        border-radius: 12px;
+        text-align: center;
+        font-size: 21px;
+        font-weight: bold;
+        margin-top: 30px;
+        box-shadow: 0 6px 20px rgba(92,184,240,0.5);
+    }
+    .example-full {
+        background: rgba(92,184,240,0.08);
+        border: 2px solid rgba(92,184,240,0.3);
+        border-radius: 16px;
+        padding: 28px;
+        margin: 35px 0;
+        font-size: 18px;
+        line-height: 1.85;
+        text-align: justify;
+    }
+
+    .example-header-classic {
+        font-size: 20px;
+        font-weight: bold;
+        color: white;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px dashed rgba(92,184,240,0.4);
+        text-align: center;
+    }
+
+    .example-label {
+        color: #5cb8f0;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 20px;
+        padding: 6px 16px;
+        background: rgba(92,184,240,0.15);
+        border-radius: 8px;
+        margin-right: 12px;
+    }
+
+    .example-function {
+        color: #99ccff;
+        font-size: 20px;
+        font-style: italic;
+        margin: 0 8px;
+    }
+
+    .example-solution-text p {
+        margin: 18px 0;
+    }
+
+    .math-centered {
+        text-align: center;
+        font-size: 22px;
+        color: #99ccff;
+        background: rgba(92,184,240,0.15);
+        padding: 14px;
+        border-radius: 10px;
+        margin: 20px auto;
+        max-width: 90%;
+        border: 1px dashed rgba(92,184,240,0.4);
+    }
+
+    .marker {
+        color: #5cb8f0;
+        font-weight: bold;
+        font-size: 22px;
+        margin-right: 8px;
+    }
+
+    .end-marker {
+        color: #5cb8f0;
+        font-weight: bold;
+        font-size: 22px;
+        margin-left: 10px;
+    }
+
+    .example-answer {
+        background: linear-gradient(135deg, #2f5f8b, #3b7fb0);
+        color: white;
+        padding: 20px;
+        border-radius: 12px;
+        text-align: center;
+        font-size: 21px;
+        font-weight: bold;
+        margin-top: 30px;
+        box-shadow: 0 6px 20px rgba(92,184,240,0.5);
+    }
+    /* ============================================= */
+    /*        АДАПТИВНІСТЬ ДЛЯ МОБІЛЬНИХ (≤768px)     */
+    /* ============================================= */
+    @media (max-width: 768px) {
+
+        /* Загальні розміри тексту */
+        .theory-content p,
+        .example-full,
+        .example-solution-text p {
+            font-size: 18px !important;
+            line-height: 1.75 !important;
+        }
+
+        /* Заголовки */
+        .section-title,
+        .example-header-classic,
+        .example-label {
+            font-size: 19px !important;
+        }
+
+        .example-label {
+            display: inline-block;
+            padding: 6px 14px !important;
+            margin-bottom: 10px;
+        }
+
+        /* Формули по центру (з нового рядка) */
+        .math-centered,
+        .math-important {
+            font-size: 19px !important;
+            padding: 14px 10px !important;
+            margin: 18px auto !important;
+        }
+
+        .math-big {
+            font-size: 19px !important;
+            padding: 14px !important;
+        }
+
+        /* Функція в умові прикладу */
+        .example-function {
+            font-size: 19px !important;
+            display: block;
+            margin: 12px auto !important;
+            text-align: center;
+        }
+
+        /* Квадратики-маркери */
+        .marker, .end-marker {
+            font-size: 19px !important;
+        }
+
+        /* Карточки похідної (зростає/спадає/стала) */
+        .grid-3 {
+            grid-template-columns: 1fr !important;   /* одна колонка */
+            gap: 18px;
+        }
+
+        .card-deriv {
+            padding: 18px !important;
+        }
+
+        /* Алгоритм */
+        .algo-box {
+            padding: 20px !important;
+        }
+
+        .algo-list li {
+            font-size: 17px !important;
+            padding-left: 38px !important;
+        }
+
+        .algo-list li::before {
+            font-size: 19px !important;
+        }
+
+        /* Відповідь */
+        .final-answer,
+        .example-answer {
+            font-size: 19px !important;
+            padding: 18px !important;
+        }
+
+        .example-full {
+            padding: 20px !important;
+            margin: 25px 0 !important;
+        }
+
+        /* Зменшуємо відступи */
+        .example-header-classic {
+            padding-bottom: 12px !important;
+            margin-bottom: 20px !important;
+        }
+    }
+    .video-modal-title {
+        text-align: center;
+        margin: 20px 0 30px;
+        padding: 20px;
+    }
+
+    .video-modal-title h2 {
+        font-size: 2.2rem;
+        color: #5cb8f0;
+        margin: 0 0 10px 0;
+        font-weight: 600;
+    }
+
+    /* Дуже маленькі екрани (≤480px) – ще компактніше */
+    @media (max-width: 480px) {
+
+        .theory-content p,
+        .example-full,
+        .example-solution-text p {
+            font-size: 18px !important;
+            line-height: 1.5 !important;
+        }
+.section-title,
+        .example-header-classic,
+        .example-label {
+            font-size: 18px !important;
+        }
+
+        .example-label {
+            display: inline-block;
+            padding: 6px 14px !important;
+            margin-bottom: 10px;
+        }
+        .math-centered,
+        .math-important {
+            font-size: 18px !important;
+            padding: 12px 8px !important;
+        }
+
+        .example-function {
+            font-size: 18px !important;
+        }
+
+        .example-label {
+            font-size: 16px !important;
+            padding: 5px 12px !important;
+        }
+
+        .section-title {
+            font-size: 18px !important;
+        }
+
+        .final-answer,
+        .example-answer {
+            font-size: 18px !important;
+            padding: 16px !important;
+        }
+
+        .marker, .end-marker {
+            font-size: 18px !important;
+        }
+        .video-modal-title h2 {
+            font-size: 1.5rem;
+        }
+    }
+
+    /* Опціонально — тонка лінія під заголовком */
+    .video-modal-title::after {
+        content: '';
+        display: block;
+        width: 80px;
+        height: 4px;
+        background: #5cb8f0;
+        margin: 20px auto 0;
+        border-radius: 2px;
+    }
+    /* На мобілці — одна колонка */
+    @media (max-width: 768px) {
+        .options-container {
+            grid-template-columns: 1fr;        /* одна колонка */
+            gap: 15px;
+            padding: 0 8px;
+        }
+        .option {
+            min-height: 80px;
+            padding: 18px 12px;
+            font-size: 18px;
+        }
+    }
+
+        /* СТИЛІ ДЛЯ SUMMARY/DETAILS У ВІЙСЬКОВІЙ ТЕМАТИЦІ */
+/* ==================== */
+details {
+    margin: 25px 0;
+    background: linear-gradient(135deg, rgba(42, 42, 42, 0.8), rgba(58, 72, 74, 0.9));
+    border-radius: 12px;
+    border: 1px solid rgba(92, 184, 240, 0.2);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+details:hover {
+    border-color: rgba(92, 184, 240, 0.4);
+    box-shadow: 0 8px 24px rgba(47, 95, 139, 0.25);
+}
+
+summary {
+    font-weight: 700;
+    padding: 18px 24px;
+    background: linear-gradient(135deg, #2f5f8b, #3b7fb0);
+    border-radius: 10px 10px 0 0;
+    color: #ffffff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.15rem;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(47, 95, 139, 0.3);
+    cursor: pointer;
+    list-style: none;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+summary::-webkit-details-marker {
+    display: none;
+}
+
+summary::after {
+    content: "▼";
+    font-size: 0.9rem;
+    transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    color: #a8e6f0;
+    margin-left: 10px;
+    font-weight: bold;
+}
+
+details[open] summary::after {
+    transform: rotate(180deg);
+    color: #5cb8f0;
+}
+
+details[open] summary {
+    background: linear-gradient(135deg, #3b7fb0, #2f5f8b);
+    border-radius: 10px 10px 0 0;
+    box-shadow: 0 4px 15px rgba(92, 184, 240, 0.3);
+}
+
+/* Контент всередині details */
+details .details-content {
+    padding: 24px;
+    color: #e0e0e0;
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    background: rgba(42, 42, 42, 0.7);
+    border-radius: 0 0 10px 10px;
+    animation: fadeIn 0.4s ease-out;
+    border-top: 1px solid rgba(92, 184, 240, 0.15);
+}
+
+details .details-content p {
+    margin: 16px 0;
+    text-align: justify;
+}
+
+details .details-content ul,
+details .details-content ol {
+    margin: 16px 0;
+    padding-left: 24px;
+}
+
+details .details-content li {
+    margin: 10px 0;
+    padding-left: 8px;
+    position: relative;
+}
+
+details .details-content li::before {
+    content: "•";
+    color: #5cb8f0;
+    font-weight: bold;
+    position: absolute;
+    left: -15px;
+}
+
+details .details-content strong {
+    color: #a8e6f0;
+    font-weight: 700;
+}
+
+details .details-content em {
+    color: #99ccff;
+    font-style: italic;
+}
+
+details .details-content .math-important {
+    background: rgba(92, 184, 240, 0.15);
+    border: 2px solid #5cb8f0;
+    border-radius: 10px;
+    padding: 18px;
+    margin: 20px auto;
+    text-align: center;
+    font-size: 1.1rem;
+    color: #99ccff;
+    font-family: 'MathJax_Math', 'Cambria Math', serif;
+}
+
+details .details-content .example {
+    background: rgba(47, 95, 139, 0.2);
+    border-left: 4px solid #5cb8f0;
+    padding: 16px;
+    margin: 20px 0;
+    border-radius: 8px;
+}
+
+details .details-content .highlight {
+    background: rgba(92, 184, 240, 0.2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #ffffff;
+}
+
+/* Стилі для таблиць всередині details */
+details .details-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    border: 1px solid rgba(92, 184, 240, 0.3);
+}
+
+details .details-content th {
+    background: rgba(47, 95, 139, 0.5);
+    color: #ffffff;
+    padding: 12px;
+    text-align: center;
+    font-family: 'Orbitron', sans-serif;
+    border-bottom: 2px solid #5cb8f0;
+}
+
+details .details-content td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid rgba(92, 184, 240, 0.2);
+}
+
+details .details-content tr:nth-child(even) {
+    background: rgba(47, 95, 139, 0.1);
+}
+
+/* Анімація відкриття */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Альтернативний стиль для summary - з іконкою щита */
+details.military summary::before {
+    content: "🛡️";
+    margin-right: 10px;
+    font-size: 1.1rem;
+}
+
+/* Стиль для попередження/уваги */
+details.warning summary {
+    background: linear-gradient(135deg, #2f5f8b, #3b7fb0);
+    box-shadow: 0 4px 12px rgba(47, 95, 139, 0.3);
+}
+
+details.warning .details-content {
+    background: rgba(47, 95, 139, 0.1);
+    border-left: 4px solid #2f5f8b;
+}
+
+/* Стиль для важливої інформації */
+details.important summary {
+    background: linear-gradient(135deg, #2f5f8b, #3b7fb0);
+    box-shadow: 0 4px 12px rgba(47, 95, 139, 0.3);
+}
+
+details.important .details-content {
+    background: rgba(47, 95, 139, 0.1);
+    border-left: 4px solid #2f5f8b;
+}
+
+/* ==================== */
+/* АДАПТИВНІСТЬ */
+/* ==================== */
+@media (max-width: 768px) {
+    details {
+        margin: 20px 0;
+        border-radius: 10px;
+    }
+    
+    summary {
+        padding: 16px 20px;
+        font-size: 1.05rem;
+    }
+    
+    details .details-content {
+        padding: 20px;
+        font-size: 1rem;
+    }
+    
+    summary::after {
+        font-size: 0.8rem;
+    }
+    
+    details .details-content ul,
+    details .details-content ol {
+        padding-left: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    details {
+        margin: 18px 0;
+        border-radius: 8px;
+    }
+    
+    summary {
+        padding: 14px 18px;
+        font-size: 1rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    summary::after {
+        align-self: flex-end;
+        margin-top: -20px;
+    }
+    
+    details .details-content {
+        padding: 18px;
+        font-size: 0.95rem;
+    }
+    
+    details .details-content ul,
+    details .details-content ol {
+        padding-left: 18px;
+    }
+    
+    details.military summary::before {
+        font-size: 1rem;
+    }
+}
+    .attention-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.attention-title::after {
+    content: "";
+    display: block;
+    width: 120px;
+    height: 5px;
+    background: linear-gradient(90deg, #5cb8f0, #2f5f8b);
+    border-radius: 3px;
+    margin-top: 6px;
+}
+
+
+/* Стилі для блоку зауважень */
+.remarks-box {
+    background: linear-gradient(135deg, rgba(47, 95, 139, 0.2), rgba(92, 184, 240, 0.1));
+    border: 2px solid rgba(92, 184, 240, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 25px 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.remarks-title {
+    color: #5cb8f0;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    text-shadow: 0 0 8px rgba(92, 184, 240, 0.3);
+    border-bottom: 2px dashed rgba(92, 184, 240, 0.4);
+    padding-bottom: 8px;
+}
+
+.remarks-content p {
+    margin: 12px 0;
+    padding-left: 10px;
+    border-left: 3px solid rgba(92, 184, 240, 0.5);
+    padding-left: 15px;
+}
+
+.remarks-content strong {
+    color: #a8e6f0;
+    margin-right: 5px;
+}
+
+/* Адаптивність для мобільних */
+@media (max-width: 768px) {
+   
+    .remarks-box {
+        padding: 18px;
+        margin: 20px 0;
+    }
+    
+    .remarks-title {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+   
+    
+    .remarks-box {
+        padding: 15px;
+    }
+    
+    .remarks-title {
+        font-size: 1rem;
+    }
+}
+   /* ========= ТІЛЬКИ ЦЕНТРАЛЬНІ ВЕЛИКІ ФОРМУЛИ — горизонтальний скрол на мобілці ========= */
+@media (max-width: 768px) {
+    /* 1. Блоки, які містять відображувані формули ( \[ ... \] ) */
+    /* Правильний селектор для MathJax 3 */
+    mjx-container[jax="CHTML"][display="true"],
+    mjx-container[display="true"] {
+        display: block !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        padding-bottom: 12px;
+        margin: 20px 0;
+        scrollbar-width: thin;
+        scrollbar-color: #5cb8f0 #2a2a2a;
+        max-width: 100%;
+    }
+
+    /* 2. Твої власні класи центральних формул */
+    .math-centered,
+    .math-important,
+    .math-big,
+    .example-full .math-centered,
+    .final-answer,
+    .example-answer,
+    /* Додаємо для тренажера */
+    #questionText > div,
+    .trainer-container > div {
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        padding: 8px 0;
+        max-width: 100%;
+    }
+    
+    /* 3. Для всіх контейнерів MathJax у тренажері */
+    .trainer-container mjx-container[jax="CHTML"][display="true"],
+    #questionText mjx-container[jax="CHTML"][display="true"] {
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+
+    /* 4. Додай це правило для всіх mjx-container на мобільних */
+    mjx-container {
+        max-height: none !important;
+        height: auto !important;
+        overflow-y: hidden !important;
+        max-width: 100% !important;
+    }
+
+    /* 5. Гарний тонкий скролбар тільки для цих блоків */
+    mjx-container[jax="CHTML"][display="true"]::-webkit-scrollbar,
+    mjx-container[display="true"]::-webkit-scrollbar,
+    .math-centered::-webkit-scrollbar,
+    .math-important::-webkit-scrollbar,
+    #questionText > div::-webkit-scrollbar,
+    .trainer-container > div::-webkit-scrollbar {
+        height: 6px;
+    }
+    
+    mjx-container[jax="CHTML"][display="true"]::-webkit-scrollbar-thumb,
+    mjx-container[display="true"]::-webkit-scrollbar-thumb,
+    .math-centered::-webkit-scrollbar-thumb,
+    .math-important::-webkit-scrollbar-thumb,
+    #questionText > div::-webkit-scrollbar-thumb,
+    .trainer-container > div::-webkit-scrollbar-thumb {
+        background: rgba(92, 184, 240, 0.7);
+        border-radius: 3px;
+    }
+    
+    mjx-container[jax="CHTML"][display="true"]::-webkit-scrollbar-thumb:hover,
+    mjx-container[display="true"]::-webkit-scrollbar-thumb:hover,
+    .math-centered::-webkit-scrollbar-thumb:hover,
+    .math-important::-webkit-scrollbar-thumb:hover,
+    #questionText > div::-webkit-scrollbar-thumb:hover,
+    .trainer-container > div::-webkit-scrollbar-thumb:hover {
+        background: #5cb8f0;
+    }
+    
+    /* 6. Спеціально для питання у тренажері */
+    #questionText {
+        overflow-x: hidden !important; /* Забороняємо горизонтальний скрол всьому блоку */
+    }
+    
+    #questionText > div {
+        margin: 0 -10px;
+        padding: 0 10px;
+    }
+}
+   /* Стилі для кнопки в питанні 1 */
+#submitAnswer {
+    background: linear-gradient(135deg, #2f5f8b, #5cb8f0);
+    color: #fff;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 25px;
+    font-family: 'Orbitron', sans-serif;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#submitAnswer:hover:not(:disabled) { 
+    background: linear-gradient(135deg, #3b7fb0, #2f5f8b); 
+    transform: scale(1.05); 
+    box-shadow: 0 4px 15px rgba(47,95,139,0.4); 
+}
+
+#submitAnswer:disabled { 
+    background: #666; 
+    cursor: not-allowed; 
+    opacity: 0.6; 
+}
+
+/* Оновлюємо контейнер для кнопки в питанні 2 */
+.trainer-container {
+    width: 90%;
+    max-width: 800px;
+    margin: auto;
+    padding: 30px;
+    background: linear-gradient(135deg, #2a2a2a, #3a454a);
+    border-radius: 16px;
+    border: 1px solid rgba(92,184,240,0.2);
+    text-align: center; /* Додаємо центрування тексту */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+}
+
+/* Оновлюємо поля введення, щоб прибрати стрілки */
+.coordinate-input {
+    width: 80px;
+    height: 50px;
+    text-align: center;
+    font-size: 22px;
+    font-family: 'Orbitron', sans-serif;
+    background: rgba(92,184,240,0.1);
+    border: 2px solid #5cb8f0;
+    border-radius: 10px;
+    color: #99ccff;
+    outline: none;
+    transition: all 0.3s ease;
+    /* Прибираємо стрілки для всіх браузерів */
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.coordinate-input::-webkit-outer-spin-button,
+.coordinate-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.coordinate-input:focus {
+    border-color: #a8e6f0;
+    box-shadow: 0 0 15px rgba(92,184,240,0.6);
+    background: rgba(92,184,240,0.2);
+    transform: scale(1.05);
+}
+
+/* Кнопка для питання 2 */
+.check-answer-btn {
+    background: linear-gradient(135deg, #2f5f8b, #5cb8f0);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-family: 'Orbitron', sans-serif;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    margin: 20px auto 0 auto;
+    display: block;
+    min-width: 200px;
+}
+
+.check-answer-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #3b7fb0, #2f5f8b);
+    transform: scale(1.05);
+    box-shadow: 0 4px 20px rgba(47,95,139,0.5);
+}
+
+.check-answer-btn:disabled {
+    background: #666;
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Для мобільних пристроїв додаємо спеціальні налаштування */
+@media (max-width: 768px) {
+    .coordinate-input {
+        width: 70px;
+        height: 45px;
+        font-size: 20px;
+        /* Для мобільного введення чисел з мінусом */
+        inputmode: decimal;
+        -webkit-inputmode: decimal;
+    }
+    
+    #submitAnswer,
+    .check-answer-btn {
+        padding: 14px 25px;
+        font-size: 16px;
+        min-width: 180px;
+    }
+}
+
+    .task-note {
+    color: #ff6b6b !important;
+    font-style: italic !important;
+    font-size: 0.9em !important;
+    display: block !important;
+    margin-top: 10px !important;
+}
+    /* Тільки вбудовані формули */
+mjx-container:not([display="true"]) {
+    font-size: 0.9em !important; /* Збільшити на 15% */
+    color: #99ccff !important; /* Змінити колір */
+}
+
+    /* Просте глобальне збільшення */
+mjx-container {
+    font-size: 110% !important; /* Збільшує на 40% */
+}
+
+/* Центральні формули ще більше */
+mjx-container[jax="CHTML"][display="true"] {
+    font-size: 110% !important; /* Збільшує на 60% */
+}
+
+/* Для мобільних */
+@media (max-width: 768px) {
+    mjx-container {
+        font-size: 110% !important; /* На мобільних 30% */
+    }
+    
+    mjx-container[jax="CHTML"][display="true"] {
+        font-size: 110% !important; /* На мобільних 50% */
+    }
+}
+
+    /* МАКСИМАЛЬНО ПРОСТЕ ЗБІЛЬШЕННЯ ФОРМУЛ У ТЕКСТІ */
+mjx-container:not([display="true"]) {
+    font-size: 120% !important; /* Збільшує на 60% */
+    color: #99ccff !important; /* Білий колір */
+    font-weight: 500 !important; /* Трохи жирніше */
+}
+
+    @media (max-width: 768px) {
+    #questionText .formula, 
+    #questionText div[style*="font-size:1.2em"] {
+        font-size: 1em !important;
+    }
+    
+    .option span {
+        font-size: 0.9em !important;
+    }
+
+    #feedback {
+    font-size: 1.3em !important;
+    font-weight: bold !important;
+    padding: 15px !important;
+}
+}
+    .option {
+    cursor: pointer;
+    padding: 15px; /* Збільшити padding */
+    margin: 10px 0; /* Збільшити margin */
+    min-height: 60px; /* Мінімальна висота */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Для мобільних пристроїв */
+@media (max-width: 768px) {
+    .option {
+        padding: 20px 15px; /* Ще більше padding на мобільних */
+        margin: 12px 0;
+        min-height: 70px;
+        font-size: 0.95em; /* Трохи менший шрифт для більшої області */
+    }
+}
+</style>
+</head>
+<body>
+    <div class="title-box">
+        <h1>88. Первісна. 89. Невизначений інтеграл</h1>
+    </div>
+
+    <div class="section-container">
+        <div class="section" id="openTheoryBtn">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Теорія">
+            <h2>Теоретичні відомості</h2>
+        </div>
+        <div class="section" id="openVideoBtn">
+            <img src="https://img.icons8.com/fluency/96/video.png" alt="Відео">
+            <h2>Відеоматеріали</h2>
+        </div>
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Питання">
+            <h2>Питання і відповіді</h2>
+        </div>
+        <div class="section" id="openTrainerBtn">
+            <img src="https://img.icons8.com/fluency/96/flash-on.png" alt="Тренажер">
+            <h2>Тренажер</h2>
+        </div>
+    </div>
+
+    <div class="navigation-buttons">
+        <a class="nav-button prev" href="{{ url_for('tema15') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+            До теми 15
+        </a>
+        <a class="nav-button home" href="{{ url_for('home') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            На головну
+        </a>
+    </div>
+
+    <!-- ТЕОРІЯ — Первісна та невизначений інтеграл -->
+    <div id="theoryModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeTheoryBtn">× Закрити</button>
+        </div>
+        <div class="modal-content theory-content">
+
+<details class="warning">
+    <summary>88. Первісна</summary>
+    <div class="details-content">
+        <h2>88. Первісна</h2>
+<div class="text-block">
+    <p><strong>Первісна функції</strong> — це фундаментальне поняття інтегрального числення, яке є оберненим до операції диференціювання.</p>
+
+    <div class="math-important">
+        \[
+        F'(x) = f(x)
+        \]
+    </div>
+
+    <p><strong>Визначення:</strong> Функція \(F(x)\) називається <strong>первісною</strong> для функції \(f(x)\) на певному інтервалі, якщо для всіх \(x\) цього інтервалу виконується рівність:</p>
+
+    <div class="math-centered">
+        \[
+        F'(x) = f(x) \quad \text{(15.1)}
+        \]
+    </div>
+
+    <p>Це означає, що первісна є функцією, похідна якої дорівнює заданій функції. Знаходження первісної є оберненим процесом до диференціювання: якщо при диференціюванні шукаємо похідну функції, то при знаходженні первісної за відомою похідною визначаємо початкову функцію.</p>
+
+    <div class="example-full">
+        <div class="example-header-classic">
+            <span class="example-label">Наприклад:</span>
+            Для функції \(f(x) = x^4\) її первісною є функція 
+        </div>
+        <div class="example-solution-text">
+            <div class="math-centered">
+                \[
+                F(x) = \frac{x^5}{5}
+                \]
+            </div>
+            <p>адже</p>
+            <div class="math-centered">
+                \[
+                \left(\frac{x^5}{5}\right)' = \frac{1}{5} \cdot 5x^4 = x^4
+                \]
+            </div>
+        </div>
+    </div>
+
+    <h3 class="section-title">Основна властивість первісної</h3>
+
+    <p>Первісна функції не є єдиною. Якщо \(F(x)\) є первісною для \(f(x)\), то будь-яка функція виду</p>
+
+    <div class="math-centered">
+        \[
+        F(x) + C \quad \text{(15.2)}
+        \]
+    </div>
+
+    <p>також є первісною, де \(C\) – довільна стала. Це пояснюється тим, що похідна сталої дорівнює нулю:</p>
+
+    <div class="math-centered">
+        \[
+        (F(x) + C)' = F'(x) + 0 = f(x)
+        \]
+    </div>
+
+    <div class="example-full">
+        <div class="example-header-classic">
+            <span class="example-label">Наприклад:</span>
+            Для \(f(x) = x^4\) функції
+        </div>
+        <div class="example-solution-text">
+            <div class="math-centered">
+                \[
+                F_1(x) = \frac{x^5}{5}, \quad F_2(x) = \frac{x^5}{5} + 3, \quad F_3(x) = \frac{x^5}{5} - 7
+                \]
+            </div>
+            <p>є первісними, адже</p>
+            <div class="math-centered">
+                \[
+                \begin{aligned}
+                F_1'(x) &= \left(\frac{x^5}{5}\right)' = x^4 = f(x), \\
+                F_2'(x) &= \left(\frac{x^5}{5} + 3\right)' = x^4 + 0 = x^4 = f(x), \\
+                F_3'(x) &= \left(\frac{x^5}{5} - 7\right)' = x^4 - 0 = x^4 = f(x).
+                \end{aligned}
+                \]
+            </div>
+        </div>
+    </div>
+
+    <p>Таким чином, всі функції виду</p>
+
+    <div class="math-centered">
+        \[
+        F(x) = \frac{x^5}{5} + C
+        \]
+    </div>
+
+    <p>є первісними для \(f(x) = x^4\), що демонструє існування нескінченної множини первісних, які відрізняються лише на довільну константу \(C\).</p>
+</div>
+    </div>
+</details>
+
+<details class="warning">
+    <summary>89. Невизначений інтеграл</summary>
+    <div class="details-content">
+        <h2>89. Невизначений інтеграл</h2>
+<div class="text-block">
+    <p><strong>Невизначений інтеграл</strong> від функції \(f(x)\) – це вираз, який описує загальний вигляд множини всіх її первісних на певному інтервалі.</p>
+
+    <div class="math-important">
+        \[
+        \int f(x) \, dx = F(x) + C
+        \]
+    </div>
+
+    <p><strong>Визначення:</strong> Якщо \(F(x)\) є первісною для \(f(x)\) (тобто \(F'(x) = f(x)\)), то запис</p>
+
+    <div class="math-centered">
+        \[
+        \int f(x) \, dx = F(x) + C \quad \text{(15.3)}
+        \]
+    </div>
+
+    <p>називається <strong>невизначеним інтегралом</strong>, де:</p>
+
+    <div class="algo-box">
+        <ul>
+            <li>\(\int\) – знак невизначеного інтеграла</li>
+            <li>\(f(x)\) – підінтегральна функція</li>
+            <li>\(dx\) – диференціал, що вказує на змінну інтегрування</li>
+            <li>\(C\) – довільна стала (константа інтегрування)</li>
+        </ul>
+    </div>
+
+    <p>Операція знаходження невизначеного інтеграла називається <strong>інтегруванням</strong>.</p>
+
+    <h3 class="section-title">Геометричний зміст</h3>
+
+    <p>Геометрично невизначений інтеграл представляє сімейство паралельних інтегральних кривих \(y = F(x) + C\). Усі вони мають однакову похідну \(F'(x) = f(x)\) і відрізняються лише вертикальним зсувом на константу \(C\) (рис. 15.1).</p>
+            <img src="/static/figure15.1.jpg" alt="перв" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+                                                                          
+
+    <h3 class="section-title">Умови існування</h3>
+
+    <p>Невизначений інтеграл існує для будь-якої неперервної функції \(f(x)\) на заданому інтервалі.</p>
+
+    <div class="example-full">
+        <div class="example-header-classic">
+            <span class="example-label">Приклад 15.1.</span>
+            Знайти невизначений інтеграл \(\int \sin x \, dx\)
+        </div>
+        <div class="example-solution-text">
+            <p>
+                <strong>Розв'язання:</strong> Для знаходження первісної функції \(\sin x\) шукаємо функцію, похідна якої дорівнює \(\sin x\).
+            </p>
+            
+            <div class="math-centered">
+                \[
+                \int \sin x \, dx = -\cos x + C
+                \]
+            </div>
+            
+            <p><strong>Перевірка.</strong> Перевіримо правильність цієї формули, взявши похідну від правої частини:</p>
+            
+            <div class="math-centered">
+                \[
+                (-\cos x + C)' = -(\cos x)' + C' = -(-\sin x) + 0 = \sin x
+                \]
+            </div>
+            
+            <p>Таким чином, невизначений інтеграл дає множину всіх первісних функцій, що відрізняються лише на довільну константу \(C\).</p>
+            
+            <div class="example-answer">
+                <strong>Відповідь:</strong> \(\displaystyle \int \sin x \, dx = -\cos x + C\)
+                
+            </div>
+        </div>
+    </div>
+</div>
+    </div>
+</details>
+
+<details class="warning">
+    <summary>Поради та типові помилки</summary>
+    <div class="details-content">
+        <h3>📌 Практичні поради</h3>
+        
+        <div class="grid-3">
+            <div class="card-deriv">
+                <h4>1. Перевіряйте результат</h4>
+                <p>Після знаходження інтеграла обов'язково продиференціюйте результат. Повинна вийти початкова функція.</p>
+            </div>
+
+            <div class="card-deriv">
+                <h4>2. Не забувайте про \(C\)</h4>
+                <p>Константу інтегрування потрібно додавати завжди, навіть якщо вона дорівнює нулю.</p>
+            </div>
+
+            <div class="card-deriv">
+                <h4>3. Пам'ятайте про область визначення</h4>
+                <p>Перевіряйте, на якому інтервалі функція неперервна — там існує інтеграл.</p>
+            </div>
+        </div>
+
+        <h3>🚫 Типові помилки</h3>
+
+        <div class="remarks-box" style="background: linear-gradient(135deg, rgba(139, 0, 0, 0.2), rgba(255, 0, 0, 0.1)); border-color: rgba(255, 50, 50, 0.3);">
+            <h4 class="remarks-title" style="color: #ff6b6b;">❗ Тактичні промахи:</h4>
+            <div class="remarks-content">
+                <p><strong>1. Забувати константу інтегрування.</strong> Це найпоширеніша помилка.</p>
+                <p><strong>2. Неправильно перевіряти результат.</strong> Не диференціюють знайдений інтеграл.</p>
+                <p><strong>3. Плутати первісну та невизначений інтеграл.</strong> Первісна — одна функція, інтеграл — множина всіх.</p>
+                <p><strong>4. Не враховувати область визначення.</strong> Інтегрують функції в точках розриву.</p>
+            </div>
+        </div>
+    </div>
+</details>
+                                                   </div>
+            
+    </div>
+
+    <!-- ВІДЕО -->
+    <div id="videoModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-modal-title">
+                <h2>Оберіть відео</h2>
+            </div>
+            <div id="videoList">
+                <div class="video-card" data-url="https://www.youtube.com/embed/qykBELeIEVM">
+                    <img class="play-icon" src="https://img.icons8.com/fluency/96/play.png" alt="">
+                    <h3>Первісні та невизначені інтеграли</h3>
+                </div>
+                
+            </div>
+            <div id="videoPlayer" style="display: none; width: 90vw; max-width: 960px; aspect-ratio: 16/9; margin: 20px auto;">
+                <iframe id="youtubePlayer" width="100%" height="100%" src="" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- ПИТАННЯ І ВІДПОВІДІ -->
+    <div id="questionsModal" class="modal">
+        <div class="modal-header"><button class="close-btn" id="closeQuestionsBtn">× Закрити</button></div>
+        <div class="modal-content">
+            <div style="max-width:964px;margin:0 auto;">
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>1. Що таке первісна функції?</span></div>
+                        <div class="card-back"><span>Функція \(F(x)\) називається первісною для \(f(x)\), якщо \(F'(x) = f(x)\).</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>2. Що таке невизначений інтеграл?</span></div>
+                        <div class="card-back"><span>Множина всіх первісних функції \(f(x)\), позначається \(\int f(x) dx = F(x) + C\).</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>3. Навіщо потрібна константа інтегрування \(C\)?</span></div>
+                        <div class="card-back"><span>Оскільки похідна константи дорівнює нулю, то до будь-якої первісної можна додати довільну константу.</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>4. Як перевірити правильність знайденого інтеграла?</span></div>
+                       <div class="card-back"><span>Продиференціювати результат: \( (F(x) + C)' = f(x) \).</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>5. Чим відрізняється первісна від невизначеного інтеграла?</span></div>
+                        <div class="card-back"><span>Первісна — одна конкретна функція, інтеграл — множина всіх первісних.</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>6. Який геометричний зміст невизначеного інтеграла?</span></div>
+                        <div class="card-back"><span>Сімейство паралельних кривих, що відрізняються вертикальним зсувом.</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>7. Яка умова існування невизначеного інтеграла?</span></div>
+                        <div class="card-back"><span>Функція \(f(x)\) повинна бути неперервною на заданому інтервалі.</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>8. Чому дорівнює \(\int \sin x dx\)?</span></div>
+                        <div class="card-back"><span>\(\int \sin x dx = -\cos x + C\)</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>9. Наведіть приклад первісної для \(f(x) = x^4\).</span></div>
+                        <div class="card-back"><span>\(F(x) = \frac{x^5}{5} + C\), де \(C\) — довільна константа.</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>10. Що означає запис \(dx\) в інтегралі?</span></div>
+                        <div class="card-back"><span>Це диференціал, що вказує на змінну інтегрування \(x\).</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ТРЕНАЖЕР -->
+    <div id="trainerModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeTrainerBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="trainer-container">
+                <div class="question-circle">
+                    <h3 id="questionNumber">Питання 1</h3>
+                </div>
+                <p id="questionText" class="math-notation-centered"></p>
+                <div class="options-container" id="optionsContainer"></div>
+                <button id="submitAnswer" class="submit-btn" disabled>Підтвердити</button>
+                <div id="feedback" class="feedback"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ЗАВЕРШЕННЯ -->
+    <div id="completionModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeCompletionBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="completion-message">
+                <div class="completion-emoji"></div>
+                <h2>МІСІЯ ВИКОНАНА!</h2>
+                <p>Ти оволодів знаходженням первісних та невизначених інтегралів!</p>
+                <p><strong>СЛАВА УКРАЇНІ!</strong></p>
+                <button id="resetTrainerBtn" class="reset-btn">Повернутися на полігон!</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalOverlay"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.add('loaded');
+
+            const modals = {
+                theory: document.getElementById('theoryModal'),
+                video: document.getElementById('videoModal'),
+                questions: document.getElementById('questionsModal'),
+                trainer: document.getElementById('trainerModal'),
+                completion: document.getElementById('completionModal')
+            };
+            const overlay = document.getElementById('modalOverlay');
+
+            function openModal(m) { 
+                m.style.display = 'flex'; 
+                overlay.style.display = 'block'; 
+                document.body.style.overflow = 'hidden'; 
+            }
+            
+            function closeModal(m) { 
+                m.style.display = 'none'; 
+                overlay.style.display = 'none'; 
+                document.body.style.overflow = 'auto'; 
+            }
+
+            // Відкриття модалок
+            document.getElementById('openTheoryBtn').onclick = () => openModal(modals.theory);
+            document.getElementById('openVideoBtn').onclick = () => openModal(modals.video);
+            document.getElementById('openQuestionsBtn').onclick = () => openModal(modals.questions);
+            document.getElementById('openTrainerBtn').onclick = () => { 
+                openModal(modals.trainer); 
+                startTrainer(); 
+            };
+
+            // Універсальне закриття по хрестику
+            document.querySelectorAll('.close-btn').forEach(btn => {
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    const modal = btn.closest('.modal');
+                    if (modal.id !== 'videoModal') {
+                        closeModal(modal);
+                    }
+                };
+            });
+
+            // Закриття по оверлею і Esc
+            overlay.onclick = () => document.querySelectorAll('.modal').forEach(closeModal);
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('.modal').forEach(m => m.style.display === 'flex' && closeModal(m));
+                }
+            });
+
+            // ВІДЕО
+            const videoList = document.getElementById('videoList');
+            const videoPlayer = document.getElementById('videoPlayer');
+            const youtubeIframe = document.getElementById('youtubePlayer');
+
+            document.querySelectorAll('.video-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const url = card.dataset.url;
+                    videoList.style.display = 'none';
+                    videoPlayer.style.display = 'block';
+                    youtubeIframe.src = url + '?autoplay=0';
+                });
+            });
+
+           // ЗМІНЕНА ФУНКЦІЯ ЗАКРИТТЯ ВІДЕО
+document.getElementById('closeVideoBtn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    
+    // Перевіряємо, чи відкрито відеоплеєр
+    if (videoPlayer.style.display === 'block') {
+        // Якщо так - повертаємось до списку відео
+        youtubeIframe.src = '';
+        videoPlayer.style.display = 'none';
+        videoList.style.display = 'flex';
+    } else {
+        // Якщо відкритий список відео - закриваємо всю модалку
+        closeModal(modals.video);
+    }
+});
+
+// ЗМІНЕНА ФУНКЦІЯ ЗАКРИТТЯ ПО ОВЕРЛЕЮ
+overlay.addEventListener('click', () => {
+    // Перевіряємо, чи відкрита відеомодалка
+    if (modals.video.style.display === 'flex') {
+        // Перевіряємо, чи відкрито відеоплеєр
+        if (videoPlayer.style.display === 'block') {
+            // Якщо так - повертаємось до списку відео
+            youtubeIframe.src = '';
+            videoPlayer.style.display = 'none';
+            videoList.style.display = 'flex';
+        } else {
+            // Якщо відкритий список відео - закриваємо всю модалку
+            closeModal(modals.video);
+        }
+    } else {
+        // Для інших модалок - стандартна поведінка
+        document.querySelectorAll('.modal').forEach(m => m.style.display === 'flex' && closeModal(m));
+    }
+});
+
+// Також треба змінити обробку Esc
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+        // Перевіряємо, чи відкрита відеомодалка
+        if (modals.video.style.display === 'flex') {
+            // Перевіряємо, чи відкрито відеоплеєр
+            if (videoPlayer.style.display === 'block') {
+                // Якщо так - повертаємось до списку відео
+                youtubeIframe.src = '';
+                videoPlayer.style.display = 'none';
+                videoList.style.display = 'flex';
+            } else {
+                // Якщо відкритий список відео - закриваємо всю модалку
+                closeModal(modals.video);
+            }
+        } else {
+            // Для інших модалок - стандартна поведінка
+            document.querySelectorAll('.modal').forEach(m => m.style.display === 'flex' && closeModal(m));
+        }
+    }
+});
+
+// === ТРЕНАЖЕР ДЛЯ ТЕМИ 88-89 (Первісна та невизначений інтеграл) ===
+let stage = 1;
+let currentFunction = '';
+let currentData = null;
+let correctAnswer = '';
+
+// Генерація випадкового цілого числа
+function rand(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+ // Допоміжна функція для коректного форматування знаків та виразів
+function formatExpression(expr) {
+    if (!expr) return expr;
+    
+    // Замінюємо подвійні знаки
+    expr = expr.replace(/\+\s*\-/g, '- ');
+    expr = expr.replace(/\-\s*\+/g, '- ');
+    expr = expr.replace(/\-\s*\-/g, '+ ');
+    
+    // Видаляємо + на початку
+    expr = expr.replace(/^\+\s*/, '');
+    
+    // Спрощуємо множення: 3*sin x → 3sin x, -3*sin x → -3sin x
+    expr = expr.replace(/(\d+)\s*\*\s*([a-zA-Z])/g, '$1$2');
+    expr = expr.replace(/(-?\d+)\s*\*\s*([a-zA-Z])/g, '$1$2');
+    
+    // Спрощуємо множення для тригонометричних функцій
+    expr = expr.replace(/(\d+)\s*\*\s*\\(sin|cos|tg|ctg|arcsin|arctg|ln|e\^)/g, '$1\\$2');
+    expr = expr.replace(/(-?\d+)\s*\*\s*\\(sin|cos|tg|ctg|arcsin|arctg|ln|e\^)/g, '$1\\$2');
+    
+    // Спрощуємо множення на 1 для дробів: 2 * 1/sin²x → 2/sin²x
+    expr = expr.replace(/(\d+)\s*\\cdot\s*\\frac\{1\}\{([^}]+)\}/g, '\\frac{$1}{$2}');
+    expr = expr.replace(/(\d+)\s*\\frac\{1\}\{([^}]+)\}/g, '\\frac{$1}{$2}');
+    expr = expr.replace(/(\d+)\s*1\\/g, '$1\\'); // Видаляємо 1 після числа
+    
+    // Видаляємо 1 перед функціями
+    expr = expr.replace(/(\D|^)1([a-zA-Z])/g, '$1$2');
+    expr = expr.replace(/^1([a-zA-Z])/, '$1');
+    expr = expr.replace(/\+ 1([a-zA-Z])/g, '+ $1');
+    expr = expr.replace(/- 1([a-zA-Z])/g, '- $1');
+    
+    // Видаляємо 1 перед степенями
+    expr = expr.replace(/1x\^/g, 'x^');
+    
+    // Видаляємо * перед функціями після форматування
+    expr = expr.replace(/(\d+)\*\\/g, '$1\\');
+    expr = expr.replace(/(-?\d+)\*\\/g, '$1\\');
+    
+    // Видаляємо зайві пробіли
+    expr = expr.replace(/\s+/g, ' ');
+    expr = expr.trim();
+    
+    return expr;
+}           
+
+// Генерація питання 1 (Знайти первісну полінома з цілими коефіцієнтами)
+function generateQuestion1Function() {
+    // Генеруємо спочатку первісну F(x) - многочлен з цілими коефіцієнтами
+    // БЕЗ вільного члена, тільки доданки з x та +C
+    // Кількість доданків: 2 або 3
+    
+    const numTerms = rand(2, 3); // 2 або 3 доданки
+    let F_parts = []; // Частини первісної F(x)
+    let f_parts = []; // Частини функції f(x) = F'(x)
+    
+    // Допоміжна функція для форматування доданка
+    function formatTerm(coefficient, power) {
+        if (coefficient === 0) return '';
+        
+        if (power === 0) {
+            return `${coefficient}`;
+        } else if (power === 1) {
+            if (coefficient === 1) return 'x';
+            if (coefficient === -1) return '-x';
+            return `${coefficient}x`;
+        } else {
+            if (coefficient === 1) return `x^{${power}}`;
+            if (coefficient === -1) return `-x^{${power}}`;
+            return `${coefficient}x^{${power}}`;
+        }
+    }
+    
+    // Генеруємо кожен доданок первісної F(x)
+    for (let i = 0; i < numTerms; i++) {
+        // Степінь для F(x) - від 1 до 4 (без 0, щоб не було вільного члена)
+        const power_F = rand(1, 4);
+        
+        // Коефіцієнт для F(x) - ціле число від 1 до 6
+        let coefficient_F = rand(1, 6);
+        
+        // Іноді робимо коефіцієнт негативним для різноманітності
+        if (rand(1, 3) === 1) {
+            coefficient_F = -coefficient_F;
+        }
+        
+        // Перевіряємо, щоб не дублювалися степені
+        if (!F_parts.some(part => part.power === power_F)) {
+            // Формуємо доданок первісної F(x)
+            let termF = formatTerm(coefficient_F, power_F);
+            
+            // Знаходимо похідну цього доданка f(x) = F'(x)
+            let coefficient_f = coefficient_F * power_F;
+            let power_f = power_F - 1;
+            
+            let termf = formatTerm(coefficient_f, power_f);
+            
+            F_parts.push({
+                coefficient: coefficient_F,
+                power: power_F,
+                term: termF
+            });
+            
+            // Додаємо до f_parts тільки якщо похідна не нульова
+            if (coefficient_f !== 0) {
+                f_parts.push({
+                    coefficient: coefficient_f,
+                    power: power_f,
+                    term: termf
+                });
+            }
+        } else {
+            i--; // Спробуємо знову з іншими параметрами
+        }
+    }
+    
+    // Сортуємо за степенем (спадання для красивого відображення)
+    F_parts.sort((a, b) => b.power - a.power);
+    f_parts.sort((a, b) => b.power - a.power);
+    
+    // Формуємо F(x) - первісну (без вільного члена!)
+    let F_x = F_parts[0].term;
+    for (let i = 1; i < F_parts.length; i++) {
+        const part = F_parts[i];
+        if (part.coefficient > 0) {
+            F_x += ` + ${part.term}`;
+        } else {
+            // Для негативних коефіцієнтів потрібно відформатувати знову
+            const absCoeff = Math.abs(part.coefficient);
+            const formatted = formatTerm(absCoeff, part.power);
+            F_x += ` - ${formatted}`;
+        }
+    }
+    F_x += ` + C`;
+    
+    // Формуємо f(x) = F'(x) - функцію в умові
+    let f_x = '';
+    if (f_parts.length > 0) {
+        f_x = f_parts[0].term;
+        for (let i = 1; i < f_parts.length; i++) {
+            const part = f_parts[i];
+            if (part.coefficient > 0) {
+                f_x += ` + ${part.term}`;
+            } else {
+                const absCoeff = Math.abs(part.coefficient);
+                const formatted = formatTerm(absCoeff, part.power);
+                f_x += ` - ${formatted}`;
+            }
+        }
+    }
+    
+    // Якщо f(x) вийшла порожньою (не повинно бути, але для безпеки)
+    if (f_x === '') {
+        f_x = '0';
+    }
+    
+    currentFunction = f_x;
+    
+    // Правильна відповідь - F(x)
+    const correctAnswer = F_x;
+    
+    // Генеруємо неправильні відповіді
+    const wrongs = [];
+    
+    // 1. Неправильні коефіцієнти (не поділили на степінь при інтегруванні)
+    let wrong1 = '';
+    for (const part of f_parts) {
+        if (part.coefficient !== 0) {
+            // Неправильна "первісна" - просто інтегруємо без ділення
+            const wrongPower = part.power + 1;
+            const wrongCoeff = part.coefficient; // Повинно бути coefficient/(power+1)
+            
+            let term = formatTerm(wrongCoeff, wrongPower);
+            
+            if (wrong1 === '') {
+                wrong1 = term;
+            } else if (part.coefficient > 0) {
+                wrong1 += ` + ${term}`;
+            } else {
+                const absCoeff = Math.abs(part.coefficient);
+                const formatted = formatTerm(absCoeff, wrongPower);
+                wrong1 += ` - ${formatted}`;
+            }
+        }
+    }
+    wrong1 += ` + C`;
+    if (wrong1 !== ` + C`) wrongs.push(wrong1);
+    
+    // 2. Похідна замість первісної (з C)
+    let wrong2 = f_x + ` + C`;
+    wrongs.push(wrong2);
+    
+    // 3. Помилка у знаках (інвертуємо знаки у F(x))
+    let wrong3 = '';
+    for (const part of F_parts) {
+        const invertedCoeff = -part.coefficient;
+        let term = formatTerm(invertedCoeff, part.power);
+        
+        if (wrong3 === '') {
+            wrong3 = term;
+        } else if (invertedCoeff > 0) {
+            wrong3 += ` + ${term}`;
+        } else {
+            const absCoeff = Math.abs(invertedCoeff);
+            const formatted = formatTerm(absCoeff, part.power);
+            wrong3 += ` - ${formatted}`;
+        }
+    }
+    wrong3 += ` + C`;
+    wrongs.push(wrong3);
+    
+    // 4. Забули додати C
+    let wrong4 = F_x.replace(' + C', '');
+    wrongs.push(wrong4);
+    
+    // 5. Неправильні степені (замість n ставимо n-1)
+    let wrong5 = '';
+    for (const part of F_parts) {
+        const wrongPower = part.power - 1;
+        if (wrongPower >= 0) {
+            let term = formatTerm(part.coefficient, wrongPower);
+            
+            if (wrong5 === '') {
+                wrong5 = term;
+            } else if (part.coefficient > 0) {
+                wrong5 += ` + ${term}`;
+            } else {
+                const absCoeff = Math.abs(part.coefficient);
+                const formatted = formatTerm(absCoeff, wrongPower);
+                wrong5 += ` - ${formatted}`;
+            }
+        }
+    }
+    wrong5 += ` + C`;
+    if (wrong5 !== ` + C`) wrongs.push(wrong5);
+    
+    // 6. Додали вільний член (якого не повинно бути)
+    let wrong6 = F_x.replace(' + C', '');
+    const freeTerm = rand(1, 5);
+    if (rand(1, 2) === 1) {
+        wrong6 += ` + ${freeTerm}`;
+    } else {
+        wrong6 += ` - ${freeTerm}`;
+    }
+    wrong6 += ` + C`;
+    wrongs.push(wrong6);
+    
+    // 7. Неправильне інтегрування степеневої функції
+    let wrong7 = '';
+    for (const part of f_parts) {
+        if (part.coefficient !== 0 && part.power > 0) {
+            // Неправильно: ділимо на power замість power+1
+            const wrongPower = part.power + 1;
+            const wrongCoeff = part.coefficient / part.power;
+            
+            // Перевіряємо, чи ціле число
+            if (wrongCoeff === Math.floor(wrongCoeff)) {
+                let term = formatTerm(wrongCoeff, wrongPower);
+                
+                if (wrong7 === '') {
+                    wrong7 = term;
+                } else if (wrongCoeff > 0) {
+                    wrong7 += ` + ${term}`;
+                } else {
+                    const absCoeff = Math.abs(wrongCoeff);
+                    const formatted = formatTerm(absCoeff, wrongPower);
+                    wrong7 += ` - ${formatted}`;
+                }
+            }
+        }
+    }
+    if (wrong7 !== '') {
+        wrong7 += ` + C`;
+        wrongs.push(wrong7);
+    }
+    
+    // Беремо перші 4 неправильні варіанти
+    const selectedWrongs = wrongs.slice(0, 4);
+    
+    return {
+        function: currentFunction,
+        correct: correctAnswer,
+        wrongs: selectedWrongs
+    };
+}
+
+    
+// Генерація питання 2 (Знайти первісну тригонометричної складеної функції)
+function generateQuestion2Function() {
+    // Вибираємо тип тригонометричної функції
+    const trigTypes = [
+        { func: '\\frac{1}{\\cos^2}', primitive: '\\tg', sign: 1 },
+        { func: '\\frac{1}{\\sin^2}', primitive: '-\\ctg', sign: -1 },
+        { func: '\\sin', primitive: '-\\frac{1}{a}\\cos', sign: -1 },
+        { func: '\\cos', primitive: '\\frac{1}{a}\\sin', sign: 1 }
+    ];
+    
+    const typeIndex = rand(0, trigTypes.length - 1);
+    const trigType = trigTypes[typeIndex];
+    
+    // Генеруємо лінійний аргумент ax + b
+    let a = rand(2, 5); // a ≠ 0, від 2 до 5
+    let b = rand(1, 5); // b ≠ 0, від 1 до 5
+    
+    // Для спрощення - не робимо a та b негативними одночасно
+    // Робимо тільки a іноді негативним
+    if (rand(1, 3) === 1) {
+        a = -Math.abs(a); // гарантуємо що a буде негативним
+    }
+    // b завжди позитивне для спрощення
+    b = Math.abs(b);
+    
+    // Формуємо аргумент функції
+    let argument = '';
+    if (a > 0) {
+        argument = `${a}x + ${b}`;
+    } else {
+        argument = `${a}x + ${b}`; // a вже містить знак мінус
+    }
+    
+    // Формуємо функцію f(x) для інтеграла
+    let funcDisplay = '';
+    if (trigType.func === '\\frac{1}{\\cos^2}') {
+        funcDisplay = `\\frac{1}{\\cos^2(${argument})}`;
+    } else if (trigType.func === '\\frac{1}{\\sin^2}') {
+        funcDisplay = `\\frac{1}{\\sin^2(${argument})}`;
+    } else {
+        funcDisplay = `${trigType.func}(${argument})`;
+    }
+    
+    currentFunction = funcDisplay;
+    
+    // Формуємо правильну первісну (без подвійних мінусів)
+    let correct = '';
+    
+    if (trigType.func === '\\frac{1}{\\cos^2}') {
+        // ∫ 1/cos²(ax+b) dx = (1/a) tg(ax+b) + C
+        if (a > 0) {
+            correct = `\\frac{1}{${a}}\\tg(${argument}) + C`;
+        } else {
+            // Якщо a негативне, то 1/a також негативне
+            correct = `-\\frac{1}{${Math.abs(a)}}\\tg(${argument}) + C`;
+        }
+    } else if (trigType.func === '\\frac{1}{\\sin^2}') {
+        // ∫ 1/sin²(ax+b) dx = -(1/a) ctg(ax+b) + C
+        if (a > 0) {
+            correct = `-\\frac{1}{${a}}\\ctg(${argument}) + C`;
+        } else {
+            // Якщо a негативне, то -1/a стає позитивним
+            correct = `\\frac{1}{${Math.abs(a)}}\\ctg(${argument}) + C`;
+        }
+    } else if (trigType.func === '\\sin') {
+        // ∫ sin(ax+b) dx = -(1/a) cos(ax+b) + C
+        if (a > 0) {
+            correct = `-\\frac{1}{${a}}\\cos(${argument}) + C`;
+        } else {
+            // Якщо a негативне, то -1/a стає позитивним
+            correct = `\\frac{1}{${Math.abs(a)}}\\cos(${argument}) + C`;
+        }
+    } else { // cos
+        // ∫ cos(ax+b) dx = (1/a) sin(ax+b) + C
+        if (a > 0) {
+            correct = `\\frac{1}{${a}}\\sin(${argument}) + C`;
+        } else {
+            // Якщо a негативне, то 1/a також негативне
+            correct = `-\\frac{1}{${Math.abs(a)}}\\sin(${argument}) + C`;
+        }
+    }
+    
+    // Генеруємо неправильні відповіді (також без подвійних мінусів)
+    const wrongs = [];
+    
+    // 1. Забули поділити на a
+    let wrong1 = '';
+    if (trigType.func === '\\frac{1}{\\cos^2}') {
+        wrong1 = `\\tg(${argument}) + C`;
+    } else if (trigType.func === '\\frac{1}{\\sin^2}') {
+        wrong1 = a > 0 ? `-\\ctg(${argument}) + C` : `\\ctg(${argument}) + C`;
+    } else if (trigType.func === '\\sin') {
+        wrong1 = a > 0 ? `-\\cos(${argument}) + C` : `\\cos(${argument}) + C`;
+    } else {
+        wrong1 = `\\sin(${argument}) + C`;
+    }
+    wrongs.push(wrong1);
+    
+    // 2. Поділили на неправильне число
+    let wrong2 = '';
+    const wrongDivisor = b + 1; // b+1 щоб точно відрізнятися від a
+    if (trigType.func === '\\frac{1}{\\cos^2}') {
+        wrong2 = `\\frac{1}{${wrongDivisor}}\\tg(${argument}) + C`;
+    } else if (trigType.func === '\\frac{1}{\\sin^2}') {
+        wrong2 = a > 0 ? 
+            `-\\frac{1}{${wrongDivisor}}\\ctg(${argument}) + C` : 
+            `\\frac{1}{${wrongDivisor}}\\ctg(${argument}) + C`;
+    } else if (trigType.func === '\\sin') {
+        wrong2 = a > 0 ? 
+            `-\\frac{1}{${wrongDivisor}}\\cos(${argument}) + C` : 
+            `\\frac{1}{${wrongDivisor}}\\cos(${argument}) + C`;
+    } else {
+        wrong2 = `\\frac{1}{${wrongDivisor}}\\sin(${argument}) + C`;
+    }
+    wrongs.push(wrong2);
+    
+    // 3. Неправильний знак
+    let wrong3 = '';
+    if (trigType.func === '\\frac{1}{\\cos^2}') {
+        wrong3 = a > 0 ? 
+            `-\\frac{1}{${a}}\\tg(${argument}) + C` : 
+            `\\frac{1}{${Math.abs(a)}}\\tg(${argument}) + C`;
+    } else if (trigType.func === '\\frac{1}{\\sin^2}') {
+        wrong3 = a > 0 ? 
+            `\\frac{1}{${a}}\\ctg(${argument}) + C` : 
+            `-\\frac{1}{${Math.abs(a)}}\\ctg(${argument}) + C`;
+    } else if (trigType.func === '\\sin') {
+        wrong3 = a > 0 ? 
+            `\\frac{1}{${a}}\\cos(${argument}) + C` : 
+            `-\\frac{1}{${Math.abs(a)}}\\cos(${argument}) + C`;
+    } else {
+        wrong3 = a > 0 ? 
+            `-\\frac{1}{${a}}\\sin(${argument}) + C` : 
+            `\\frac{1}{${Math.abs(a)}}\\sin(${argument}) + C`;
+    }
+    wrongs.push(wrong3);
+    
+    // 4. Похідна замість первісної
+    let wrong4 = '';
+    if (trigType.func === '\\frac{1}{\\cos^2}') {
+        wrong4 = `${Math.abs(a)}\\frac{1}{\\cos^2(${argument})} + C`;
+    } else if (trigType.func === '\\frac{1}{\\sin^2}') {
+        wrong4 = a > 0 ? 
+            `-${a}\\frac{1}{\\sin^2(${argument})} + C` : 
+            `${Math.abs(a)}\\frac{1}{\\sin^2(${argument})} + C`;
+    } else if (trigType.func === '\\sin') {
+        wrong4 = `${Math.abs(a)}\\cos(${argument}) + C`;
+    } else {
+        wrong4 = a > 0 ? 
+            `-${a}\\sin(${argument}) + C` : 
+            `${Math.abs(a)}\\sin(${argument}) + C`;
+    }
+    wrongs.push(wrong4);
+    
+    // 5. Неправильна тригонометрична функція
+    let wrong5 = '';
+    if (trigType.func === '\\frac{1}{\\cos^2}') {
+        wrong5 = a > 0 ? 
+            `\\frac{1}{${a}}\\ctg(${argument}) + C` : 
+            `-\\frac{1}{${Math.abs(a)}}\\ctg(${argument}) + C`;
+    } else if (trigType.func === '\\frac{1}{\\sin^2}') {
+        wrong5 = a > 0 ? 
+            `-\\frac{1}{${a}}\\tg(${argument}) + C` : 
+            `\\frac{1}{${Math.abs(a)}}\\tg(${argument}) + C`;
+    } else if (trigType.func === '\\sin') {
+        wrong5 = a > 0 ? 
+            `\\frac{1}{${a}}\\sin(${argument}) + C` : 
+            `-\\frac{1}{${Math.abs(a)}}\\sin(${argument}) + C`;
+    } else {
+        wrong5 = a > 0 ? 
+            `-\\frac{1}{${a}}\\cos(${argument}) + C` : 
+            `\\frac{1}{${Math.abs(a)}}\\cos(${argument}) + C`;
+    }
+    wrongs.push(wrong5);
+    
+    // Беремо перші 4 неправильні варіанти
+    const selectedWrongs = wrongs.slice(0, 4);
+    
+    return {
+        function: currentFunction,
+        correct: correct,
+        wrongs: selectedWrongs
+    };
+}
+
+// Допоміжна функція для коректного форматування знаків
+function formatSigns(expr) {
+    if (!expr) return expr;
+    
+    // Замінюємо подвійні знаки
+    expr = expr.replace(/\+\s*\-/g, '- ');
+    expr = expr.replace(/\-\s*\+/g, '- ');
+    expr = expr.replace(/\-\s*\-/g, '+ ');
+    
+    // Видаляємо + на початку
+    expr = expr.replace(/^\+\s*/, '');
+    
+    // Видаляємо зайві пробіли
+    expr = expr.replace(/\s+/g, ' ');
+    expr = expr.trim();
+    
+    return expr;
+}
+
+// Допоміжна функція для коректного форматування знаків та виразів
+function formatExpression(expr) {
+    if (!expr) return expr;
+    
+    // Замінюємо подвійні знаки
+    expr = expr.replace(/\+\s*\-/g, '- ');
+    expr = expr.replace(/\-\s*\+/g, '- ');
+    expr = expr.replace(/\-\s*\-/g, '+ ');
+    
+    // Видаляємо + на початку
+    expr = expr.replace(/^\+\s*/, '');
+    
+    // Спрощуємо множення на 1 для дробів: 2 * 1/sin²x → 2/sin²x
+    expr = expr.replace(/(\d+)\s*\\cdot\s*\\frac\{1\}\{([^}]+)\}/g, '\\frac{$1}{$2}');
+    expr = expr.replace(/(\d+)\s*\\frac\{1\}\{([^}]+)\}/g, '\\frac{$1}{$2}');
+    expr = expr.replace(/(\d+)\s*1\\/g, '$1'); // Видаляємо 1 після числа
+    
+    // Спрощуємо запис для тригонометричних функцій
+    expr = expr.replace(/\\frac\{(\d+)\}\{sin\^2\s*x\}/g, '$1/\\sin^2 x');
+    expr = expr.replace(/\\frac\{(\d+)\}\{cos\^2\s*x\}/g, '$1/\\cos^2 x');
+    
+    // Видаляємо 1 перед функціями
+    expr = expr.replace(/(\D|^)1([a-zA-Z])/g, '$1$2');
+    expr = expr.replace(/^1([a-zA-Z])/, '$1');
+    expr = expr.replace(/\+ 1([a-zA-Z])/g, '+ $1');
+    expr = expr.replace(/- 1([a-zA-Z])/g, '- $1');
+    
+    // Видаляємо 1 перед степенями
+    expr = expr.replace(/1x\^/g, 'x^');
+    
+    // Видаляємо зайві пробіли
+    expr = expr.replace(/\s+/g, ' ');
+    expr = expr.trim();
+    
+    return expr;
+}
+
+// Генерація питання 3 (Знайти невизначений інтеграл суми двох функцій)
+function generateQuestion3Function() {
+    // Список можливих функцій для первісної F(x)
+    const functions = [
+        // x^n (у первісній без дробів!)
+        { F: 'x', f: '1', type: 'power', n: 1 },
+        { F: 'x^2', f: '2x', type: 'power', n: 2 },
+        { F: 'x^3', f: '3x^2', type: 'power', n: 3 },
+        { F: 'x^4', f: '4x^3', type: 'power', n: 4 },
+        // ln|x|
+        { F: '\\ln|x|', f: '\\frac{1}{x}', type: 'ln' },
+        // e^x
+        { F: 'e^x', f: 'e^x', type: 'exp' },
+        // тригонометричні
+        { F: '\\sin x', f: '\\cos x', type: 'trig' },
+        { F: '\\cos x', f: '-\\sin x', type: 'trig' },
+        { F: '\\tg x', f: '\\frac{1}{\\cos^2 x}', type: 'trig' },
+        { F: '\\ctg x', f: '-\\frac{1}{\\sin^2 x}', type: 'trig' },
+        // обернені тригонометричні
+        { F: '\\arcsin x', f: '\\frac{1}{\\sqrt{1-x^2}}', type: 'inverse' },
+        { F: '\\arctg x', f: '\\frac{1}{1+x^2}', type: 'inverse' }
+    ];
+    
+    // Вибираємо 2 різні функції для F(x)
+    let index1 = rand(0, functions.length - 1);
+    let index2 = rand(0, functions.length - 1);
+    
+    // Переконуємось що функції різні
+    while (index2 === index1) {
+        index2 = rand(0, functions.length - 1);
+    }
+    
+    const func1 = functions[index1];
+    const func2 = functions[index2];
+    
+    // Генеруємо коефіцієнти (можуть бути 1)
+    let coeff1 = rand(1, 3);
+    let coeff2 = rand(1, 3);
+    
+    // Іноді робимо один коефіцієнт негативним
+    if (rand(1, 3) === 1) {
+        coeff1 = -coeff1;
+    }
+    if (coeff1 > 0 && rand(1, 4) === 1) {
+        coeff2 = -coeff2;
+    }
+    
+    // Формуємо F(x) - первісну (без дробів у коефіцієнтах!)
+    let F_x = '';
+    
+    // Перший доданок
+    if (coeff1 === 1) {
+        F_x = func1.F;
+    } else if (coeff1 === -1) {
+        F_x = `-${func1.F}`;
+    } else {
+        F_x = `${coeff1}${func1.F}`; // Без знаку множення
+    }
+    
+    // Другий доданок
+    if (coeff2 > 0) {
+        if (coeff2 === 1) {
+            F_x += ` + ${func2.F}`;
+        } else {
+            F_x += ` + ${coeff2}${func2.F}`;
+        }
+    } else if (coeff2 < 0) {
+        if (coeff2 === -1) {
+            F_x += ` - ${func2.F}`;
+        } else {
+            F_x += ` - ${Math.abs(coeff2)}${func2.F}`;
+        }
+    }
+    
+    F_x += ` + C`;
+    
+    // Формуємо f(x) = F'(x) - функцію для інтеграла
+    let f_x = '';
+    
+    // Перший доданок похідної
+    let f1 = func1.f;
+    // Для степеневих функцій враховуємо коефіцієнт та степінь
+    let f1_coeff = '';
+    if (func1.type === 'power') {
+        // f(x) = coeff1 * n * x^{n-1}
+        const derivativeCoeff = coeff1 * func1.n;
+        if (derivativeCoeff === 0) {
+            f1_coeff = '';
+        } else if (derivativeCoeff === 1) {
+            if (func1.n === 1) {
+                f1_coeff = '1';
+            } else {
+                f1_coeff = `${func1.n}x${func1.n > 2 ? `^{${func1.n-1}}` : ''}`;
+            }
+        } else if (derivativeCoeff === -1) {
+            if (func1.n === 1) {
+                f1_coeff = '-1';
+            } else {
+                f1_coeff = `-${func1.n}x${func1.n > 2 ? `^{${func1.n-1}}` : ''}`;
+            }
+        } else {
+            if (func1.n === 1) {
+                f1_coeff = `${derivativeCoeff}`;
+            } else {
+                f1_coeff = `${derivativeCoeff}x${func1.n > 2 ? `^{${func1.n-1}}` : ''}`;
+            }
+        }
+    } else {
+        // Для інших функцій
+        if (coeff1 === 1) {
+            f1_coeff = f1;
+        } else if (coeff1 === -1) {
+            f1_coeff = f1.startsWith('-') ? f1.substring(1) : `-${f1}`;
+        } else {
+            // Для дробів
+            if (f1.includes('\\frac{1}{')) {
+                const denominator = f1.match(/\\frac\{1\}\{([^}]+)\}/)[1];
+                f1_coeff = `\\frac{${coeff1}}{${denominator}}`;
+            } else if (f1.startsWith('-')) {
+                f1_coeff = `${coeff1 < 0 ? '' : '-'}${Math.abs(coeff1)}${f1.substring(1)}`;
+            } else {
+                f1_coeff = `${coeff1}${f1}`;
+            }
+        }
+    }
+    f_x = f1_coeff;
+    
+    // Другий доданок похідної
+    let f2 = func2.f;
+    let f2_coeff = '';
+    
+    if (func2.type === 'power') {
+        const derivativeCoeff = coeff2 * func2.n;
+        if (derivativeCoeff !== 0) {
+            if (Math.abs(derivativeCoeff) === 1) {
+                if (func2.n === 1) {
+                    f2_coeff = derivativeCoeff === 1 ? '1' : '-1';
+                } else {
+                    f2_coeff = derivativeCoeff === 1 ? 
+                        `${func2.n}x${func2.n > 2 ? `^{${func2.n-1}}` : ''}` : 
+                        `-${func2.n}x${func2.n > 2 ? `^{${func2.n-1}}` : ''}`;
+                }
+            } else {
+                if (func2.n === 1) {
+                    f2_coeff = `${derivativeCoeff}`;
+                } else {
+                    f2_coeff = `${derivativeCoeff}x${func2.n > 2 ? `^{${func2.n-1}}` : ''}`;
+                }
+            }
+        }
+    } else {
+        if (coeff2 === 1) {
+            f2_coeff = f2;
+        } else if (coeff2 === -1) {
+            f2_coeff = f2.startsWith('-') ? f2.substring(1) : `-${f2}`;
+        } else {
+            if (f2.includes('\\frac{1}{')) {
+                const denominator = f2.match(/\\frac\{1\}\{([^}]+)\}/)[1];
+                f2_coeff = `\\frac{${coeff2}}{${denominator}}`;
+            } else if (f2.startsWith('-')) {
+                f2_coeff = `${coeff2 < 0 ? '' : '-'}${Math.abs(coeff2)}${f2.substring(1)}`;
+            } else {
+                f2_coeff = `${coeff2}${f2}`;
+            }
+        }
+    }
+    
+    // Додаємо другий доданок
+    if (coeff2 > 0 && f2_coeff) {
+        f_x += ` + ${f2_coeff}`;
+    } else if (coeff2 < 0 && f2_coeff) {
+        if (f2_coeff.startsWith('-')) {
+            f_x += ` + ${f2_coeff.substring(1)}`;
+        } else {
+            f_x += ` - ${f2_coeff}`;
+        }
+    }
+    
+    currentFunction = f_x;
+    
+    // Правильна відповідь - F(x)
+    let correct = F_x;
+    
+    // Застосовуємо форматування
+    correct = formatExpression(correct);
+    
+    // Генеруємо неправильні відповіді
+    const wrongs = [];
+    
+    // 1. Похідна замість первісної
+    let wrong1 = formatExpression(f_x + ` + C`);
+    wrongs.push(wrong1);
+    
+    // 2. Неправильна первісна (не поділили на степінь для степеневих функцій)
+    let wrong2 = '';
+    
+    // Перший доданок
+    if (func1.type === 'power') {
+        // Неправильно: не поділили на n+1
+        if (coeff1 === 1) {
+            wrong2 = `x^{${func1.n + 1}}`;
+        } else if (coeff1 === -1) {
+            wrong2 = `-x^{${func1.n + 1}}`;
+        } else {
+            wrong2 = `${coeff1}x^{${func1.n + 1}}`;
+        }
+    } else {
+        if (coeff1 === 1) {
+            wrong2 = func1.F;
+        } else if (coeff1 === -1) {
+            wrong2 = `-${func1.F}`;
+        } else {
+            wrong2 = `${coeff1}${func1.F}`;
+        }
+    }
+    
+    // Другий доданок
+    if (coeff2 > 0) {
+        if (func2.type === 'power') {
+            if (coeff2 === 1) {
+                wrong2 += ` + x^{${func2.n + 1}}`;
+            } else {
+                wrong2 += ` + ${coeff2}x^{${func2.n + 1}}`;
+            }
+        } else {
+            if (coeff2 === 1) {
+                wrong2 += ` + ${func2.F}`;
+            } else {
+                wrong2 += ` + ${coeff2}${func2.F}`;
+            }
+        }
+    } else if (coeff2 < 0) {
+        if (func2.type === 'power') {
+            if (coeff2 === -1) {
+                wrong2 += ` - x^{${func2.n + 1}}`;
+            } else {
+                wrong2 += ` - ${Math.abs(coeff2)}x^{${func2.n + 1}}`;
+            }
+        } else {
+            if (coeff2 === -1) {
+                wrong2 += ` - ${func2.F}`;
+            } else {
+                wrong2 += ` - ${Math.abs(coeff2)}${func2.F}`;
+            }
+        }
+    }
+    wrong2 += ` + C`;
+    wrong2 = formatExpression(wrong2);
+    wrongs.push(wrong2);
+    
+    // 3. Помилка у знаках (інвертуємо знаки)
+    let wrong3 = '';
+    if (coeff1 > 0) {
+        wrong3 = `-${coeff1 === 1 ? '' : coeff1}${func1.F}`;
+    } else {
+        wrong3 = `${Math.abs(coeff1) === 1 ? '' : Math.abs(coeff1)}${func1.F}`;
+    }
+    
+    if (coeff2 > 0) {
+        wrong3 += ` - ${coeff2 === 1 ? '' : coeff2}${func2.F}`;
+    } else {
+        wrong3 += ` + ${Math.abs(coeff2) === 1 ? '' : Math.abs(coeff2)}${func2.F}`;
+    }
+    wrong3 += ` + C`;
+    wrong3 = formatExpression(wrong3);
+    wrongs.push(wrong3);
+    
+    // 4. Забули константу C
+    let wrong4 = correct.replace(' + C', '');
+    wrongs.push(wrong4);
+    
+    // 5. Неправильна функція (змінили одну з функцій на іншу)
+    let wrong5 = '';
+    let altFuncIndex = rand(0, functions.length - 1);
+    while (altFuncIndex === index1 || altFuncIndex === index2) {
+        altFuncIndex = rand(0, functions.length - 1);
+    }
+    const altFunc = functions[altFuncIndex];
+    
+    // Перший доданок
+    if (coeff1 === 1) {
+        wrong5 = altFunc.F;
+    } else if (coeff1 === -1) {
+        wrong5 = `-${altFunc.F}`;
+    } else {
+        wrong5 = `${coeff1}${altFunc.F}`;
+    }
+    
+    // Другий доданок
+    if (coeff2 > 0) {
+        if (coeff2 === 1) {
+            wrong5 += ` + ${func2.F}`;
+        } else {
+            wrong5 += ` + ${coeff2}${func2.F}`;
+        }
+    } else if (coeff2 < 0) {
+        if (coeff2 === -1) {
+            wrong5 += ` - ${func2.F}`;
+        } else {
+            wrong5 += ` - ${Math.abs(coeff2)}${func2.F}`;
+        }
+    }
+    wrong5 += ` + C`;
+    wrong5 = formatExpression(wrong5);
+    wrongs.push(wrong5);
+    
+    // Беремо перші 4 неправильні варіанти
+    const selectedWrongs = wrongs.slice(0, 4);
+    
+    // Застосовуємо форматування до всіх відповідей
+    return {
+        function: formatExpression(currentFunction),
+        correct: formatExpression(correct),
+        wrongs: selectedWrongs.map(w => formatExpression(w))
+    };
+}
+
+// Показ питання 1
+function showQuestion1() {
+    currentData = generateQuestion1Function();
+    
+    document.getElementById('questionNumber').textContent = 'Питання 1/3';
+    document.getElementById('questionText').innerHTML = `
+        Яка з наведених функцій є первісною для функції:<br><br>
+        <div style="font-size:1.2em; color:#99ccff; background:rgba(92,184,240,0.18); padding:18px; border-radius:14px; text-align:center;">
+            \\[ f(x) = ${currentFunction} \\]
+        
+    `;
+
+    correctAnswer = currentData.correct;
+    
+    // Формуємо варіанти відповідей
+    const allAnswers = [currentData.correct, ...currentData.wrongs.slice(0, 3)];
+    
+    // Перемішуємо
+    for (let i = allAnswers.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [allAnswers[i], allAnswers[j]] = [allAnswers[j], allAnswers[i]];
+    }
+    
+    renderOptions(allAnswers);
+}
+
+// Показ питання 2
+function showQuestion2() {
+    currentData = generateQuestion2Function();
+    
+    document.getElementById('questionNumber').textContent = 'Питання 2/3';
+    document.getElementById('questionText').innerHTML = `
+        Який із наведених виразів є результатом інтегрування?<br><br>
+        <div style="font-size:1.2em; color:#99ccff; background:rgba(92,184,240,0.18); padding:18px; border-radius:14px; text-align:center;">
+            \\[ \\int ${currentData.function} \\, dx \\]
+        </div>
+       
+    `;
+
+    correctAnswer = currentData.correct;
+    
+    // Формуємо варіанти відповідей
+    const allAnswers = [currentData.correct, ...currentData.wrongs.slice(0, 3)];
+    
+    // Перемішуємо
+    for (let i = allAnswers.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [allAnswers[i], allAnswers[j]] = [allAnswers[j], allAnswers[i]];
+    }
+    
+    renderOptions(allAnswers);
+}
+
+// Показ питання 3
+function showQuestion3() {
+    currentData = generateQuestion3Function();
+    
+    document.getElementById('questionNumber').textContent = 'Питання 3/3';
+    document.getElementById('questionText').innerHTML = `
+        Який із наведених виразів є результатом інтегрування?<br><br>
+        <div style="font-size:1.2em; color:#99ccff; background:rgba(92,184,240,0.18); padding:18px; border-radius:14px; text-align:center;">
+            \\[ \\int (${currentFunction} )\\, dx \\]
+        </div>
+            `;
+
+    correctAnswer = currentData.correct;
+    
+    // Формуємо варіанти відповідей
+    const allAnswers = [currentData.correct, ...currentData.wrongs.slice(0, 3)];
+    
+    // Перемішуємо
+    for (let i = allAnswers.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [allAnswers[i], allAnswers[j]] = [allAnswers[j], allAnswers[i]];
+    }
+    
+    renderOptions(allAnswers);
+}
+
+// Рендер варіантів відповідей
+function renderOptions(values) {
+    const container = document.getElementById('optionsContainer');
+    container.innerHTML = '';
+    
+    values.forEach(val => {
+        const div = document.createElement('div');
+        div.className = 'option';
+        
+        const mathSpan = document.createElement('span');
+        mathSpan.innerHTML = `\\[ ${val} \\]`;
+        div.appendChild(mathSpan);
+        
+        div.dataset.value = val;
+        div.onclick = () => selectOption(div);
+        container.appendChild(div);
+    });
+    
+    document.getElementById('submitAnswer').disabled = true;
+    document.getElementById('submitAnswer').style.display = 'block';
+    document.getElementById('feedback').style.opacity = 0;
+    
+    // Рендеримо MathJax
+    if (window.MathJax) {
+        setTimeout(() => {
+            MathJax.typesetPromise();
+        }, 100);
+    }
+}
+
+function selectOption(el) {
+    document.querySelectorAll('.option').forEach(d => d.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('submitAnswer').disabled = false;
+}
+
+// Обробка відповіді
+document.getElementById('submitAnswer').onclick = () => {
+    const sel = document.querySelector('.option.selected');
+    if (!sel) return;
+
+    const userAnswer = sel.dataset.value;
+    const isCorrect = userAnswer === correctAnswer;
+
+    const fb = document.getElementById('feedback');
+    fb.textContent = isCorrect ? '✅ ВІРНО! Ціль уражена!' : '❌ Промах! Спробуй ще!';
+    fb.style.background = isCorrect ? '#22c55e' : '#ef4444';
+    fb.style.opacity = 1;
+
+    setTimeout(() => {
+        fb.style.opacity = 0;
+        
+        if (isCorrect) {
+            if (stage === 1) {
+                stage = 2;
+                showQuestion2();
+            } else if (stage === 2) {
+                stage = 3;
+                showQuestion3();
+            } else if (stage === 3) {
+                closeModal(modals.trainer);
+                openModal(modals.completion);
+            }
+        } else {
+            if (stage === 1) {
+                showQuestion1();
+            } else if (stage === 2) {
+                showQuestion2();
+            } else if (stage === 3) {
+                showQuestion3();
+            }
+        }
+    }, 1400);
+};
+
+// Функція початку тренажера
+function startTrainer() {
+    stage = 1;
+    currentData = null;
+    showQuestion1();
+}
+
+// Скидання тренажера
+document.getElementById('resetTrainerBtn').onclick = () => {
+    closeModal(modals.completion);
+    startTrainer();
+    openModal(modals.trainer);
+};
+
+
+            });
+    </script>
+</body>
+</html>
