@@ -1527,7 +1527,28 @@ function drawComplexPlane(canvas, a, b) {
                 console.error('Error in generateQuestionData:', err);
             }
         }
+// Форматування уявної частини: 1 → +i, -1 → -i, 5 → +5i, -3 → -3i, 0 → порожньо
+function formatImaginary(b) {
+    if (b === 0) return '';
+    if (b === 1) return '+i';
+    if (b === -1) return '-i';
+    if (b > 0) return `+${b}i`;
+    return `${b}i`; // від'ємні, крім -1
+}
 
+// Повне форматування комплексного числа a + bi у стандартному вигляді
+function formatComplex(a, b) {
+    if (a === 0 && b === 0) return '0';
+    if (a === 0) {
+        // Тільки уявна частина
+        return formatImaginary(b).replace(/^\+/, ''); // прибираємо + на початку, якщо є
+    }
+    if (b === 0) {
+        return a.toString(); // тільки дійсна
+    }
+    // Обидві частини
+    return `${a}${formatImaginary(b)}`;
+}
         function renderQuestion() {
     const trainerContent = document.getElementById('trainerContent');
     if (!trainerContent) {
@@ -1540,7 +1561,7 @@ function drawComplexPlane(canvas, a, b) {
             <div class="completion-emoji"></div>
             <div class="completion-message">
                <h2>МІСІЯ ВИКОНАНА!</h2>
-                <p>Ти оволодів методами розкриття невизначеностей!</p>
+                <p>Модулі підкорено! Ти — справжній математичний снайпер!</p>
                 <p><strong>СЛАВА УКРАЇНІ!</strong></p>
                 <button id="resetTrainerBtn" class="reset-btn">Повернутися на полігон!</button>
             </div>
@@ -1567,23 +1588,32 @@ function drawComplexPlane(canvas, a, b) {
         return;
     }
 
-    let text, optionsHTML;
+       let text, optionsHTML;
 
     if (currentQuestion === 'q1_v1' || currentQuestion === 'q1_random') {
         const qData = currentQuestion === 'q1_v1' ? data : currentData.q1_random;
-        text = `Знайти модуль комплексного числа \\( z = ${qData.b > 0 ? '' : '-'}${Math.abs(qData.b)}i \\)`;
+        const imagSign = qData.b > 0 ? '' : '-';
+        const imagAbs = Math.abs(qData.b);
+        const imagStr = (imagAbs === 1) ? 'i' : `${imagAbs}i`;
+        text = `Знайти модуль комплексного числа \\( z = ${imagSign}${imagStr} \\)`;
         optionsHTML = qData.options.map(opt => `<div class="option" data-answer="${opt}">\\(${opt}\\)</div>`).join('');
+
     } else if (currentQuestion === 'q2') {
-        text = `Знайти модуль комплексного числа \\( z = ${data.a}${data.b >= 0 ? '+' : '-'}${Math.abs(data.b)}i \\)`;
+        text = `Знайти модуль комплексного числа \\( z = ${formatComplex(data.a, data.b)} \\)`;
         optionsHTML = data.options.map(opt => `<div class="option" data-answer="${opt}">\\(${opt}\\)</div>`).join('');
+
     } else if (currentQuestion === 'q3') {
         text = `На рисунку зображено радіус-вектор комплексного числа. Знайти його довжину.`;
         optionsHTML = data.options.map(opt => `<div class="option" data-answer="${opt}">\\(${opt}\\)</div>`).join('');
+
     } else if (currentQuestion === 'q4') {
-        text = `Знайти модуль різниці комплексних чисел \\( (${data.a1}${data.b1 >= 0 ? '+' : '-'}${Math.abs(data.b1)}i) - (${data.a2}${data.b2 >= 0 ? '+' : '-'}${Math.abs(data.b2)}i) \\)`;
+        const z1 = formatComplex(data.a1, data.b1);
+        const z2 = formatComplex(data.a2, data.b2);
+        text = `Знайти модуль різниці комплексних чисел \\( (${z1}) - (${z2}) \\)`;
         optionsHTML = data.options.map(opt => `<div class="option" data-answer="${opt}">\\(${opt}\\)</div>`).join('');
+
     } else if (currentQuestion === 'q5') {
-        text = `Який модуль має спряжене до числа \\( z = ${data.a}${data.b >= 0 ? '+' : '-'}${Math.abs(data.b)}i \\)?`;
+        text = `Який модуль має спряжене до числа \\( z = ${formatComplex(data.a, data.b)} \\)?`;
         optionsHTML = data.options.map(opt => `<div class="option" data-answer="${opt}">\\(${opt}\\)</div>`).join('');
     }
 
@@ -1680,5 +1710,6 @@ function drawComplexPlane(canvas, a, b) {
     </script>
 </body>
 </html>
+
 
 
