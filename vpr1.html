@@ -320,36 +320,79 @@
     let lastTouchStartTime = null;
     let touchCount = 0;
 
-    function generateComplexNumbers() {
-      currentNumbers = [];
-      for (let i = 0; i < 5; i++) {
-        const re = Math.floor(Math.random() * 19) - 9; // [-9, 9]
-        const im = Math.floor(Math.random() * 19) - 9; // [-9, 9]
-        const number = im === 0 ? `${re}` : re === 0 ? `${im}i` : `${re} ${im >= 0 ? '+' : ''} ${im}i`;
-        const latex = `\\( ${number} \\)`;
-        currentNumbers.push({ number, latex, x: re, y: im });
-      }
-      console.log('Generated numbers:', currentNumbers);
-    }
-
-    function renderMathJax(elementId) {
-      const element = document.getElementById(elementId);
-      if (!element) {
-        console.error(`Element with id '${elementId}' not found!`);
-        return;
-      }
-      element.innerHTML = currentNumbers[currentNumberIndex].latex;
-      console.log(`renderMathJax: Rendering for #${elementId}, latex: ${currentNumbers[currentNumberIndex].latex}`);
-      if (window.MathJax) {
-        MathJax.typesetPromise([`#${elementId}`]).then(() => {
-          element.classList.add('rendered');
-          console.log(`renderMathJax: Successfully rendered for #${elementId}`);
-        }).catch(err => console.error(`renderMathJax: Error for #${elementId}:`, err));
+     function generateComplexNumbers() {
+  currentNumbers = [];
+  for (let i = 0; i < 5; i++) {
+    const re = Math.floor(Math.random() * 19) - 9; // [-9, 9]
+    const im = Math.floor(Math.random() * 19) - 9; // [-9, 9]
+    
+    let number;
+    if (im === 0) {
+      // Тільки дійсна частина
+      number = `${re}`;
+    } else if (re === 0) {
+      // Тільки уявна частина
+      if (Math.abs(im) === 1) {
+        number = im === 1 ? 'i' : '-i'; // i або -i замість 1i чи -1i
       } else {
-        console.warn(`renderMathJax: MathJax not loaded, retrying for #${elementId}`);
-        setTimeout(() => renderMathJax(elementId), 500);
+        number = `${im}i`;
+      }
+    } else {
+      // Обидві частини
+      const imAbs = Math.abs(im);
+      const imSign = im >= 0 ? '+' : '-';
+      if (imAbs === 1) {
+        number = `${re} ${imSign} i`; // i замість 1i
+      } else {
+        number = `${re} ${imSign} ${imAbs}i`;
       }
     }
+    
+    const latex = `\\( ${number} \\)`;
+    currentNumbers.push({ number, latex, x: re, y: im });
+  }
+  console.log('Generated numbers:', currentNumbers);
+}
+
+   function renderMathJax(elementId) {
+  const element = document.getElementById(elementId);
+  if (!element) {
+    console.error(`Element with id '${elementId}' not found!`);
+    return;
+  }
+  
+  // Отримуємо поточне число
+  const currentNum = currentNumbers[currentNumberIndex];
+  
+  // Перетворюємо для LaTeX (якщо потрібно)
+  let latexNumber = currentNum.number;
+  
+  // Замінюємо "i" на математичну уявну одиницю в LaTeX
+  latexNumber = latexNumber.replace(/(\d*)i/g, function(match, coefficient) {
+    if (coefficient === '' || coefficient === '1') {
+      return 'i';
+    } else if (coefficient === '-1') {
+      return '-i';
+    } else {
+      return coefficient + 'i';
+    }
+  });
+  
+  // Оновлюємо латех версію
+  currentNum.latex = `\\( ${latexNumber} \\)`;
+  element.innerHTML = currentNum.latex;
+  
+  console.log(`renderMathJax: Rendering for #${elementId}, latex: ${currentNum.latex}`);
+  if (window.MathJax) {
+    MathJax.typesetPromise([`#${elementId}`]).then(() => {
+      element.classList.add('rendered');
+      console.log(`renderMathJax: Successfully rendered for #${elementId}`);
+    }).catch(err => console.error(`renderMathJax: Error for #${elementId}:`, err));
+  } else {
+    console.warn(`renderMathJax: MathJax not loaded, retrying for #${elementId}`);
+    setTimeout(() => renderMathJax(elementId), 500);
+  }
+}
 
     function drawGrid() {
       ctx.clearRect(0, 0, canvasWidth, canvasHeight);
@@ -504,17 +547,35 @@
     }
 
     function nextNumber() {
-      currentNumberIndex++;
-      if (currentNumberIndex < currentNumbers.length) {
-        const numberText = `Комплексне число ${currentNumberIndex + 1}:`;
-        document.querySelector(".label-text").textContent = numberText;
-        const complexNumberElement = document.getElementById("complexNumber");
-        complexNumberElement.classList.remove('rendered');
-        complexNumberElement.innerHTML = currentNumbers[currentNumberIndex].latex;
-        renderMathJax("complexNumber");
-        clearCanvas();
+  currentNumberIndex++;
+  if (currentNumberIndex < currentNumbers.length) {
+    const numberText = `Комплексне число ${currentNumberIndex + 1}:`;
+    document.querySelector(".label-text").textContent = numberText;
+    const complexNumberElement = document.getElementById("complexNumber");
+    complexNumberElement.classList.remove('rendered');
+    
+    // Оновлюємо відображення з виправленим форматом
+    const currentNum = currentNumbers[currentNumberIndex];
+    let displayNumber = currentNum.number;
+    
+    // Виправляємо відображення для MathJax
+    displayNumber = displayNumber.replace(/(\d*)i/g, function(match, coefficient) {
+      if (coefficient === '' || coefficient === '1') {
+        return 'i';
+      } else if (coefficient === '-1') {
+        return '-i';
       } else {
-        document.getElementById("mainTitle").style.display = "none";
+        return coefficient + 'i';
+      }
+    });
+    
+    currentNum.latex = `\\( ${displayNumber} \\)`;
+    complexNumberElement.innerHTML = currentNum.latex;
+    
+    renderMathJax("complexNumber");
+    clearCanvas();
+  } else {
+            document.getElementById("mainTitle").style.display = "none";
         document.getElementById("yAxisLabel").style.display = "none";
         document.querySelector(".close-btn").style.display = "none";
         document.getElementById("complexPlane").style.display = "none";
@@ -598,3 +659,4 @@
   </script>
 </body>
 </html>
+
