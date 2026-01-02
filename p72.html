@@ -1,0 +1,2554 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>72. Важливі границі</title>
+    <script>
+window.MathJax = {
+    tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true,
+        packages: {'[+]': ['noerrors']},
+        macros: {
+            tg: ['\\operatorname{tg}', 0],
+            ctg: ['\\operatorname{ctg}', 0],
+            arctg: ['\\operatorname{arctg}', 0],
+            arcctg: ['\\operatorname{arcctg}', 0]
+        }
+    },
+    options: {
+        ignoreHtmlClass: "tex2jax_ignore|no-mathjax",
+        processHtmlClass: "tex2jax_process",
+        renderActions: {
+            find_script_mathtex: [10, function () {}, false]
+        }
+    },
+    loader: {load: ['[tex]/noerrors']}
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+<style>
+    *, *:before, *:after { box-sizing: border-box; }
+    body {
+        margin: 0;
+        background: radial-gradient(circle at center, #0a0a0a 0%, #1a1a1a 40%, #2b2b2b 100%);
+        color: #e0e0e0;
+        font-family: 'Roboto Condensed', sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }
+    body.loaded { visibility: visible; opacity: 1; }
+
+    .title-box {
+        margin-top: 60px;
+        padding: 20px 40px;
+        background: linear-gradient(135deg, #1a3a2a, #2a4a3a);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+        border-radius: 16px;
+        text-align: center;
+        border: 1px solid #2f8b5f;
+    }
+    .title-box h1 {
+        margin: 0;
+        font-size: 28px;
+        color: #5cf0b8;
+        font-family: 'Orbitron', sans-serif;
+        text-shadow: 0 0 8px rgba(92,240,184,0.5);
+    }
+
+    .section-container {
+        margin-top: 40px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 25px;
+    }
+    .section {
+        width: 260px;
+        height: 200px;
+        background: linear-gradient(145deg, #2a2a2a, #354535);
+        border-radius: 14px;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.45);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 15px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+        border: 1px solid rgba(92,240,184,0.15);
+    }
+    .section:hover {
+        transform: scale(1.06);
+        box-shadow: 0 10px 25px rgba(92,240,184,0.25);
+    }
+    .section h2 { font-size: 20px; color: #ffffff; font-family: 'Orbitron', sans-serif; }
+    .section img { width: 60px; height: 60px; margin-bottom: 15px; filter: brightness(1.3) drop-shadow(0 0 6px #5cf0b8); }
+
+    .modal {
+        display: none;
+        position: fixed;
+        top: 5%; left: 5%; width: 90%; height: 90%;
+        background: linear-gradient(135deg, #2a2a2a, #3a4a45);
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        z-index: 1001;
+        overflow: hidden;
+        flex-direction: column;
+        border: 1px solid rgba(92,240,184,0.2);
+    }
+    #modalOverlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.85);
+        z-index: 999;
+        backdrop-filter: blur(6px);
+    }
+    .modal-content {
+        padding: 20px;
+        flex-grow: 1;
+        overflow-y: auto;
+        color: #e0e0e0;
+        width: 100%;
+    }
+    .modal-header {
+        background: linear-gradient(0deg, #2a2a2a, #3a4a45);
+        padding: 8px 12px;
+        display: flex;
+        justify-content: flex-end;
+        width: 100%;
+        position: sticky;
+        top: 0;
+        z-index: 1002;
+        border-bottom: 1px solid rgba(92,240,184,0.2);
+    }
+    .close-btn {
+        background: linear-gradient(135deg, #2f8b5f, #5cf0b8);
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 6px 16px;
+        font-size: 16px;
+        cursor: pointer;
+        font-family: 'Orbitron', sans-serif;
+        box-shadow: 0 2px 8px rgba(47,139,95,0.4);
+    }
+    .close-btn:hover { background: linear-gradient(135deg, #3bb07f, #2f8b5f); transform: scale(1.05); }
+
+    .theory-content h2, .trainer-container h2 { 
+        color: #5cf0b8; 
+        text-shadow: 0 0 10px rgba(92,240,184,0.5); 
+        text-align: center; 
+        font-family: 'Orbitron', sans-serif; 
+    }
+    .theory-content p, .theory-content li { 
+        font-size: clamp(18px, 3vw, 20px); 
+        line-height: 1.7; 
+        text-align: justify; 
+    }
+    .example {
+        background: rgba(92,240,184,0.1);
+        border-left: 4px solid #5cf0b8;
+        padding: 12px;
+        margin: 15px 0;
+        border-radius: 6px;
+        color: #a8f0e6;
+        font-weight: bold;
+        font-size: 22px;
+    }
+    .solution {
+        background: rgba(92,240,184,0.15);
+        border: 2px solid #5cf0b8;
+        padding: 12px;
+        margin: 15px 0;
+        border-radius: 6px;
+        text-align: center;
+        color: #5cf0b8;
+        font-weight: bold;
+    }
+    .math-notation-centered {
+        display: block;
+        text-align: center;
+        font-size: clamp(20px, 3.5vw, 24px);
+        margin: 20px 0;
+        color: #99ffcc;
+    }
+    mjx-container { color: #99ffcc !important; font-style: italic !important; }
+
+    .navigation-buttons { 
+        display: flex; 
+        justify-content: center; 
+        gap: 20px; 
+        margin: 40px 0; 
+    }
+    .nav-button {
+        display: flex; 
+        align-items: center; 
+        background: linear-gradient(135deg, #2a2a2a, #354535);
+        color: #e0e0e0; 
+        padding: 12px 24px; 
+        border-radius: 10px; 
+        text-decoration: none;
+        font-weight: bold; 
+        border: 1px solid rgba(92,240,184,0.3);
+        transition: all 0.3s ease;
+    }
+    .nav-button:hover { 
+        background: linear-gradient(135deg, #3bb07f, #5cf0b8); 
+        color: #fff; 
+        transform: scale(1.05); 
+    }
+    .nav-button svg { margin-right: 8px; fill: currentColor; width: 20px; height: 20px; }
+
+    @media (max-width: 768px) {
+        .title-box { margin-top: 40px; }
+        .title-box h1 { font-size: 20px; }
+        .section h2 { font-size: 18px; }
+        .section-container { flex-direction: column; align-items: center; }
+        .section { width: 80%; height: 180px; }
+        .modal { top: 2%; left: 2%; width: 96%; height: 96%; }
+        .theory-content h2, .trainer-container h2 { font-size: 18px; }
+    }
+
+    /* Стилі скролбару */
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { 
+        background: rgba(92, 240, 184, 0.3); 
+        border-radius: 10px;
+        border: 2px solid transparent;
+        background-clip: content-box;
+        transition: all 0.3s ease;
+    }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(92, 240, 184, 0.7); }
+    ::-webkit-scrollbar-thumb:active { background: #5cf0b8; width: 12px; }
+    * { scrollbar-width: thin; scrollbar-color: rgba(92, 240, 184, 0.5) transparent; }
+
+    .formula-box {
+        background: rgba(92,240,184,0.1);
+        padding: 20px;
+        border-left: 4px solid #5cf0b8;
+        border-radius: 8px;
+        margin: 20px auto;
+        max-width: 700px;
+        text-align: center;
+    }
+
+    #videoList { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; padding: 20px; }
+    .video-card {
+        width: 300px;
+        height: 250px;
+        background: #2c2c2c;
+        border-radius: 16px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 15px;
+        gap: 15px;
+        cursor: pointer;
+        transition: 0.3s ease;
+    }
+    .video-card:hover {
+        background: #333;
+        transform: translateY(-4px);
+        box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+    }
+    .video-card .play-icon { width: 64px; height: 64px; }
+    .video-card h3 { color: #f0f0f0; font-size: 1rem; line-height: 1.3; }
+
+    /* Стилі флеш-карток */
+    .question-card {
+        perspective: 1000px;
+        margin: 25px auto;
+        max-width: 964px;
+        width: 100%;
+        min-height: 180px;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+    .question-card:hover { transform: translateY(-5px); }
+    .card-inner {
+        position: relative;
+        width: 100%;
+        min-height: 180px;
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        transform-style: preserve-3d;
+    }
+    .question-card.flipped .card-inner { transform: rotateY(180deg); }
+    .card-front, .card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 25px;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+        text-align: center;
+        border: 2px solid rgba(92,240,184,0.3);
+        transition: all 0.3s ease;
+    }
+    .card-front {
+        background: linear-gradient(135deg, #2a2a2a, #3a4a45);
+        color: #ffffff;
+    }
+    .card-front:hover { border-color: rgba(92,240,184,0.6); box-shadow: 0 10px 30px rgba(92,240,184,0.2); }
+    .card-back {
+        background: linear-gradient(135deg, #2a2a2a, #3a4a45);
+        color: #e0e0e0;
+        transform: rotateY(180deg);
+        padding: 25px;
+        border-color: rgba(92,240,184,0.5);
+    }
+    .card-back:hover { border-color: rgba(92,240,184,0.8); box-shadow: 0 10px 30px rgba(92,240,184,0.3); }
+    .card-front span, .card-back span { font-size: clamp(18px, 3vw, 20px); line-height: 1.6; font-weight: 500; }
+    .card-front span { color: #ffffff; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); }
+    .card-back span { color: #e0e0e0; width: 100%; }
+    .card-front::after { content: "❓"; position: absolute; bottom: 15px; right: 20px; font-size: 20px; opacity: 0.7; color: #5cf0b8; }
+    .card-back::after { content: "💡"; position: absolute; bottom: 15px; right: 20px; font-size: 20px; opacity: 0.7; color: #5cf0b8; }
+
+    /* Стилі тренажера */
+    .trainer-container {
+        width: 90%;
+        max-width: 800px;
+        margin: auto;
+        padding: 30px;
+        background: linear-gradient(135deg, #2a2a2a, #3a4a45);
+        border-radius: 16px;
+        border: 1px solid rgba(92,240,184,0.2);
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+    }
+    .question-circle {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 25px;
+        background: linear-gradient(135deg, #2f8b5f, #5cf0b8);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 15px rgba(47,139,95,0.4);
+    }
+    .question-circle h3 { color: #fff; margin: 0; font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700; }
+    .options-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin: 30px 0;
+        padding: 0 15px;
+        justify-items: center;
+    }
+    .option {
+        width: 100%;
+        min-height: 80px;
+        padding: 20px 15px;
+        border: 3px solid #2f8b5f;
+        border-radius: 14px;
+        background: #2a2a2a;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.25s ease;
+        font-size: clamp(17px, 3vw, 19px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    .option * { pointer-events: none !important; }
+    .option { pointer-events: auto !important; }
+    .option:hover:not(.selected) {
+        background: rgba(92,240,184,0.2);
+        border-color: #5cf0b8;
+        transform: translateY(-4px);
+    }
+    .option.selected {
+        background: linear-gradient(135deg, #2f8b5f, #5cf0b8);
+        border-color: #5cf0b8;
+        color: white;
+        box-shadow: 0 0 20px rgba(92,240,184,0.6);
+        transform: scale(1.03);
+    }
+    .submit-btn {
+        background: linear-gradient(135deg, #2f8b5f, #5cf0b8);
+        color: #fff;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 25px;
+        font-family: 'Orbitron', sans-serif;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+    }
+    .submit-btn:hover:not(:disabled) { background: linear-gradient(135deg, #3bb07f, #2f8b5f); transform: scale(1.05); box-shadow: 0 4px 15px rgba(47,139,95,0.4); }
+    .submit-btn:disabled { background: #666; cursor: not-allowed; opacity: 0.6; }
+    .feedback {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 30px;
+        padding: 20px 40px;
+        border-radius: 10px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 1002;
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    /* === МЕДАЛЬ З ТРИЗУБОМ === */
+    .completion-emoji {
+        position: relative;
+        display: inline-block;
+        width: clamp(56px, 12vw, 96px);
+        height: clamp(56px, 12vw, 96px);
+        vertical-align: middle;
+        margin: 0 auto 3vw;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #2a2a2a, #3a4a45);
+        border: 3px dashed #ffd700;
+        box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+        overflow: hidden;
+        animation: medalAppear 0.8s ease-out;
+    }
+    .completion-emoji::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><filter id='s' x='-50%' y='-50%' width='200%' height='200%'><feDropShadow dx='0' dy='2' stdDeviation='2' flood-color='%23000000' flood-opacity='0.25'/></filter></defs><rect x='30' y='0' width='60' height='40' rx='4' fill='%23007ACC'/><rect x='30' y='20' width='60' height='20' rx='4' fill='%23FFD700'/><g transform='translate(60,70)'><polygon points='0,-26 6,-6 26,-6 9,6 15,26 0,14 -15,26 -9,6 -26,-6 -6,-6' fill='%23FFD700' filter='url(%23s)'/></g></svg>");
+       background-size: 75%;
+        background-repeat: no-repeat;
+        background-position: center 60%;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+        animation: medalBounce 1.2s ease-out 0.3s both;
+    }
+    @keyframes medalAppear {
+        0% { transform: scale(0.3) rotate(-180deg); opacity: 0; }
+        60% { transform: scale(1.1); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes medalBounce {
+        0% { transform: translateY(-120px) rotate(-30deg) scale(0.4); opacity: 0; }
+        60% { transform: translateY(15px) rotate(10deg) scale(1.15); opacity: 1; }
+        80% { transform: translateY(-8px) rotate(-5deg) scale(1.05); }
+        100% { transform: translateY(0) rotate(0) scale(1); }
+    }
+
+    .completion-message {
+        background: linear-gradient(145deg, #2a2a2a, #3a4a45);
+        border: 2.5px solid #ffffff;
+        border-radius: 15px;
+        padding: clamp(12px, 3vw, 18px);
+        box-shadow: 0 6px 12px rgba(92,240,184,0.4);
+        margin: 2vw auto;
+        max-width: 90%;
+        text-align: center;
+    }
+    .completion-message h2 {
+        color: #ffffff;
+        text-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+    .completion-message p { color: #ffffff; }
+
+    #completionModal .modal-content {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px;
+    }
+    #completionModal .completion-message {
+        text-align: center;
+        max-width: 500px;
+    }
+    .reset-btn {
+        background: linear-gradient(135deg, #2f8b5f, #5cf0b8);
+        color: #fff;
+        padding: 15px 35px;
+        border: none;
+        border-radius: 25px;
+        font-family: 'Orbitron', sans-serif;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 700;
+        margin-top: 20px;
+        transition: all 0.3s ease;
+    }
+    .reset-btn:hover { background: linear-gradient(135deg, #3bb07f, #2f8b5f); transform: scale(1.05); box-shadow: 0 4px 15px rgba(47,139,95,0.4); }
+
+    @media (max-width: 768px) {
+        .trainer-container { padding: 20px 15px; width: 95%; margin: 10px auto; }
+        .question-circle { width: 100px; height: 100px; margin: 0 auto 15px; }
+        .question-circle h3 { font-size: 16px; }
+        .options-container { gap: 10px; margin: 20px 0; }
+        .option { min-width: 100%; padding: 12px 15px; font-size: 16px; font-weight: 600; border-width: 3px; background: rgba(42,42,42,0.9); }
+        #questionText { font-size: 18px; margin: 10px 0; line-height: 1.3; }
+        .feedback { font-size: 20px; padding: 15px 25px; border-radius: 8px; text-shadow: 0 2px 4px rgba(0,0,0,0.7); }
+    }
+    #questionText { font-size: clamp(18px, 2.8vw, 20px); line-height: 1.4; margin: 15px 0; color: #99ffcc; font-weight: 600; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+    mjx-container { font-size: 0.9em !important; color: #99ffcc !important; font-style: italic !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+    .highlight { color: #5cf0b8; font-weight: bold; }
+    .pos { color: #7cff7c; font-weight: bold; }
+    .neg { color: #ff6b6b; font-weight: bold; }
+
+    .text-block p {
+        font-size: 18px;
+        line-height: 1.8;
+        margin: 18px 0;
+        text-align: justify;
+    }
+
+    .math-important {
+        background: rgba(92,240,184,0.1);
+        padding: 20px;
+        border-left: 4px solid #5cf0b8;
+        border-radius: 8px;
+        margin: 20px auto;
+        max-width: 700px;
+        text-align: center;
+    }
+
+    .math-big {
+        font-size: 20px;
+        color: #99ffcc;
+        text-align: center;
+        margin: 20px 0;
+        padding: 15px;
+        background: rgba(92,240,184,0.15);
+        border-radius: 10px;
+    }
+
+   .grid-3 {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    margin: 30px 0;
+    max-width: 100%;
+}
+
+    @media (max-width: 768px) {
+    .grid-3 {
+        gap: 20px;
+        margin: 25px 0;
+    }
+    
+    .card-deriv {
+        padding: 20px;
+    }
+    
+    .card-deriv h4 {
+        font-size: 18px;
+    }
+    
+    .card-deriv p {
+        font-size: 16px;
+    }
+    
+    .card-deriv .math-big {
+        font-size: 16px;
+        padding: 12px;
+    }
+}
+
+   .card-deriv {
+    background: linear-gradient(135deg, #2a2a2a, #3a4a45);
+    padding: 25px;
+    border-radius: 16px;
+    border: 1px solid rgba(92,240,184,0.4);
+    text-align: left;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    width: 100%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+    .card-deriv:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(92,240,184,0.2);
+}
+
+.card-deriv h4 {
+    color: #5cf0b8;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 20px;
+    margin-bottom: 15px;
+    text-shadow: 0 0 8px rgba(92,240,184,0.3);
+}
+
+.card-deriv p {
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    color: #e0e0e0;
+}
+
+.card-deriv .math-big {
+    background: rgba(92,240,184,0.1);
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid rgba(92,240,184,0.2);
+    font-size: 18px;
+    text-align: center;
+    margin-top: 15px;
+}
+    
+
+    .section-title {
+        color: #5cf0b8;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 22px;
+        text-align: center;
+        margin: 35px 0 20px;
+        text-shadow: 0 0 10px rgba(92,240,184,0.4);
+    }
+
+    .bullet-blue li {
+        font-size: 18.5px;
+        margin: 12px 0;
+        padding-left: 8px;
+    }
+
+    .bullet-blue li::marker { color: #5cf0b8; font-size: 22px; }
+
+    .algo-box {
+        background: rgba(92,240,184,0.12);
+        border: 2px dashed #5cf0b8;
+        border-radius: 14px;
+        padding: 25px;
+        margin: 30px 0;
+    }
+
+    .algo-list {
+        padding-left: 20px;
+        counter-reset: num;
+    }
+
+    .algo-list li {
+        position: relative;
+        padding-left: 45px;
+        margin: 20px 0;
+        font-size: 18.5px;
+        line-height: 1.7;
+    }
+
+    .algo-list li::before {
+        counter-increment: num;
+        content: counter(num) ")";
+        position: absolute;
+        left: 0;
+        color: #5cf0b8;
+        font-weight: bold;
+        font-size: 22px;
+        font-family: 'Orbitron', sans-serif;
+    }
+
+    .final-answer {
+        background: linear-gradient(135deg, #2f8b5f, #3bb07f);
+        color: white;
+        padding: 22px;
+        border-radius: 12px;
+        text-align: center;
+        font-size: 21px;
+        font-weight: bold;
+        margin-top: 30px;
+        box-shadow: 0 6px 20px rgba(92,240,184,0.5);
+    }
+    
+    .example-full {
+        background: rgba(92,240,184,0.08);
+        border: 2px solid rgba(92,240,184,0.3);
+        border-radius: 16px;
+        padding: 28px;
+        margin: 35px 0;
+        font-size: 19px;
+        line-height: 1.85;
+        text-align: justify;
+    }
+
+    .example-header-classic {
+        font-size: 22px;
+        font-weight: bold;
+        color: white;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px dashed rgba(92,240,184,0.4);
+        text-align: center;
+    }
+
+    .example-label {
+        color: #5cf0b8;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 24px;
+        padding: 6px 16px;
+        background: rgba(92,240,184,0.15);
+        border-radius: 8px;
+        margin-right: 12px;
+    }
+
+    .example-function {
+        color: #99ffcc;
+        font-size: 22px;
+        font-style: italic;
+        margin: 0 8px;
+    }
+
+    .example-solution-text p {
+        margin: 18px 0;
+    }
+
+    .math-centered {
+        text-align: center;
+        font-size: 22px;
+        color: #99ffcc;
+        background: rgba(92,240,184,0.15);
+        padding: 14px;
+        border-radius: 10px;
+        margin: 20px auto;
+        max-width: 90%;
+        border: 1px dashed rgba(92,240,184,0.4);
+    }
+
+    .marker {
+        color: #5cf0b8;
+        font-weight: bold;
+        font-size: 22px;
+        margin-right: 8px;
+    }
+
+    .end-marker {
+        color: #5cf0b8;
+        font-weight: bold;
+        font-size: 22px;
+        margin-left: 10px;
+    }
+
+    .example-answer {
+        background: linear-gradient(135deg, #2f8b5f, #3bb07f);
+        color: white;
+        padding: 20px;
+        border-radius: 12px;
+        text-align: center;
+        font-size: 21px;
+        font-weight: bold;
+        margin-top: 30px;
+        box-shadow: 0 6px 20px rgba(92,240,184,0.5);
+    }
+    
+    @media (max-width: 768px) {
+        .theory-content p,
+        .example-full,
+        .example-solution-text p {
+            font-size: 18px !important;
+            line-height: 1.75 !important;
+        }
+
+        .section-title,
+        .example-header-classic,
+        .example-label {
+            font-size: 19px !important;
+        }
+
+        .example-label {
+            display: inline-block;
+            padding: 6px 14px !important;
+            margin-bottom: 10px;
+        }
+
+        .math-centered,
+        .math-important {
+            font-size: 19px !important;
+            padding: 14px 10px !important;
+            margin: 18px auto !important;
+        }
+
+        .math-big {
+            font-size: 19px !important;
+            padding: 14px !important;
+        }
+
+        .example-function {
+            font-size: 19px !important;
+            display: block;
+            margin: 12px auto !important;
+            text-align: center;
+        }
+
+        .marker, .end-marker {
+            font-size: 19px !important;
+        }
+
+        .grid-3 {
+            grid-template-columns: 1fr !important;
+            gap: 18px;
+        }
+
+        .card-deriv {
+            padding: 18px !important;
+        }
+
+        .algo-box {
+            padding: 20px !important;
+        }
+
+        .algo-list li {
+            font-size: 17px !important;
+            padding-left: 38px !important;
+        }
+
+        .algo-list li::before {
+            font-size: 19px !important;
+        }
+
+        .final-answer,
+        .example-answer {
+            font-size: 19px !important;
+            padding: 18px !important;
+        }
+
+        .example-full {
+            padding: 20px !important;
+            margin: 25px 0 !important;
+        }
+
+        .example-header-classic {
+            padding-bottom: 12px !important;
+            margin-bottom: 20px !important;
+        }
+    }
+
+    .video-modal-title {
+        text-align: center;
+        margin: 20px 0 30px;
+        padding: 20px;
+    }
+
+    .video-modal-title h2 {
+        font-size: 2.2rem;
+        color: #5cf0b8;
+        margin: 0 0 10px 0;
+        font-weight: 600;
+    }
+
+    @media (max-width: 480px) {
+        .theory-content p,
+        .example-full,
+        .example-solution-text p {
+            font-size: 18px !important;
+            line-height: 1.5 !important;
+        }
+        
+        .section-title,
+        .example-header-classic,
+        .example-label {
+            font-size: 18px !important;
+        }
+
+        .example-label {
+            display: inline-block;
+            padding: 6px 14px !important;
+            margin-bottom: 10px;
+        }
+        
+        .math-centered,
+        .math-important {
+            font-size: 18px !important;
+            padding: 12px 8px !important;
+        }
+
+        .example-function {
+            font-size: 18px !important;
+        }
+
+        .example-label {
+            font-size: 16px !important;
+            padding: 5px 12px !important;
+        }
+
+        .section-title {
+            font-size: 18px !important;
+        }
+
+        .final-answer,
+        .example-answer {
+            font-size: 18px !important;
+            padding: 16px !important;
+        }
+
+        .marker, .end-marker {
+            font-size: 18px !important;
+        }
+        
+        .video-modal-title h2 {
+            font-size: 1.5rem;
+        }
+    }
+
+    .video-modal-title::after {
+        content: '';
+        display: block;
+        width: 80px;
+        height: 4px;
+        background: #5cf0b8;
+        margin: 20px auto 0;
+        border-radius: 2px;
+    }
+    
+    @media (max-width: 768px) {
+        .options-container {
+            grid-template-columns: 1fr;
+            gap: 15px;
+            padding: 0 8px;
+        }
+        .option {
+            min-height: 80px;
+            padding: 18px 12px;
+            font-size: 18px;
+        }
+    }
+
+    details {
+        margin: 25px 0;
+        background: linear-gradient(135deg, rgba(42, 42, 42, 0.8), rgba(58, 74, 69, 0.9));
+        border-radius: 12px;
+        border: 1px solid rgba(92, 240, 184, 0.2);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    details:hover {
+        border-color: rgba(92, 240, 184, 0.4);
+        box-shadow: 0 8px 24px rgba(47, 139, 95, 0.25);
+    }
+
+   summary {
+    font-weight: 700;
+    padding: 18px 24px;
+    background: linear-gradient(135deg, #2f8b5f, #3bb07f);
+    border-radius: 10px 10px 0 0;
+    color: #ffffff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.15rem;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(47, 139, 95, 0.3);
+    cursor: pointer;
+    list-style: none;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    text-align: left;
+    width: 100%;
+}
+
+    summary::-webkit-details-marker {
+    display: none;
+}
+
+summary::after {
+    content: "▼";
+    font-size: 0.9rem;
+    transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    color: #a8f0e6;
+    margin-left: auto;
+    font-weight: bold;
+    padding-left: 15px;
+}
+
+    details[open] summary::after {
+        transform: rotate(180deg);
+        color: #5cf0b8;
+    }
+
+    details[open] summary {
+        background: linear-gradient(135deg, #3bb07f, #2f8b5f);
+        border-radius: 10px 10px 0 0;
+        box-shadow: 0 4px 15px rgba(92, 240, 184, 0.3);
+    }
+
+    details .details-content {
+        padding: 24px;
+        color: #e0e0e0;
+        font-family: 'Roboto Condensed', sans-serif;
+        font-size: 1.05rem;
+        line-height: 1.7;
+        background: rgba(42, 42, 42, 0.7);
+        border-radius: 0 0 10px 10px;
+        animation: fadeIn 0.4s ease-out;
+        border-top: 1px solid rgba(92, 240, 184, 0.15);
+    }
+
+    details .details-content p {
+        margin: 16px 0;
+        text-align: justify;
+    }
+
+    details .details-content ul,
+    details .details-content ol {
+        margin: 16px 0;
+        padding-left: 24px;
+    }
+
+    details .details-content li {
+        margin: 10px 0;
+        padding-left: 8px;
+        position: relative;
+    }
+
+    details .details-content li::before {
+        content: "•";
+        color: #5cf0b8;
+        font-weight: bold;
+        position: absolute;
+        left: -15px;
+    }
+
+    details .details-content strong {
+        color: #a8f0e6;
+        font-weight: 700;
+    }
+
+    details .details-content em {
+        color: #99ffcc;
+        font-style: italic;
+    }
+
+    details .details-content .math-important {
+        background: rgba(92, 240, 184, 0.15);
+        border: 2px solid #5cf0b8;
+        border-radius: 10px;
+        padding: 18px;
+        margin: 20px auto;
+        text-align: center;
+        font-size: 1.1rem;
+        color: #99ffcc;
+        font-family: 'MathJax_Math', 'Cambria Math', serif;
+    }
+
+    details .details-content .example {
+        background: rgba(47, 139, 95, 0.2);
+        border-left: 4px solid #5cf0b8;
+        padding: 16px;
+        margin: 20px 0;
+        border-radius: 8px;
+    }
+
+    details .details-content .highlight {
+        background: rgba(92, 240, 184, 0.2);
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: #ffffff;
+    }
+
+    details .details-content table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        border: 1px solid rgba(92, 240, 184, 0.3);
+    }
+
+    details .details-content th {
+        background: rgba(47, 139, 95, 0.5);
+        color: #ffffff;
+        padding: 12px;
+        text-align: center;
+        font-family: 'Orbitron', sans-serif;
+        border-bottom: 2px solid #5cf0b8;
+    }
+
+    details .details-content td {
+        padding: 10px;
+        text-align: center;
+        border: 1px solid rgba(92, 240, 184, 0.2);
+    }
+
+    details .details-content tr:nth-child(even) {
+        background: rgba(47, 139, 95, 0.1);
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    details.military summary::before {
+        content: "🛡️";
+        margin-right: 10px;
+        font-size: 1.1rem;
+    }
+
+    details.warning summary {
+        background: linear-gradient(135deg, #2f8b5f, #3bb07f);
+        box-shadow: 0 4px 12px rgba(47, 139, 95, 0.3);
+    }
+
+    details.warning .details-content {
+        background: rgba(47, 139, 95, 0.1);
+        border-left: 4px solid #2f8b5f;
+    }
+
+    details.important summary {
+        background: linear-gradient(135deg, #2f8b5f, #3bb07f);
+        box-shadow: 0 4px 12px rgba(47, 139, 95, 0.3);
+    }
+
+    details.important .details-content {
+        background: rgba(47, 139, 95, 0.1);
+        border-left: 4px solid #2f8b5f;
+    }
+
+    @media (max-width: 768px) {
+        details {
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+        
+        summary {
+            padding: 16px 20px;
+            font-size: 1.05rem;
+        }
+        
+        details .details-content {
+            padding: 20px;
+            font-size: 1rem;
+        }
+        
+        summary::after {
+            font-size: 0.8rem;
+        }
+        
+        details .details-content ul,
+        details .details-content ol {
+            padding-left: 20px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        details {
+            margin: 18px 0;
+            border-radius: 8px;
+        }
+        
+        summary {
+            padding: 14px 18px;
+            font-size: 1rem;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        
+        summary::after {
+            align-self: flex-end;
+            margin-top: -20px;
+        }
+        
+        details .details-content {
+            padding: 18px;
+            font-size: 0.95rem;
+        }
+        
+        details .details-content ul,
+        details .details-content ol {
+            padding-left: 18px;
+        }
+        
+        details.military summary::before {
+            font-size: 1rem;
+        }
+    }
+    
+    .attention-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+
+    .attention-title::after {
+        content: "";
+        display: block;
+        width: 120px;
+        height: 5px;
+        background: linear-gradient(90deg, #5cf0b8, #2f8b5f);
+        border-radius: 3px;
+        margin-top: 6px;
+    }
+
+    .remarks-box {
+        background: linear-gradient(135deg, rgba(47, 139, 95, 0.2), rgba(92, 240, 184, 0.1));
+        border: 2px solid rgba(92, 240, 184, 0.3);
+        border-radius: 12px;
+        padding: 20px;
+        margin: 25px 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .remarks-title {
+        color: #5cf0b8;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+        text-shadow: 0 0 8px rgba(92, 240, 184, 0.3);
+        border-bottom: 2px dashed rgba(92, 240, 184, 0.4);
+        padding-bottom: 8px;
+    }
+
+    .remarks-content p {
+        margin: 12px 0;
+        padding-left: 10px;
+        border-left: 3px solid rgba(92, 240, 184, 0.5);
+        padding-left: 15px;
+    }
+
+    .remarks-content strong {
+        color: #a8f0e6;
+        margin-right: 5px;
+    }
+
+    @media (max-width: 768px) {
+        .remarks-box {
+            padding: 18px;
+            margin: 20px 0;
+        }
+        
+        .remarks-title {
+            font-size: 1.1rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .remarks-box {
+            padding: 15px;
+        }
+        
+        .remarks-title {
+            font-size: 1rem;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        mjx-container[jax="CHTML"][display="true"],
+        mjx-container[display="true"] {
+            display: block !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            -webkit-overflow-scrolling: touch !important;
+            padding-bottom: 12px;
+            margin: 20px 0;
+            scrollbar-width: thin;
+            scrollbar-color: #5cf0b8 #2a2a2a;
+            max-width: 100%;
+        }
+
+        .math-centered,
+        .math-important,
+        .math-big,
+        .example-full .math-centered,
+        .final-answer,
+        .example-answer,
+        #questionText > div,
+        .trainer-container > div {
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            -webkit-overflow-scrolling: touch !important;
+            padding: 8px 0;
+            max-width: 100%;
+        }
+        
+        .trainer-container mjx-container[jax="CHTML"][display="true"],
+        #questionText mjx-container[jax="CHTML"][display="true"] {
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            -webkit-overflow-scrolling: touch !important;
+        }
+
+        mjx-container {
+            max-height: none !important;
+            height: auto !important;
+            overflow-y: hidden !important;
+            max-width: 100% !important;
+        }
+
+        mjx-container[jax="CHTML"][display="true"]::-webkit-scrollbar,
+        mjx-container[display="true"]::-webkit-scrollbar,
+        .math-centered::-webkit-scrollbar,
+        .math-important::-webkit-scrollbar,
+        #questionText > div::-webkit-scrollbar,
+        .trainer-container > div::-webkit-scrollbar {
+            height: 6px;
+        }
+        
+        mjx-container[jax="CHTML"][display="true"]::-webkit-scrollbar-thumb,
+        mjx-container[display="true"]::-webkit-scrollbar-thumb,
+        .math-centered::-webkit-scrollbar-thumb,
+        .math-important::-webkit-scrollbar-thumb,
+        #questionText > div::-webkit-scrollbar-thumb,
+        .trainer-container > div::-webkit-scrollbar-thumb {
+            background: rgba(92, 240, 184, 0.7);
+            border-radius: 3px;
+        }
+        
+        mjx-container[jax="CHTML"][display="true"]::-webkit-scrollbar-thumb:hover,
+        mjx-container[display="true"]::-webkit-scrollbar-thumb:hover,
+        .math-centered::-webkit-scrollbar-thumb:hover,
+        .math-important::-webkit-scrollbar-thumb:hover,
+        #questionText > div::-webkit-scrollbar-thumb:hover,
+        .trainer-container > div::-webkit-scrollbar-thumb:hover {
+            background: #5cf0b8;
+        }
+        
+        #questionText {
+            overflow-x: hidden !important;
+        }
+        
+        #questionText > div {
+            margin: 0 -10px;
+            padding: 0 10px;
+        }
+    }
+    
+    #submitAnswer {
+        background: linear-gradient(135deg, #2f8b5f, #5cf0b8);
+        color: #fff;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 25px;
+        font-family: 'Orbitron', sans-serif;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        margin-top: 20px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    #submitAnswer:hover:not(:disabled) { 
+        background: linear-gradient(135deg, #3bb07f, #2f8b5f); 
+        transform: scale(1.05); 
+        box-shadow: 0 4px 15px rgba(47,139,95,0.4); 
+    }
+
+    #submitAnswer:disabled { 
+        background: #666; 
+        cursor: not-allowed; 
+        opacity: 0.6; 
+    }
+
+    .coordinate-input {
+        width: 80px;
+        height: 50px;
+        text-align: center;
+        font-size: 22px;
+        font-family: 'Orbitron', sans-serif;
+        background: rgba(92,240,184,0.1);
+        border: 2px solid #5cf0b8;
+        border-radius: 10px;
+        color: #99ffcc;
+        outline: none;
+        transition: all 0.3s ease;
+        -moz-appearance: textfield;
+        appearance: textfield;
+    }
+
+    .coordinate-input::-webkit-outer-spin-button,
+    .coordinate-input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    .coordinate-input:focus {
+        border-color: #a8f0e6;
+        box-shadow: 0 0 15px rgba(92,240,184,0.6);
+        background: rgba(92,240,184,0.2);
+        transform: scale(1.05);
+    }
+
+    .check-answer-btn {
+        background: linear-gradient(135deg, #2f8b5f, #5cf0b8);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 25px;
+        font-family: 'Orbitron', sans-serif;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        margin: 20px auto 0 auto;
+        display: block;
+        min-width: 200px;
+    }
+
+    .check-answer-btn:hover:not(:disabled) {
+        background: linear-gradient(135deg, #3bb07f, #2f8b5f);
+        transform: scale(1.05);
+        box-shadow: 0 4px 20px rgba(47,139,95,0.5);
+    }
+
+    .check-answer-btn:disabled {
+        background: #666;
+        cursor: not-allowed;
+        opacity: 0.6;
+        transform: none;
+        box-shadow: none;
+    }
+
+    @media (max-width: 768px) {
+        .coordinate-input {
+            width: 70px;
+            height: 45px;
+            font-size: 20px;
+            inputmode: decimal;
+            -webkit-inputmode: decimal;
+        }
+        
+        #submitAnswer,
+        .check-answer-btn {
+            padding: 14px 25px;
+            font-size: 16px;
+            min-width: 180px;
+        }
+    }
+
+    .task-note {
+        color: #ff6b6b !important;
+        font-style: italic !important;
+        font-size: 0.9em !important;
+        display: block !important;
+        margin-top: 10px !important;
+    }
+    
+    mjx-container:not([display="true"]) {
+        font-size: 1.1em !important;
+        color: #99ffcc !important;
+    }
+</style>
+</head>
+<body>
+    <div class="title-box">
+        <h1>72. Важливі границі</h1>
+    </div>
+
+    <div class="section-container">
+        <div class="section" id="openTheoryBtn">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Теорія">
+            <h2>Теоретичні відомості</h2>
+        </div>
+        <div class="section" id="openVideoBtn">
+            <img src="https://img.icons8.com/fluency/96/video.png" alt="Відео">
+            <h2>Відеоматеріали</h2>
+        </div>
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Питання">
+            <h2>Питання і відповіді</h2>
+        </div>
+        <div class="section" id="openTrainerBtn">
+            <img src="https://img.icons8.com/fluency/96/flash-on.png" alt="Тренажер">
+            <h2>Тренажер</h2>
+        </div>
+    </div>
+
+    <div class="navigation-buttons">
+         <a class="nav-button prev" href="{{ url_for('tema12') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+            До теми 12
+        </a>
+        <a class="nav-button home" href="{{ url_for('home') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            На головну
+        </a>
+    </div>
+
+    <!-- ТЕОРІЯ — Важливі границі -->
+    <div id="theoryModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeTheoryBtn">× Закрити</button>
+        </div>
+        <div class="modal-content theory-content">
+            <details class="warning">
+                <summary>Вступ. Перша та друга важливі границі</summary>
+                <div class="details-content">
+                    <h2>Важливі границі</h2>
+                    <div class="text-block">
+                        <p>При обчисленні границь функцій широко використовуються поняття еквівалентності нескінченно малих функцій, а також дві важливі границі, що є основою багатьох математичних розрахунків.</p>
+
+                        <div class="remarks-box">
+                            <h4 class="remarks-title">📝 Ключове зауваження:</h4>
+                            <div class="remarks-content">
+                                <p><strong>Важливі границі</strong> – це фундаментальні граничні співвідношення, які дозволяють спрощувати складні обчислення границь тригонометричних, показникових та логарифмічних функцій.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </details>
+
+            <details class="warning">
+                <summary>Перша важлива границя</summary>
+                <div class="details-content">
+                    <h3>Перша важлива границя (перша чудова границя)</h3>
+                    <div class="text-block">
+                        <p>Перша фундаментальна границя має вигляд:</p>
+                        <div class="math-important">
+                            \[
+                            \lim_{x \to 0} \frac{\sin x}{x} = 1.
+                            \]
+                        </div>
+                        <p>Ця границя є ключовою при роботі з тригонометричними функціями і має низку важливих наслідків, які полегшують обчислення інших границь.</p>
+
+                        <h4 class="section-title">Наслідки першої важливої границі:</h4>
+                        <div class="grid-3">
+                            <div class="card-deriv">
+                                <h4>1. Обернена границя</h4>
+                                <p>\[ \lim_{x \to 0} \frac{x}{\sin x} = 1 \]</p>
+                            </div>
+                            <div class="card-deriv">
+                                <h4>2. Тангенс</h4>
+                                <p>\[ \lim_{x \to 0} \frac{\tg x}{x} = 1 \]</p>
+                            </div>
+                            <div class="card-deriv">
+                                <h4>3. Арктангенс</h4>
+                                <p>\[ \lim_{x \to 0} \frac{\arctg x}{x} = 1 \]</p>
+                            </div>
+                            <div class="card-deriv">
+                                <h4>4. Арксинус</h4>
+                                <p>\[ \lim_{x \to 0} \frac{\arcsin x}{x} = 1 \]</p>
+                            </div>
+                            <div class="card-deriv">
+                                <h4>5. Синус з коефіцієнтом</h4>
+                                <p>\[ \lim_{x \to 0} \frac{\sin ax}{x} = a \]</p>
+                            </div>
+                            <div class="card-deriv">
+                                <h4>6. Дріб з коефіцієнтами</h4>
+                                <p>\[ \lim_{x \to 0} \frac{\sin ax}{bx} = \frac{a}{b} \]</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </details>
+
+            <details class="warning">
+                <summary>Приклади використання першої границі</summary>
+                <div class="details-content">
+                    <!-- Приклад 12.16 -->
+                    <div class="example-full">
+                        <div class="example-header-classic">
+                            <span class="example-label">Приклад 12.16.</span>
+                            Обчислити границю
+                            <span class="example-function">\(\displaystyle \lim_{x \to 0} \frac{\tg 4x}{x}\).</span>
+                        </div>
+                        <div class="example-solution-text">
+                            <p>
+                                <strong>Розв'язання:</strong><br>
+                                <span class="marker">1.</span> При \(x \to 0\) отримуємо невизначеність виду \(\left\{ \frac{0}{0} \right\}\).<br><br>
+                                <span class="marker">2.</span> <strong>Спосіб 1.</strong> Використання першої важливої границі. Домножимо чисельник і знаменник на 4:
+                                <div class="math-centered">\[
+                                \lim_{x \to 0} \frac{\tg 4x}{x} = \lim_{x \to 0} \frac{4\tg 4x}{4x} = 4 \cdot \lim_{x \to 0} \frac{\tg 4x}{4x}.
+                                \]</div>
+                                Оскільки \(\lim_{x \to 0} \frac{\tg x}{x} = 1\), то коли \(4x \to 0\) (що виконується при \(x \to 0\)):
+                                <div class="math-centered">\[
+                                4 \cdot \lim_{x \to 0} \frac{\tg 4x}{4x} = 4 \cdot 1 = 4.
+                                \]</div>
+                                <span class="marker">3.</span> <strong>Спосіб 2.</strong> Використання еквівалентності нескінченно малих функцій. Відомо, що \(\tg 4x \sim 4x\) при \(x \to 0\):
+                                <div class="math-centered">\[
+                                \lim_{x \to 0} \frac{\tg 4x}{x} \approx \lim_{x \to 0} \frac{4x}{x} = \lim_{x \to 0} 4 = 4.
+                                \]</div>
+                            </p>
+                            <div class="example-answer">
+                                <strong>Відповідь.</strong> \(\displaystyle \lim_{x \to 0} \frac{\tg 4x}{x} = 4\)
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Приклад 12.17 -->
+                    <div class="example-full">
+                        <div class="example-header-classic">
+                            <span class="example-label">Приклад 12.17.</span>
+                            Обчислити границю
+                            <span class="example-function">\(\displaystyle \lim_{x \to 0} \frac{\sin^2 \frac{x}{5}}{x^2}\).</span>
+                        </div>
+                        <div class="example-solution-text">
+                            <p>
+                                <strong>Розв'язання:</strong><br>
+                                <span class="marker">1.</span> При \(x \to 0\) отримуємо невизначеність виду \(\left\{ \frac{0}{0} \right\}\).<br><br>
+                                <span class="marker">2.</span> <strong>Спосіб 1.</strong> Перетворимо вираз, розкладаючи знаменник через множник 25:
+                                <div class="math-centered">\[
+                                \lim_{x \to 0} \frac{\sin^2 \frac{x}{5}}{x^2} = \lim_{x \to 0} \frac{\sin^2 \frac{x}{5}}{25 \cdot \left(\frac{x}{5}\right)^2} = \lim_{x \to 0} \frac{1}{25} \cdot \left(\frac{\sin \frac{x}{5}}{\frac{x}{5}}\right)^2.
+                                \]</div>
+                                Використовуємо першу важливу границю:
+                                <div class="math-centered">\[
+                                \lim_{x \to 0} \frac{\sin \frac{x}{5}}{\frac{x}{5}} = 1.
+                                \]</div>
+                                Отже:
+                                <div class="math-centered">\[
+                                \lim_{x \to 0} \frac{\sin^2 \frac{x}{5}}{x^2} = \frac{1}{25} \cdot 1^2 = \frac{1}{25} = 0.04.
+                                \]</div>
+                                <span class="marker">3.</span> <strong>Спосіб 2.</strong> Використовуємо еквівалентність \(\sin \frac{x}{5} \sim \frac{x}{5}\) при \(x \to 0\):
+                                <div class="math-centered">\[
+                                \lim_{x \to 0} \frac{\sin^2 \frac{x}{5}}{x^2} \approx \lim_{x \to 0} \frac{\left(\frac{x}{5}\right)^2}{x^2} = \lim_{x \to 0} \frac{x^2}{25x^2} = \frac{1}{25} = 0.04.
+                                \]</div>
+                            </p>
+                            <div class="example-answer">
+                                <strong>Відповідь.</strong> \(\displaystyle \lim_{x \to 0} \frac{\sin^2 \frac{x}{5}}{x^2} = 0.04\)
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Приклад 12.18 -->
+                    <div class="example-full">
+                        <div class="example-header-classic">
+                            <span class="example-label">Приклад 12.18.</span>
+                            Обчислити границю
+                            <span class="example-function">\(\displaystyle \lim_{x \to 0} \frac{\arcsin 3x \cdot \tg 4x}{24x^2}\).</span>
+                        </div>
+                        <div class="example-solution-text">
+                            <p>
+                                <strong>Розв'язання:</strong><br>
+                                <span class="marker">1.</span> При \(x \to 0\) отримуємо невизначеність виду \(\left\{ \frac{0}{0} \right\}\).<br><br>
+                                <span class="marker">2.</span> <strong>Спосіб 1.</strong> Розкладемо знаменник: \(24x^2 = 2 \cdot 3x \cdot 4x\):
+                                <div class="math-centered">\[
+                                \lim_{x \to 0} \frac{\arcsin 3x \cdot \tg 4x}{24x^2} = \lim_{x \to 0} \frac{\arcsin 3x \cdot \tg 4x}{2 \cdot 3x \cdot 4x} = \frac{1}{2} \cdot \lim_{x \to 0} \frac{\arcsin 3x}{3x} \cdot \frac{\tg 4x}{4x}.
+                                \]</div>
+                                Використовуємо наслідки першої важливої границі:
+                                <div class="math-centered">\[
+                                \lim_{x \to 0} \frac{\arcsin 3x}{3x} = 1, \quad \lim_{x \to 0} \frac{\tg 4x}{4x} = 1.
+                                \]</div>
+                                Отже:
+                                <div class="math-centered">\[
+                                \frac{1}{2} \cdot 1 \cdot 1 = \frac{1}{2} = 0.5.
+                                \]</div>
+                                <span class="marker">3.</span> <strong>Спосіб 2.</strong> Використовуємо еквівалентності: \(\arcsin 3x \sim 3x\), \(\tg 4x \sim 4x\):
+                                <div class="math-centered">\[
+                                \lim_{x \to 0} \frac{\arcsin 3x \cdot \tg 4x}{24x^2} \approx \lim_{x \to 0} \frac{3x \cdot 4x}{24x^2} = \lim_{x \to 0} \frac{12x^2}{24x^2} = \frac{12}{24} = \frac{1}{2} = 0.5.
+                                \]</div>
+                            </p>
+                            <div class="example-answer">
+                                <strong>Відповідь.</strong> \(\displaystyle \lim_{x \to 0} \frac{\arcsin 3x \cdot \tg 4x}{24x^2} = 0.5\)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </details>
+
+            <details class="warning">
+                <summary>Друга важлива границя</summary>
+                <div class="details-content">
+                    <h3>Друга важлива границя (друга чудова границя)</h3>
+                    <div class="text-block">
+                        <p>Невизначеність виду \(\{1^\infty\}\) усувається за допомогою другої важливої границі:</p>
+                        <div class="math-important">
+                            \[
+                            \lim_{x \to \infty} \left(1 + \frac{1}{x}\right)^x = e,
+                            \]
+                        </div>
+                        <p>де \(e \approx 2.71828\) – основа натуральних логарифмів (експонента).</p>
+
+                        <h4 class="section-title">Наслідки другої важливої границі:</h4>
+                        <div class="grid-3">
+                            <div class="card-deriv">
+                                <h4>1. Альтернативна форма</h4>
+                                <p>\[ \lim_{x \to 0} (1 + x)^{1/x} = e \]</p>
+                            </div>
+                            <div class="card-deriv">
+                                <h4>2. Логарифм</h4>
+                                <p>\[ \lim_{x \to 0} \frac{\ln(1 + x)}{x} = 1 \]</p>
+                            </div>
+                            <div class="card-deriv">
+                                <h4>3. Логарифм з основою a</h4>
+                                <p>\[ \lim_{x \to 0} \frac{\log_a (1 + x)}{x} = \frac{1}{\ln a} \]</p>
+                            </div>
+                            <div class="card-deriv">
+                                <h4>4. Показникова функція</h4>
+                                <p>\[ \lim_{x \to 0} \frac{a^x - 1}{x} = \ln a \]</p>
+                            </div>
+                            <div class="card-deriv">
+                                <h4>5. Експонента</h4>
+                                <p>\[ \lim_{x \to 0} \frac{e^x - 1}{x} = 1 \]</p>
+                            </div>
+                            <div class="card-deriv">
+                                <h4>6. Степенева функція</h4>
+                                <p>\[ \lim_{x \to 0} \frac{(1 + x)^\alpha - 1}{x} = \alpha \]</p>
+                            </div>
+                        </div>
+
+                        <div class="remarks-box">
+                            <h4 class="remarks-title">⚡ Увага! Зауваження:</h4>
+                            <div class="remarks-content">
+                                <p>При обчисленні границь, пов'язаних із числом \(e\), часто застосовують таке твердження: якщо існують границі \(\lim_{x \to a} f(x)\) та \(\lim_{x \to a} g(x)\), причому \(\lim_{x \to a} f(x) > 0\), то існує границя:</p>
+                                <div class="math-centered">\[
+                                \lim_{x \to a} [f(x)]^{g(x)} = [\lim_{x \to a} f(x)]^{\lim_{x \to a} g(x)}.
+                                \]</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </details>
+
+            <details class="warning">
+                <summary>Приклади використання другої границі</summary>
+                <div class="details-content">
+                    <!-- Приклад 12.19 -->
+                    <div class="example-full">
+                        <div class="example-header-classic">
+                            <span class="example-label">Приклад 12.19.</span>
+                            Обчислити границю
+                            <span class="example-function">\(\displaystyle \lim_{x \to \infty} \left(\frac{x}{x+1}\right)^{2x-3}\).</span>
+                        </div>
+                        <div class="example-solution-text">
+                            <p>
+                                <strong>Розв'язання:</strong><br>
+                                <span class="marker">1.</span> При \(x \to \infty\) вираз \(\frac{x}{x+1} \to 1\), а показник \(2x-3 \to \infty\), що дає невизначеність виду \(\{1^\infty\}\).<br><br>
+                                <span class="marker">2.</span> Перетворимо вираз:
+                                <div class="math-centered">\[
+                                \frac{x}{x+1} = 1 + \frac{-1}{x+1}.
+                                \]</div>
+                                <span class="marker">3.</span> Запишемо границю у вигляді:
+                                <div class="math-centered">\[
+                                \lim_{x \to \infty} \left(1 + \frac{-1}{x+1}\right)^{2x-3} = \lim_{x \to \infty} \left[\left(1 + \frac{-1}{x+1}\right)^{\frac{x+1}{-1}}\right]^{\frac{-1}{x+1} \cdot (2x-3)}.
+                                \]</div>
+                                <span class="marker">4.</span> Застосовуємо другу важливу границю:
+                                <div class="math-centered">\[
+                                \lim_{x \to \infty} \left(1 + \frac{-1}{x+1}\right)^{\frac{x+1}{-1}} = e.
+                                \]</div>
+                                <span class="marker">5.</span> Обчислюємо показник:
+                                <div class="math-centered">\[
+                                \lim_{x \to \infty} \frac{-1}{x+1} \cdot (2x-3) = \lim_{x \to \infty} \frac{-2x+3}{x+1} = -2.
+                                \]</div>
+                                <span class="marker">6.</span> Отже, границя дорівнює:
+                                <div class="math-centered">\[
+                                e^{-2}.
+                                \]</div>
+                            </p>
+                            <div class="example-answer">
+                                <strong>Відповідь.</strong> \(\displaystyle \lim_{x \to \infty} \left(\frac{x}{x+1}\right)^{2x-3} = e^{-2}\)
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Приклад 12.20 -->
+                    <div class="example-full">
+                        <div class="example-header-classic">
+                            <span class="example-label">Приклад 12.20.</span>
+                            Обчислити границю
+                            <span class="example-function">\(\displaystyle \lim_{x \to 1} (4x-3)^{\frac{x+7}{x-1}}\).</span>
+                        </div>
+                        <div class="example-solution-text">
+                            <p>
+                                <strong>Розв'язання:</strong><br>
+                                <span class="marker">1.</span> При \(x \to 1\) вираз \(4x-3 \to 1\), а показник \(\frac{x+7}{x-1} \to \infty\), що дає невизначеність виду \(\{1^\infty\}\).<br><br>
+                                <span class="marker">2.</span> Перетворимо вираз:
+                                <div class="math-centered">\[
+                                4x-3 = 1 + (4x-4) = 1 + 4(x-1).
+                                \]</div>
+                                <span class="marker">3.</span> Запишемо границю:
+                                <div class="math-centered">\[
+                                \lim_{x \to 1} \left[1 + 4(x-1)\right]^{\frac{x+7}{x-1}} = \lim_{x \to 1} \left[\left(1 + 4(x-1)\right)^{\frac{1}{4(x-1)}}\right]^{4(x-1) \cdot \frac{x+7}{x-1}}.
+                                \]</div>
+                                <span class="marker">4.</span> Застосовуємо другу важливу границю:
+                                <div class="math-centered">\[
+                                \lim_{x \to 1} \left(1 + 4(x-1)\right)^{\frac{1}{4(x-1)}} = e.
+                                \]</div>
+                                <span class="marker">5.</span> Обчислюємо показник:
+                                <div class="math-centered">\[
+                                \lim_{x \to 1} 4(x-1) \cdot \frac{x+7}{x-1} = \lim_{x \to 1} 4(x+7) = 4 \cdot 8 = 32.
+                                \]</div>
+                                <span class="marker">6.</span> Отже, границя дорівнює:
+                                <div class="math-centered">\[
+                                e^{32}.
+                                \]</div>
+                            </p>
+                            <div class="example-answer">
+                                <strong>Відповідь.</strong> \(\displaystyle \lim_{x \to 1} (4x-3)^{\frac{x+7}{x-1}} = e^{32}\)
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Приклад 12.21 -->
+                    <div class="example-full">
+                        <div class="example-header-classic">
+                            <span class="example-label">Приклад 12.21.</span>
+                            Обчислити границю
+                            <span class="example-function">\(\displaystyle \lim_{x \to 0} (1 + \sin x)^{1/x}\).</span>
+                        </div>
+                        <div class="example-solution-text">
+                            <p>
+                                <strong>Розв'язання:</strong><br>
+                                <span class="marker">1.</span> При \(x \to 0\) вираз \(1 + \sin x \to 1\), а показник \(1/x \to \infty\), що дає невизначеність виду \(\{1^\infty\}\).<br><br>
+                                <span class="marker">2.</span> Запишемо границю:
+                                <div class="math-centered">\[
+                                \lim_{x \to 0} (1 + \sin x)^{1/x} = \lim_{x \to 0} \left[\left(1 + \sin x\right)^{1/\sin x}\right]^{\sin x \cdot 1/x}.
+                                \]</div>
+                                <span class="marker">3.</span> Застосовуємо другу важливу границю:
+                                <div class="math-centered">\[
+                                \lim_{x \to 0} (1 + \sin x)^{1/\sin x} = e.
+                                \]</div>
+                                <span class="marker">4.</span> Обчислюємо показник, використовуючи першу важливу границю:
+                                <div class="math-centered">\[
+                                \lim_{x \to 0} \frac{\sin x}{x} = 1.
+                                \]</div>
+                                <span class="marker">5.</span> Отже, границя дорівнює:
+                                <div class="math-centered">\[
+                                e^{1} = e.
+                                \]</div>
+                            </p>
+                            <div class="example-answer">
+                                <strong>Відповідь.</strong> \(\displaystyle \lim_{x \to 0} (1 + \sin x)^{1/x} = e\)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <!-- ВІДЕО -->
+    <div id="videoModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-modal-title">
+                <h2>Оберіть відео</h2>
+            </div>
+            <div id="videoList">
+                <div class="video-card" data-url="https://www.youtube.com/embed/4ExxUlR-sFI">
+                    <img class="play-icon" src="https://img.icons8.com/fluency/96/play.png" alt="">
+                    <h3>Перша важлива границя. Обчислення деяких границь</h3>
+                </div>
+                <div class="video-card" data-url="https://www.youtube.com/embed/VAwUeUaRPjc">
+                    <img class="play-icon" src="https://img.icons8.com/fluency/96/play.png" alt="">
+                    <h3>Друга важлива границя. Приклади використання</h3>
+                </div>
+               
+            </div>
+            <div id="videoPlayer" style="display: none; width: 90vw; max-width: 960px; aspect-ratio: 16/9; margin: 20px auto;">
+                <iframe id="youtubePlayer" width="100%" height="100%" src="" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- ПИТАННЯ І ВІДПОВІДІ -->
+    <div id="questionsModal" class="modal">
+        <div class="modal-header"><button class="close-btn" id="closeQuestionsBtn">× Закрити</button></div>
+        <div class="modal-content">
+            <div style="max-width:964px;margin:0 auto;">
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>1. Що таке перша важлива границя?</span></div>
+                        <div class="card-back"><span>\(\displaystyle \lim_{x \to 0} \frac{\sin x}{x} = 1\) – фундаментальна границя для тригонометричних функцій.</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>2. Яке значення другої важливої границі?</span></div>
+                        <div class="card-back"><span>\(\displaystyle \lim_{x \to \infty} \left(1 + \frac{1}{x}\right)^x = e\), де \(e \approx 2.71828\).</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>3. Чому дорівнює границя \(\displaystyle \lim_{x \to 0} \frac{\tg x}{x}\)?</span></div>
+                        <div class="card-back"><span>Дорівнює \(1\). Це наслідок першої важливої границі.</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>4. Як виглядає наслідок другої границі для \(\ln(1+x)\)?</span></div>
+                        <div class="card-back"><span>\(\displaystyle \lim_{x \to 0} \frac{\ln(1+x)}{x} = 1\).</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>5. Яку невизначеність усуває друга важлива границя?</span></div>
+                        <div class="card-back"><span>Невизначеність виду \(\{1^\infty\}\).</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>6. Чому дорівнює \(\displaystyle \lim_{x \to 0} \frac{\sin 5x}{3x}\)?</span></div>
+                        <div class="card-back"><span>\(\frac{5}{3}\). За наслідком: \(\displaystyle \lim_{x \to 0} \frac{\sin ax}{bx} = \frac{a}{b}\).</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>7. Як обчислити \(\displaystyle \lim_{x \to 0} \frac{e^x - 1}{x}\)?</span></div>
+                        <div class="card-back"><span>Дорівнює \(1\). Це наслідок другої важливої границі.</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>8. Що таке еквівалентні нескінченно малі функції?</span></div>
+                        <div class="card-back"><span>Функції, границя відношення яких дорівнює \(1\). Наприклад, \(\sin x \sim x\), \(\tg x \sim x\), \(\arcsin x \sim x\) при \(x \to 0\).</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>9. Як обчислити \(\displaystyle \lim_{x \to 0} \frac{(1+x)^\alpha - 1}{x}\)?</span></div>
+                        <div class="card-back"><span>Дорівнює \(\alpha\). Це наслідок другої важливої границі.</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>10. Яке практичне значення важливих границь?</span></div>
+                        <div class="card-back"><span>Вони дозволяють спрощувати складні обчислення границь, особливо для тригонометричних, показникових та логарифмічних функцій.</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ТРЕНАЖЕР -->
+    <div id="trainerModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeTrainerBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="trainer-container">
+                <div class="question-circle">
+                    <h3 id="questionNumber">Питання 1</h3>
+                </div>
+                <p id="questionText" class="math-notation-centered"></p>
+                <div class="options-container" id="optionsContainer"></div>
+                <button id="submitAnswer" class="submit-btn" disabled>Підтвердити</button>
+                <div id="feedback" class="feedback"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ЗАВЕРШЕННЯ -->
+    <div id="completionModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeCompletionBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="completion-message">
+                <div class="completion-emoji"></div>
+                <h2>МІСІЯ ВИКОНАНА!</h2>
+                <p>Ти оволодів важливими границями!</p>
+                <p><strong>СЛАВА УКРАЇНІ!</strong></p>
+                <button id="resetTrainerBtn" class="reset-btn">Повернутися на полігон!</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalOverlay"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.add('loaded');
+
+            const modals = {
+                theory: document.getElementById('theoryModal'),
+                video: document.getElementById('videoModal'),
+                questions: document.getElementById('questionsModal'),
+                trainer: document.getElementById('trainerModal'),
+                completion: document.getElementById('completionModal')
+            };
+            const overlay = document.getElementById('modalOverlay');
+
+            function openModal(m) { 
+                m.style.display = 'flex'; 
+                overlay.style.display = 'block'; 
+                document.body.style.overflow = 'hidden'; 
+            }
+            
+            function closeModal(m) { 
+                m.style.display = 'none'; 
+                overlay.style.display = 'none'; 
+                document.body.style.overflow = 'auto'; 
+            }
+
+            // Відкриття модалок
+            document.getElementById('openTheoryBtn').onclick = () => openModal(modals.theory);
+            document.getElementById('openVideoBtn').onclick = () => openModal(modals.video);
+            document.getElementById('openQuestionsBtn').onclick = () => openModal(modals.questions);
+            document.getElementById('openTrainerBtn').onclick = () => { 
+                openModal(modals.trainer); 
+                startTrainer(); 
+            };
+
+            // Універсальне закриття по хрестику
+            document.querySelectorAll('.close-btn').forEach(btn => {
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    const modal = btn.closest('.modal');
+                    if (modal.id !== 'videoModal') {
+                        closeModal(modal);
+                    }
+                };
+            });
+
+            // Закриття по оверлею і Esc
+            overlay.onclick = () => document.querySelectorAll('.modal').forEach(closeModal);
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('.modal').forEach(m => m.style.display === 'flex' && closeModal(m));
+                }
+            });
+
+            // ВІДЕО
+            const videoList = document.getElementById('videoList');
+            const videoPlayer = document.getElementById('videoPlayer');
+            const youtubeIframe = document.getElementById('youtubePlayer');
+
+            document.querySelectorAll('.video-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const url = card.dataset.url;
+                    videoList.style.display = 'none';
+                    videoPlayer.style.display = 'block';
+                    youtubeIframe.src = url + '?autoplay=0';
+                });
+            });
+
+            // ЗМІНЕНА ФУНКЦІЯ ЗАКРИТТЯ ВІДЕО
+            document.getElementById('closeVideoBtn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                
+                if (videoPlayer.style.display === 'block') {
+                    youtubeIframe.src = '';
+                    videoPlayer.style.display = 'none';
+                    videoList.style.display = 'flex';
+                } else {
+                    closeModal(modals.video);
+                }
+            });
+
+            // ЗМІНЕНА ФУНКЦІЯ ЗАКРИТТЯ ПО ОВЕРЛЕЮ
+            overlay.addEventListener('click', () => {
+                if (modals.video.style.display === 'flex') {
+                    if (videoPlayer.style.display === 'block') {
+                        youtubeIframe.src = '';
+                        videoPlayer.style.display = 'none';
+                        videoList.style.display = 'flex';
+                    } else {
+                        closeModal(modals.video);
+                    }
+                } else {
+                    document.querySelectorAll('.modal').forEach(m => m.style.display === 'flex' && closeModal(m));
+                }
+            });
+
+            // Обробка Esc
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') {
+                    if (modals.video.style.display === 'flex') {
+                        if (videoPlayer.style.display === 'block') {
+                            youtubeIframe.src = '';
+                            videoPlayer.style.display = 'none';
+                            videoList.style.display = 'flex';
+                        } else {
+                            closeModal(modals.video);
+                        }
+                    } else {
+                        document.querySelectorAll('.modal').forEach(m => m.style.display === 'flex' && closeModal(m));
+                    }
+                }
+            });
+
+           // === ТРЕНАЖЕР ДЛЯ ТЕМИ 72 (Важливі границі) ===
+let stage = 1;
+let correctAnswer = '';
+
+// Генерація випадкового цілого числа
+function rand(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// Функція НСД для спрощення дробів
+function gcd(x, y) {
+    while(y) {
+        const t = y;
+        y = x % y;
+        x = t;
+    }
+    return x;
+}
+
+// Функція для спрощення дробу
+function simplifyFraction(num, den) {
+    if (den === 0) return '∞';
+    if (num === 0) return '0';
+    
+    const gcdValue = gcd(Math.abs(num), Math.abs(den));
+    const simpleNum = num / gcdValue;
+    const simpleDen = den / gcdValue;
+    
+    if (simpleDen === 1) {
+        return simpleNum.toString();
+    } else if (simpleDen === -1) {
+        return (-simpleNum).toString();
+    } else {
+        if (simpleDen < 0) {
+            return `${-simpleNum}/${-simpleDen}`;
+        } else {
+            return `${simpleNum}/${simpleDen}`;
+        }
+    }
+}
+
+// Показ питання 1 (перша важлива границя або її наслідки)
+function showQuestion1() {
+    const a = rand(2, 9); // a від 2 до 9 (не 0 і не 1)
+    const b = rand(2, 9); // b від 2 до 9 (не 0 і не 1)
+    
+    // Вибір типу функції
+    const types = [
+        { 
+            name: 'sinax/x',
+            func: `\\frac{\\sin ${a}x}{x}`,
+            answer: a.toString()
+        },
+        { 
+            name: 'sinax/bx',
+            func: `\\frac{\\sin ${a}x}{${b}x}`,
+            answer: simplifyFraction(a, b)
+        },
+        { 
+            name: 'arctgax/bx',
+            func: `\\frac{\\arctg ${a}x}{${b}x}`,
+            answer: simplifyFraction(a, b)
+        },
+        { 
+            name: 'tgax/bx',
+            func: `\\frac{\\tg ${a}x}{${b}x}`,
+            answer: simplifyFraction(a, b)
+        },
+        { 
+            name: 'x/sinax',
+            func: `\\frac{x}{\\sin ${a}x}`,
+            answer: simplifyFraction(1, a)
+        },
+        { 
+            name: 'bx/sinax',
+            func: `\\frac{${b}x}{\\sin ${a}x}`,
+            answer: simplifyFraction(b, a)
+        },
+        { 
+            name: 'bx/arctgax',
+            func: `\\frac{${b}x}{\\arctg ${a}x}`,
+            answer: simplifyFraction(b, a)
+        },
+        { 
+            name: 'bx/tgax',
+            func: `\\frac{${b}x}{\\tg ${a}x}`,
+            answer: simplifyFraction(b, a)
+        }
+    ];
+    
+    const selected = types[rand(0, types.length - 1)];
+    correctAnswer = selected.answer;
+    
+    document.getElementById('questionNumber').textContent = 'Питання 1/3';
+    document.getElementById('questionText').innerHTML = `
+        Обчислити границю:<br><br>
+        <div style="font-size:1.2em; color:#99ffcc; background:rgba(92,240,184,0.18); padding:18px; border-radius:14px; text-align:center;">
+            \\[ \\lim_{x \\to 0} ${selected.func} \\]
+        </div>
+    `;
+
+    // Формуємо варіанти відповідей
+    let wrongs = [];
+    
+    // Генеруємо хибні варіанти
+    if (selected.name.includes('sinax/x') || selected.name.includes('x/sinax')) {
+        // Для випадків з одним параметром
+        const ansNum = Number(correctAnswer);
+        wrongs = [
+            simplifyFraction(a, 1),
+            simplifyFraction(1, a),
+            simplifyFraction(a + 1, 1),
+            simplifyFraction(1, a + 1),
+            '0',
+            '1',
+            '∞'
+        ];
+    } else {
+        // Для випадків з двома параметрами
+        const [num, den] = selected.answer.includes('/') 
+            ? selected.answer.split('/').map(Number)
+            : [Number(selected.answer), 1];
+        
+        wrongs = [
+            simplifyFraction(den, num),        // обернений дріб
+            simplifyFraction(num * 2, den),    // подвоєний чисельник
+            simplifyFraction(num, den * 2),    // подвоєний знаменник
+            simplifyFraction(num + den, den),  // чисельник + знаменник
+            simplifyFraction(num, num + den),  // чисельник над сумою
+            '0',
+            '1',
+            '∞'
+        ];
+    }
+    
+    // Вибираємо унікальні хибні варіанти (не більше 3)
+    const uniqueWrongs = [...new Set(wrongs.filter(w => w !== correctAnswer))].slice(0, 3);
+    
+    const allAnswers = [correctAnswer, ...uniqueWrongs];
+    
+    // Перемішуємо
+    for (let i = allAnswers.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [allAnswers[i], allAnswers[j]] = [allAnswers[j], allAnswers[i]];
+    }
+    
+    renderOptions(allAnswers);
+}
+
+// Показ питання 2 (друга важлива границя)
+function showQuestion2() {
+    let a, b;
+    
+    // Генеруємо a та b так, щоб вони не дорівнювали один одному, не 0 і не 1
+    do {
+        a = rand(2, 9); // a від 2 до 9
+        b = rand(2, 9); // b від 2 до 9
+    } while (a === b || a === 0 || a === 1 || b === 0 || b === 1);
+    
+    // ТІЛЬКИ один тип - (1 + a/x)^(bx)
+    const selected = { 
+        func: `\\left(1 + \\frac{${a}}{x}\\right)^{${b}x}`, 
+        answer: `e^{${a * b}}`
+    };
+    
+    correctAnswer = selected.answer;
+    
+    document.getElementById('questionNumber').textContent = 'Питання 2/3';
+    document.getElementById('questionText').innerHTML = `
+        Обчислити границю:<br><br>
+        <div style="font-size:1.2em; color:#99ffcc; background:rgba(92,240,184,0.18); padding:18px; border-radius:14px; text-align:center;">
+            \\[ \\lim_{x \\to \\infty} ${selected.func} \\]
+        </div>
+    `;
+
+    // Формуємо варіанти відповідей
+    const correctPower = a * b;
+    
+    // Генеруємо хибні варіанти - замінюємо '1' на 'e^{a+b}'
+    const wrongs = [
+        `e^{${a + b}}`,  // Заміна '1' на e^{a+b} - поширена помилка (сума замість добутку)
+        '0',
+        '∞',
+        `e`,
+        `e^2`,
+        `e^{${correctPower + rand(1, 3)}}`,
+        `e^{${Math.abs(correctPower - rand(1, 3))}}`,
+        `e^{-${correctPower}}`,
+        `e^{${a}}`,
+        `e^{${b}}`,
+        `e^{${a - b}}`,
+        `e^{${Math.floor(a / b)}}`
+    ];
+    
+    // Вибираємо унікальні хибні варіанти (не більше 3)
+    const uniqueWrongs = [...new Set(wrongs.filter(w => w !== correctAnswer))].slice(0, 3);
+    
+    const allAnswers = [correctAnswer, ...uniqueWrongs];
+    
+    // Перемішуємо
+    for (let i = allAnswers.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [allAnswers[i], allAnswers[j]] = [allAnswers[j], allAnswers[i]];
+    }
+    
+    renderOptions(allAnswers);
+}
+
+// Показ питання 3 (складніші приклади з добутками функцій)
+function showQuestion3() {
+    const a = rand(2, 9);
+    const b = rand(2, 9);
+    const c = rand(6, 20) * rand(1, 3); // c може бути від 6 до 60
+    
+    // Вибір типу функції
+    const types = [
+        { 
+            // Тип 1: (arcsin(ax) * tg(bx)) / (c * x^2)
+            func: `\\frac{\\arcsin${a}x \\cdot \\tg${b}x}{${c}x^2}`,
+            answer: simplifyFraction(a * b, c)
+        },
+        { 
+            // Тип 2: (sin(ax) * arctg(bx)) / (c * x^2)
+            func: `\\frac{\\sin${a}x \\cdot \\arctg${b}x}{${c}x^2}`,
+            answer: simplifyFraction(a * b, c)
+        },
+        { 
+            // Тип 3: (tg(ax) * arcsin(bx)) / (c * x^2)
+            func: `\\frac{\\tg${a}x \\cdot \\arcsin${b}x}{${c}x^2}`,
+            answer: simplifyFraction(a * b, c)
+        },
+        { 
+            // Тип 4: (arctg(ax) * sin(bx)) / (c * x^2)
+            func: `\\frac{\\arctg${a}x \\cdot \\sin${b}x}{${c}x^2}`,
+            answer: simplifyFraction(a * b, c)
+        },
+        { 
+            // Тип 5: (sin(ax) * sin(bx)) / (c * x^2)
+            func: `\\frac{\\sin${a}x \\cdot \\sin${b}x}{${c}x^2}`,
+            answer: simplifyFraction(a * b, c)
+        },
+        { 
+            // Тип 6: (tg(ax) * tg(bx)) / (c * x^2)
+            func: `\\frac{\\tg${a}x \\cdot \\tg${b}x}{${c}x^2}`,
+            answer: simplifyFraction(a * b, c)
+        },
+        { 
+            // Тип 7: (x^2) / (arcsin(ax) * tg(bx)) - обернений варіант
+            func: `\\frac{${c}x^2}{\\arcsin${a}x \\cdot \\tg${b}x}`,
+            answer: simplifyFraction(c, a * b)
+        },
+        { 
+            // Тип 8: (x^2) / (sin(ax) * arctg(bx)) - обернений варіант
+            func: `\\frac{${c}x^2}{\\sin${a}x \\cdot \\arctg${b}x}`,
+            answer: simplifyFraction(c, a * b)
+        }
+    ];
+    
+    const selected = types[rand(0, types.length - 1)];
+    correctAnswer = selected.answer;
+    
+    document.getElementById('questionNumber').textContent = 'Питання 3/3';
+    document.getElementById('questionText').innerHTML = `
+        Обчислити границю:<br><br>
+        <div style="font-size:1.2em; color:#99ffcc; background:rgba(92,240,184,0.18); padding:18px; border-radius:14px; text-align:center;">
+            \\[ \\lim_{x \\to 0} ${selected.func} \\]
+        </div>
+    `;
+
+    // Формуємо варіанти відповідей
+    let wrongs = [];
+    
+    // Отримуємо чисельник і знаменник правильної відповіді
+    const [correctNum, correctDen] = correctAnswer.includes('/') 
+        ? correctAnswer.split('/').map(Number)
+        : [Number(correctAnswer), 1];
+    
+    // Для типів 1-6 (добуток у чисельнику)
+    if (selected.func.includes('\\frac{\\') && !selected.func.includes('x^2}{\\')) {
+        // Правильна відповідь: (a*b)/c
+        
+        wrongs = [
+            simplifyFraction(correctNum * 2, correctDen),    // подвоєний чисельник
+            simplifyFraction(correctNum, correctDen * 2),    // подвоєний знаменник
+            simplifyFraction(correctDen, correctNum),        // обернений дріб
+            simplifyFraction(a, c),                          // тільки a/c
+            simplifyFraction(b, c),                          // тільки b/c
+            simplifyFraction(a + b, c),                      // сума замість добутку
+            simplifyFraction(a * b, c * 2),                  // подвоєний знаменник у c
+            '0',
+            '1',
+            '∞'
+        ];
+    } 
+    // Для типів 7-8 (добуток у знаменнику)
+    else {
+        // Правильна відповідь: c/(a*b)
+        
+        wrongs = [
+            simplifyFraction(correctNum * 2, correctDen),    // подвоєний чисельник
+            simplifyFraction(correctNum, correctDen * 2),    // подвоєний знаменник
+            simplifyFraction(correctDen, correctNum),        // обернений дріб
+            simplifyFraction(c, a),                          // тільки c/a
+            simplifyFraction(c, b),                          // тільки c/b
+            simplifyFraction(c, a + b),                      // сума замість добутку
+            simplifyFraction(c * 2, a * b),                  // подвоєний чисельник у c
+            '0',
+            '1',
+            '∞'
+        ];
+    }
+    
+    // Вибираємо унікальні хибні варіанти (не більше 3)
+    const uniqueWrongs = [...new Set(wrongs.filter(w => w !== correctAnswer))].slice(0, 3);
+    
+    const allAnswers = [correctAnswer, ...uniqueWrongs];
+    
+    // Перемішуємо
+    for (let i = allAnswers.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [allAnswers[i], allAnswers[j]] = [allAnswers[j], allAnswers[i]];
+    }
+    
+    renderOptions(allAnswers);
+}
+
+            // Показ питання 4 (друга важлива границя - альтернативна форма)
+function showQuestion4() {
+    let a, b;
+    
+    // Генеруємо a та b так, щоб вони не дорівнювали один одному, не 0 і не 1
+    do {
+        a = rand(2, 9); // a від 2 до 9
+        b = rand(2, 9); // b від 2 до 9
+    } while (a === b || a === 0 || a === 1 || b === 0 || b === 1);
+    
+    // ТІЛЬКИ один тип - ((x+a)/x)^(bx)
+    const selected = { 
+        func: `\\left(\\frac{x+${a}}{x}\\right)^{${b}x}`, 
+        answer: `e^{${a * b}}`
+    };
+    
+    correctAnswer = selected.answer;
+    
+    document.getElementById('questionNumber').textContent = 'Питання 4/4';
+    document.getElementById('questionText').innerHTML = `
+        Обчислити границю:<br><br>
+        <div style="font-size:1.2em; color:#99ffcc; background:rgba(92,240,184,0.18); padding:18px; border-radius:14px; text-align:center;">
+            \\[ \\lim_{x \\to \\infty} ${selected.func} \\]
+        </div>
+    `;
+
+    // Формуємо варіанти відповідей
+    const correctPower = a * b;
+    
+    // Генеруємо хибні варіанти - аналогічно питанню 2
+    const wrongs = [
+        `e^{${a + b}}`,  // Заміна '1' на e^{a+b} - поширена помилка (сума замість добутку)
+        '0',
+        '∞',
+        `e`,
+        `e^2`,
+        `e^{${correctPower + rand(1, 3)}}`,
+        `e^{${Math.abs(correctPower - rand(1, 3))}}`,
+        `e^{-${correctPower}}`,
+        `e^{${a}}`,
+        `e^{${b}}`,
+        `e^{${a - b}}`,
+        `e^{${Math.floor(a / b)}}`
+    ];
+    
+    // Вибираємо унікальні хибні варіанти (не більше 3)
+    const uniqueWrongs = [...new Set(wrongs.filter(w => w !== correctAnswer))].slice(0, 3);
+    
+    const allAnswers = [correctAnswer, ...uniqueWrongs];
+    
+    // Перемішуємо
+    for (let i = allAnswers.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [allAnswers[i], allAnswers[j]] = [allAnswers[j], allAnswers[i]];
+    }
+    
+    renderOptions(allAnswers);
+}
+
+            // Рендер варіантів відповідей
+            function renderOptions(values) {
+                const container = document.getElementById('optionsContainer');
+                container.innerHTML = '';
+                
+                values.forEach(val => {
+                    const div = document.createElement('div');
+                    div.className = 'option';
+                    
+                    const mathSpan = document.createElement('span');
+                    mathSpan.innerHTML = `\\[ ${val} \\]`;
+                    div.appendChild(mathSpan);
+                    
+                    div.dataset.value = val;
+                    div.onclick = () => selectOption(div);
+                    container.appendChild(div);
+                });
+                
+                document.getElementById('submitAnswer').disabled = true;
+                document.getElementById('submitAnswer').style.display = 'block';
+                document.getElementById('feedback').style.opacity = 0;
+                
+                // Рендеримо MathJax
+                if (window.MathJax) {
+                    setTimeout(() => {
+                        MathJax.typesetPromise();
+                    }, 100);
+                }
+            }
+
+            function selectOption(el) {
+                document.querySelectorAll('.option').forEach(d => d.classList.remove('selected'));
+                el.classList.add('selected');
+                document.getElementById('submitAnswer').disabled = false;
+            }
+
+            // Обробка відповіді (оновлена для 4 питань)
+document.getElementById('submitAnswer').onclick = () => {
+    const sel = document.querySelector('.option.selected');
+    if (!sel) return;
+
+    const userAnswer = sel.dataset.value;
+    const isCorrect = userAnswer === correctAnswer;
+
+    const fb = document.getElementById('feedback');
+    fb.textContent = isCorrect ? '✅ ВІРНО! Ціль уражена!' : '❌ Промах! Спробуй ще!';
+    fb.style.background = isCorrect ? '#22c55e' : '#ef4444';
+    fb.style.opacity = 1;
+
+    setTimeout(() => {
+        fb.style.opacity = 0;
+        
+        if (isCorrect) {
+            if (stage === 1) {
+                stage = 2;
+                showQuestion2();
+            } else if (stage === 2) {
+                stage = 3;
+                showQuestion3();
+            } else if (stage === 3) {
+                stage = 4;
+                showQuestion4();
+            } else if (stage === 4) {
+                closeModal(modals.trainer);
+                openModal(modals.completion);
+            }
+        } else {
+            // При невірній відповіді залишаємось на тому ж питанні
+            if (stage === 1) {
+                showQuestion1();
+            } else if (stage === 2) {
+                showQuestion2();
+            } else if (stage === 3) {
+                showQuestion3();
+            } else if (stage === 4) {
+                showQuestion4();
+            }
+        }
+    }, 1400);
+};
+
+// Функція початку тренажера
+function startTrainer() {
+    stage = 1;
+    showQuestion1();
+}
+
+            // Скидання тренажера
+            document.getElementById('resetTrainerBtn').onclick = () => {
+                closeModal(modals.completion);
+                startTrainer();
+                openModal(modals.trainer);
+            };
+        });
+    </script>
+</body>
+</html>
