@@ -1302,6 +1302,54 @@ mjx-container.math-notation-centered * {
 #videoModal .modal-content::-webkit-scrollbar-thumb {
     animation: scrollbarAppear 0.3s ease-out;
 }
+
+        /* Лицьова сторона — ПИТАННЯ */
+#questionsModal .card-front {
+    background: linear-gradient(135deg, #e8f5ff, #bbdefb); /* ніжний блакитний */
+    color: #003366;                 /* темно-синій текст питання */
+    border: 3px solid #2196f3;
+    font-weight: 700;
+    font-size: clamp(16px, 3vw, 19px);
+    padding: 20px;
+    text-align: center;
+    line-height: 1.5;
+}
+
+/* Формули в питанні — жовті */
+#questionsModal .card-front mjx-container,
+#questionsModal .card-front .MathJax {
+    color: #FFFF00 !important;
+    font-size: 1.15em !important;
+}
+
+/* Зворотна сторона — ВІДПОВІДЬ */
+#questionsModal .card-back {
+    background: linear-gradient(135deg, #004d40, #00695c); /* глибокий зелено-бірюзовий */
+    border: 3px solid #80deea;
+    padding: 20px;
+}
+
+/* Звичайний текст відповіді — білий */
+#questionsModal .card-back span {
+    color: #FFFFFF !important;
+    font-size: clamp(16px, 3vw, 19px);
+    line-height: 1.6;
+    text-align: justify;
+    display: block;
+}
+
+/* Формули у відповіді — жовті */
+#questionsModal .card-back mjx-container,
+#questionsModal .card-back .MathJax {
+    color: #FFFF00 !important;
+    font-size: 1.15em !important;
+}
+
+/* Курсор підказує, що можна клікнути */
+#questionsModal .question-card {
+    cursor: pointer;
+}
+
     </style>
 </head>
 <body>
@@ -2299,6 +2347,7 @@ q7: function() {
 </script>
 </body>
 </html>
+
 
 
 
