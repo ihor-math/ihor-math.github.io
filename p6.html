@@ -2184,32 +2184,32 @@ function generateQuestion() {
             }
             if (Math.abs(selectedOption - currentAnswer) < 0.0001 || selectedOption === currentAnswer) {
                 if (currentQuestionNumber === 1) {
-                    showFeedback('✅ Правильно! Переходимо до питання 2.', true, () => {
+                    showFeedback('✅ ВІРНО! Ціль уражена!', true, () => {
                         currentQuestionNumber = 2;
                         selectedOption = null;
                         generateQuestion();
                     });
                 } else if (currentQuestionNumber === 2) {
-                    showFeedback('✅ Правильно! Переходимо до питання 3.', true, () => {
+                    showFeedback('✅ ВІРНО! Ціль уражена!', true, () => {
                         currentQuestionNumber = 3;
                         selectedOption = null;
                         generateQuestion();
                     });
                 } else if (currentQuestionNumber === 3) {
-                    showFeedback('✅ Правильно! Переходимо до питання 4.', true, () => {
+                    showFeedback('✅ ВІРНО! Ціль уражена!', true, () => {
                         currentQuestionNumber = 4;
                         selectedOption = null;
                         generateQuestion();
                     });
                 } else if (currentQuestionNumber === 4) {
-                    showFeedback('✅ Правильно! Тренування завершено!', true, () => {
+                    showFeedback('✅ ВІРНО! Ціль уражена!', true, () => {
                         currentQuestionNumber = 5;
                         selectedOption = null;
                         generateQuestion();
                     });
                 }
             } else {
-                showFeedback(`❌ Неправильно. Спробуйте ще раз для питання ${currentQuestionNumber}.`, false, () => {
+                showFeedback(`❌ Промах! Спробуй ще!`, false, () => {
                     selectedOption = null;
                     generateQuestion();
                 });
@@ -2232,34 +2232,50 @@ function generateQuestion() {
     } else if (currentQuestionNumber === 4) {
         generateQuestion4();
     } else if (currentQuestionNumber === 5) {
-        // Завершення тренажера
-        trainerContent.innerHTML = `
-            <div class="completion-emoji">🎉</div>
-            <div class="completion-message">
-                <h2>Тренування завершено!</h2>
-                <p>Молодець!</p>
-                <button id="resetTrainerBtn">Спробувати ще раз</button>
-            </div>
-        `;
-        const resetBtn = document.getElementById('resetTrainerBtn');
-        if (resetBtn) {
-            resetBtn.addEventListener('click', () => {
-                console.log('Скидання тренажера до питання 1'); // Для дебагу
-                currentQuestionNumber = 1;
-                currentAnswer = null;
-                selectedOption = null;
-                trainerContent.innerHTML = ''; // Очищаємо вміст
-                generateQuestion();
-                adjustModalHeight(modals.trainer); // Адаптуємо висоту модального вікна
-            });
-        } else {
-            console.error('Кнопка resetTrainerBtn не знайдена!');
-        }
-        waitForMathJax().then(() => {
-            adjustModalHeight(modals.trainer);
+    // Завершення тренажера — покращений вигляд
+    trainerContent.innerHTML = `
+        <div class="completion-emoji"></div>
+        
+        <div class="completion-message">
+            <h2 class="glow-title" style="font-size: clamp(28px, 5vw, 36px); margin-bottom: 20px;">
+                МІСІЯ ВИКОНАНА!
+            </h2>
+            <p style="font-size: clamp(18px, 3.5vw, 22px); margin-bottom: 15px; color: #ffd700;">
+                Напрям визначено!<br>Аргумент узято під контроль!
+            </p>
+            <p style="font-size: clamp(20px, 4vw, 26px); font-weight: 800; color: #ffd700; text-shadow: 0 0 15px #0057b7;">
+                СЛАВА УКРАЇНІ!
+            </p>
+            <p style="font-size: clamp(20px, 4vw, 26px); font-weight: 800; color: #0057b7; text-shadow: 0 0 15px #ffd700; margin-top: 5px;">
+                ГЕРОЯМ СЛАВА!
+            </p>
+            
+            <button id="resetTrainerBtn" class="reset-btn">
+                <span style="display: flex; align-items: center; gap: 12px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    Повернутися на полігон
+                </span>
+            </button>
+        </div>
+    `;
+
+    // Обробник кнопки скидання
+    const resetBtn = document.getElementById('resetTrainerBtn');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            currentQuestionNumber = 1;
+            currentAnswer = null;
+            selectedOption = null;
+            generateQuestion();
         });
-        return;
     }
+
+    // Адаптація висоти модального вікна
+    adjustModalHeight(modals.trainer);
+    return;
+}
 
     // Викликаємо adjustModalHeight після рендерингу MathJax
     waitForMathJax().then(() => {
@@ -2290,6 +2306,7 @@ if (buttons.openTrainer) {
 </script>
 </body>
 </html>
+
 
 
 
