@@ -846,46 +846,72 @@
     transition: visibility 0s linear 0s, opacity 0.3s ease;
 }
 
-          .completion-message {
-    text-align: center;
-    margin: 20px auto;
-    padding: 20px;
-    background: linear-gradient(135deg, rgba(30, 30, 80, 0.8), rgba(80, 70, 200, 0.8));
-    border-radius: 20px;
-    border: 2px solid rgba(0, 255, 255, 0.4);
-    max-width: 400px;
-    width: 90%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
+         
+  /* === МЕДАЛЬ З ТРИЗУБОМ === */
+    .completion-emoji {
+        position: relative;
+        display: inline-block;
+        width: clamp(56px, 12vw, 96px);
+        height: clamp(56px, 12vw, 96px);
+        vertical-align: middle;
+        margin: 0 auto 3vw;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #2a2a2a, #3a454a);
+        border: 3px dashed #ffd700;
+        box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+        overflow: hidden;
+        animation: medalAppear 0.8s ease-out;
+    }
+    .completion-emoji::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><filter id='s' x='-50%' y='-50%' width='200%' height='200%'><feDropShadow dx='0' dy='2' stdDeviation='2' flood-color='%23000000' flood-opacity='0.25'/></filter></defs><rect x='30' y='0' width='60' height='40' rx='4' fill='%23007ACC'/><rect x='30' y='20' width='60' height='20' rx='4' fill='%23FFD700'/><g transform='translate(60,70)'><polygon points='0,-26 6,-6 26,-6 9,6 15,26 0,14 -15,26 -9,6 -26,-6 -6,-6' fill='%23FFD700' filter='url(%23s)'/></g></svg>");
+       background-size: 75%;
+        background-repeat: no-repeat;
+        background-position: center 60%;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+        animation: medalBounce 1.2s ease-out 0.3s both;
+    }
+    @keyframes medalAppear {
+        0% { transform: scale(0.3) rotate(-180deg); opacity: 0; }
+        60% { transform: scale(1.1); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes medalBounce {
+        0% { transform: translateY(-120px) rotate(-30deg) scale(0.4); opacity: 0; }
+        60% { transform: translateY(15px) rotate(10deg) scale(1.15); opacity: 1; }
+        80% { transform: translateY(-8px) rotate(-5deg) scale(1.05); }
+        100% { transform: translateY(0) rotate(0) scale(1); }
+    }
 
- .completion-emoji::after {
-            content: '🎉';
-            font-size: clamp(40px, 8vw, 60px);
-            color: #ffff00;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-        }
+    .completion-message {
+        background: linear-gradient(145deg, #2a2a2a, #3a454a);
+        border: 2.5px solid #ffffff;
+        border-radius: 15px;
+        padding: clamp(12px, 3vw, 18px);
+        box-shadow: 0 6px 12px rgba(92,184,240,0.4);
+        margin: 2vw auto;
+        max-width: 90%;
+        text-align: center;
+    }
+    .completion-message h2 {
+        color: #ffffff;
+        text-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+    .completion-message p { color: #ffffff; }
 
-.completion-message h2 {
-    font-size: clamp(20px, 4vw, 24px);
-    color: #ff00ff; /* Відповідність темі */
-    text-shadow: 0 0 6px rgba(255, 0, 255, 0.7);
-    margin-bottom: 10px;
-}
-
-.completion-message p {
-    font-size: clamp(16px, 3vw, 18px);
-    color: #00f0ff; /* Відповідність темі */
-    text-align: center; /* Явне центрування */
-    margin: 0 0 15px 0; /* Скидання відступів */
-    text-shadow: 0 0 4px rgba(0, 255, 255, 0.3);
-}
-
+    #completionModal .modal-content {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px;
+    }
+    #completionModal .completion-message {
+        text-align: center;
+        max-width: 500px;
+    }
+    
 #resetTrainerBtn {
     padding: 12px 24px;
     background: linear-gradient(135deg, #ff00ff, #ff4081); /* Як у .trainer-submit */
@@ -1236,6 +1262,25 @@
         padding: 8px 16px;
     }
         }
+        /* Центрування СЛАВА УКРАЇНІ! */
+.ukraine-text-container {
+    text-align: center;
+    margin: 25px 0;
+}
+
+.ukraine-text-container strong {
+    color: #ffd700;
+    font-size: 26px;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+    display: inline-block;
+    padding: 12px 25px;
+}
+
+/* Кнопка нижче */
+.button-container {
+    text-align: center;
+    margin-top: 40px;
+}
     </style>
 </head>
 <body>
@@ -1262,7 +1307,7 @@
         </div>
     </div>
 
-   <div class="navigation-buttons" style="margin: 40px 0; display: flex; gap: 20px; justify-content: center;">
+     <div class="navigation-buttons" style="margin: 40px 0; display: flex; gap: 20px; justify-content: center;">
         <a class="nav-button" href='tema2.html'>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white">
                 <path d="M15 18l-6-6 6-6"/>
@@ -1277,9 +1322,7 @@
 
         </a>
     </div>
-
-
-    <div id="modalOverlay"></div>
+        <div id="modalOverlay"></div>
 
     <div id="theoryModal" class="modal">
         <div class="modal-header">
@@ -1478,11 +1521,20 @@
             <button id="submitAnswer" class="trainer-submit" aria-label="Перевірити відповідь">Перевірити</button>
             <div id="toastContainer"></div>
             <div id="completionMessage" class="completion-message" style="display: none;">
-                <div class="completion-emoji"></div>
-                <h2>Тренування завершено!</h2>
-                <p>Молодець!</p>
-                <button id="resetTrainerBtn" aria-label="Почати тренування заново">Спробувати ще раз</button>
-            </div>
+    <div class="completion-emoji"></div>
+    <h2>МІСІЯ ВИКОНАНА!</h2>
+    <p>Сектор "Алгебра" захоплено! Сектор "Тригонометрія" під контролем!</p>
+    
+    <!-- Окремий контейнер для СЛАВА УКРАЇНІ! -->
+    <div class="ukraine-text-container">
+        <strong>СЛАВА УКРАЇНІ!</strong>
+    </div>
+    
+    <!-- Кнопка з більшим верхнім відступом -->
+    <div class="button-container" style="margin-top: 40px;">
+        <button id="resetTrainerBtn" aria-label="Почати тренування заново">Повернутися на полігон!</button>
+    </div>
+</div>
         </div>
     </div>
 </div>
@@ -1956,6 +2008,12 @@ function resetTrainer() {
     inputB.value = '';
     
     generateQuestion();
+    
+    // Прокручуємо до початку тренажера
+    const trainerContainer = document.querySelector('.trainer-container');
+    if (trainerContainer) {
+        trainerContainer.scrollIntoView({ behavior: 'smooth' });
+    }
 }
 
 function formatAlgebraic(real, imag) {
@@ -2499,7 +2557,7 @@ function addEventListeners() {
         const normalizedCorrect = normalizeString(correctAnswer);
 
         if (normalizedSelected === normalizedCorrect) {
-            showToast('<span style="color: white;">✅ Правильно!</span>', true);
+            showToast('<span style="color: white;">✅ ВІРНО! Ціль уражена!</span>', true);
             setTimeout(() => {
                 if (currentQuestion < 5) {
                     currentQuestion++;
@@ -2509,7 +2567,7 @@ function addEventListeners() {
                 }
             }, 2000);
         } else {
-            showToast('<span style="color: white;">❌ Неправильно. Спробуйте ще раз.</span>', false);
+            showToast('<span style="color: white;">❌ Промах! Спробуй ще!</span>', false);
             setTimeout(() => {
                 selectedOption = null;
                 submitButton.disabled = true;
@@ -2537,5 +2595,3 @@ window.addEventListener('resize', () => {
 </script>
 </body>
 </html>
-
-
