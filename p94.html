@@ -1,0 +1,2969 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>94. Інтегрування частинами</title>
+    <script>
+window.MathJax = {
+    tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true,
+        packages: {'[+]': ['noerrors']},
+        macros: {
+            tg: ['\\operatorname{tg}', 0],
+            ctg: ['\\operatorname{ctg}', 0],
+            arctg: ['\\operatorname{arctg}', 0],
+            arcctg: ['\\operatorname{arcctg}', 0],
+            log: ['\\operatorname{log}', 0],
+            ln: ['\\operatorname{ln}', 0],
+            sin: ['\\operatorname{sin}', 0],
+            cos: ['\\operatorname{cos}', 0],
+            arccos: ['\\operatorname{arccos}', 0],
+            arcsin: ['\\operatorname{arcsin}', 0]
+        }
+    },
+    options: {
+        ignoreHtmlClass: "tex2jax_ignore|no-mathjax",
+        processHtmlClass: "tex2jax_process",
+        renderActions: {
+            find_script_mathtex: [10, function () {}, false]
+        }
+    },
+    loader: {load: ['[tex]/noerrors']},
+    startup: {
+        pageReady: () => {
+            return MathJax.startup.defaultPageReady().then(() => {
+                // Після завантаження MathJax збільшуємо розмір формул
+                document.querySelectorAll('mjx-container').forEach(el => {
+                    if (el.hasAttribute('display') && el.getAttribute('display') === 'true') {
+                        el.style.fontSize = '1.3em';
+                    }
+                });
+            });
+        }
+    }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+<style>
+
+    *, *:before, *:after { box-sizing: border-box; }
+    body {
+        margin: 0;
+        background: radial-gradient(circle at center, #1a0a0a 0%, #2a1a1a 40%, #3b2b2b 100%);
+        color: #e0e0e0;
+        font-family: 'Roboto Condensed', sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }
+    body.loaded { visibility: visible; opacity: 1; }
+
+    .title-box {
+        margin-top: 60px;
+        padding: 20px 40px;
+        background: linear-gradient(135deg, #3a1a2a, #4a2a3a);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+        border-radius: 16px;
+        text-align: center;
+        border: 1px solid #8b3a5f;
+    }
+    .title-box h1 {
+        margin: 0;
+        font-size: 28px;
+        color: #f0b85c;
+        font-family: 'Orbitron', sans-serif;
+        text-shadow: 0 0 8px rgba(240,184,92,0.5);
+    }
+
+    .section-container {
+        margin-top: 40px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 25px;
+    }
+    .section {
+        width: 260px;
+        height: 200px;
+        background: linear-gradient(145deg, #3a2a2a, #453535);
+        border-radius: 14px;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.45);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 15px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+        border: 1px solid rgba(240,184,92,0.15);
+    }
+    .section:hover {
+        transform: scale(1.06);
+        box-shadow: 0 10px 25px rgba(240,184,92,0.25);
+    }
+    .section h2 { font-size: 20px; color: #ffffff; font-family: 'Orbitron', sans-serif; }
+    .section img { width: 60px; height: 60px; margin-bottom: 15px; filter: brightness(1.3) drop-shadow(0 0 6px #f0b85c); }
+
+    .modal {
+        display: none;
+        position: fixed;
+        top: 5%; left: 5%; width: 90%; height: 90%;
+        background: linear-gradient(135deg, #3a2a2a, #4a4545);
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        z-index: 1001;
+        overflow: hidden;
+        flex-direction: column;
+        border: 1px solid rgba(240,184,92,0.2);
+    }
+    #modalOverlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.85);
+        z-index: 999;
+        backdrop-filter: blur(6px);
+    }
+    .modal-content {
+        padding: 20px;
+        flex-grow: 1;
+        overflow-y: auto;
+        color: #e0e0e0;
+        width: 100%;
+    }
+    .modal-header {
+        background: linear-gradient(0deg, #3a2a2a, #4a4545);
+        padding: 8px 12px;
+        display: flex;
+        justify-content: flex-end;
+        width: 100%;
+        position: sticky;
+        top: 0;
+        z-index: 1002;
+        border-bottom: 1px solid rgba(240,184,92,0.2);
+    }
+    .close-btn {
+        background: linear-gradient(135deg, #8b3a5f, #f0b85c);
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 6px 16px;
+        font-size: 16px;
+        cursor: pointer;
+        font-family: 'Orbitron', sans-serif;
+        box-shadow: 0 2px 8px rgba(139,58,95,0.4);
+    }
+    .close-btn:hover { background: linear-gradient(135deg, #9b4f70, #8b3a5f); transform: scale(1.05); }
+
+    .theory-content h2, .trainer-container h2 { 
+        color: #f0b85c; 
+        text-shadow: 0 0 10px rgba(240,184,92,0.5); 
+        text-align: center; 
+        font-family: 'Orbitron', sans-serif; 
+    }
+    .theory-content p, .theory-content li { 
+        font-size: clamp(18px, 3vw, 20px); 
+        line-height: 1.7; 
+        text-align: justify; 
+    }
+    
+    /* ВЕЛИКІ ФОРМУЛИ */
+    mjx-container {
+        font-size: 1.2em !important; /* Збільшуємо всі формули */
+    }
+    
+    mjx-container[display="true"] {
+        font-size: 1.2em !important; /* Особливо великі для формул у вигляді display */
+        margin: 25px 0 !important;
+    }
+    
+    /* Вбудовані формули в тексті */
+    mjx-container:not([display="true"]) {
+        font-size: 1.2em !important;
+        color: #ffcc99 !important;
+       
+    }
+    
+    .example {
+        background: rgba(240,184,92,0.1);
+        border-left: 4px solid #f0b85c;
+        padding: 12px;
+        margin: 15px 0;
+        border-radius: 6px;
+        color: #f0e6a8;
+        font-weight: bold;
+        font-size: 22px;
+    }
+    .solution {
+        background: rgba(240,184,92,0.15);
+        border: 2px solid #f0b85c;
+        padding: 12px;
+        margin: 15px 0;
+        border-radius: 6px;
+        text-align: center;
+        color: #f0b85c;
+        font-weight: bold;
+    }
+    .math-notation-centered {
+        display: block;
+        text-align: center;
+        font-size: clamp(21px, 2.8vw, 22px); /* Збільшено */
+        margin: 20px 0;
+        color: #ffcc99;
+    }
+
+    .navigation-buttons { 
+        display: flex; 
+        justify-content: center; 
+        gap: 20px; 
+        margin: 40px 0; 
+    }
+    .nav-button {
+        display: flex; 
+        align-items: center; 
+        background: linear-gradient(135deg, #3a2a2a, #453535);
+        color: #e0e0e0; 
+        padding: 12px 24px; 
+        border-radius: 10px; 
+        text-decoration: none;
+        font-weight: bold; 
+        border: 1px solid rgba(240,184,92,0.3);
+        transition: all 0.3s ease;
+    }
+    .nav-button:hover { 
+        background: linear-gradient(135deg, #9b4f70, #f0b85c); 
+        color: #fff; 
+        transform: scale(1.05); 
+    }
+    .nav-button svg { margin-right: 8px; fill: currentColor; width: 20px; height: 20px; }
+
+    @media (max-width: 768px) {
+        .title-box { margin-top: 40px; }
+        .title-box h1 { font-size: 20px; }
+        .section h2 { font-size: 18px; }
+        .section-container { flex-direction: column; align-items: center; }
+        .section { width: 80%; height: 180px; }
+        .modal { top: 2%; left: 2%; width: 96%; height: 96%; }
+        .theory-content h2, .trainer-container h2 { font-size: 18px; }
+        
+        /* На мобільних теж збільшуємо формули */
+        mjx-container {
+            font-size: 1.0em !important;
+        }
+        mjx-container[display="true"] {
+            font-size: 1.0em !important;
+        }
+    }
+
+    /* Стилі скролбару */
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { 
+        background: rgba(240, 184, 92, 0.3); 
+        border-radius: 10px;
+        border: 2px solid transparent;
+        background-clip: content-box;
+        transition: all 0.3s ease;
+    }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(240, 184, 92, 0.7); }
+    ::-webkit-scrollbar-thumb:active { background: #f0b85c; width: 12px; }
+    * { scrollbar-width: thin; scrollbar-color: rgba(240, 184, 92, 0.5) transparent; }
+
+    .formula-box {
+        background: rgba(240,184,92,0.1);
+        padding: 20px;
+        border-left: 4px solid #f0b85c;
+        border-radius: 8px;
+        margin: 20px auto;
+        text-align: center;
+        font-size: 1.2em;
+        /* Додаємо скрол для довгих формул */
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+    }
+
+
+    #videoList { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; padding: 20px; }
+    .video-card {
+        width: 300px;
+        height: 250px;
+        background: #3c2c2c;
+        border-radius: 16px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 15px;
+        gap: 15px;
+        cursor: pointer;
+        transition: 0.3s ease;
+    }
+    .video-card:hover {
+        background: #433;
+        transform: translateY(-4px);
+        box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+    }
+    .video-card .play-icon { width: 64px; height: 64px; }
+    .video-card h3 { color: #f0f0f0; font-size: 1rem; line-height: 1.3; }
+
+    /* Стилі флеш-карток */
+    .question-card {
+        perspective: 1000px;
+        margin: 25px auto;
+        max-width: 964px;
+        width: 100%;
+        min-height: 180px;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+    .question-card:hover { transform: translateY(-5px); }
+    .card-inner {
+        position: relative;
+        width: 100%;
+        min-height: 180px;
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        transform-style: preserve-3d;
+    }
+    .question-card.flipped .card-inner { transform: rotateY(180deg); }
+    .card-front, .card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 25px;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+        text-align: center;
+        border: 2px solid rgba(240,184,92,0.3);
+        transition: all 0.3s ease;
+    }
+    .card-front {
+        background: linear-gradient(135deg, #3a2a2a, #4a4545);
+        color: #ffffff;
+    }
+    .card-front:hover { border-color: rgba(240,184,92,0.6); box-shadow: 0 10px 30px rgba(240,184,92,0.2); }
+    .card-back {
+        background: linear-gradient(135deg, #3a2a2a, #4a4545);
+        color: #e0e0e0;
+        transform: rotateY(180deg);
+        padding: 25px;
+        border-color: rgba(240,184,92,0.5);
+    }
+    .card-back:hover { border-color: rgba(240,184,92,0.8); box-shadow: 0 10px 30px rgba(240,184,92,0.3); }
+    .card-front span, .card-back span { font-size: clamp(18px, 3vw, 20px); line-height: 1.6; font-weight: 500; }
+    .card-front span { color: #ffffff; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); }
+    .card-back span { color: #e0e0e0; width: 100%; }
+    .card-front::after { content: "❓"; position: absolute; bottom: 15px; right: 20px; font-size: 20px; opacity: 0.7; color: #f0b85c; }
+    .card-back::after { content: "💡"; position: absolute; bottom: 15px; right: 20px; font-size: 20px; opacity: 0.7; color: #f0b85c; }
+
+    /* Стилі тренажера */
+    .trainer-container {
+        width: 90%;
+        max-width: 800px;
+        margin: auto;
+        padding: 30px;
+        background: linear-gradient(135deg, #3a2a2a, #4a4545);
+        border-radius: 16px;
+        border: 1px solid rgba(240,184,92,0.2);
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+    }
+    .question-circle {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 25px;
+        background: linear-gradient(135deg, #8b3a5f, #f0b85c);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 15px rgba(139,58,95,0.4);
+    }
+    .question-circle h3 { color: #fff; margin: 0; font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700; }
+    .options-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin: 30px 0;
+        padding: 0 15px;
+        justify-items: center;
+    }
+    .option {
+        width: 100%;
+        min-height: 80px;
+        padding: 20px 15px;
+        border: 3px solid #8b3a5f;
+        border-radius: 14px;
+        background: #3a2a2a;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.25s ease;
+        font-size: clamp(17px, 3vw, 19px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    .option * { pointer-events: none !important; }
+    .option { pointer-events: auto !important; }
+    .option:hover:not(.selected) {
+        background: rgba(240,184,92,0.2);
+        border-color: #f0b85c;
+        transform: translateY(-4px);
+    }
+    .option.selected {
+        background: linear-gradient(135deg, #8b3a5f, #f0b85c);
+        border-color: #f0b85c;
+        color: white;
+        box-shadow: 0 0 20px rgba(240,184,92,0.6);
+        transform: scale(1.03);
+    }
+    .submit-btn {
+        background: linear-gradient(135deg, #8b3a5f, #f0b85c);
+        color: #fff;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 25px;
+        font-family: 'Orbitron', sans-serif;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+    }
+    .submit-btn:hover:not(:disabled) { background: linear-gradient(135deg, #9b4f70, #8b3a5f); transform: scale(1.05); box-shadow: 0 4px 15px rgba(139,58,95,0.4); }
+    .submit-btn:disabled { background: #666; cursor: not-allowed; opacity: 0.6; }
+    .feedback {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 30px;
+        padding: 20px 40px;
+        border-radius: 10px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 1002;
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    /* === МЕДАЛЬ З ТРИЗУБОМ === */
+    .completion-emoji {
+        position: relative;
+        display: inline-block;
+        width: clamp(56px, 12vw, 96px);
+        height: clamp(56px, 12vw, 96px);
+        vertical-align: middle;
+        margin: 0 auto 3vw;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #3a2a2a, #4a4545);
+        border: 3px dashed #ffd700;
+        box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+        overflow: hidden;
+        animation: medalAppear 0.8s ease-out;
+    }
+    .completion-emoji::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><filter id='s' x='-50%' y='-50%' width='200%' height='200%'><feDropShadow dx='0' dy='2' stdDeviation='2' flood-color='%23000000' flood-opacity='0.25'/></filter></defs><rect x='30' y='0' width='60' height='40' rx='4' fill='%23007ACC'/><rect x='30' y='20' width='60' height='20' rx='4' fill='%23FFD700'/><g transform='translate(60,70)'><polygon points='0,-26 6,-6 26,-6 9,6 15,26 0,14 -15,26 -9,6 -26,-6 -6,-6' fill='%23FFD700' filter='url(%23s)'/></g></svg>");
+       background-size: 75%;
+        background-repeat: no-repeat;
+        background-position: center 60%;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+        animation: medalBounce 1.2s ease-out 0.3s both;
+    }
+    @keyframes medalAppear {
+        0% { transform: scale(0.3) rotate(-180deg); opacity: 0; }
+        60% { transform: scale(1.1); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes medalBounce {
+        0% { transform: translateY(-120px) rotate(-30deg) scale(0.4); opacity: 0; }
+        60% { transform: translateY(15px) rotate(10deg) scale(1.15); opacity: 1; }
+        80% { transform: translateY(-8px) rotate(-5deg) scale(1.05); }
+        100% { transform: translateY(0) rotate(0) scale(1); }
+    }
+
+    .completion-message {
+        background: linear-gradient(145deg, #3a2a2a, #4a4545);
+        border: 2.5px solid #ffffff;
+        border-radius: 15px;
+        padding: clamp(12px, 3vw, 18px);
+        box-shadow: 0 6px 12px rgba(240,184,92,0.4);
+        margin: 2vw auto;
+        max-width: 90%;
+        text-align: center;
+    }
+    .completion-message h2 {
+        color: #ffffff;
+        text-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+    .completion-message p { color: #ffffff; }
+
+    #completionModal .modal-content {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px;
+    }
+    #completionModal .completion-message {
+        text-align: center;
+        max-width: 500px;
+    }
+    .reset-btn {
+        background: linear-gradient(135deg, #8b3a5f, #f0b85c);
+        color: #fff;
+        padding: 15px 35px;
+        border: none;
+        border-radius: 25px;
+        font-family: 'Orbitron', sans-serif;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 700;
+        margin-top: 20px;
+        transition: all 0.3s ease;
+    }
+    .reset-btn:hover { background: linear-gradient(135deg, #9b4f70, #8b3a5f); transform: scale(1.05); box-shadow: 0 4px 15px rgba(139,58,95,0.4); }
+
+    @media (max-width: 768px) {
+        .trainer-container { padding: 20px 15px; width: 95%; margin: 10px auto; }
+        .question-circle { width: 100px; height: 100px; margin: 0 auto 15px; }
+        .question-circle h3 { font-size: 16px; }
+        .options-container { gap: 10px; margin: 20px 0; }
+        .option { min-width: 100%; padding: 12px 15px; font-size: 14px; font-weight: 600; border-width: 3px; background: rgba(58,42,42,0.9); }
+        #questionText { font-size: 16px; margin: 10px 0; line-height: 0.9; }
+        .feedback { font-size: 20px; padding: 15px 25px; border-radius: 8px; text-shadow: 0 2px 4px rgba(0,0,0,0.7); }
+    }
+    #questionText { 
+        font-size: clamp(18px, 2.8vw, 20px); 
+        line-height: 1.2; 
+        margin: 15px 0; 
+        color: #ffcc99; 
+        font-weight: 600; 
+        text-shadow: 0 2px 4px rgba(0,0,0,0.5); 
+    }
+    .highlight { color: #f0b85c; font-weight: bold; }
+    .pos { color: #7cff7c; font-weight: bold; }
+    .neg { color: #ff6b6b; font-weight: bold; }
+
+    .text-block p {
+        font-size: 18px;
+        line-height: 1.8;
+        margin: 18px 0;
+        text-align: justify;
+    }
+
+    .math-important {
+        background: rgba(240,184,92,0.2);
+        border: 2px solid #f0b85c;
+        border-radius: 12px;
+        padding: 20px;
+        margin: 25px auto;
+        text-align: center;
+        font-size: 22px; /* Збільшено */
+        color: #ffcc99;
+        font-weight: 500;
+    }
+
+    .math-big {
+        font-size: 17px; /* Збільшено */
+        color: #ffcc99;
+        text-align: center;
+        margin: 20px 0;
+        padding: 15px;
+        background: rgba(240,184,92,0.15);
+        border-radius: 10px;
+    }
+
+   .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 22px;
+    margin: 30px 0;
+}
+
+/* АДАПТАЦІЯ ДЛЯ МОБІЛЬНИХ */
+/* ======================== */
+
+/* Планшети та невеликі екрани (≤1024px) */
+@media (max-width: 1024px) {
+    .grid-3 {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+        margin: 25px 0;
+    }
+}
+
+/* Планшети вертикально (≤768px) */
+@media (max-width: 768px) {
+    .grid-3 {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 18px;
+        margin: 22px 0;
+    }
+}
+
+/* Великі телефони (≤600px) - 2 колонки */
+@media (max-width: 600px) {
+    .grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        margin: 20px 0;
+    }
+    
+    .card-deriv {
+        min-height: 280px;
+    }
+}
+
+/* Середні телефони (≤480px) */
+@media (max-width: 480px) {
+    .grid-3 {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        margin: 18px 0;
+    }
+    
+    .card-deriv {
+        min-height: auto;
+        padding: 18px 15px !important;
+    }
+    
+    .grid-3 .card-deriv h4 {
+        font-size: 1.1rem;
+        margin-bottom: 12px;
+    }
+    
+    .grid-3 .card-deriv p {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin: 10px 0;
+    }
+    
+    .grid-3 .card-deriv .math-big {
+        font-size: 1.0rem !important;
+        padding: 12px 8px !important;
+        margin: 15px 0 !important;
+    }
+}
+
+/* Маленькі телефони (≤360px) */
+@media (max-width: 360px) {
+    .grid-3 {
+        gap: 12px;
+        margin: 15px 0;
+    }
+    
+    .card-deriv {
+        padding: 15px 12px !important;
+        border-radius: 10px;
+    }
+    
+    .grid-3 .card-deriv h4 {
+        font-size: 1rem;
+    }
+    
+    .grid-3 .card-deriv p {
+        font-size: 0.9rem;
+    }
+}
+
+/* Особливості для мобільних */
+@media (max-width: 768px) {
+    .card-deriv {
+        text-align: center;
+    }
+    
+    .grid-3 .card-deriv ul {
+        text-align: left;
+        padding-left: 20px;
+        margin: 10px 0;
+    }
+    
+    .grid-3 .card-deriv li {
+        margin: 8px 0;
+        font-size: 0.95rem;
+    }
+    
+    .grid-3 .math-big mjx-container {
+        font-size: 0.9em !important;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+    
+    .grid-3 .card-deriv {
+        overflow: hidden;
+    }
+    
+    .grid-3 .math-big {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 5px;
+    }
+}
+
+/* Вертикальна орієнтація (портрет) */
+@media (max-width: 480px) and (orientation: portrait) {
+    .grid-3 {
+        margin: 20px -10px;
+    }
+    
+    .card-deriv {
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+}
+
+/* Горизонтальна орієнтація (ландшафт) */
+@media (max-width: 768px) and (orientation: landscape) {
+    .grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+    
+    .card-deriv {
+        min-height: 300px;
+    }
+}
+
+/* Додаткові покращення для доступності */
+@media (max-width: 768px) {
+    .card-deriv {
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+    
+    .grid-3 * {
+        -webkit-text-size-adjust: 100%;
+    }
+    
+    .grid-3 {
+        will-change: transform;
+        transform: translateZ(0);
+    }
+}
+
+    .card-deriv {
+        background: linear-gradient(135deg, #3a2a2a, #4a4545);
+        padding: 22px;
+        border-radius: 14px;
+        border: 1px solid rgba(240,184,92,0.4);
+        text-align: center;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    }
+
+    .section-title {
+        color: #f0b85c;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 22px;
+        text-align: center;
+        margin: 35px 0 20px;
+        text-shadow: 0 0 10px rgba(240,184,92,0.4);
+    }
+
+    .bullet-blue li {
+        font-size: 18.5px;
+        margin: 12px 0;
+        padding-left: 8px;
+    }
+
+    .bullet-blue li::marker { color: #f0b85c; font-size: 22px; }
+
+    .algo-box {
+        background: rgba(240,184,92,0.12);
+        border: 2px dashed #f0b85c;
+        border-radius: 14px;
+        padding: 25px;
+        margin: 30px 0;
+    }
+
+    .algo-list {
+        padding-left: 20px;
+        counter-reset: num;
+    }
+
+    .algo-list li {
+        position: relative;
+        padding-left: 45px;
+        margin: 20px 0;
+        font-size: 18.5px;
+        line-height: 1.7;
+    }
+
+    .algo-list li::before {
+        counter-increment: num;
+        content: counter(num) ")";
+        position: absolute;
+        left: 0;
+        color: #f0b85c;
+        font-weight: bold;
+        font-size: 22px;
+        font-family: 'Orbitron', sans-serif;
+    }
+
+    .final-answer {
+        background: linear-gradient(135deg, #8b3a5f, #9b4f70);
+        color: white;
+        padding: 22px;
+        border-radius: 12px;
+        text-align: center;
+        font-size: 21px;
+        font-weight: bold;
+        margin-top: 30px;
+        box-shadow: 0 6px 20px rgba(240,184,92,0.5);
+    }
+    .example-full {
+        background: rgba(240,184,92,0.08);
+        border: 2px solid rgba(240,184,92,0.3);
+        border-radius: 16px;
+        padding: 28px;
+        margin: 35px 0;
+        font-size: 19px;
+        line-height: 1.85;
+        text-align: justify;
+    }
+
+    .example-header-classic {
+        font-size: 22px;
+        font-weight: bold;
+        color: white;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px dashed rgba(240,184,92,0.4);
+        text-align: center;
+    }
+
+    .example-label {
+        color: #f0b85c;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 24px;
+        padding: 6px 16px;
+        background: rgba(240,184,92,0.15);
+        border-radius: 8px;
+        margin-right: 12px;
+    }
+
+    .example-function {
+        color: #ffcc99;
+        font-size: 22px;
+        font-style: italic;
+        margin: 0 8px;
+    }
+
+    .example-solution-text p {
+        margin: 18px 0;
+    }
+
+    .math-centered {
+        text-align: center;
+        font-size: 24px; /* Збільшено */
+        color: #ffcc99;
+        background: rgba(240,184,92,0.15);
+        padding: 14px;
+        border-radius: 10px;
+        margin: 20px auto;
+        max-width: 90%;
+        border: 1px dashed rgba(240,184,92,0.4);
+    }
+
+    .marker {
+        color: #f0b85c;
+        font-weight: bold;
+        font-size: 22px;
+        margin-right: 8px;
+    }
+
+    .end-marker {
+        color: #f0b85c;
+        font-weight: bold;
+        font-size: 22px;
+        margin-left: 10px;
+    }
+
+    .example-answer {
+        background: linear-gradient(135deg, #8b3a5f, #9b4f70);
+        color: white;
+        padding: 20px;
+        border-radius: 12px;
+        text-align: center;
+        font-size: 21px;
+        font-weight: bold;
+        margin-top: 30px;
+        box-shadow: 0 6px 20px rgba(240,184,92,0.5);
+    }
+    /* ============================================= */
+    /*        АДАПТИВНІСТЬ ДЛЯ МОБІЛЬНИХ (≤768px)     */
+    /* ============================================= */
+    @media (max-width: 768px) {
+
+        /* Загальні розміри тексту */
+        .theory-content p,
+        .example-full,
+        .example-solution-text p {
+            font-size: 18px !important;
+            line-height: 1.75 !important;
+        }
+
+        /* Заголовки */
+        .section-title,
+        .example-header-classic,
+        .example-label {
+            font-size: 19px !important;
+        }
+
+        .example-label {
+            display: inline-block;
+            padding: 6px 14px !important;
+            margin-bottom: 10px;
+        }
+
+        /* Формули по центру (з нового рядка) */
+        .math-centered,
+        .math-important {
+            font-size: 19px !important;
+            padding: 14px 10px !important;
+            margin: 18px auto !important;
+        }
+
+        .math-big {
+            font-size: 19px !important;
+            padding: 14px !important;
+        }
+
+        /* Функція в умові прикладу */
+        .example-function {
+            font-size: 19px !important;
+            display: block;
+            margin: 12px auto !important;
+            text-align: center;
+        }
+
+        /* Квадратики-маркери */
+        .marker, .end-marker {
+            font-size: 19px !important;
+        }
+
+        /* Карточки похідної (зростає/спадає/стала) */
+        .grid-3 {
+            grid-template-columns: 1fr !important;
+            gap: 18px;
+        }
+
+        .card-deriv {
+            padding: 18px !important;
+        }
+
+        /* Алгоритм */
+        .algo-box {
+            padding: 20px !important;
+        }
+
+        .algo-list li {
+            font-size: 17px !important;
+            padding-left: 38px !important;
+        }
+
+        .algo-list li::before {
+            font-size: 19px !important;
+        }
+
+        /* Відповідь */
+        .final-answer,
+        .example-answer {
+            font-size: 19px !important;
+            padding: 18px !important;
+        }
+
+        .example-full {
+            padding: 20px !important;
+            margin: 25px 0 !important;
+        }
+
+        /* Зменшуємо відступи */
+        .example-header-classic {
+            padding-bottom: 12px !important;
+            margin-bottom: 20px !important;
+        }
+    }
+    .video-modal-title {
+        text-align: center;
+        margin: 20px 0 30px;
+        padding: 20px;
+    }
+
+    .video-modal-title h2 {
+        font-size: 2.2rem;
+        color: #f0b85c;
+        margin: 0 0 10px 0;
+        font-weight: 600;
+    }
+
+    /* Дуже маленькі екрани (≤480px) – ще компактніше */
+    @media (max-width: 480px) {
+
+        .theory-content p,
+        .example-full,
+        .example-solution-text p {
+            font-size: 18px !important;
+            line-height: 1.5 !important;
+        }
+.section-title,
+        .example-header-classic,
+        .example-label {
+            font-size: 18px !important;
+        }
+
+        .example-label {
+            display: inline-block;
+            padding: 6px 14px !important;
+            margin-bottom: 10px;
+        }
+        .math-centered,
+        .math-important {
+            font-size: 18px !important;
+            padding: 12px 8px !important;
+        }
+
+        .example-function {
+            font-size: 18px !important;
+        }
+
+        .example-label {
+            font-size: 16px !important;
+            padding: 5px 12px !important;
+        }
+
+        .section-title {
+            font-size: 18px !important;
+        }
+
+        .final-answer,
+        .example-answer {
+            font-size: 18px !important;
+            padding: 16px !important;
+        }
+
+        .marker, .end-marker {
+            font-size: 18px !important;
+        }
+        .video-modal-title h2 {
+            font-size: 1.5rem;
+        }
+    }
+
+    /* Опціонально — тонка лінія під заголовком */
+    .video-modal-title::after {
+        content: '';
+        display: block;
+        width: 80px;
+        height: 4px;
+        background: #f0b85c;
+        margin: 20px auto 0;
+        border-radius: 2px;
+    }
+    /* На мобілці — одна колонка */
+    @media (max-width: 768px) {
+        .options-container {
+            grid-template-columns: 1fr;
+            gap: 15px;
+            padding: 0 8px;
+        }
+        .option {
+            min-height: 80px;
+            padding: 18px 12px;
+            font-size: 18px;
+        }
+    }
+
+        /* СТИЛІ ДЛЯ SUMMARY/DETAILS У ВІЙСЬКОВІЙ ТЕМАТИЦІ */
+/* ==================== */
+details {
+    margin: 25px 0;
+    background: linear-gradient(135deg, rgba(58, 42, 42, 0.8), rgba(74, 69, 69, 0.9));
+    border-radius: 12px;
+    border: 1px solid rgba(240, 184, 92, 0.2);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+details:hover {
+    border-color: rgba(240, 184, 92, 0.4);
+    box-shadow: 0 8px 24px rgba(139, 58, 95, 0.25);
+}
+
+summary {
+    font-weight: 700;
+    padding: 18px 24px;
+    background: linear-gradient(135deg, #8b3a5f, #9b4f70);
+    border-radius: 10px 10px 0 0;
+    color: #ffffff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.15rem;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(139, 58, 95, 0.3);
+    cursor: pointer;
+    list-style: none;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+summary::-webkit-details-marker {
+    display: none;
+}
+
+summary::after {
+    content: "▼";
+    font-size: 0.9rem;
+    transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    color: #f0e6a8;
+    margin-left: 10px;
+    font-weight: bold;
+}
+
+details[open] summary::after {
+    transform: rotate(180deg);
+    color: #f0b85c;
+}
+
+details[open] summary {
+    background: linear-gradient(135deg, #9b4f70, #8b3a5f);
+    border-radius: 10px 10px 0 0;
+    box-shadow: 0 4px 15px rgba(240, 184, 92, 0.3);
+}
+
+/* Контент всередині details */
+details .details-content {
+    padding: 24px;
+    color: #e0e0e0;
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    background: rgba(58, 42, 42, 0.7);
+    border-radius: 0 0 10px 10px;
+    animation: fadeIn 0.4s ease-out;
+    border-top: 1px solid rgba(240, 184, 92, 0.15);
+}
+
+details .details-content p {
+    margin: 16px 0;
+    text-align: justify;
+}
+
+details .details-content ul,
+details .details-content ol {
+    margin: 16px 0;
+    padding-left: 24px;
+}
+
+details .details-content li {
+    margin: 10px 0;
+    padding-left: 8px;
+    position: relative;
+}
+
+details .details-content li::before {
+    content: "•";
+    color: #f0b85c;
+    font-weight: bold;
+    position: absolute;
+    left: -15px;
+}
+
+details .details-content strong {
+    color: #f0e6a8;
+    font-weight: 700;
+}
+
+details .details-content em {
+    color: #ffcc99;
+    font-style: italic;
+}
+
+details .details-content .math-important {
+    background: rgba(240, 184, 92, 0.15);
+    border: 2px solid #f0b85c;
+    border-radius: 10px;
+    padding: 18px;
+    margin: 20px auto;
+    text-align: center;
+    font-size: 1.3rem; /* Збільшено */
+    color: #ffcc99;
+    font-family: 'MathJax_Math', 'Cambria Math', serif;
+}
+
+details .details-content .example {
+    background: rgba(139, 58, 95, 0.2);
+    border-left: 4px solid #f0b85c;
+    padding: 16px;
+    margin: 20px 0;
+    border-radius: 8px;
+}
+
+details .details-content .highlight {
+    background: rgba(240, 184, 92, 0.2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #ffffff;
+}
+
+/* Стилі для таблиць всередині details */
+details .details-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    border: 1px solid rgba(240, 184, 92, 0.3);
+}
+
+details .details-content th {
+    background: rgba(139, 58, 95, 0.5);
+    color: #ffffff;
+    padding: 12px;
+    text-align: center;
+    font-family: 'Orbitron', sans-serif;
+    border-bottom: 2px solid #f0b85c;
+}
+
+details .details-content td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid rgba(240, 184, 92, 0.2);
+}
+
+details .details-content tr:nth-child(even) {
+    background: rgba(139, 58, 95, 0.1);
+}
+
+/* Анімація відкриття */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Альтернативний стиль для summary - з іконкою щита */
+details.military summary::before {
+    content: "🛡️";
+    margin-right: 10px;
+    font-size: 1.1rem;
+}
+
+/* Стиль для попередження/уваги */
+details.warning summary {
+    background: linear-gradient(135deg, #8b3a5f, #9b4f70);
+    box-shadow: 0 4px 12px rgba(139, 58, 95, 0.3);
+}
+
+details.warning .details-content {
+    background: rgba(139, 58, 95, 0.1);
+    border-left: 4px solid #8b3a5f;
+}
+
+/* Стиль для важливої інформації */
+details.important summary {
+    background: linear-gradient(135deg, #8b3a5f, #9b4f70);
+    box-shadow: 0 4px 12px rgba(139, 58, 95, 0.3);
+}
+
+details.important .details-content {
+    background: rgba(139, 58, 95, 0.1);
+    border-left: 4px solid #8b3a5f;
+}
+
+/* ==================== */
+/* АДАПТИВНІСТЬ */
+/* ==================== */
+@media (max-width: 768px) {
+    details {
+        margin: 20px 0;
+        border-radius: 10px;
+    }
+    
+    summary {
+        padding: 16px 20px;
+        font-size: 1.05rem;
+    }
+    
+    details .details-content {
+        padding: 20px;
+        font-size: 1rem;
+    }
+    
+    summary::after {
+        font-size: 0.8rem;
+    }
+    
+    details .details-content ul,
+    details .details-content ol {
+        padding-left: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    details {
+        margin: 18px 0;
+        border-radius: 8px;
+    }
+    
+    summary {
+        padding: 14px 18px;
+        font-size: 1rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    summary::after {
+        align-self: flex-end;
+        margin-top: -20px;
+    }
+    
+    details .details-content {
+        padding: 18px;
+        font-size: 0.95rem;
+    }
+    
+    details .details-content ul,
+    details .details-content ol {
+        padding-left: 18px;
+    }
+    
+    details.military summary::before {
+        font-size: 1rem;
+    }
+}
+    .attention-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.attention-title::after {
+    content: "";
+    display: block;
+    width: 120px;
+    height: 5px;
+    background: linear-gradient(90deg, #f0b85c, #8b3a5f);
+    border-radius: 3px;
+    margin-top: 6px;
+}
+
+
+/* Стилі для блоку зауважень */
+.remarks-box {
+    background: linear-gradient(135deg, rgba(139, 58, 95, 0.2), rgba(240, 184, 92, 0.1));
+    border: 2px solid rgba(240, 184, 92, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 25px 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.remarks-title {
+    color: #f0b85c;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    text-shadow: 0 0 8px rgba(240, 184, 92, 0.3);
+    border-bottom: 2px dashed rgba(240, 184, 92, 0.4);
+    padding-bottom: 8px;
+}
+
+.remarks-content p {
+    margin: 12px 0;
+    padding-left: 10px;
+    border-left: 3px solid rgba(240, 184, 92, 0.5);
+    padding-left: 15px;
+}
+
+.remarks-content strong {
+    color: #f0e6a8;
+    margin-right: 5px;
+}
+
+/* Адаптивність для мобільних */
+@media (max-width: 768px) {
+   
+    .remarks-box {
+        padding: 18px;
+        margin: 20px 0;
+    }
+    
+    .remarks-title {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+   
+    
+    .remarks-box {
+        padding: 15px;
+    }
+    
+    .remarks-title {
+        font-size: 1rem;
+    }
+}
+   /* ========= ТІЛЬКИ ЦЕНТРАЛЬНІ ВЕЛИКІ ФОРМУЛИ — горизонтальний скрол на мобілці ========= */
+@media (max-width: 768px) {
+    mjx-container[jax="CHTML"][display="true"],
+    mjx-container[display="true"] {
+        display: block !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        padding-bottom: 12px;
+        margin: 20px 0;
+        scrollbar-width: thin;
+        scrollbar-color: #f0b85c #3a2a2a;
+        max-width: 100%;
+        font-size: 1.1em !important; /* Збільшено для мобільних */
+    }
+
+    .math-centered,
+    .math-important,
+    .math-big,
+    .example-full .math-centered,
+    .final-answer,
+    .example-answer,
+    #questionText > div,
+    .trainer-container > div {
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        padding: 8px 0;
+        max-width: 100%;
+    }
+    
+    .trainer-container mjx-container[jax="CHTML"][display="true"],
+    #questionText mjx-container[jax="CHTML"][display="true"] {
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+
+    mjx-container {
+        max-height: none !important;
+        height: auto !important;
+        overflow-y: hidden !important;
+        max-width: 100% !important;
+    }
+
+    mjx-container[jax="CHTML"][display="true"]::-webkit-scrollbar,
+    mjx-container[display="true"]::-webkit-scrollbar,
+    .math-centered::-webkit-scrollbar,
+    .math-important::-webkit-scrollbar,
+    #questionText > div::-webkit-scrollbar,
+    .trainer-container > div::-webkit-scrollbar {
+        height: 6px;
+    }
+    
+    mjx-container[jax="CHTML"][display="true"]::-webkit-scrollbar-thumb,
+    mjx-container[display="true"]::-webkit-scrollbar-thumb,
+    .math-centered::-webkit-scrollbar-thumb,
+    .math-important::-webkit-scrollbar-thumb,
+    #questionText > div::-webkit-scrollbar-thumb,
+    .trainer-container > div::-webkit-scrollbar-thumb {
+        background: rgba(240, 184, 92, 0.7);
+        border-radius: 3px;
+    }
+    
+    mjx-container[jax="CHTML"][display="true"]::-webkit-scrollbar-thumb:hover,
+    mjx-container[display="true"]::-webkit-scrollbar-thumb:hover,
+    .math-centered::-webkit-scrollbar-thumb:hover,
+    .math-important::-webkit-scrollbar-thumb:hover,
+    #questionText > div::-webkit-scrollbar-thumb:hover,
+    .trainer-container > div::-webkit-scrollbar-thumb:hover {
+        background: #f0b85c;
+    }
+    
+    #questionText {
+        overflow-x: hidden !important;
+    }
+    
+    #questionText > div {
+        margin: 0 -10px;
+        padding: 0 10px;
+    }
+}
+   /* Стилі для кнопки в питанні 1 */
+#submitAnswer {
+    background: linear-gradient(135deg, #8b3a5f, #f0b85c);
+    color: #fff;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 25px;
+    font-family: 'Orbitron', sans-serif;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#submitAnswer:hover:not(:disabled) { 
+    background: linear-gradient(135deg, #9b4f70, #8b3a5f); 
+    transform: scale(1.05); 
+    box-shadow: 0 4px 15px rgba(139,58,95,0.4); 
+}
+
+#submitAnswer:disabled { 
+    background: #666; 
+    cursor: not-allowed; 
+    opacity: 0.6; 
+}
+
+/* Оновлюємо контейнер для кнопки в питанні 2 */
+.trainer-container {
+    width: 90%;
+    max-width: 800px;
+    margin: auto;
+    padding: 30px;
+    background: linear-gradient(135deg, #3a2a2a, #4a4545);
+    border-radius: 16px;
+    border: 1px solid rgba(240,184,92,0.2);
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+}
+
+/* Оновлюємо поля введення, щоб прибрати стрілки */
+.coordinate-input {
+    width: 80px;
+    height: 50px;
+    text-align: center;
+    font-size: 22px;
+    font-family: 'Orbitron', sans-serif;
+    background: rgba(240,184,92,0.1);
+    border: 2px solid #f0b85c;
+    border-radius: 10px;
+    color: #ffcc99;
+    outline: none;
+    transition: all 0.3s ease;
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.coordinate-input::-webkit-outer-spin-button,
+.coordinate-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.coordinate-input:focus {
+    border-color: #f0e6a8;
+    box-shadow: 0 0 15px rgba(240,184,92,0.6);
+    background: rgba(240,184,92,0.2);
+    transform: scale(1.05);
+}
+
+/* Кнопка для питання 2 */
+.check-answer-btn {
+    background: linear-gradient(135deg, #8b3a5f, #f0b85c);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-family: 'Orbitron', sans-serif;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    margin: 20px auto 0 auto;
+    display: block;
+    min-width: 200px;
+}
+
+.check-answer-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #9b4f70, #8b3a5f);
+    transform: scale(1.05);
+    box-shadow: 0 4px 20px rgba(139,58,95,0.5);
+}
+
+.check-answer-btn:disabled {
+    background: #666;
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Для мобільних пристроїв додаємо спеціальні налаштування */
+@media (max-width: 768px) {
+    .coordinate-input {
+        width: 70px;
+        height: 45px;
+        font-size: 20px;
+        inputmode: decimal;
+        -webkit-inputmode: decimal;
+    }
+    
+    #submitAnswer,
+    .check-answer-btn {
+        padding: 14px 25px;
+        font-size: 16px;
+        min-width: 180px;
+    }
+}
+
+    .task-note {
+    color: #ff6b6b !important;
+    font-style: italic !important;
+    font-size: 0.9em !important;
+    display: block !important;
+    margin-top: 10px !important;
+}
+
+     /* СТИЛІ ДЛЯ ТАБЛИЦЬ З ГОРИЗОНТАЛЬНИМ СКРОЛОМ */
+    .table-container {
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        margin: 20px 0;
+        border-radius: 8px;
+        background: rgba(240,184,92,0.05);
+        border: 1px solid rgba(240,184,92,0.1);
+    }
+
+    .table-container table {
+        width: 100%;
+        min-width: 600px; /* Мінімальна ширина для таблиць */
+        border-collapse: collapse;
+    }
+
+    .table-container th {
+        background: rgba(139,58,95,0.5);
+        color: #ffffff;
+        padding: 12px;
+        text-align: center;
+        font-family: 'Orbitron', sans-serif;
+        border: 1px solid rgba(240,184,92,0.3);
+        white-space: nowrap;
+    }
+
+    .table-container td {
+        padding: 10px;
+        text-align: center;
+        border: 1px solid rgba(240,184,92,0.2);
+        vertical-align: middle;
+    }
+
+    .table-container tr:nth-child(even) {
+        background: rgba(139,58,95,0.1);
+    }
+
+    /* Стилі для формул у таблицях */
+    .table-container mjx-container {
+        font-size: 1em !important;
+    }
+
+    /* На мобільних пристроях робимо таблиці скролюваними */
+    @media (max-width: 768px) {
+        .table-container {
+            margin: 15px -10px;
+            padding: 0 10px;
+            border-radius: 0;
+        }
+        
+        .table-container table {
+            min-width: 700px; /* Для мобільних ще ширша */
+        }
+        
+        .formula-box {
+            margin: 15px -10px;
+            padding: 15px 10px;
+            border-radius: 0;
+            border-left: none;
+            border-right: none;
+        }
+        
+        /* Формули в таблицях на мобільних */
+        .table-container mjx-container {
+            font-size: 0.9em !important;
+        }
+    }
+
+
+
+
+   @media (max-width: 768px) {
+    .trainer-container { 
+        padding: 20px 15px; 
+        width: 95%; 
+        margin: 10px auto; 
+    }
+    .question-circle { 
+        width: 100px; 
+        height: 100px; 
+        margin: 0 auto 15px; 
+    }
+    .question-circle h3 { 
+        font-size: 16px; 
+    }
+    .options-container { 
+        gap: 10px; 
+        margin: 20px 0; 
+    }
+    .option { 
+        min-width: 100%; 
+        padding: 12px 15px; 
+        font-size: 14px; 
+        font-weight: 600; 
+        border-width: 3px; 
+        background: rgba(58,42,42,0.9); 
+    }
+    #questionText { 
+        font-size: 16px; 
+        margin: 10px 0; 
+        line-height: 1.1; /* Змінив з 0.9 на 1.2 для кращої читабельності */
+    }
+    .feedback { 
+        font-size: 20px; 
+        padding: 15px 25px; 
+        border-radius: 8px; 
+        text-shadow: 0 2px 4px rgba(0,0,0,0.7); 
+    }
+    
+    /* ДОДАЄМО ЦЕ ДЛЯ ФОРМУЛ У ТРЕНАЖЕРІ */
+    /* Зменшуємо всі формули на мобільних */
+    .trainer-container mjx-container {
+        font-size: 1.1em !important;
+    }
+    
+    /* Особливо зменшуємо великі формули */
+    .trainer-container mjx-container[display="true"] {
+        font-size: 1.1em !important;
+    }
+    
+    /* Формули у варіантах відповідей */
+    .option mjx-container {
+        font-size: 1.1em !important;
+    }
+    
+    /* Формула в умові питання */
+    #questionText mjx-container {
+        font-size: 1.1em !important;
+    }
+    
+    /* Контейнер для формули питання */
+    #questionText > div {
+        font-size: 1.1em;
+        padding: 12px !important;
+    }
+    
+    /* Горизонтальний скрол для дуже довгих формул */
+    .trainer-container mjx-container[jax="CHTML"][display="true"] {
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        max-width: 100%;
+        padding-bottom: 8px;
+    }
+}
+
+/* Додаткові налаштування для дуже маленьких екранів */
+@media (max-width: 480px) {
+    .trainer-container { 
+        padding: 15px 10px; 
+        width: 98%; 
+    }
+    .option { 
+        padding: 10px 12px; 
+        font-size: 13px; 
+    }
+    #questionText { 
+        font-size: 15px; 
+        margin: 8px 0; 
+    }
+    
+    /* Ще більше зменшуємо формули на дуже маленьких екранах */
+    .trainer-container mjx-container {
+        font-size: 1.0em !important;
+    }
+    
+    .trainer-container mjx-container[display="true"] {
+        font-size: 1.0em !important;
+    }
+    
+    .option mjx-container {
+        font-size: 1.0em !important;
+    }
+    
+    #questionText mjx-container {
+        font-size: 1.0em !important;
+    }
+} 
+</style>
+</head>
+<body>
+    <div class="title-box">
+        <h1>94. Інтегрування частинами</h1>
+    </div>
+
+    <div class="section-container">
+        <div class="section" id="openTheoryBtn">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Теорія">
+            <h2>Теоретичні відомості</h2>
+        </div>
+        <div class="section" id="openVideoBtn">
+            <img src="https://img.icons8.com/fluency/96/video.png" alt="Відео">
+            <h2>Відеоматеріали</h2>
+        </div>
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Питання">
+            <h2>Питання і відповіді</h2>
+        </div>
+        <div class="section" id="openTrainerBtn">
+            <img src="https://img.icons8.com/fluency/96/flash-on.png" alt="Тренажер">
+            <h2>Тренажер</h2>
+        </div>
+    </div>
+
+    <div class="navigation-buttons">
+        <a class="nav-button prev" href="tema15.html">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+            До теми 15
+        </a>
+         <a class="nav-button home" href="zmist.html">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+  <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+</svg>
+            До курсу
+        </a>
+    </div>
+
+    <!-- ТЕОРІЯ — Метод інтегрування частинами -->
+    <div id="theoryModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeTheoryBtn">× Закрити</button>
+        </div>
+        <div class="modal-content theory-content">
+
+<details class="warning">
+    <summary>Що таке метод інтегрування частинами? Основна формула та вибір u і dv</summary>
+    <div class="details-content">
+            <h2>Інтегрування частинами</h2>
+<div class="text-block">
+    <p><strong>Метод інтегрування частинами</strong> – це метод знаходження невизначеного інтеграла від добутку двох функцій, який базується на правилі диференціювання добутку двох функцій:</p>
+    
+    <div class="formula-box">
+        <strong>Формула інтегрування частинами:</strong>
+        \[ \int u \, dv = uv - \int v \, du \tag{15.9} \]
+    </div>
+
+
+    <p>Ця формула дозволяє звести обчислення інтеграла \(\int u \, dv\) до знаходження іншого інтеграла \(\int v \, du\), який часто є табличним.</p>
+
+    <div class="remarks-box">
+        <h4 class="remarks-title">⚡ Увага! Як обрати \(u\) і \(dv\)?</h4>
+        <div class="remarks-content">
+            <p>Щоб застосувати формулу (15.9), підінтегральний вираз розбивають на два множники:</p>
+            <ul>
+                <li><strong>\(u\)</strong> – функція, яку позначають як першу частину</li>
+                <li><strong>\(dv\)</strong> – другу частину, що включає диференціал \(dx\)</li>
+            </ul>
+            <p><strong>Важливо:</strong></p>
+            <ol>
+                <li>\(dx\) завжди входить до \(dv\)</li>
+                <li>\(dv\) має бути таким, щоб його легко можна було проінтегрувати</li>
+                <li>Константу інтегрування \(C\) до \(v\) додавати не потрібно, оскільки вона враховується в кінцевому результаті</li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+<h3 class="section-title">Області застосування методу інтегрування частинами</h3>
+
+<div class="grid-3">
+    <div class="card-deriv">
+        <h4>1. Добуток многочлена та експоненти/тригонометрії</h4>
+        <div class="math-big">\[
+            P_n(x) e^{kx}, \quad P_n(x) a^{kx},  \]
+   \[ \quad P_n(x) \sin kx, \]
+   \[ \quad P_n(x) \cos kx
+        \]</div>
+        <p>Приклад: \(\int x e^{2x} dx\)</p>
+    </div>
+
+    <div class="card-deriv">
+        <h4>2. Добуток многочлена та логарифма</h4>
+        <div class="math-big">\[
+            P_n(x) \ln x, \quad P_n(x) \lg x, \]
+    \[\quad P_n(x) \log_a x
+        \]</div>
+        <p>Приклад: \(\int x \ln x dx\)</p>
+    </div>
+
+    <div class="card-deriv">
+        <h4>3. Добуток многочлена та оберненої тригонометрії</h4>
+        <div class="math-big">\[
+            P_n(x) \arcsin x, \]
+    \[\quad P_n(x) \arccos x, \]
+   \[ \quad P_n(x) \arctg x, \]
+    \[\quad P_n(x) \arcctg x
+        \]</div>
+        <p>Приклад: \(\int x \arctg x dx\)</p>
+    </div>
+</div>
+
+<h3 class="section-title">Таблиця вибору \(u\) та \(dv\)</h3>
+
+<div class="remarks-box">
+    <h4 class="remarks-title">📋 Таблиця 7: Правила вибору \(u\) та \(dv\)</h4>
+    <div class="details-content">
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>№</th>
+                        <th>Вид інтеграла</th>
+                        <th>Множник \(u\)</th>
+                        <th>Множник \(dv\)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>
+                            \[ \int P_n(x) \begin{pmatrix} e^{kx} \\ a^{kx} \\ \sin kx \\ \cos kx \end{pmatrix} dx \]
+                        </td>
+                        <td>\(u = P_n(x)\)</td>
+                        <td>
+                            \[ dv = \begin{pmatrix} e^{kx} \\ a^{kx} \\ \sin kx \\ \cos kx \end{pmatrix} dx \]
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>
+                            \[ \int P_n(x) \begin{pmatrix} \arcsin kx \\ \arccos kx \\ \arctg kx \\ \ln^m kx \end{pmatrix} dx \]
+                        </td>
+                        <td>
+                            \[ u = \begin{pmatrix} \arcsin kx \\ \arccos kx \\ \arctg kx \\ \ln^m kx \end{pmatrix} \]
+                        </td>
+                        <td>\(dv = P_n(x) dx\)</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>
+                            \[ \int \begin{pmatrix} \sin(\ln x) \\ \cos(\ln x) \end{pmatrix} dx \]
+                        </td>
+                        <td>
+                            \[ u = \begin{pmatrix} \sin(\ln x) \\ \cos(\ln x) \end{pmatrix} \]
+                        </td>
+                        <td>\(dv = dx\)</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>
+                            \[ \int e^{kx} \begin{pmatrix} \sin ax \\ \cos ax \end{pmatrix} dx \]
+                        </td>
+                        <td colspan="2">
+                            <div style="text-align:center;">
+                                <strong>Довільний вибір</strong><br>
+                                (залежить від спрощення)
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>
+                            \[ \int \sqrt{a^2 - x^2} \, dx \]
+                        </td>
+                        <td>\(u = \sqrt{a^2 - x^2}\)</td>
+                        <td>\(dv = dx\)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="remarks-box" style="background:linear-gradient(135deg, rgba(139,58,95,0.2), rgba(240,184,92,0.1));">
+    <h4 class="remarks-title">💡 Практичні поради:</h4>
+    <div class="remarks-content">
+        <p><strong>1. Пам'ятайте мнемонічне правило:</strong> для вибору \(u\) можна скористатися абревіатурою <strong>ILATE</strong>:</p>
+        <ul>
+            <li><strong>I</strong> – Inverse trigonometric functions (обернені тригонометричні)</li>
+            <li><strong>L</strong> – Logarithmic functions (логарифмічні)</li>
+            <li><strong>A</strong> – Algebraic functions (алгебраїчні: многочлени, корені)</li>
+            <li><strong>T</strong> – Trigonometric functions (тригонометричні)</li>
+            <li><strong>E</strong> – Exponential functions (експоненціальні)</li>
+        </ul>
+        <p><strong>2. Многочлени</strong> зазвичай беруться як \(u\), оскільки при диференціюванні їх степінь знижується.</p>
+        <p><strong>3. Логарифми та обернені тригонометричні функції</strong> завжди беруться як \(u\), оскільки їх похідні простіші.</p>
+    </div>
+</div>
+</div>
+                                                   </details>
+                                                   <details class="warning">
+    <summary>Приклади інтегрування частинами</summary>
+    <div class="details-content">
+        <!-- Приклад 15.17 -->
+        <div class="example-full">
+            <div class="example-header-classic">
+                <span class="example-label">Приклад 15.17.</span>
+                Знайти інтеграл 
+                <span class="example-function">\( \displaystyle \int x e^{2x} \, dx.\)</span>
+            </div>
+            <div class="example-solution-text">
+                <p>
+                    <span class="marker">■</span> <strong>Використаємо метод інтегрування частинами, обравши \(u\) та \(dv\) відповідно:</strong>
+                </p>
+                <div class="math-centered">\[
+                    \int x e^{2x} dx = \begin{vmatrix}
+                        u = x, & dv = e^{2x} dx \\
+                        du = dx, & v = \frac{1}{2} e^{2x}
+                    \end{vmatrix}
+                \]</div>
+                <p>
+                    <strong>Застосовуючи формулу інтегрування частинами \(\int u dv = uv - \int v du\):</strong>
+                </p>
+                <div class="math-centered">\[
+                    x \cdot \frac{1}{2} e^{2x} - \int \frac{1}{2} e^{2x} dx = \frac{1}{2} x e^{2x} - \frac{1}{2} \cdot \frac{1}{2} e^{2x} = \frac{1}{2} x e^{2x} - \frac{1}{4} e^{2x} + C
+                \]</div>
+                <div class="example-answer">
+                    <strong>Відповідь.</strong> \( \displaystyle \int x e^{2x} dx = \frac{1}{2} x e^{2x} - \frac{1}{4} e^{2x} + C \)
+                </div>
+            </div>
+        </div>
+
+        <!-- Приклад 15.18 -->
+        <div class="example-full">
+            <div class="example-header-classic">
+                <span class="example-label">Приклад 15.18.</span>
+                Знайти інтеграл 
+                <span class="example-function">\( \displaystyle \int (1-x) \sin x \, dx.\)</span>
+            </div>
+            <div class="example-solution-text">
+                <p>
+                    <span class="marker">■</span> <strong>Використаємо метод інтегрування частинами:</strong>
+                </p>
+                <div class="math-centered">\[
+                    \int (1-x) \sin x dx = \begin{vmatrix}
+                        u = 1-x, & dv = \sin x dx \\
+                        du = -dx, & v = -\cos x
+                    \end{vmatrix}
+                \]</div>
+                <p>
+                    <strong>Застосовуємо формулу:</strong>
+                </p>
+                <div class="math-centered">\[
+                    (1-x)(-\cos x) - \int (-\cos x)(-dx) = (x-1)\cos x - \sin x + C
+                \]</div>
+                <div class="example-answer">
+                    <strong>Відповідь.</strong> \( \displaystyle \int (1-x) \sin x dx = (x-1)\cos x - \sin x + C \)
+                </div>
+            </div>
+        </div>
+
+        <!-- Приклад 15.19 -->
+        <div class="example-full">
+            <div class="example-header-classic">
+                <span class="example-label">Приклад 15.19.</span>
+                Знайти інтеграл 
+                <span class="example-function">\( \displaystyle \int x \arctg x \, dx.\)</span>
+            </div>
+            <div class="example-solution-text">
+                <p>
+                    <span class="marker">■</span> <strong>Використаємо метод інтегрування частинами:</strong>
+                </p>
+                <div class="math-centered">\[
+                    \int x \arctg x dx = \begin{vmatrix}
+                        u = \arctg x, & dv = x dx \\
+                        du = \frac{dx}{1+x^2}, & v = \frac{x^2}{2}
+                    \end{vmatrix}
+                \]</div>
+                <p>
+                    <strong>Застосовуємо формулу:</strong>
+                </p>
+                <div class="math-centered">\[
+                    \frac{x^2}{2} \arctg x - \int \frac{x^2}{2} \cdot \frac{dx}{1+x^2} = \frac{1}{2} x^2 \arctg x - \frac{1}{2} \int \frac{x^2 dx}{1+x^2}
+                \]</div>
+                <p>
+                    <strong>Розкладемо дріб у другому інтегралі:</strong>
+                </p>
+                <div class="math-centered">\[
+                    \frac{x^2}{1+x^2} = 1 - \frac{1}{1+x^2}
+                \]</div>
+                <p>
+                    <strong>Тоді:</strong>
+                </p>
+                <div class="math-centered">\[
+                    \frac{1}{2} \int \frac{x^2 dx}{1+x^2} = \frac{1}{2} \int \left(1 - \frac{1}{1+x^2}\right) dx = \frac{1}{2} \left(x - \arctg x\right)
+                \]</div>
+                <p>
+                    <strong>Остаточний результат:</strong>
+                </p>
+                <div class="math-centered">\[
+                    \frac{1}{2} x^2 \arctg x - \frac{1}{2} x + \frac{1}{2} \arctg x + C
+                \]</div>
+                <div class="example-answer">
+                    <strong>Відповідь.</strong> \( \displaystyle \int x \arctg x dx = \frac{1}{2} x^2 \arctg x - \frac{1}{2} x + \frac{1}{2} \arctg x + C \)
+                </div>
+            </div>
+        </div>
+
+        <!-- Приклад 15.20 -->
+        <div class="example-full">
+            <div class="example-header-classic">
+                <span class="example-label">Приклад 15.20.</span>
+                Знайти інтеграл 
+                <span class="example-function">\( \displaystyle \int \frac{x}{\sin^2 x} \, dx.\)</span>
+            </div>
+            <div class="example-solution-text">
+                <p>
+                    <span class="marker">■</span> <strong>Використаємо метод інтегрування частинами:</strong>
+                </p>
+                <div class="math-centered">\[
+                    \int \frac{x}{\sin^2 x} dx = \begin{vmatrix}
+                        u = x, & dv = \frac{dx}{\sin^2 x} \\
+                        du = dx, & v = -\ctg x
+                    \end{vmatrix}
+                \]</div>
+                <p>
+                    <strong>Застосовуємо формулу:</strong>
+                </p>
+                <div class="math-centered">\[
+                    -x \ctg x - \int (-\ctg x) dx = -x \ctg x + \int \ctg x dx
+                \]</div>
+                <p>
+                    <strong>Обчислюємо другий інтеграл:</strong>
+                </p>
+                <div class="math-centered">\[
+                    \int \ctg x dx = \ln|\sin x| + C
+                \]</div>
+                <div class="example-answer">
+                    <strong>Відповідь.</strong> \( \displaystyle \int \frac{x}{\sin^2 x} dx = -x \ctg x + \ln|\sin x| + C \)
+                </div>
+            </div>
+        </div>
+
+        <!-- Приклад 15.21 -->
+        <div class="example-full">
+            <div class="example-header-classic">
+                <span class="example-label">Приклад 15.21.</span>
+                Знайти інтеграл 
+                <span class="example-function">\( \displaystyle \int (2x^2 - 3) e^x \, dx.\)</span>
+            </div>
+            <div class="example-solution-text">
+                <p>
+                    <span class="marker">■</span> <strong>Використаємо метод інтегрування частинами:</strong>
+                </p>
+                <div class="math-centered">\[
+                    \int (2x^2 - 3) e^x dx = \begin{vmatrix}
+                        u = 2x^2 - 3, & dv = e^x dx \\
+                        du = 4x dx, & v = e^x
+                    \end{vmatrix} = (2x^2 - 3) e^x - 4 \int x e^x dx
+                \]</div>
+                <p>
+                    <strong>Обчислимо другий інтеграл аналогічно:</strong>
+                </p>
+                <div class="math-centered">\[
+                    \int x e^x dx = \begin{vmatrix}
+                        u = x, & dv = e^x dx \\
+                        du = dx, & v = e^x
+                    \end{vmatrix} = x e^x - \int e^x dx = x e^x - e^x
+                \]</div>
+                <p>
+                    <strong>Підставляємо це в основний вираз:</strong>
+                </p>
+                <div class="math-centered">\[
+                    (2x^2 - 3) e^x - 4(x e^x - e^x) = (2x^2 - 3) e^x - 4x e^x + 4 e^x + C
+                \]</div>
+                <p>
+                    <strong>Виносимо \(e^x\) за дужки:</strong>
+                </p>
+                <div class="math-centered">\[
+                    e^x (2x^2 - 3 - 4x + 4) + C = e^x (2x^2 - 4x + 1) + C
+                \]</div>
+                <div class="example-answer">
+                    <strong>Відповідь.</strong> \( \displaystyle \int (2x^2 - 3) e^x dx = e^x (2x^2 - 4x + 1) + C \)
+                </div>
+            </div>
+        </div>
+    </div>
+</details>
+
+<details class="warning">
+    <summary>Практичні поради та алгоритм застосування методу інтегрування частинами</summary>
+    <div class="details-content">
+        <h3>📌 Алгоритм застосування методу інтегрування частинами</h3>
+        
+<div class="algo-box" style="background: rgba(240,184,92,0.08); border: 2px solid rgba(240,184,92,0.4);">
+    <ol class="algo-list">
+        <li><strong>Виберіть \(u\) та \(dv\).</strong> Визначте, яку частину підінтегрального виразу позначити як \(u\), а яку як \(dv\). Користуйтесь таблицею 7 або мнемонічним правилом ILATE.</li>
+        <li><strong>Знайдіть \(du\) та \(v\).</strong> Обчисліть:
+            <ul>
+                <li>\(du\) – диференціал функції \(u\): \(du = u' dx\)</li>
+                <li>\(v\) – первісну функції, що стоїть в \(dv\): \(v = \int dv\)</li>
+            </ul>
+        </li>
+        <li><strong>Застосуйте формулу.</strong> Підставте у формулу інтегрування частинами:
+            \[ \int u \, dv = uv - \int v \, du \]
+        </li>
+        <li><strong>Обчисліть новий інтеграл.</strong> Знайдіть \(\int v \, du\). Якщо цей інтеграл також вимагає інтегрування частинами, повторіть процедуру.</li>
+        <li><strong>Спростіть вираз.</strong> Виконайте алгебраїчні спрощення, якщо це необхідно.</li>
+        <li><strong>Перевірте результат.</strong> Продиференціюйте отриману функцію, щоб переконатися у правильності.</li>
+    </ol>
+</div>
+
+        <h3>🚫 Типові помилки</h3>
+
+        <div class="remarks-box" style="background: linear-gradient(135deg, rgba(139, 0, 0, 0.2), rgba(255, 0, 0, 0.1)); border-color: rgba(255, 50, 50, 0.3);">
+            <h4 class="remarks-title" style="color: #ff6b6b;">❗ Увага! Поширені помилки:</h4>
+            <div class="remarks-content">
+                <p><strong>1. Неправильний вибір \(u\) та \(dv\).</strong> Найчастіша помилка. Пам'ятайте: похідна від \(u\) має спрощуватися, а інтеграл від \(dv\) має легко обчислюватися.</p>
+                <p><strong>2. Забувають про знак мінус у формулі.</strong> Формула має вигляд \(uv - \int v du\), а не \(uv + \int v du\).</p>
+                <p><strong>3. Неправильне обчислення \(du\) або \(v\).</strong> Перевіряйте диференціювання та інтегрування.</p>
+                <p><strong>4. Додавання константи інтегрування до \(v\).</strong> Це не потрібно, константа з'явиться в кінцевому результаті.</p>
+                <p><strong>5. Не спрощують остаточний вираз.</strong> Завжди намагайтеся винести спільні множники або об'єднати подібні доданки.</p>
+            </div>
+        </div>
+
+        <h3>🎯 Спеціальні випадки</h3>
+
+<div class="grid-3">
+    <div class="card-deriv">
+        <h4>Коли потрібно застосувати метод двічі</h4>
+        <p>Для інтегралів виду:
+        \[ \int P_n(x) e^{ax} dx, \quad \int P_n(x) \sin(ax) dx \]
+        де \(P_n(x)\) – многочлен степеня \(n\).</p>
+        <p>Метод застосовується \(n\) разів, поки многочлен не зникне (його похідна стане нулем).</p>
+    </div>
+
+    <div class="card-deriv">
+        <h4>Інтеграли, що повертаються до себе</h4>
+        <p>Для інтегралів виду:
+        \[ \int e^{ax} \sin(bx) dx, \quad \int e^{ax} \cos(bx) dx \]
+        Після дворазового інтегрування частинами отримуємо рівняння, з якого можна виразити шуканий інтеграл.</p>
+    </div>
+
+    <div class="card-deriv">
+        <h4>Скорочені позначення</h4>
+        <p>Часто використовують скорочені позначення:
+        \[ \int u dv = uv - \int v du \]
+        або у вигляді визначника:
+        \[ \begin{vmatrix} u & dv \\ du & v \end{vmatrix} \]
+        що допомагає запам'ятати порядок дій.</p>
+    </div>
+</div>
+
+        <h3>📈 Корисні формули та перетворення</h3>
+        <div class="math-important">
+            \[
+            \begin{aligned}
+            &\int P_n(x) e^{ax} dx = e^{ax} \left( \frac{P_n(x)}{a} - \frac{P_n'(x)}{a^2} + \frac{P_n''(x)}{a^3} - \cdots \right) + C \\
+            &\int \ln x dx = x \ln x - x + C \\
+            &\int \arctg x dx = x \arctg x - \frac{1}{2} \ln(1+x^2) + C \\
+            &\int \arcsin x dx = x \arcsin x + \sqrt{1-x^2} + C
+            \end{aligned}
+            \]
+        </div>
+    </div>
+</details>
+                                                   </div>
+            
+    </div>
+
+    <!-- ВІДЕО -->
+    <div id="videoModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-modal-title">
+                <h2>Оберіть відео</h2>
+            </div>
+            <div id="videoList">
+                <div class="video-card" data-url="https://www.youtube.com/embed/cV6Ynb3SVGw">
+                    <img class="play-icon" src="https://img.icons8.com/fluency/96/play.png" alt="">
+                    <h3>Інтегрування частинами. Основні типи інтегралів, що беруться частинами.</h3>
+                </div>
+                
+            </div>
+            <div id="videoPlayer" style="display: none; width: 90vw; max-width: 960px; aspect-ratio: 16/9; margin: 20px auto;">
+                <iframe id="youtubePlayer" width="100%" height="100%" src="" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- ПИТАННЯ І ВІДПОВІДІ -->
+    <div id="questionsModal" class="modal">
+        <div class="modal-header"><button class="close-btn" id="closeQuestionsBtn">× Закрити</button></div>
+        <div class="modal-content">
+            <div style="max-width:964px;margin:0 auto;">
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>1. Що таке метод інтегрування частинами?</span></div>
+                        <div class="card-back"><span>Це метод знаходження невизначеного інтеграла від добутку двох функцій, що базується на формулі: \(\int u dv = uv - \int v du\).</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>2. На якому правилі диференціювання базується метод інтегрування частинами?</span></div>
+                        <div class="card-back"><span>На правилі диференціювання добутку двох функцій: \((uv)' = u'v + uv'\).</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>3. Як правильно обрати \(u\) та \(dv\)?</span></div>
+                        <div class="card-back"><span>Керуйтесь правилом ILATE: обернені тригонометричні, логарифмічні, алгебраїчні, тригонометричні, експоненціальні функції.</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>4. Чому для інтеграла \(\int x e^{2x} dx\) вибирають \(u = x\), \(dv = e^{2x} dx\)?</span></div>
+                       <div class="card-back"><span>Бо похідна від \(x\) спрощується (стає 1), а інтеграл від \(e^{2x}\) легко обчислюється.</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>5. Як обчислити \(\int \ln x dx\) методом інтегрування частинами?</span></div>
+                        <div class="card-back"><span>Приймаємо \(u = \ln x\), \(dv = dx\), тоді \(du = dx/x\), \(v = x\), і \(\int \ln x dx = x \ln x - x + C\).</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>6. Що робити, якщо після застосування формули отримуємо складніший інтеграл?</span></div>
+                        <div class="card-back"><span>Спробуйте поміняти місцями \(u\) та \(dv\) або використати інший метод інтегрування.</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>7. Які інтеграли потребують дворазового застосування методу частинами?</span></div>
+                        <div class="card-back"><span>Інтеграли виду \(\int x^2 e^x dx\), \(\int x^2 \sin x dx\), де многочлен має степінь ≥ 2.</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>8. Чому не потрібно додавати константу інтегрування при знаходженні \(v\)?</span></div>
+                        <div class="card-back"><span>Бо вона з'явиться в кінцевому результаті, і додавання її на проміжному етапі лише ускладнить обчислення.</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>9. Як перевірити правильність обчислення інтеграла методом частинами?</span></div>
+                        <div class="card-back"><span>Продиференціюйте отриману первісну – має вийти початкова підінтегральна функція.</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>10. Наведіть приклад інтеграла, де метод частинами застосовується кілька разів.</span></div>
+                        <div class="card-back"><span>\(\int x^2 e^x dx\): спочатку \(u = x^2\), потім для \(\int x e^x dx\) знову застосовуємо метод з \(u = x\).</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ТРЕНАЖЕР -->
+    <div id="trainerModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeTrainerBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="trainer-container">
+                <div class="question-circle">
+                    <h3 id="questionNumber">Питання 1</h3>
+                </div>
+                <p id="questionText" class="math-notation-centered"></p>
+                <div class="options-container" id="optionsContainer"></div>
+                <button id="submitAnswer" class="submit-btn" disabled>Підтвердити</button>
+                <div id="feedback" class="feedback"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ЗАВЕРШЕННЯ -->
+    <div id="completionModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeCompletionBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="completion-message">
+                <div class="completion-emoji"></div>
+                <h2>МІСІЯ ВИКОНАНА!</h2>
+                <p>Ти оволодів методом інтегрування частинами!</p>
+                <p><strong>СЛАВА УКРАЇНІ!</strong></p>
+                <button id="resetTrainerBtn" class="reset-btn">Повернутися на полігон!</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalOverlay"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.add('loaded');
+
+            const modals = {
+                theory: document.getElementById('theoryModal'),
+                video: document.getElementById('videoModal'),
+                questions: document.getElementById('questionsModal'),
+                trainer: document.getElementById('trainerModal'),
+                completion: document.getElementById('completionModal')
+            };
+            const overlay = document.getElementById('modalOverlay');
+
+            function openModal(m) { 
+                m.style.display = 'flex'; 
+                overlay.style.display = 'block'; 
+                document.body.style.overflow = 'hidden'; 
+            }
+            
+            function closeModal(m) { 
+                m.style.display = 'none'; 
+                overlay.style.display = 'none'; 
+                document.body.style.overflow = 'auto'; 
+            }
+
+            // Відкриття модалок
+            document.getElementById('openTheoryBtn').onclick = () => openModal(modals.theory);
+            document.getElementById('openVideoBtn').onclick = () => openModal(modals.video);
+            document.getElementById('openQuestionsBtn').onclick = () => openModal(modals.questions);
+            document.getElementById('openTrainerBtn').onclick = () => { 
+                openModal(modals.trainer); 
+                startTrainer(); 
+            };
+
+            // Універсальне закриття по хрестику
+            document.querySelectorAll('.close-btn').forEach(btn => {
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    const modal = btn.closest('.modal');
+                    if (modal.id !== 'videoModal') {
+                        closeModal(modal);
+                    }
+                };
+            });
+
+            // Закриття по оверлею і Esc
+            overlay.onclick = () => document.querySelectorAll('.modal').forEach(closeModal);
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('.modal').forEach(m => m.style.display === 'flex' && closeModal(m));
+                }
+            });
+
+            // ВІДЕО
+            const videoList = document.getElementById('videoList');
+            const videoPlayer = document.getElementById('videoPlayer');
+            const youtubeIframe = document.getElementById('youtubePlayer');
+
+            document.querySelectorAll('.video-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const url = card.dataset.url;
+                    videoList.style.display = 'none';
+                    videoPlayer.style.display = 'block';
+                    youtubeIframe.src = url + '?autoplay=0';
+                });
+            });
+
+            // Змінені функції закриття відео
+            document.getElementById('closeVideoBtn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                
+                if (videoPlayer.style.display === 'block') {
+                    youtubeIframe.src = '';
+                    videoPlayer.style.display = 'none';
+                    videoList.style.display = 'flex';
+                } else {
+                    closeModal(modals.video);
+                }
+            });
+
+            overlay.addEventListener('click', () => {
+                if (modals.video.style.display === 'flex') {
+                    if (videoPlayer.style.display === 'block') {
+                        youtubeIframe.src = '';
+                        videoPlayer.style.display = 'none';
+                        videoList.style.display = 'flex';
+                    } else {
+                        closeModal(modals.video);
+                    }
+                } else {
+                    document.querySelectorAll('.modal').forEach(m => m.style.display === 'flex' && closeModal(m));
+                }
+            });
+
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') {
+                    if (modals.video.style.display === 'flex') {
+                        if (videoPlayer.style.display === 'block') {
+                            youtubeIframe.src = '';
+                            videoPlayer.style.display = 'none';
+                            videoList.style.display = 'flex';
+                        } else {
+                            closeModal(modals.video);
+                        }
+                    } else {
+                        document.querySelectorAll('.modal').forEach(m => m.style.display === 'flex' && closeModal(m));
+                    }
+                }
+            });
+
+            // === ТРЕНАЖЕР ===
+let currentQuestionType = 1;
+let correctAnswer = '';
+let allQuestions = [];
+let usedQuestionIds = [];
+let incorrectQuestionIds = []; // Масив для питань, на які дали неправильну відповідь
+
+// Ініціалізація всіх завдань для методу інтегрування частинами
+function initializeAllQuestions() {
+    allQuestions = [
+        // Питання типу 1 (11 завдань)
+        {
+            id: 1,
+            type: 1,
+            question: `\\[ \\int x \\sin x \\, dx \\]`,
+            options: [
+                `-x\\cos x + \\sin x + C`,
+                `-x\\cos x - \\sin x + C`,
+                `-x\\sin x + \\cos x + C`,
+                `x\\cos x - \\sin x + C`
+            ],
+            correctIndex: 0
+        },
+        {
+            id: 2,
+            type: 1,
+            question: `\\[ \\int (1-x) \\sin x \\, dx \\]`,
+            options: [
+                `(x-1)\\cos x - \\sin x + C`,
+                `(x-1)\\cos x + \\sin x + C`,
+                `(x-1)\\sin x - \\cos x + C`,
+                `(x-1)\\sin x + \\cos x + C`
+            ],
+            correctIndex: 0
+        },
+        {
+            id: 3,
+            type: 1,
+            question: `\\[ \\int x \\cos 2x \\, dx \\]`,
+            options: [
+                `\\frac{x\\sin 2x}{2} + \\frac{\\cos 2x}{4} + C`,
+                `\\frac{x\\sin 2x}{2} - \\frac{\\cos 2x}{4} + C`,
+                `2x\\sin 2x + 4\\cos 2x + C`,
+                `-\\frac{x\\sin 2x}{2} + \\frac{\\cos 2x}{4} + C`
+            ],
+            correctIndex: 0
+        },
+        {
+            id: 4,
+            type: 1,
+            question: `\\[ \\int (3x+2) \\cos x \\, dx \\]`,
+            options: [
+                `(3x+2)\\sin x + 3\\cos x + C`,
+                `-(3x+2)\\sin x + 3\\cos x + C`,
+                `(3x+2)\\sin x - 3\\cos x + C`,
+                `3\\sin x + (3x+2)\\cos x + C`
+            ],
+            correctIndex: 0
+        },
+        {
+            id: 5,
+            type: 1,
+            question: `\\[ \\int (3x+1) e^{3x} \\, dx \\]`,
+            options: [
+                `x e^{3x} + C`,
+                `x e^{3x} + \\frac{1}{3} e^{3x} + C`,
+                `\\frac{x e^{3x}}{3} + \\frac{1}{3} e^{3x} + C`,
+                `e^{3x} + C`
+            ],
+            correctIndex: 0
+        },
+        {
+            id: 6,
+            type: 1,
+            question: `\\[ \\int x^2 e^x \\, dx \\]`,
+            options: [
+                `e^x (x^2 - 2x + 2) + C`,
+                `x^2 e^x - 2e^x + C`,
+                `x^2 e^x - 2x e^x + C`,
+                `x^2 e^x - 2x e^x - 2e^x + C`
+            ],
+            correctIndex: 0
+        },
+        {
+            id: 7,
+            type: 1,
+            question: `\\[ \\int (x-1) 2^x \\, dx \\]`,
+            options: [
+                `\\frac{2^x}{\\ln 2} \\left(x - 1 - \\frac{1}{\\ln 2}\\right) + C`,
+                `\\frac{2^x}{\\ln 2} (x - 1) + C`,
+                `\\frac{2^x}{\\ln 4} (x - 1) + C`,
+                `\\frac{x 2^x}{\\ln 4} + C`
+            ],
+            correctIndex: 0
+        },
+        {
+            id: 8,
+            type: 1,
+            question: `\\[ \\int \\frac{x}{3^x} \\, dx \\]`,
+            options: [
+                `\\frac{3^{-x}}{\\ln 3} \\left(x - \\frac{1}{\\ln 3}\\right) + C`,
+                `\\frac{3^{x}}{\\ln 3} \\left(x - \\frac{1}{\\ln 3}\\right) + C`,
+                `\\frac{x 3^{-x}}{\\ln 9} + C`,
+                `\\frac{3^{-x}}{\\ln 3} \\left(x + \\frac{1}{\\ln 3}\\right) + C`
+            ],
+            correctIndex: 0
+        },
+        {
+            id: 9,
+            type: 1,
+            question: `\\[ \\int x \\cos x \\, dx \\]`,
+            options: [
+                `x \\sin x + \\cos x + C`,
+                `x \\cos x + \\sin x + C`,
+                `-x \\sin x + \\cos x + C`,
+                `x \\cos x - \\sin x + C`
+            ],
+            correctIndex: 0
+        },
+        {
+            id: 10,
+            type: 1,
+            question: `\\[ \\int x e^x \\, dx \\]`,
+            options: [
+                `e^x (x - 1) + C`,
+                `e^x (x + 1) + C`,
+                `x e^x + C`,
+                `x e^x - x + C`
+            ],
+            correctIndex: 0
+        },
+        {
+            id: 11,
+            type: 1,
+            question: `\\[ \\int 3^x \\cdot x \\, dx \\]`,
+            options: [
+                `\\frac{3^x}{\\ln 3} \\left(x - \\frac{1}{\\ln 3}\\right) + C`,
+                `\\frac{3^x}{\\ln 9} (x - 1) + C`,
+                `\\frac{3^x}{\\ln 3} \\left(x + \\frac{1}{\\ln 3}\\right) + C`,
+                `\\frac{3^x x}{\\ln 9} + C`
+            ],
+            correctIndex: 0
+        },
+        
+        // Питання типу 2 (9 завдань)
+        {
+            id: 12,
+            type: 2,
+            question: `\\[ \\int x \\ln x \\, dx \\]`,
+            options: [
+                `\\frac{x^2}{4} (2\\ln x - 1) + C`,
+                `\\frac{x^2 \\ln x}{2} - \\frac{x^2}{2} + C`,
+                `x^2 \\ln x - \\frac{x^2}{4} + C`,
+                `\\frac{x^2}{2} (\\ln x - 1) + C`
+            ],
+            correctIndex: 0
+        },
+        {
+            id: 13,
+            type: 2,
+            question: `\\[ \\int x \\arctg x \\, dx \\]`,
+            options: [
+                `\\frac{x^2 + 1}{2} \\arctg x - \\frac{x}{2} + C`,
+                `\\frac{x^2}{2} \\arctg x - \\frac{x}{2} + C`,
+                `\\arctg x - \\frac{x}{2} + C`,
+                `\\frac{x^2 + 1}{2} \\arctg x + \\frac{x}{2} + C`
+            ],
+            correctIndex: 0
+        },
+        {
+            id: 14,
+            type: 2,
+            question: `\\[ \\int \\arcsin x \\, dx \\]`,
+            options: [
+                `x \\arcsin x + \\sqrt{1 - x^2} + C`,
+                `x \\arcsin x + \\sqrt{1 + x^2} + C`,
+                `x \\arcsin x - \\sqrt{1 - x^2} + C`,
+                `x + \\sqrt{1 - x^2} + C`
+            ],
+            correctIndex: 0
+        },
+        {
+            id: 15,
+            type: 2,
+            question: `\\[ \\int \\ln x \\, dx \\]`,
+            options: [
+                `x \\ln x - x + C`,
+                `x \\ln x - 1 + C`,
+                `x \\ln x + x + C`,
+                `\\ln x - x + C`
+            ],
+            correctIndex: 0
+        },
+        {
+            id: 16,
+            type: 2,
+            question: `\\[ \\int (\\ln x + 1) \\, dx \\]`,
+            options: [
+                `x \\ln x + C`,
+                `x \\ln x - 1 + C`,
+                `x \\ln x + x + C`,
+                `x \\ln x - x + C`
+            ],
+            correctIndex: 0
+        },
+        {
+            id: 17,
+            type: 2,
+            question: `\\[ \\int 2\\arcsin x \\, dx \\]`,
+            options: [
+                `2x \\arcsin x + 2\\sqrt{1 - x^2} + C`,
+                `2x \\arcsin x + \\sqrt{1 + x^2} + C`,
+                `2x \\arcsin x - 2\\sqrt{1 - x^2} + C`,
+                `2x + 2\\sqrt{1 - x^2} + C`
+            ],
+            correctIndex: 0
+        },
+        {
+            id: 18,
+            type: 2,
+            question: `\\[ \\int \\frac{\\ln x}{\\sqrt{x}} \\, dx \\]`,
+            options: [
+                `2\\sqrt{x} \\ln x - 4\\sqrt{x} + C`,
+                `2\\sqrt{x} \\ln x - 2\\sqrt{x} + C`,
+                `2\\sqrt{x} \\ln x + 4\\sqrt{x} + C`,
+                `\\sqrt{x} \\ln x - 4\\sqrt{x} + C`
+            ],
+            correctIndex: 0
+        },
+        {
+            id: 19,
+            type: 2,
+            question: `\\[ \\int (4x - 6) \\sin 2x \\, dx \\]`,
+            options: [
+                `(3 - 2x) \\cos 2x + \\sin 2x + C`,
+                `(2x - 3) \\cos 2x + \\sin 2x + C`,
+                `(3 - 2x) \\cos 2x - \\sin 2x + C`,
+                `(2x - 3) \\cos 2x - \\sin 2x + C`
+            ],
+            correctIndex: 0
+        },
+        {
+            id: 20,
+            type: 2,
+            question: `\\[ \\int \\ln 3x \\, dx \\]`,
+            options: [
+                `x \\ln 3x - x + C`,
+                `x \\ln 3x - 1 + C`,
+                `x \\ln 3x - 3x + C`,
+                `x \\ln x - x + C`
+            ],
+            correctIndex: 0
+        }
+    ];
+}
+
+// Отримати запитання для поточного типу
+function getQuestionForCurrentType() {
+    let availableQuestions;
+    
+    // Якщо це питання типу 3
+    if (currentQuestionType === 3) {
+        // Спочатку шукаємо питання, які ще не були використані
+        availableQuestions = allQuestions.filter(q => !usedQuestionIds.includes(q.id));
+        
+        // Якщо всі питання вже були використані
+        if (availableQuestions.length === 0) {
+            // Беремо питання, на які була дана неправильна відповідь
+            if (incorrectQuestionIds.length > 0) {
+                availableQuestions = allQuestions.filter(q => incorrectQuestionIds.includes(q.id));
+            } else {
+                // Якщо неправильних відповідей не було, беремо всі питання
+                availableQuestions = [...allQuestions];
+            }
+        }
+    } else {
+        // Для питань типів 1 і 2
+        availableQuestions = allQuestions.filter(q => 
+            q.type === currentQuestionType && !usedQuestionIds.includes(q.id)
+        );
+        
+        // Якщо всі питання цього типу вже були використані
+        if (availableQuestions.length === 0) {
+            availableQuestions = allQuestions.filter(q => q.type === currentQuestionType);
+        }
+    }
+    
+    if (availableQuestions.length > 0) {
+        const randomIndex = Math.floor(Math.random() * availableQuestions.length);
+        const selectedQuestion = availableQuestions[randomIndex];
+        
+        // Запам'ятовуємо, що це питання було використане
+        if (!usedQuestionIds.includes(selectedQuestion.id)) {
+            usedQuestionIds.push(selectedQuestion.id);
+        }
+        
+        return selectedQuestion;
+    }
+    
+    // Якщо жодного питання не знайдено, повертаємо перше
+    return allQuestions[0];
+}
+
+// Показ питання
+function showQuestion() {
+    const questionData = getQuestionForCurrentType();
+    
+    document.getElementById('questionNumber').textContent = `Питання ${currentQuestionType}`;
+    
+    document.getElementById('questionText').innerHTML = `
+        Обчисліть інтеграл методом інтегрування частинами:<br><br>
+        <div style="font-size:1.2em; color:#ffcc99; background:rgba(240,184,92,0.18); padding:18px; border-radius:14px; text-align:center;">
+            ${questionData.question}
+        </div>
+    `;
+
+    correctAnswer = questionData.options[questionData.correctIndex];
+    
+    const allAnswers = [...questionData.options];
+    
+    // Перемішуємо варіанти відповідей
+    for (let i = allAnswers.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [allAnswers[i], allAnswers[j]] = [allAnswers[j], allAnswers[i]];
+    }
+    
+    renderOptions(allAnswers);
+}
+
+// Рендер варіантів відповідей
+function renderOptions(values) {
+    const container = document.getElementById('optionsContainer');
+    container.innerHTML = '';
+    
+    values.forEach(val => {
+        const div = document.createElement('div');
+        div.className = 'option';
+        
+        const mathSpan = document.createElement('span');
+        mathSpan.innerHTML = `\\[ ${val} \\]`;
+        div.appendChild(mathSpan);
+        
+        div.dataset.value = val;
+        div.onclick = () => selectOption(div);
+        container.appendChild(div);
+    });
+    
+    document.getElementById('submitAnswer').disabled = true;
+    document.getElementById('submitAnswer').style.display = 'block';
+    document.getElementById('feedback').style.opacity = 0;
+    
+    if (window.MathJax) {
+        setTimeout(() => {
+            MathJax.typesetPromise();
+        }, 100);
+    }
+}
+
+function selectOption(el) {
+    document.querySelectorAll('.option').forEach(d => d.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('submitAnswer').disabled = false;
+}
+
+// Обробка відповіді
+document.getElementById('submitAnswer').onclick = () => {
+    const sel = document.querySelector('.option.selected');
+    if (!sel) return;
+
+    const userAnswer = sel.dataset.value;
+    const currentQuestionId = getCurrentQuestionId();
+    const isCorrect = userAnswer === correctAnswer;
+
+    const fb = document.getElementById('feedback');
+    fb.textContent = isCorrect ? '✅ ВІРНО! Ціль уражена!' : '❌ Промах! Спробуй ще!';
+    fb.style.background = isCorrect ? '#22c55e' : '#ef4444';
+    fb.style.opacity = 1;
+
+    // Якщо відповідь неправильна, запам'ятовуємо ID питання
+    if (!isCorrect && currentQuestionId && !incorrectQuestionIds.includes(currentQuestionId)) {
+        incorrectQuestionIds.push(currentQuestionId);
+    }
+
+    setTimeout(() => {
+        fb.style.opacity = 0;
+        
+        if (isCorrect) {
+            if (currentQuestionType < 3) {
+                currentQuestionType++;
+                showQuestion();
+            } else {
+                closeModal(modals.trainer);
+                openModal(modals.completion);
+            }
+        } else {
+            // При неправильній відповіді показуємо нове питання того ж типу
+            showQuestion();
+        }
+    }, 1400);
+};
+
+// Функція для отримання ID поточного питання
+function getCurrentQuestionId() {
+    // Знаходимо поточне питання за формулою
+    const currentQuestionText = document.getElementById('questionText').innerText;
+    for (const question of allQuestions) {
+        if (currentQuestionText.includes(question.question.replace(/\\\[|\\\]/g, ''))) {
+            return question.id;
+        }
+    }
+    return null;
+}
+
+// Функція початку тренажера
+function startTrainer() {
+    initializeAllQuestions();
+    currentQuestionType = 1;
+    usedQuestionIds = [];
+    incorrectQuestionIds = [];
+    showQuestion();
+}
+
+// Скидання тренажера
+document.getElementById('resetTrainerBtn').onclick = () => {
+    closeModal(modals.completion);
+    startTrainer();
+    openModal(modals.trainer);
+};
+        });
+    </script>
+</body>
+</html>
