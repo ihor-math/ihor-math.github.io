@@ -2559,16 +2559,18 @@ function showQuestionForCurrentStage() {
         // Для питань 1 і 2 - з зображенням
         questionHTML = `
             <div style="text-align: center; margin: 20px 0;">
-                <p style="font-size: 1.2em; color: #99ccff; margin-bottom: 20px;">${currentQuestion.text}</p>
+                <p style="font-size: clamp(1rem, 4vw, 1.2em); color: #99ccff; margin-bottom: 20px; line-height: 1.4;">${currentQuestion.text}</p>
                 <img src="/static/${currentQuestion.image}" alt="Графік" style="max-width: 100%; max-height: 300px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
             </div>
         `;
     } else {
         // Для питання 3 - тільки текст (без зображення)
-        // Вже маємо LaTeX в тексті, тому просто виводимо
+        // Використовуємо адаптивний шрифт для мобільних
         questionHTML = `
             <div style="text-align: center; margin: 20px 0;">
-                <p style="font-size: 1.2em; color: #99ccff; margin-bottom: 20px;">${currentQuestion.text}</p>
+                <p style="font-size: clamp(0.9rem, 3.5vw, 1.2em); color: #99ccff; margin-bottom: 20px; line-height: 1.5; text-align: justify; padding: 0 10px;">
+                    ${currentQuestion.text}
+                </p>
             </div>
         `;
     }
@@ -2697,4 +2699,5 @@ document.getElementById('resetTrainerBtn').onclick = () => {
     </script>
 </body>
 </html>
+
 
