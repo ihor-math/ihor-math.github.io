@@ -314,6 +314,42 @@
         gap: 10px;
       }
     }
+    /* Стилі для сучасної смужки прокрутки */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #3b82f6, #7c3aed);
+  border-radius: 10px;
+  border: 2px solid rgba(15, 23, 42, 0.3);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #60a5fa, #a78bfa);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Для Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #3b82f6 rgba(15, 23, 42, 0.6);
+}
+
+/* Плавна прокрутка для всього документа */
+html {
+  scroll-behavior: smooth;
+}
   </style>
 </head>
 <body>
@@ -419,4 +455,5 @@
   </div>
 </body>
 </html>
+
 
