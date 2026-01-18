@@ -313,6 +313,311 @@
         gap: 10px;
       }
     }
+
+    /* Стилі для сучасної смужки прокрутки */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(12px);
+  border-radius: 10px;
+  border: 1px solid rgba(74, 222, 128, 0.1);
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.15);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, 
+    #166534, 
+    #15803d, 
+    #22c55e,
+    #4ade80,
+    #86efac
+  );
+  border-radius: 10px;
+  border: 2px solid rgba(15, 23, 42, 0.3);
+  box-shadow: 
+    0 0 15px rgba(34, 197, 94, 0.5),
+    inset 0 0 12px rgba(134, 239, 172, 0.3);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, 
+    #22c55e, 
+    #4ade80, 
+    #86efac,
+    #bbf7d0
+  );
+  box-shadow: 
+    0 0 20px rgba(74, 222, 128, 0.7),
+    inset 0 0 15px rgba(187, 247, 208, 0.4);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(180deg, 
+    #14532d, 
+    #166534, 
+    #15803d
+  );
+  box-shadow: 
+    0 0 10px rgba(20, 83, 45, 0.4),
+    inset 0 0 8px rgba(22, 163, 74, 0.2);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Для Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #22c55e rgba(15, 23, 42, 0.6);
+}
+
+/* Плавна прокрутка для всього документа */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Стиль для скроллбара при фокусі */
+:focus {
+  scrollbar-color: #86efac rgba(15, 23, 42, 0.7);
+}
+
+/* Додаткові ефекти для акцентних елементів */
+.card:hover ~ ::-webkit-scrollbar-thumb,
+.card:focus ~ ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #86efac, #4ade80, #22c55e);
+}
+
+/* Адаптивність для маленьких екранів */
+@media (max-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(74, 222, 128, 0.08);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    border: 1px solid rgba(15, 23, 42, 0.2);
+    box-shadow: 
+      0 0 12px rgba(34, 197, 94, 0.4),
+      inset 0 0 8px rgba(134, 239, 172, 0.2);
+  }
+  
+  /* Плавна прокрутка на мобільних */
+  body {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Оптимізований градієнт для мобільних */
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #22c55e, #4ade80, #86efac);
+  }
+  
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #4ade80 rgba(15, 23, 42, 0.5);
+  }
+}
+
+@media (max-width: 480px) {
+  /* На дуже маленьких екранах робимо скроллбар тоншим */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.4);
+    border-radius: 3px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #4ade80, #86efac);
+    border: none;
+    border-radius: 3px;
+    box-shadow: 
+      0 0 8px rgba(74, 222, 128, 0.4),
+      inset 0 0 5px rgba(134, 239, 172, 0.2);
+  }
+  
+  /* Для екранів менше 400px - мінімалістичний дизайн */
+  @media (max-width: 400px) {
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.3);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: #86efac;
+      box-shadow: 0 0 6px rgba(134, 239, 172, 0.3);
+    }
+    
+    /* Приховування для економії місця */
+    /*
+    ::-webkit-scrollbar {
+      display: none;
+    }
+    
+    * {
+      scrollbar-width: none;
+    }
+    */
+  }
+}
+
+/* Стиль для контейнера */
+.container {
+  /* Якщо потрібна окрема прокрутка для контейнера:
+  max-height: 75vh;
+  overflow-y: auto; */
+}
+
+/* Спеціальні стилі для скроллбара контейнера */
+.container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.container::-webkit-scrollbar-track {
+  background: rgba(22, 101, 52, 0.15);
+  border-radius: 5px;
+}
+
+.container::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #15803d, #22c55e, #4ade80);
+  border-radius: 5px;
+  border: 1px solid rgba(22, 101, 52, 0.2);
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.3);
+}
+
+/* Стилі для карток (якщо є контент з прокруткою) */
+.card-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.card-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 2px;
+}
+
+.card-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #4ade80, #86efac);
+  border-radius: 2px;
+}
+
+/* Анімація при завантаженні */
+@keyframes scrollbarGrowth {
+  0% {
+    background-size: 100% 100%;
+    box-shadow: 0 0 8px rgba(34, 197, 94, 0.3);
+  }
+  50% {
+    background-size: 100% 150%;
+    box-shadow: 0 0 18px rgba(74, 222, 128, 0.6);
+  }
+  100% {
+    background-size: 100% 100%;
+    box-shadow: 0 0 8px rgba(34, 197, 94, 0.3);
+  }
+}
+
+::-webkit-scrollbar-thumb {
+  background-size: 100% 100%;
+  animation: scrollbarGrowth 5s ease-in-out infinite;
+}
+
+/* Додаткові ефекти при прокрутці */
+body.scrolling::-webkit-scrollbar-thumb {
+  animation: scrollbarGrowth 2s ease-in-out infinite;
+}
+
+/* Ефект при наведенні на навігаційні кнопки */
+.nav-button:hover + body::-webkit-scrollbar-thumb,
+.nav-button:focus + body::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #86efac, #4ade80, #22c55e, #15803d);
+}
+
+/* Оптимізація для iOS Safari */
+@supports (-webkit-touch-callout: none) {
+  body {
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Безпечні відступи для iOS */
+  .container {
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .navigation-buttons {
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+  }
+  
+  /* Кращий feedback для iOS */
+  ::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(180deg, #86efac, #4ade80);
+    transform: scale(1.07);
+    transition: transform 0.2s ease;
+  }
+}
+
+/* Ефект для header при прокрутці */
+.scrolled .header-box {
+  box-shadow: 
+    0 4px 20px rgba(34, 197, 94, 0.4),
+    0 2px 10px rgba(134, 239, 172, 0.2);
+}
+
+.scrolled .header-box::after {
+  background: #86efac;
+  box-shadow: 0 0 10px rgba(134, 239, 172, 0.3);
+  width: 80px;
+}
+
+/* Стилі для різних типів добутків векторів */
+.scalar-product ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #15803d, #22c55e); /* Скалярний - один колір */
+}
+
+.vector-product ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #92400e, #f97316); /* Векторний - оранжевий */
+}
+
+.mixed-product ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #4b5563, #9ca3af); /* Мішаний - сірий */
+}
+
+/* Додаткові CSS змінні для гнучкості */
+:root {
+  --scrollbar-green-dark: #166534;
+  --scrollbar-green-medium: #22c55e;
+  --scrollbar-green-light: #4ade80;
+  --scrollbar-green-accent: #86efac;
+  --scrollbar-green-glow: rgba(34, 197, 94, 0.5);
+  --scrollbar-bg: rgba(15, 23, 42, 0.6);
+}
+
+/* Використання змінних */
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg, 
+    var(--scrollbar-green-dark),
+    var(--scrollbar-green-medium),
+    var(--scrollbar-green-light),
+    var(--scrollbar-green-accent)
+  );
+  box-shadow: 0 0 15px var(--scrollbar-green-glow);
+}
   </style>
 </head>
 <body>
@@ -387,5 +692,6 @@
   </div>
 </body>
 </html>
+
 
 
