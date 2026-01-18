@@ -1,0 +1,2543 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>54. Рівняння площини у відрізках на осях</title>
+    <script>
+window.MathJax = {
+    tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true,
+        packages: {'[+]': ['noerrors']},
+        macros: {
+            tg: ['\\operatorname{tg}', 0],
+            ctg: ['\\operatorname{ctg}', 0],
+            arctg: ['\\operatorname{arctg}', 0],
+            arcctg: ['\\operatorname{arcctg}', 0]
+        }
+    },
+    options: {
+        ignoreHtmlClass: "tex2jax_ignore|no-mathjax",
+        processHtmlClass: "tex2jax_process",
+        renderActions: {
+            find_script_mathtex: [10, () => {}, false]
+        }
+    },
+    loader: {load: ['[tex]/noerrors']},
+    startup: {
+        ready: () => {
+            MathJax.startup.defaultReady();
+            MathJax.typesetPromise().then(() => {
+                document.body.classList.add('loaded');
+            });
+        }
+    }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+<style>
+    *, *:before, *:after { box-sizing: border-box; }
+    body {
+        margin: 0;
+        background: radial-gradient(circle at center, #0a1a0a 0%, #1a2a1a 40%, #2b3b2b 100%);
+        color: #e0e0e0;
+        font-family: 'Roboto Condensed', sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }
+    body.loaded { visibility: visible; opacity: 1; }
+
+    .title-box {
+        margin-top: 60px;
+        padding: 20px 40px;
+        background: linear-gradient(135deg, #1a3a1a, #2a4a2a);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+        border-radius: 16px;
+        text-align: center;
+        border: 1px solid #5c8b5c;
+    }
+    .title-box h1 {
+        margin: 0;
+        font-size: 28px;
+        color: #7cff7c;
+        font-family: 'Orbitron', sans-serif;
+        text-shadow: 0 0 8px rgba(124,255,124,0.5);
+    }
+
+    .section-container {
+        margin-top: 40px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 25px;
+    }
+    .section {
+        width: 260px;
+        height: 200px;
+        background: linear-gradient(145deg, #2a2a2a, #354535);
+        border-radius: 14px;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.45);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 15px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+        border: 1px solid rgba(124,255,124,0.15);
+    }
+    .section:hover {
+        transform: scale(1.06);
+        box-shadow: 0 10px 25px rgba(124,255,124,0.25);
+    }
+    .section h2 { font-size: 20px; color: #ffffff; font-family: 'Orbitron', sans-serif; }
+    .section img { width: 60px; height: 60px; margin-bottom: 15px; filter: brightness(1.3) drop-shadow(0 0 6px #7cff7c); }
+
+    .modal {
+        display: none;
+        position: fixed;
+        top: 5%; left: 5%; width: 90%; height: 90%;
+        background: linear-gradient(135deg, #2a2a2a, #3a4a3a);
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        z-index: 1001;
+        overflow: hidden;
+        flex-direction: column;
+        border: 1px solid rgba(124,255,124,0.2);
+    }
+    #modalOverlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.85);
+        z-index: 999;
+        backdrop-filter: blur(6px);
+    }
+    .modal-content {
+        padding: 20px;
+        flex-grow: 1;
+        overflow-y: auto;
+        color: #e0e0e0;
+        width: 100%;
+    }
+    .modal-header {
+        background: linear-gradient(0deg, #2a2a2a, #3a4a3a);
+        padding: 8px 12px;
+        display: flex;
+        justify-content: flex-end;
+        width: 100%;
+        position: sticky;
+        top: 0;
+        z-index: 1002;
+        border-bottom: 1px solid rgba(124,255,124,0.2);
+    }
+    .close-btn {
+        background: linear-gradient(135deg, #5c8b5c, #7cff7c);
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 6px 16px;
+        font-size: 16px;
+        cursor: pointer;
+        font-family: 'Orbitron', sans-serif;
+        box-shadow: 0 2px 8px rgba(92,139,92,0.4);
+    }
+    .close-btn:hover { background: linear-gradient(135deg, #7cff7c, #5c8b5c); transform: scale(1.05); }
+
+    .theory-content h2, .trainer-container h2 { 
+        color: #7cff7c; 
+        text-shadow: 0 0 10px rgba(124,255,124,0.5); 
+        text-align: center; 
+        font-family: 'Orbitron', sans-serif; 
+    }
+    .theory-content p, .theory-content li { 
+        font-size: clamp(18px, 3vw, 20px); 
+        line-height: 1.7; 
+        text-align: justify; 
+    }
+    .example {
+        background: rgba(124,255,124,0.1);
+        border-left: 4px solid #7cff7c;
+        padding: 12px;
+        margin: 15px 0;
+        border-radius: 6px;
+        color: #a8f0a8;
+        font-weight: bold;
+        font-size: 22px;
+    }
+    .solution {
+        background: rgba(124,255,124,0.15);
+        border: 2px solid #7cff7c;
+        padding: 12px;
+        margin: 15px 0;
+        border-radius: 6px;
+        text-align: center;
+        color: #7cff7c;
+        font-weight: bold;
+    }
+    .math-notation-centered {
+        display: block;
+        text-align: center;
+        font-size: clamp(22px, 3.5vw, 24px);
+        margin: 20px 0;
+        color: #99ff99;
+    }
+    mjx-container { color: #99ff99 !important; font-style: italic !important; }
+
+    .navigation-buttons { 
+        display: flex; 
+        justify-content: center; 
+        gap: 20px; 
+        margin: 40px 0; 
+    }
+    .nav-button {
+        display: flex; 
+        align-items: center; 
+        background: linear-gradient(135deg, #2a2a2a, #354535);
+        color: #e0e0e0; 
+        padding: 12px 24px; 
+        border-radius: 10px; 
+        text-decoration: none;
+        font-weight: bold; 
+        border: 1px solid rgba(124,255,124,0.3);
+        transition: all 0.3s ease;
+    }
+    .nav-button:hover { 
+        background: linear-gradient(135deg, #5c8b5c, #7cff7c); 
+        color: #fff; 
+        transform: scale(1.05); 
+    }
+    .nav-button svg { margin-right: 8px; fill: currentColor; width: 20px; height: 20px; }
+
+    @media (max-width: 768px) {
+        .title-box { margin-top: 40px; }
+        .title-box h1 { font-size: 20px; }
+        .section h2 { font-size: 18px; }
+        .section-container { flex-direction: column; align-items: center; }
+        .section { width: 80%; height: 180px; }
+        .modal { top: 2%; left: 2%; width: 96%; height: 96%; }
+        .theory-content h2, .trainer-container h2 { font-size: 18px; }
+    }
+
+    /* Стилі скролбару */
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { 
+        background: rgba(124, 255, 124, 0.3); 
+        border-radius: 10px;
+        border: 2px solid transparent;
+        background-clip: content-box;
+        transition: all 0.3s ease;
+    }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(124, 255, 124, 0.7); }
+    ::-webkit-scrollbar-thumb:active { background: #7cff7c; width: 12px; }
+    * { scrollbar-width: thin; scrollbar-color: rgba(124, 255,124,0.5) transparent; }
+
+    .formula-box {
+        background: rgba(124,255,124,0.1);
+        padding: 20px;
+        border-left: 4px solid #7cff7c;
+        border-radius: 8px;
+        margin: 20px auto;
+        max-width: 700px;
+        text-align: center;
+    }
+
+    #videoList { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; padding: 20px; }
+    .video-card {
+        width: 300px;
+        height: 250px;
+        background: #2c2c2c;
+        border-radius: 16px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 15px;
+        gap: 15px;
+        cursor: pointer;
+        transition: 0.3s ease;
+    }
+    .video-card:hover {
+        background: #333;
+        transform: translateY(-4px);
+        box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+    }
+    .video-card .play-icon { width: 64px; height: 64px; }
+    .video-card h3 { color: #f0f0f0; font-size: 1rem; line-height: 1.3; }
+
+    /* Стилі флеш-карток */
+    .question-card {
+        perspective: 1000px;
+        margin: 25px auto;
+        max-width: 964px;
+        width: 100%;
+        min-height: 180px;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+    .question-card:hover { transform: translateY(-5px); }
+    .card-inner {
+        position: relative;
+        width: 100%;
+        min-height: 180px;
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        transform-style: preserve-3d;
+    }
+    .question-card.flipped .card-inner { transform: rotateY(180deg); }
+    .card-front, .card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 25px;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+        text-align: center;
+        border: 2px solid rgba(124,255,124,0.3);
+        transition: all 0.3s ease;
+    }
+    .card-front {
+        background: linear-gradient(135deg, #2a2a2a, #3a4a3a);
+        color: #ffffff;
+    }
+    .card-front:hover { border-color: rgba(124,255,124,0.6); box-shadow: 0 10px 30px rgba(124,255,124,0.2); }
+    .card-back {
+        background: linear-gradient(135deg, #2a2a2a, #3a4a3a);
+        color: #e0e0e0;
+        transform: rotateY(180deg);
+        padding: 25px;
+        border-color: rgba(124,255,124,0.5);
+    }
+    .card-back:hover { border-color: rgba(124,255,124,0.8); box-shadow: 0 10px 30px rgba(124,255,124,0.3); }
+    .card-front span, .card-back span { font-size: clamp(18px, 3vw, 20px); line-height: 1.6; font-weight: 500; }
+    .card-front span { color: #ffffff; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); }
+    .card-back span { color: #e0e0e0; width: 100%; }
+    .card-front::after { content: "❓"; position: absolute; bottom: 15px; right: 20px; font-size: 20px; opacity: 0.7; color: #7cff7c; }
+    .card-back::after { content: "💡"; position: absolute; bottom: 15px; right: 20px; font-size: 20px; opacity: 0.7; color: #7cff7c; }
+
+    /* Стилі тренажера */
+    .trainer-container {
+        width: 90%;
+        max-width: 800px;
+        margin: auto;
+        padding: 30px;
+        background: linear-gradient(135deg, #2a2a2a, #3a4a3a);
+        border-radius: 16px;
+        border: 1px solid rgba(124,255,124,0.2);
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+    }
+    .question-circle {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 25px;
+        background: linear-gradient(135deg, #5c8b5c, #7cff7c);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 15px rgba(92,139,92,0.4);
+    }
+    .question-circle h3 { color: #fff; margin: 0; font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700; }
+    .options-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin: 30px 0;
+        padding: 0 15px;
+        justify-items: center;
+    }
+    .option {
+        width: 100%;
+        min-height: 80px;
+        padding: 20px 15px;
+        border: 3px solid #5c8b5c;
+        border-radius: 14px;
+        background: #2a2a2a;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.25s ease;
+        font-size: clamp(17px, 3vw, 19px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    .option * { pointer-events: none !important; }
+    .option { pointer-events: auto !important; }
+    .option:hover:not(.selected) {
+        background: rgba(124,255,124,0.2);
+        border-color: #7cff7c;
+        transform: translateY(-4px);
+    }
+    .option.selected {
+        background: linear-gradient(135deg, #5c8b5c, #7cff7c);
+        border-color: #7cff7c;
+        color: white;
+        box-shadow: 0 0 20px rgba(124,255,124,0.6);
+        transform: scale(1.03);
+    }
+    .submit-btn {
+        background: linear-gradient(135deg, #5c8b5c, #7cff7c);
+        color: #fff;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 25px;
+        font-family: 'Orbitron', sans-serif;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+    }
+    .submit-btn:hover:not(:disabled) { background: linear-gradient(135deg, #7cff7c, #5c8b5c); transform: scale(1.05); box-shadow: 0 4px 15px rgba(92,139,92,0.4); }
+    .submit-btn:disabled { background: #666; cursor: not-allowed; opacity: 0.6; }
+    .feedback {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 30px;
+        padding: 20px 40px;
+        border-radius: 10px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 1002;
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    /* === МЕДАЛЬ З ТРИЗУБОМ === */
+    .completion-emoji {
+        position: relative;
+        display: inline-block;
+        width: clamp(56px, 12vw, 96px);
+        height: clamp(56px, 12vw, 96px);
+        vertical-align: middle;
+        margin: 0 auto 3vw;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #2a2a2a, #3a4a3a);
+        border: 3px dashed #ffd700;
+        box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+        overflow: hidden;
+        animation: medalAppear 0.8s ease-out;
+    }
+    .completion-emoji::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><filter id='s' x='-50%' y='-50%' width='200%' height='200%'><feDropShadow dx='0' dy='2' stdDeviation='2' flood-color='%23000000' flood-opacity='0.25'/></filter></defs><rect x='30' y='0' width='60' height='40' rx='4' fill='%23007ACC'/><rect x='30' y='20' width='60' height='20' rx='4' fill='%23FFD700'/><g transform='translate(60,70)'><polygon points='0,-26 6,-6 26,-6 9,6 15,26 0,14 -15,26 -9,6 -26,-6 -6,-6' fill='%23FFD700' filter='url(%23s)'/></g></svg>");
+       background-size: 75%;
+        background-repeat: no-repeat;
+        background-position: center 60%;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+        animation: medalBounce 1.2s ease-out 0.3s both;
+    }
+    @keyframes medalAppear {
+        0% { transform: scale(0.3) rotate(-180deg); opacity: 0; }
+        60% { transform: scale(1.1); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes medalBounce {
+        0% { transform: translateY(-120px) rotate(-30deg) scale(0.4); opacity: 0; }
+        60% { transform: translateY(15px) rotate(10deg) scale(1.15); opacity: 1; }
+        80% { transform: translateY(-8px) rotate(-5deg) scale(1.05); }
+        100% { transform: translateY(0) rotate(0) scale(1); }
+    }
+
+    .completion-message {
+        background: linear-gradient(145deg, #2a2a2a, #3a4a3a);
+        border: 2.5px solid #ffffff;
+        border-radius: 15px;
+        padding: clamp(12px, 3vw, 18px);
+        box-shadow: 0 6px 12px rgba(124,255,124,0.4);
+        margin: 2vw auto;
+        max-width: 90%;
+        text-align: center;
+    }
+    .completion-message h2 {
+        color: #ffffff;
+        text-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+    .completion-message p { color: #ffffff; }
+
+    #completionModal .modal-content {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px;
+    }
+    #completionModal .completion-message {
+        text-align: center;
+        max-width: 500px;
+    }
+    .reset-btn {
+        background: linear-gradient(135deg, #5c8b5c, #7cff7c);
+        color: #fff;
+        padding: 15px 35px;
+        border: none;
+        border-radius: 25px;
+        font-family: 'Orbitron', sans-serif;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 700;
+        margin-top: 20px;
+        transition: all 0.3s ease;
+    }
+    .reset-btn:hover { background: linear-gradient(135deg, #7cff7c, #5c8b5c); transform: scale(1.05); box-shadow: 0 4px 15px rgba(92,139,92,0.4); }
+
+    @media (max-width: 768px) {
+        .trainer-container { padding: 20px 15px; width: 95%; margin: 10px auto; }
+        .question-circle { width: 100px; height: 100px; margin: 0 auto 15px; }
+        .question-circle h3 { font-size: 16px; }
+        .options-container { gap: 10px; margin: 20px 0; }
+        .option { min-width: 100%; padding: 12px 15px; font-size: 16px; font-weight: 600; border-width: 3px; background: rgba(42,42,42,0.9); }
+        #questionText { font-size: 18px; margin: 10px 0; line-height: 1.3; }
+        .feedback { font-size: 20px; padding: 15px 25px; border-radius: 8px; text-shadow: 0 2px 4px rgba(0,0,0,0.7); }
+    }
+    #questionText { font-size: clamp(18px, 2.8vw, 20px); line-height: 1.4; margin: 15px 0; color: #99ff99; font-weight: 600; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+    mjx-container { font-size: 0.9em !important; color: #99ff99 !important; font-style: italic !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+    .highlight { color: #7cff7c; font-weight: bold; }
+    .pos { color: #7cff7c; font-weight: bold; }
+    .neg { color: #ff6b6b; font-weight: bold; }
+
+    .text-block p {
+        font-size: 18px;
+        line-height: 1.8;
+        margin: 18px 0;
+        text-align: justify;
+    }
+
+    .math-important {
+        background: rgba(124,255,124,0.1);
+        border: 2px solid #7cff7c;
+        border-radius: 12px;
+        padding: 20px;
+        margin: 25px auto;
+        text-align: center;
+        font-size: 22px;
+        color: #99ff99;
+        font-weight: 500;
+    }
+
+    .math-big {
+        font-size: 20px;
+        color: #99ff99;
+        text-align: center;
+        margin: 20px 0;
+        padding: 15px;
+        background: rgba(124,255,124,0.15);
+        border-radius: 10px;
+    }
+
+   .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 22px;
+    margin: 30px 0;
+}
+
+/* АДАПТАЦІЯ ДЛЯ МОБІЛЬНИХ */
+/* ======================== */
+
+/* Планшети та невеликі екрани (≤1024px) */
+@media (max-width: 1024px) {
+    .grid-3 {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+        margin: 25px 0;
+    }
+}
+
+/* Планшети вертикально (≤768px) */
+@media (max-width: 768px) {
+    .grid-3 {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 18px;
+        margin: 22px 0;
+    }
+}
+
+/* Великі телефони (≤600px) - 2 колонки */
+@media (max-width: 600px) {
+    .grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        margin: 20px 0;
+    }
+    
+    .card-deriv {
+        min-height: 280px;
+    }
+}
+
+/* Середні телефони (≤480px) */
+@media (max-width: 480px) {
+    .grid-3 {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        margin: 18px 0;
+    }
+    
+    .card-deriv {
+        min-height: auto;
+        padding: 18px 15px !important;
+    }
+    
+    .grid-3 .card-deriv h4 {
+        font-size: 1.1rem;
+        margin-bottom: 12px;
+    }
+    
+    .grid-3 .card-deriv p {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin: 10px 0;
+    }
+    
+    .grid-3 .card-deriv .math-big {
+        font-size: 1.0rem !important;
+        padding: 12px 8px !important;
+        margin: 15px 0 !important;
+    }
+}
+
+/* Маленькі телефони (≤360px) */
+@media (max-width: 360px) {
+    .grid-3 {
+        gap: 12px;
+        margin: 15px 0;
+    }
+    
+    .card-deriv {
+        padding: 15px 12px !important;
+        border-radius: 10px;
+    }
+    
+    .grid-3 .card-deriv h4 {
+        font-size: 1rem;
+    }
+    
+    .grid-3 .card-deriv p {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .card-deriv {
+        text-align: center;
+    }
+    
+    .grid-3 .card-deriv ul {
+        text-align: left;
+        padding-left: 20px;
+        margin: 10px 0;
+    }
+    
+    .grid-3 .card-deriv li {
+        margin: 8px 0;
+        font-size: 0.95rem;
+    }
+    
+    .grid-3 .math-big mjx-container {
+        font-size: 0.9em !important;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+    
+    .grid-3 .card-deriv {
+        overflow: hidden;
+    }
+    
+    .grid-3 .math-big {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 5px;
+    }
+}
+
+@media (max-width: 480px) and (orientation: portrait) {
+    .grid-3 {
+        margin: 20px -10px;
+    }
+    
+    .card-deriv {
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+}
+
+@media (max-width: 768px) and (orientation: landscape) {
+    .grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+    
+    .card-deriv {
+        min-height: 300px;
+    }
+}
+
+@media (max-width: 768px) {
+    .card-deriv {
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+    
+    .grid-3 * {
+        -webkit-text-size-adjust: 100%;
+    }
+    
+    .grid-3 {
+        will-change: transform;
+        transform: translateZ(0);
+    }
+}
+
+    .card-deriv {
+        background: linear-gradient(135deg, #2a2a2a, #3a4a3a);
+        padding: 22px;
+        border-radius: 14px;
+        border: 1px solid rgba(124,255,124,0.4);
+        text-align: center;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    }
+
+    .section-title {
+        color: #7cff7c;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 22px;
+        text-align: center;
+        margin: 35px 0 20px;
+        text-shadow: 0 0 10px rgba(124,255,124,0.4);
+    }
+
+    .bullet-blue li {
+        font-size: 18.5px;
+        margin: 12px 0;
+        padding-left: 8px;
+    }
+
+    .bullet-blue li::marker { color: #7cff7c; font-size: 22px; }
+
+    .algo-box {
+        background: rgba(124,255,124,0.12);
+        border: 2px dashed #7cff7c;
+        border-radius: 14px;
+        padding: 25px;
+        margin: 30px 0;
+    }
+
+    .algo-list {
+        padding-left: 20px;
+        counter-reset: num;
+    }
+
+    .algo-list li {
+        position: relative;
+        padding-left: 45px;
+        margin: 20px 0;
+        font-size: 18.5px;
+        line-height: 1.7;
+    }
+
+    .algo-list li::before {
+        counter-increment: num;
+        content: counter(num) ")";
+        position: absolute;
+        left: 0;
+        color: #7cff7c;
+        font-weight: bold;
+        font-size: 22px;
+        font-family: 'Orbitron', sans-serif;
+    }
+
+    .final-answer {
+        background: linear-gradient(135deg, #5c8b5c, #7cff7c);
+        color: white;
+        padding: 22px;
+        border-radius: 12px;
+        text-align: center;
+        font-size: 21px;
+        font-weight: bold;
+        margin-top: 30px;
+        box-shadow: 0 6px 20px rgba(124,255,124,0.5);
+    }
+    .example-full {
+        background: rgba(124,255,124,0.08);
+        border: 2px solid rgba(124,255,124,0.3);
+        border-radius: 16px;
+        padding: 28px;
+        margin: 35px 0;
+        font-size: 18px;
+        line-height: 1.85;
+        text-align: justify;
+    }
+
+    .example-header-classic {
+        font-size: 20px;
+        font-weight: bold;
+        color: white;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px dashed rgba(124,255,124,0.4);
+        text-align: center;
+    }
+
+    .example-label {
+        color: #7cff7c;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 20px;
+        padding: 6px 16px;
+        background: rgba(124,255,124,0.15);
+        border-radius: 8px;
+        margin-right: 12px;
+    }
+
+    .example-function {
+        color: #99ff99;
+        font-size: 20px;
+        font-style: italic;
+        margin: 0 8px;
+    }
+
+    .example-solution-text p {
+        margin: 18px 0;
+    }
+
+    .math-centered {
+        text-align: center;
+        font-size: 22px;
+        color: #99ff99;
+        background: rgba(124,255,124,0.15);
+        padding: 14px;
+        border-radius: 10px;
+        margin: 20px auto;
+        max-width: 90%;
+        border: 1px dashed rgba(124,255,124,0.4);
+    }
+
+    .marker {
+        color: #7cff7c;
+        font-weight: bold;
+        font-size: 22px;
+        margin-right: 8px;
+    }
+
+    .end-marker {
+        color: #7cff7c;
+        font-weight: bold;
+        font-size: 22px;
+        margin-left: 10px;
+    }
+
+   .example-answer {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: #4ade80; /* яскравий зелений */
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 21px;
+    font-weight: bold;
+    margin-top: 30px;
+    box-shadow: 0 8px 24px rgba(74,222,128,0.35);
+}
+
+    @media (max-width: 768px) {
+        .theory-content p,
+        .example-full,
+        .example-solution-text p {
+            font-size: 18px !important;
+            line-height: 1.75 !important;
+        }
+
+        .section-title,
+        .example-header-classic,
+        .example-label {
+            font-size: 19px !important;
+        }
+
+        .example-label {
+            display: inline-block;
+            padding: 6px 14px !important;
+            margin-bottom: 10px;
+        }
+
+        .math-centered,
+        .math-important {
+            font-size: 19px !important;
+            padding: 14px 10px !important;
+            margin: 18px auto !important;
+        }
+
+        .math-big {
+            font-size: 19px !important;
+            padding: 14px !important;
+        }
+
+        .example-function {
+            font-size: 19px !important;
+            display: block;
+            margin: 12px auto !important;
+            text-align: center;
+        }
+
+        .marker, .end-marker {
+            font-size: 19px !important;
+        }
+
+        .grid-3 {
+            grid-template-columns: 1fr !important;
+            gap: 18px;
+        }
+
+        .card-deriv {
+            padding: 18px !important;
+        }
+
+        .algo-box {
+            padding: 20px !important;
+        }
+
+        .algo-list li {
+            font-size: 17px !important;
+            padding-left: 38px !important;
+        }
+
+        .algo-list li::before {
+            font-size: 19px !important;
+        }
+
+        .final-answer,
+        .example-answer {
+            font-size: 19px !important;
+            padding: 18px !important;
+        }
+
+        .example-full {
+            padding: 20px !important;
+            margin: 25px 0 !important;
+        }
+
+        .example-header-classic {
+            padding-bottom: 12px !important;
+            margin-bottom: 20px !important;
+        }
+    }
+    .video-modal-title {
+        text-align: center;
+        margin: 20px 0 30px;
+        padding: 20px;
+    }
+
+    .video-modal-title h2 {
+        font-size: 2.2rem;
+        color: #7cff7c;
+        margin: 0 0 10px 0;
+        font-weight: 600;
+    }
+
+    @media (max-width: 480px) {
+        .theory-content p,
+        .example-full,
+        .example-solution-text p {
+            font-size: 18px !important;
+            line-height: 1.5 !important;
+        }
+        .section-title,
+        .example-header-classic,
+        .example-label {
+            font-size: 18px !important;
+        }
+
+        .example-label {
+            display: inline-block;
+            padding: 6px 14px !important;
+            margin-bottom: 10px;
+        }
+        .math-centered,
+        .math-important {
+            font-size: 18px !important;
+            padding: 12px 8px !important;
+        }
+
+        .example-function {
+            font-size: 18px !important;
+        }
+
+        .example-label {
+            font-size: 16px !important;
+            padding: 5px 12px !important;
+        }
+
+        .section-title {
+            font-size: 18px !important;
+        }
+
+        .final-answer,
+        .example-answer {
+            font-size: 18px !important;
+            padding: 16px !important;
+        }
+
+        .marker, .end-marker {
+            font-size: 18px !important;
+        }
+        .video-modal-title h2 {
+            font-size: 1.5rem;
+        }
+    }
+
+    .video-modal-title::after {
+        content: '';
+        display: block;
+        width: 80px;
+        height: 4px;
+        background: #7cff7c;
+        margin: 20px auto 0;
+        border-radius: 2px;
+    }
+    
+    @media (max-width: 768px) {
+        .options-container {
+            grid-template-columns: 1fr;
+            gap: 15px;
+            padding: 0 8px;
+        }
+        .option {
+            min-height: 80px;
+            padding: 18px 12px;
+            font-size: 18px;
+        }
+    }
+
+        /* СТИЛІ ДЛЯ SUMMARY/DETAILS У ВІЙСЬКОВІЙ ТЕМАТИЦІ */
+details {
+    margin: 25px 0;
+    background: linear-gradient(135deg, rgba(42, 42, 42, 0.8), rgba(58, 74, 58, 0.9));
+    border-radius: 12px;
+    border: 1px solid rgba(124, 255, 124, 0.2);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+details:hover {
+    border-color: rgba(124, 255, 124, 0.4);
+    box-shadow: 0 8px 24px rgba(92, 139, 92, 0.25);
+}
+
+summary {
+    font-weight: 700;
+    padding: 18px 24px;
+    background: linear-gradient(135deg, #5c8b5c, #7cff7c);
+    border-radius: 10px 10px 0 0;
+    color: #ffffff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.15rem;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(92, 139, 92, 0.3);
+    cursor: pointer;
+    list-style: none;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+summary::-webkit-details-marker {
+    display: none;
+}
+
+summary::after {
+    content: "▼";
+    font-size: 0.9rem;
+    transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    color: #a8f0a8;
+    margin-left: 10px;
+    font-weight: bold;
+}
+
+details[open] summary::after {
+    transform: rotate(180deg);
+    color: #7cff7c;
+}
+
+details[open] summary {
+    background: linear-gradient(135deg, #7cff7c, #5c8b5c);
+    border-radius: 10px 10px 0 0;
+    box-shadow: 0 4px 15px rgba(124, 255, 124, 0.3);
+}
+
+details .details-content {
+    padding: 24px;
+    color: #e0e0e0;
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    background: rgba(42, 42, 42, 0.7);
+    border-radius: 0 0 10px 10px;
+    animation: fadeIn 0.4s ease-out;
+    border-top: 1px solid rgba(124, 255, 124, 0.15);
+}
+
+details .details-content p {
+    margin: 16px 0;
+    text-align: justify;
+}
+
+details .details-content ul,
+details .details-content ol {
+    margin: 16px 0;
+    padding-left: 24px;
+}
+
+details .details-content li {
+    margin: 10px 0;
+    padding-left: 8px;
+    position: relative;
+}
+
+details .details-content li::before {
+    content: "•";
+    color: #7cff7c;
+    font-weight: bold;
+    position: absolute;
+    left: -15px;
+}
+
+details .details-content strong {
+    color: #a8f0a8;
+    font-weight: 700;
+}
+
+details .details-content em {
+    color: #99ff99;
+    font-style: italic;
+}
+
+details .details-content .math-important {
+    background: rgba(124, 255, 124, 0.15);
+    border: 2px solid #7cff7c;
+    border-radius: 10px;
+    padding: 18px;
+    margin: 20px auto;
+    text-align: center;
+    font-size: 1.1rem;
+    color: #99ff99;
+    font-family: 'MathJax_Math', 'Cambria Math', serif;
+}
+
+details .details-content .example {
+    background: rgba(92, 139, 92, 0.2);
+    border-left: 4px solid #7cff7c;
+    padding: 16px;
+    margin: 20px 0;
+    border-radius: 8px;
+}
+
+details .details-content .highlight {
+    background: rgba(124, 255, 124, 0.2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #ffffff;
+}
+
+details .details-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    border: 1px solid rgba(124, 255, 124, 0.3);
+}
+
+details .details-content th {
+    background: rgba(92, 139, 92, 0.5);
+    color: #ffffff;
+    padding: 12px;
+    text-align: center;
+    font-family: 'Orbitron', sans-serif;
+    border-bottom: 2px solid #7cff7c;
+}
+
+details .details-content td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid rgba(124, 255, 124, 0.2);
+}
+
+details .details-content tr:nth-child(even) {
+    background: rgba(92, 139, 92, 0.1);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+details.military summary::before {
+    content: "🛡️";
+    margin-right: 10px;
+    font-size: 1.1rem;
+}
+
+details.warning summary {
+    background: linear-gradient(135deg, #5c8b5c, #7cff7c);
+    box-shadow: 0 4px 12px rgba(92, 139, 92, 0.3);
+}
+
+details.warning .details-content {
+    background: rgba(92, 139, 92, 0.1);
+    border-left: 4px solid #5c8b5c;
+}
+
+details.important summary {
+    background: linear-gradient(135deg, #5c8b5c, #7cff7c);
+    box-shadow: 0 4px 12px rgba(92, 139, 92, 0.3);
+}
+
+details.important .details-content {
+    background: rgba(92, 139, 92, 0.1);
+    border-left: 4px solid #5c8b5c;
+}
+
+@media (max-width: 768px) {
+    details {
+        margin: 20px 0;
+        border-radius: 10px;
+    }
+    
+    summary {
+        padding: 16px 20px;
+        font-size: 1.05rem;
+    }
+    
+    details .details-content {
+        padding: 20px;
+        font-size: 1rem;
+    }
+    
+    summary::after {
+        font-size: 0.8rem;
+    }
+    
+    details .details-content ul,
+    details .details-content ol {
+        padding-left: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    details {
+        margin: 18px 0;
+        border-radius: 8px;
+    }
+    
+    summary {
+        padding: 14px 18px;
+        font-size: 1rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    summary::after {
+        align-self: flex-end;
+        margin-top: -20px;
+    }
+    
+    details .details-content {
+        padding: 18px;
+        font-size: 0.95rem;
+    }
+    
+    details .details-content ul,
+    details .details-content ol {
+        padding-left: 18px;
+    }
+    
+    details.military summary::before {
+        font-size: 1rem;
+    }
+}
+
+.remarks-box {
+    background: linear-gradient(135deg, rgba(92, 139, 92, 0.2), rgba(124, 255, 124, 0.1));
+    border: 2px solid rgba(124, 255, 124, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 25px 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.remarks-title {
+    color: #7cff7c;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    text-shadow: 0 0 8px rgba(124, 255, 124, 0.3);
+    border-bottom: 2px dashed rgba(124, 255, 124, 0.4);
+    padding-bottom: 8px;
+}
+
+.remarks-content p {
+    margin: 12px 0;
+    padding-left: 10px;
+    border-left: 3px solid rgba(124, 255, 124, 0.5);
+    padding-left: 15px;
+}
+
+.remarks-content strong {
+    color: #a8f0a8;
+    margin-right: 5px;
+}
+
+@media (max-width: 768px) {
+    .remarks-box {
+        padding: 18px;
+        margin: 20px 0;
+    }
+    
+    .remarks-title {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .remarks-box {
+        padding: 15px;
+    }
+    
+    .remarks-title {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    mjx-container[jax="CHTML"][display="true"],
+    mjx-container[display="true"] {
+        display: block !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        padding-bottom: 12px;
+        margin: 20px 0;
+        scrollbar-width: thin;
+        scrollbar-color: #7cff7c #2a2a2a;
+        max-width: 100%;
+    }
+
+    .math-centered,
+    .math-important,
+    .math-big,
+    .example-full .math-centered,
+    .final-answer,
+    .example-answer,
+    #questionText > div,
+    .trainer-container > div {
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        padding: 8px 0;
+        max-width: 100%;
+    }
+    
+    .trainer-container mjx-container[jax="CHTML"][display="true"],
+    #questionText mjx-container[jax="CHTML"][display="true"] {
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+
+    mjx-container {
+        max-height: none !important;
+        height: auto !important;
+        overflow-y: hidden !important;
+        max-width: 100% !important;
+    }
+
+    mjx-container[jax="CHTML"][display="true"]::-webkit-scrollbar,
+    mjx-container[display="true"]::-webkit-scrollbar,
+    .math-centered::-webkit-scrollbar,
+    .math-important::-webkit-scrollbar,
+    #questionText > div::-webkit-scrollbar,
+    .trainer-container > div::-webkit-scrollbar {
+        height: 6px;
+    }
+    
+    mjx-container[jax="CHTML"][display="true"]::-webkit-scrollbar-thumb,
+    mjx-container[display="true"]::-webkit-scrollbar-thumb,
+    .math-centered::-webkit-scrollbar-thumb,
+    .math-important::-webkit-scrollbar-thumb,
+    #questionText > div::-webkit-scrollbar-thumb,
+    .trainer-container > div::-webkit-scrollbar-thumb {
+        background: rgba(124, 255, 124, 0.7);
+        border-radius: 3px;
+    }
+    
+    mjx-container[jax="CHTML"][display="true"]::-webkit-scrollbar-thumb:hover,
+    mjx-container[display="true"]::-webkit-scrollbar-thumb:hover,
+    .math-centered::-webkit-scrollbar-thumb:hover,
+    .math-important::-webkit-scrollbar-thumb:hover,
+    #questionText > div::-webkit-scrollbar-thumb:hover,
+    .trainer-container > div::-webkit-scrollbar-thumb:hover {
+        background: #7cff7c;
+    }
+    
+    #questionText {
+        overflow-x: hidden !important;
+    }
+    
+    #questionText > div {
+        margin: 0 -10px;
+        padding: 0 10px;
+    }
+}
+
+#submitAnswer {
+    background: linear-gradient(135deg, #5c8b5c, #7cff7c);
+    color: #fff;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 25px;
+    font-family: 'Orbitron', sans-serif;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#submitAnswer:hover:not(:disabled) { 
+    background: linear-gradient(135deg, #7cff7c, #5c8b5c); 
+    transform: scale(1.05); 
+    box-shadow: 0 4px 15px rgba(92,139,92,0.4); 
+}
+
+#submitAnswer:disabled { 
+    background: #666; 
+    cursor: not-allowed; 
+    opacity: 0.6; 
+}
+
+.trainer-container {
+    width: 90%;
+    max-width: 800px;
+    margin: auto;
+    padding: 30px;
+    background: linear-gradient(135deg, #2a2a2a, #3a4a3a);
+    border-radius: 16px;
+    border: 1px solid rgba(124,255,124,0.2);
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+}
+
+.coordinate-input {
+    width: 80px;
+    height: 50px;
+    text-align: center;
+    font-size: 22px;
+    font-family: 'Orbitron', sans-serif;
+    background: rgba(124,255,124,0.1);
+    border: 2px solid #7cff7c;
+    border-radius: 10px;
+    color: #99ff99;
+    outline: none;
+    transition: all 0.3s ease;
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.coordinate-input::-webkit-outer-spin-button,
+.coordinate-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.coordinate-input:focus {
+    border-color: #a8f0a8;
+    box-shadow: 0 0 15px rgba(124,255,124,0.6);
+    background: rgba(124,255,124,0.2);
+    transform: scale(1.05);
+}
+
+.check-answer-btn {
+    background: linear-gradient(135deg, #5c8b5c, #7cff7c);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-family: 'Orbitron', sans-serif;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    margin: 20px auto 0 auto;
+    display: block;
+    min-width: 200px;
+}
+
+.check-answer-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #7cff7c, #5c8b5c);
+    transform: scale(1.05);
+    box-shadow: 0 4px 20px rgba(92,139,92,0.5);
+}
+
+.check-answer-btn:disabled {
+    background: #666;
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+    box-shadow: none;
+}
+
+@media (max-width: 768px) {
+    .coordinate-input {
+        width: 70px;
+        height: 45px;
+        font-size: 20px;
+        inputmode: decimal;
+        -webkit-inputmode: decimal;
+    }
+    
+    #submitAnswer,
+    .check-answer-btn {
+        padding: 14px 25px;
+        font-size: 16px;
+        min-width: 180px;
+    }
+}
+
+.task-note {
+    color: #ff6b6b !important;
+    font-style: italic !important;
+    font-size: 0.9em !important;
+    display: block !important;
+    margin-top: 10px !important;
+}
+
+mjx-container:not([display="true"]) {
+    font-size: 1.2em !important;
+    color: #99ff99 !important;
+    font-weight: 500 !important;
+}
+
+mjx-container {
+    font-size: 110% !important;
+}
+
+mjx-container[jax="CHTML"][display="true"] {
+    font-size: 110% !important;
+}
+
+@media (max-width: 768px) {
+    mjx-container {
+        font-size: 110% !important;
+    }
+    
+    mjx-container[jax="CHTML"][display="true"] {
+        font-size: 110% !important;
+    }
+    
+    #questionText .formula, 
+    #questionText div[style*="font-size:1.2em"] {
+        font-size: 1em !important;
+    }
+    
+    .option span {
+        font-size: 0.9em !important;
+    }
+
+    #feedback {
+    font-size: 1.3em !important;
+    font-weight: bold !important;
+    padding: 15px !important;
+}
+}
+
+.option {
+    cursor: pointer;
+    padding: 15px;
+    margin: 10px 0;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .option {
+        padding: 20px 15px;
+        margin: 12px 0;
+        min-height: 70px;
+        font-size: 0.95em;
+    }
+}
+</style>
+</head>
+<body>
+    <div class="title-box">
+        <h1>54. Рівняння площини у відрізках на осях</h1>
+    </div>
+
+    <div class="section-container">
+        <div class="section" id="openTheoryBtn">
+            <img src="https://img.icons8.com/fluency/96/book-shelf.png" alt="Теорія">
+            <h2>Теоретичні відомості</h2>
+        </div>
+        <div class="section" id="openVideoBtn">
+            <img src="https://img.icons8.com/fluency/96/video.png" alt="Відео">
+            <h2>Відеоматеріали</h2>
+        </div>
+        <div class="section" id="openQuestionsBtn">
+            <img src="https://img.icons8.com/fluency/96/flipboard.png" alt="Питання">
+            <h2>Питання і відповіді</h2>
+        </div>
+        <div class="section" id="openTrainerBtn">
+            <img src="https://img.icons8.com/fluency/96/flash-on.png" alt="Тренажер">
+            <h2>Тренажер</h2>
+        </div>
+    </div>
+
+    <div class="navigation-buttons">
+        <a class="nav-button prev" href="{{ url_for('tema11') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+            До теми 11
+        </a>
+        <a class="nav-button home" href="{{ url_for('zmist') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            До курсу
+        </a>
+    </div>
+
+   <!-- ТЕОРІЯ -->
+<div id="theoryModal" class="modal">
+    <div class="modal-header">
+        <button class="close-btn" id="closeTheoryBtn">× Закрити</button>
+    </div>
+    <div class="modal-content theory-content">
+        <details class="warning">
+            <summary>Передумови виведення рівняння</summary>
+            <div class="details-content">
+                <p><strong>Рівняння площини у відрізках</strong> — це зручний спосіб запису рівняння площини, коли відомі точки її перетину з осями координат.</p>
+                
+                <p>Розглянемо площину, яка проходить через три точки: \(A(a;0;0)\), \(B(0;b;0)\), \(C(0;0;c)\) (рис. 11.3), де \(a \ne 0\), \(b \ne 0\), \(c \ne 0\). Ці точки розташовані на осях координат. Знайдемо рівняння цієї площини, використовуючи метод визначника.</p>
+                <img src="/static/figure11.3.jpg" alt="Площина у відрізках" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+                    
+                <p>Для площини, що проходить через точки \(M_1 (x_1;y_1;z_1)\), \(M_2 (x_2;y_2;z_2)\), \(M_3 (x_3;y_3;z_3)\), рівняння задається визначником:</p>
+                
+                <div class="math-important">
+                    \[
+                    \begin{vmatrix}
+                    x-x_1 & y-y_1 & z-z_1 \\
+                    x_2-x_1 & y_2-y_1 & z_2-z_1 \\
+                    x_3-x_1 & y_3-y_1 & z_3-z_1
+                    \end{vmatrix} = 0.
+                    \]
+                </div>
+                
+                <p>Позначимо:</p>
+                <ul>
+                    <li>\(M_1 (x_1;y_1;z_1) = A(a;0;0)\): \(x_1 = a\), \(y_1 = 0\), \(z_1 = 0\);</li>
+                    <li>\(M_2 (x_2;y_2;z_2) = B(0;b;0)\): \(x_2 = 0\), \(y_2 = b\), \(z_2 = 0\);</li>
+                    <li>\(M_3 (x_3;y_3;z_3) = C(0;0;c)\): \(x_3 = 0\), \(y_3 = 0\), \(z_3 = c\).</li>
+                </ul>
+            </div>
+        </details>
+
+        <details class="warning">
+            <summary>Виведення рівняння</summary>
+            <div class="details-content">
+                <p>Підставимо ці значення у визначник:</p>
+                
+                <div class="math-centered">
+                    \[
+                    \begin{vmatrix}
+                    x-a & y & z \\
+                    0-a & b-0 & 0-0 \\
+                    0-a & 0-0 & c-0
+                    \end{vmatrix}
+                    =
+                    \begin{vmatrix}
+                    x-a & y & z \\
+                    -a & b & 0 \\
+                    -a & 0 & c
+                    \end{vmatrix}
+                    = 0.
+                    \]
+                </div>
+                
+                <p>Розкладемо визначник за першим рядком:</p>
+                
+                <div class="math-centered">
+                    \[
+                    (x-a) \cdot 
+                    \begin{vmatrix}
+                    b & 0 \\
+                    0 & c
+                    \end{vmatrix}
+                    - y \cdot 
+                    \begin{vmatrix}
+                    -a & 0 \\
+                    -a & c
+                    \end{vmatrix}
+                    + z \cdot 
+                    \begin{vmatrix}
+                    -a & b \\
+                    -a & 0
+                    \end{vmatrix}
+                    = 0.
+                    \]
+                </div>
+                
+                <p>Обчислимо визначники:</p>
+                
+                <div class="math-centered">
+                    \[
+                    (x-a) \cdot bc - y \cdot (-ac) + z \cdot ab = 0.
+                    \]
+                </div>
+                
+                <p>Розкриємо дужки:</p>
+                
+                <div class="math-centered">
+                    \[
+                    bcx - abc + acy + abz = 0.
+                    \]
+                </div>
+                
+                <p>Перенесемо вільний член вправо:</p>
+                
+                <div class="math-centered">
+                    \[
+                    bcx + acy + abz = abc.
+                    \]
+                </div>
+                
+                <p>Поділимо обидві частини на \(abc\) (оскільки \(a,b,c \ne 0\)):</p>
+                
+                <div class="math-centered">
+                    \[
+                    \frac{bcx}{abc} + \frac{acy}{abc} + \frac{abz}{abc} = \frac{abc}{abc}.
+                    \]
+                </div>
+                
+                <p>Після скорочення рівняння площини набуває вигляду:</p>
+                
+                <div class="math-important">
+                    \[
+                    \frac{x}{a} + \frac{y}{b} + \frac{z}{c} = 1. \quad (11.4)
+                    \]
+                </div>
+                
+                <p>Це рівняння (11.4) називають <strong>рівнянням площини у відрізках</strong>, де \(a\), \(b\) і \(c\) – відрізки, які площина відтинає на осях координат \(Ox\), \(Oy\) та \(Oz\) відповідно.</p>
+                
+                <div class="remarks-box">
+                    <div class="remarks-title">Геометричний зміст</div>
+                    <div class="remarks-content">
+                        <p>• \(a\) — координата точки перетину площини з віссю \(Ox\) (точка \((a,0,0)\))</p>
+                        <p>• \(b\) — координата точки перетину площини з віссю \(Oy\) (точка \((0,b,0)\))</p>
+                        <p>• \(c\) — координата точки перетину площини з віссю \(Oz\) (точка \((0,0,c)\))</p>
+                    </div>
+                </div>
+            </div>
+        </details>
+
+        <details class="warning">
+            <summary>Приклад з повним розв'язанням</summary>
+            <div class="details-content">
+                <div class="example-full">
+                    <div class="example-header-classic">
+                        <span class="example-label">Приклад 11.4</span>
+                        Скласти рівняння площини, яка проходить через три задані точки: 
+                        \(M_1 (1;-5;2)\), \(M_2 (-6;2;2)\), \(M_3 (1;3;4)\), 
+                        спростити його, записати у відрізках, і побудувати цю площину.
+                    </div>
+                    
+                    <div class="example-solution-text">
+                        <p><strong>Розв'язання:</strong></p>
+                        
+                        <p>Для знаходження рівняння площини, що проходить через точки \(M_1 (1;-5;2)\), \(M_2 (-6;2;2)\), \(M_3 (1;3;4)\), використаємо визначник:</p>
+                        
+                        <div class="math-centered">
+                            \[
+                            \begin{vmatrix}
+                            x-x_1 & y-y_1 & z-z_1 \\
+                            x_2-x_1 & y_2-y_1 & z_2-z_1 \\
+                            x_3-x_1 & y_3-y_1 & z_3-z_1
+                            \end{vmatrix} = 0.
+                            \]
+                        </div>
+                        
+                        <p>Підставимо координати точок:</p>
+                        
+                        <div class="math-centered">
+                            \[
+                            \begin{vmatrix}
+                            x-1 & y+5 & z-2 \\
+                            -6-1 & 2+5 & 2-2 \\
+                            1-1 & 3+5 & 4-2
+                            \end{vmatrix}
+                            =
+                            \begin{vmatrix}
+                            x-1 & y+5 & z-2 \\
+                            -7 & 7 & 0 \\
+                            0 & 8 & 2
+                            \end{vmatrix}
+                            = 0.
+                            \]
+                        </div>
+                        
+                        <p>Розкладемо визначник за першим рядком:</p>
+                        
+                        <div class="math-centered">
+                            \[
+                            (x-1) 
+                            \begin{vmatrix}
+                            7 & 0 \\
+                            8 & 2
+                            \end{vmatrix}
+                            - (y+5) 
+                            \begin{vmatrix}
+                            -7 & 0 \\
+                            0 & 2
+                            \end{vmatrix}
+                            + (z-2) 
+                            \begin{vmatrix}
+                            -7 & 7 \\
+                            0 & 8
+                            \end{vmatrix}
+                            = 0.
+                            \]
+                        </div>
+                        
+                        <p>Обчислимо визначники:</p>
+                        
+                        <div class="math-centered">
+                            \[
+                            (x-1) \cdot (7 \cdot 2 - 0 \cdot 8) - (y+5) \cdot ((-7) \cdot 2 - 0 \cdot 0) + (z-2) \cdot ((-7) \cdot 8 - 7 \cdot 0) = 0.
+                            \]
+                        </div>
+                        
+                        <div class="math-centered">
+                            \[
+                            14(x-1) + 14(y+5) - 56(z-2) = 0.
+                            \]
+                        </div>
+                        
+                        <p>Поділимо все рівняння на 14, щоб спростити коефіцієнти:</p>
+                        
+                        <div class="math-centered">
+                            \[
+                            (x-1) + (y+5) - 4(z-2) = 0.
+                            \]
+                        </div>
+                        
+                        <p>Розкриємо дужки та спростимо:</p>
+                        
+                        <div class="math-centered">
+                            \[
+                            x - 1 + y + 5 - 4z + 8 = 0,
+                            \]
+                            \[
+                            x + y - 4z + 12 = 0.
+                            \]
+                        </div>
+                        
+                        <p>Отже, загальне рівняння площини: \(x + y - 4z + 12 = 0\).</p>
+                        
+                        <p><strong>Для запису рівняння площини у відрізках</strong> перенесемо число 12 у праву частину:</p>
+                        
+                        <div class="math-centered">
+                            \[
+                            x + y - 4z = -12.
+                            \]
+                        </div>
+                        
+                        <p>Поділимо на \(-12\):</p>
+                        
+                        <div class="math-centered">
+                            \[
+                            \frac{x}{-12} + \frac{y}{-12} + \frac{-4z}{-12} = \frac{-12}{-12}.
+                            \]
+                        </div>
+                        
+                        <p>Після скорочення отримаємо рівняння у відрізках:</p>
+                        
+                        <div class="math-important">
+                            \[
+                            \frac{x}{-12} + \frac{y}{-12} + \frac{z}{3} = 1.
+                            \]
+                        </div>
+                        
+                        <p>З цього рівняння видно, що площина відтинає на осях координат відрізки:</p>
+                        
+                        <div class="math-centered">
+                            \[
+                            a = -12, \quad b = -12, \quad c = 3.
+                            \]
+                        </div>
+                        
+                        <p>Вісь \(Ox\) перетинає площину в точці з від'ємною абсцисою, вісь \(Oy\) – у точці з від'ємною ординатою, вісь \(Oz\) – у точці з додатною аплікатою. Знаючи ці відрізки, легко побудувати площину (рис. 11.4).</p>
+                        <img src="/static/figure11.4.jpg" alt="Площина приклад" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+                    
+                        <div class="example-answer">
+                            <strong>Відповідь:</strong> 
+                            Загальне рівняння: \(x + y - 4z + 12 = 0\)<br>
+                            У відрізках: \(\frac{x}{-12} + \frac{y}{-12} + \frac{z}{3} = 1\)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </details>
+
+        <details class="warning">
+            <summary>Властивості та застосування</summary>
+            <div class="details-content">
+                <h3 class="section-title">Переваги рівняння у відрізках:</h3>
+                
+                <div class="grid-3">
+                    <div class="card-deriv">
+                        <h4>Наочність</h4>
+                        <p>Миттєво видно точки перетину площини з осями координат.</p>
+                    </div>
+                    
+                    <div class="card-deriv">
+                        <h4>Простота побудови</h4>
+                        <p>Для побудови площини достатньо відкласти відрізки на осях і провести площину через отримані точки.</p>
+                    </div>
+                    
+                    <div class="card-deriv">
+                        <h4>Перевірка розташування</h4>
+                        <p>Легко визначити, в яких октантах знаходиться площина, за знаками \(a\), \(b\), \(c\).</p>
+                    </div>
+                </div>
+                
+                <div class="algo-box">
+                    <h3 class="section-title">Алгоритм переходу від загального рівняння до рівняння у відрізках:</h3>
+                                        
+                        <li>Записати загальне рівняння площини у вигляді \(Ax + By + Cz + D = 0\).</li>
+                        <li>Перенести вільний член \(D\) у праву частину: \(Ax + By + Cz = -D\).</li>
+                        <li>Поділити обидві частини на \(-D\) (якщо \(D \ne 0\)): 
+                            \(\frac{A}{-D}x + \frac{B}{-D}y + \frac{C}{-D}z = 1\).</li>
+                        <li>Подати отримане рівняння у вигляді \(\frac{x}{a} + \frac{y}{b} + \frac{z}{c} = 1\), 
+                            де \(a = -\frac{D}{A}\), \(b = -\frac{D}{B}\), \(c = -\frac{D}{C}\).</li>
+                        <li>Переконатися, що жоден зі знаменників не дорівнює нулю.</li>
+                   
+                </div>
+                
+                <div class="remarks-box">
+                    <div class="remarks-title">Важливо!</div>
+                    <div class="remarks-content">
+                        <p><strong>Рівняння у відрізках можна записати тільки тоді, коли площина не проходить через початок координат</strong> (тобто \(D \ne 0\)) і перетинає всі три координатні осі (тобто \(A \ne 0\), \(B \ne 0\), \(C \ne 0\)).</p>
+                    </div>
+                </div>
+            </div>
+        </details>
+    </div>
+</div>
+
+    <!-- ВІДЕО -->
+    <div id="videoModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeVideoBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="video-modal-title">
+                <h2>Відеоматеріали</h2>
+            </div>
+            <div id="videoList">
+                <div class="video-card" data-url="https://www.youtube.com/embed/fOf1LtvCafg">
+                    <img class="play-icon" src="https://img.icons8.com/fluency/96/play.png" alt="">
+                    <h3>Рівняння площини у відрізках на осях</h3>
+                </div>
+                <div class="video-card" data-url="https://www.youtube.com/embed/_MhI5F1lNbM">
+                    <img class="play-icon" src="https://img.icons8.com/fluency/96/play.png" alt="">
+                    <h3>Plane - Points of Intersection</h3>
+                </div>
+                
+            </div>
+            <div id="videoPlayer" style="display: none; width: 90vw; max-width: 960px; aspect-ratio: 16/9; margin: 20px auto;">
+                <iframe id="youtubePlayer" width="100%" height="100%" src="" frameborder="0"
+                    allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- ПИТАННЯ І ВІДПОВІДІ -->
+    <div id="questionsModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeQuestionsBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div style="max-width:964px;margin:0 auto;">
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>1. Який вигляд має рівняння площини у відрізках на осях координат?</span></div>
+                        <div class="card-back"><span>\(\frac{x}{a} + \frac{y}{b} + \frac{z}{c} = 1\), де \(a\), \(b\), \(c\) — відрізки, що відтинаються площиною на осях \(Ox\), \(Oy\), \(Oz\) відповідно.</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>2. Що означають числа \(a\), \(b\), \(c\) у рівнянні площини у відрізках?</span></div>
+                        <div class="card-back"><span>Це координати точок перетину площини з осями координат: \(A(a,0,0)\) на осі \(Ox\), \(B(0,b,0)\) на осі \(Oy\), \(C(0,0,c)\) на осі \(Oz\).</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>3. Чи завжди можна записати рівняння площини у відрізках?</span></div>
+                        <div class="card-back"><span>Ні, тільки якщо площина не проходить через початок координат і перетинає всі три координатні осі.</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>4. Як перейти від загального рівняння площини \(Ax+By+Cz+D=0\) до рівняння у відрізках?</span></div>
+                        <div class="card-back"><span>Перенести \(D\) у праву частину, поділити на \(-D\) і подати у вигляді \(\frac{x}{a} + \frac{y}{b} + \frac{z}{c} = 1\), де \(a = -\frac{D}{A}\), \(b = -\frac{D}{B}\), \(c = -\frac{D}{C}\).</span></div>
+                    </div>
+                </div>
+                <div class="question-card" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front"><span>5. Який геометричний зміст від'ємних значень \(a\), \(b\) або \(c\)?</span></div>
+                        <div class="card-back"><span>Від'ємні значення означають, що площина перетинає відповідну вісь у від'ємній півосі.</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ТРЕНАЖЕР -->
+    <div id="trainerModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeTrainerBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="trainer-container">
+                <div class="question-circle">
+                    <h3 id="questionNumber">Питання 1</h3>
+                </div>
+                <p id="questionText" class="math-notation-centered"></p>
+                <div class="options-container" id="optionsContainer"></div>
+                <button id="submitAnswer" class="submit-btn" disabled>Підтвердити</button>
+                <div id="feedback" class="feedback"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ЗАВЕРШЕННЯ -->
+    <div id="completionModal" class="modal">
+        <div class="modal-header">
+            <button class="close-btn" id="closeCompletionBtn">× Закрити</button>
+        </div>
+        <div class="modal-content">
+            <div class="completion-message">
+                <div class="completion-emoji"></div>
+                <h2>МІСІЯ ВИКОНАНА!</h2>
+                <p>Ти оволодів рівнянням площини у відрізках!</p>
+                <p><strong>СЛАВА УКРАЇНІ!</strong></p>
+                <button id="resetTrainerBtn" class="reset-btn">Повернутися на полігон!</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalOverlay"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.add('loaded');
+
+            const modals = {
+                theory: document.getElementById('theoryModal'),
+                video: document.getElementById('videoModal'),
+                questions: document.getElementById('questionsModal'),
+                trainer: document.getElementById('trainerModal'),
+                completion: document.getElementById('completionModal')
+            };
+            const overlay = document.getElementById('modalOverlay');
+
+            function openModal(m) { 
+                m.style.display = 'flex'; 
+                overlay.style.display = 'block'; 
+                document.body.style.overflow = 'hidden'; 
+            }
+            
+            function closeModal(m) { 
+                m.style.display = 'none'; 
+                overlay.style.display = 'none'; 
+                document.body.style.overflow = 'auto'; 
+            }
+
+            document.getElementById('openTheoryBtn').onclick = () => openModal(modals.theory);
+            document.getElementById('openVideoBtn').onclick = () => openModal(modals.video);
+            document.getElementById('openQuestionsBtn').onclick = () => openModal(modals.questions);
+            document.getElementById('openTrainerBtn').onclick = () => { 
+                openModal(modals.trainer); 
+                startTrainer(); 
+            };
+
+            document.querySelectorAll('.close-btn').forEach(btn => {
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    const modal = btn.closest('.modal');
+                    if (modal.id !== 'videoModal') {
+                        closeModal(modal);
+                    }
+                };
+            });
+
+            overlay.onclick = () => document.querySelectorAll('.modal').forEach(closeModal);
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('.modal').forEach(m => m.style.display === 'flex' && closeModal(m));
+                }
+            });
+
+            // ВІДЕО
+            const videoList = document.getElementById('videoList');
+            const videoPlayer = document.getElementById('videoPlayer');
+            const youtubeIframe = document.getElementById('youtubePlayer');
+
+            document.querySelectorAll('.video-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const url = card.dataset.url;
+                    videoList.style.display = 'none';
+                    videoPlayer.style.display = 'block';
+                    youtubeIframe.src = url + '?autoplay=0';
+                });
+            });
+
+            document.getElementById('closeVideoBtn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (videoPlayer.style.display === 'block') {
+                    youtubeIframe.src = '';
+                    videoPlayer.style.display = 'none';
+                    videoList.style.display = 'flex';
+                } else {
+                    closeModal(modals.video);
+                }
+            });
+
+ // ТРЕНАЖЕР
+let stage = 1;
+let currentQuestion = null;
+let correctAnswer = '';
+let usedQuestions = [[], [], []];
+let failedQuestions = [[], [], []];
+
+// Функція для генерації випадкового числа в діапазоні
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// Функція для форматування числа (не показуємо +1, -1 пишемо як -)
+function formatCoefficient(coeff, isFirst = false) {
+    if (coeff === 1 && !isFirst) return "+";
+    if (coeff === 1 && isFirst) return "";
+    if (coeff === -1) return "-";
+    if (coeff > 0 && !isFirst) return `+${coeff}`;
+    return `${coeff}`;
+}
+
+// Функція для форматування рівняння у відрізках як формули MathJax
+function formatSegmentEquation(a, b, c) {
+    // Форматуємо з використанням дробів для MathJax
+    // Завжди у форматі x/a + y/b + z/c = 1, навіть якщо a, b, c від'ємні
+    let equation = `\\frac{x}{${a}}`;
+    
+    // Для b: завжди додаємо + перед y/b (навіть якщо b від'ємне)
+    equation += `+\\frac{y}{${b}}`;
+    
+    // Для c: завжди додаємо + перед z/c (навіть якщо c від'ємне)
+    equation += `+\\frac{z}{${c}}`;
+    
+    equation += "=1";
+    return equation;
+}
+
+// Функція для генерації рівняння у відрізках
+function generateSegmentEquation() {
+    const a = getRandomInt(2, 10) * (Math.random() > 0.5 ? 1 : -1);
+    const b = getRandomInt(2, 10) * (Math.random() > 0.5 ? 1 : -1);
+    const c = getRandomInt(2, 10) * (Math.random() > 0.5 ? 1 : -1);
+    
+    return { 
+        equation: formatSegmentEquation(a, b, c), 
+        a, b, c 
+    };
+}
+
+// Функція для генерації загального рівняння
+function generateGeneralEquation() {
+    // Генеруємо коефіцієнти так, щоб D ділився на A, B, C
+    let A, B, C, D;
+    
+    do {
+        A = getRandomInt(1, 6) * (Math.random() > 0.5 ? 1 : -1);
+        B = getRandomInt(1, 6) * (Math.random() > 0.5 ? 1 : -1);
+        C = getRandomInt(1, 6) * (Math.random() > 0.5 ? 1 : -1);
+        
+        // Знаходимо спільний множник для того, щоб D ділився на A, B, C
+        const lcm = Math.abs(A * B * C);
+        const multiplier = getRandomInt(1, 3);
+        D = -lcm * multiplier; // Робимо D від'ємним, щоб при перенесенні стало додатнім
+    } while (Math.abs(D) > 100); // Обмежуємо величину D
+    
+    // Форматуємо рівняння як формулу MathJax
+    let equation = "";
+    
+    // Перший член
+    if (A === 1) {
+        equation += "x";
+    } else if (A === -1) {
+        equation += "-x";
+    } else {
+        equation += `${A}x`;
+    }
+    
+    // Другий член
+    if (B !== 0) {
+        if (B === 1) {
+            equation += "+y";
+        } else if (B === -1) {
+            equation += "-y";
+        } else {
+            equation += B > 0 ? `+${B}y` : `${B}y`;
+        }
+    }
+    
+    // Третій член
+    if (C !== 0) {
+        if (C === 1) {
+            equation += "+z";
+        } else if (C === -1) {
+            equation += "-z";
+        } else {
+            equation += C > 0 ? `+${C}z` : `${C}z`;
+        }
+    }
+    
+    // Вільний член
+    equation += D >= 0 ? `+${D}=0` : `${D}=0`;
+    
+    // Обчислюємо правильну відповідь у відрізках
+    const a = -D / A;
+    const b = -D / B;
+    const c = -D / C;
+    
+    return { 
+        equation, 
+        correctAnswer: formatSegmentEquation(a, b, c), 
+        a, b, c, A, B, C, D 
+    };
+}
+
+// Функція для генерації неправильних варіантів відповідей для питання 1 (у вигляді формул)
+function generateWrongAnswers1(a, b, c) {
+    const wrongs = [];
+    
+    // Варіант 1: змінити знаки (правильно: x=-a, y=-b, z=-c)
+    wrongs.push(`x=${-a},\\; y=${-b},\\; z=${-c}`);
+    
+    // Варіант 2: змінити знаки тільки у двох змінних
+    const signCombinations = [
+        `x=${-a},\\; y=${b},\\; z=${-c}`,
+        `x=${a},\\; y=${-b},\\; z=${-c}`,
+        `x=${-a},\\; y=${-b},\\; z=${c}`
+    ];
+    wrongs.push(signCombinations[Math.floor(Math.random() * signCombinations.length)]);
+    
+    // Варіант 3: поміняти значення місцями
+    const permutations = [
+        `x=${b},\\; y=${a},\\; z=${c}`,
+        `x=${c},\\; y=${b},\\; z=${a}`,
+        `x=${a},\\; y=${c},\\; z=${b}`
+    ];
+    wrongs.push(permutations[Math.floor(Math.random() * permutations.length)]);
+    
+    // Варіант 4: змінити одне значення
+    const changedValue = c * (Math.random() > 0.5 ? -1 : 2);
+    wrongs.push(`x=${a},\\; y=${b},\\; z=${changedValue}`);
+    
+    // Виберемо 3 унікальних варіанти
+    const uniqueWrongs = [...new Set(wrongs)].slice(0, 3);
+    
+    // Якщо не вистачає, додамо додаткові
+    while (uniqueWrongs.length < 3) {
+        const randomA = getRandomInt(2, 10) * (Math.random() > 0.5 ? 1 : -1);
+        const randomB = getRandomInt(2, 10) * (Math.random() > 0.5 ? 1 : -1);
+        const randomC = getRandomInt(2, 10) * (Math.random() > 0.5 ? 1 : -1);
+        uniqueWrongs.push(`x=${randomA},\\; y=${randomB},\\; z=${randomC}`);
+    }
+    
+    return uniqueWrongs;
+}
+
+// Функція для генерації неправильних варіантів відповідей для питання 2
+function generateWrongAnswers2(correctAnswer, a, b, c, A, B, C, D) {
+    const wrongs = [];
+    
+    // Варіант 1: неправильний знак у одного з відрізків
+    wrongs.push(formatSegmentEquation(a, -b, c));
+    
+    // Варіант 2: поміняти чисельники місцями
+    wrongs.push(formatSegmentEquation(-D/B, -D/A, -D/C));
+    
+    // Варіант 3: використати коефіцієнти замість відрізків
+    wrongs.push(formatSegmentEquation(A, B, C));
+    
+    // Варіант 4: неправильно обчислені відрізки
+    wrongs.push(formatSegmentEquation(-D/(2*A), -D/B, -D/C));
+    
+    // Виберемо 3 унікальних варіанти
+    return [...new Set(wrongs)].slice(0, 3);
+}
+
+// Функція для генерації неправильних варіантів відповідей для питання 3 з випадковими знаками
+function generateWrongAnswers3(correctAnswer, a, b, c) {
+    const wrongs = [];
+    
+    // Обчислюємо правильні коефіцієнти
+    const lcm = a * b * c;
+    const A = lcm / a;
+    const B = lcm / b;
+    const C = lcm / c;
+    const D = -lcm;
+    
+    // Варіант 1: поміняти коефіцієнти місцями та змінити знаки
+    if (Math.random() > 0.5) {
+        wrongs.push(`${formatCoefficient(B, true)}x${formatCoefficient(A)}y${formatCoefficient(C)}z${formatCoefficient(D)}=0`);
+    } else {
+        wrongs.push(`${formatCoefficient(-B, true)}x${formatCoefficient(-A)}y${formatCoefficient(-C)}z${formatCoefficient(D)}=0`);
+    }
+    
+    // Варіант 2: неправильний вільний член
+    if (Math.random() > 0.5) {
+        wrongs.push(`${formatCoefficient(A, true)}x${formatCoefficient(B)}y${formatCoefficient(C)}z${formatCoefficient(-D)}=0`);
+    } else {
+        wrongs.push(`${formatCoefficient(A, true)}x${formatCoefficient(-B)}y${formatCoefficient(C)}z${formatCoefficient(-D)}=0`);
+    }
+    
+    // Варіант 3: всі знаки змінені
+    wrongs.push(`${formatCoefficient(-A, true)}x${formatCoefficient(-B)}y${formatCoefficient(-C)}z${formatCoefficient(D)}=0`);
+    
+    // Варіант 4: поміняти коефіцієнти місцями
+    const sign1 = Math.random() > 0.5 ? 1 : -1;
+    const sign2 = Math.random() > 0.5 ? 1 : -1;
+    const sign3 = Math.random() > 0.5 ? 1 : -1;
+    wrongs.push(`${formatCoefficient(sign1*C, true)}x${formatCoefficient(sign2*A)}y${formatCoefficient(sign3*B)}z${formatCoefficient(D)}=0`);
+    
+    // Додатковий варіант: змішати знаки
+    if (Math.random() > 0.5) {
+        wrongs.push(`${formatCoefficient(A, true)}x${formatCoefficient(-B)}y${formatCoefficient(C)}z${formatCoefficient(D)}=0`);
+    }
+    
+    // Виберемо 3 унікальних варіанти
+    const uniqueWrongs = [...new Set(wrongs)].slice(0, 3);
+    
+    return uniqueWrongs;
+}
+
+// Генерація питань
+function generateQuestion1() {
+    const { equation, a, b, c } = generateSegmentEquation();
+    const wrongs = generateWrongAnswers1(a, b, c);
+    const correct = `x=${a},\\; y=${b},\\; z=${c}`;
+    
+    return {
+        id: Date.now() + Math.random(),
+        text: `Вказати, які відрізки відтинає задана площина на координатних осях Ox, Oy та Oz, якщо її рівняння має вигляд<br><br>\\[${equation}\\]`,
+        correct: correct,
+        wrongs: wrongs
+    };
+}
+
+function generateQuestion2() {
+    const { equation, correctAnswer, a, b, c, A, B, C, D } = generateGeneralEquation();
+    const wrongs = generateWrongAnswers2(correctAnswer, a, b, c, A, B, C, D);
+    
+    return {
+        id: Date.now() + Math.random(),
+        text: `Яке рівняння площини у відрізках відповідає рівнянню<br><br>\\[${equation}\\]`,
+        correct: correctAnswer,
+        wrongs: wrongs
+    };
+}
+
+function generateQuestion3() {
+    const { equation, a, b, c } = generateSegmentEquation();
+    
+    // Обчислюємо правильну відповідь
+    const lcm = a * b * c;
+    const A = lcm / a;
+    const B = lcm / b;
+    const C = lcm / c;
+    const D = -lcm;
+    
+    // Форматуємо правильну відповідь
+    let correctAnswer = formatCoefficient(A, true);
+    correctAnswer += "x";
+    correctAnswer += formatCoefficient(B);
+    correctAnswer += "y";
+    correctAnswer += formatCoefficient(C);
+    correctAnswer += "z";
+    correctAnswer += formatCoefficient(D);
+    correctAnswer += "=0";
+    
+    const wrongs = generateWrongAnswers3(correctAnswer, a, b, c);
+    
+    return {
+        id: Date.now() + Math.random(),
+        text: `Вибрати рівняння, яке задає ту саму площину, що й<br><br>\\[${equation}\\]`,
+        correct: correctAnswer,
+        wrongs: wrongs
+    };
+}
+
+function getRandomQuestionForStage(stageIndex) {
+    let question;
+    
+    if (stageIndex === 0) {
+        question = generateQuestion1();
+    } else if (stageIndex === 1) {
+        question = generateQuestion2();
+    } else {
+        question = generateQuestion3();
+    }
+    
+    return question;
+}
+
+function showQuestionForCurrentStage() {
+    const stageIndex = stage - 1;
+    currentQuestion = getRandomQuestionForStage(stageIndex);
+    
+    document.getElementById('questionNumber').textContent = `Питання ${stage}/3`;
+    document.getElementById('questionText').innerHTML = currentQuestion.text;
+    correctAnswer = currentQuestion.correct;
+    
+    const allAnswers = [currentQuestion.correct, ...currentQuestion.wrongs.slice(0, 3)];
+    
+    // Перемішуємо відповіді
+    for (let i = allAnswers.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [allAnswers[i], allAnswers[j]] = [allAnswers[j], allAnswers[i]];
+    }
+    
+    renderOptions(allAnswers);
+    
+    // Рендеримо MathJax
+    if (window.MathJax) {
+        setTimeout(() => {
+            MathJax.typesetPromise();
+        }, 100);
+    }
+}
+
+function renderOptions(values) {
+    const container = document.getElementById('optionsContainer');
+    container.innerHTML = '';
+    
+    values.forEach(val => {
+        const div = document.createElement('div');
+        div.className = 'option';
+        
+        const span = document.createElement('span');
+        
+        // Для всіх відповідей обгортаємо в \[ \] для MathJax
+        span.innerHTML = `\\[${val}\\]`;
+        
+        div.appendChild(span);
+        div.dataset.value = val;
+        div.onclick = () => selectOption(div);
+        container.appendChild(div);
+    });
+    
+    document.getElementById('submitAnswer').disabled = true;
+    document.getElementById('feedback').style.opacity = 0;
+    
+    // Рендеримо MathJax
+    if (window.MathJax) {
+        setTimeout(() => {
+            MathJax.typesetPromise();
+        }, 100);
+    }
+}
+
+function selectOption(el) {
+    document.querySelectorAll('.option').forEach(d => d.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('submitAnswer').disabled = false;
+}
+
+document.getElementById('submitAnswer').onclick = () => {
+    const sel = document.querySelector('.option.selected');
+    if (!sel) return;
+
+    const userAnswer = sel.dataset.value;
+    const isCorrect = userAnswer === correctAnswer;
+    
+    const fb = document.getElementById('feedback');
+    fb.textContent = isCorrect ? '✅ ВІРНО! Ціль уражена!' : '❌ Промах! Спробуй ще!';
+    fb.style.background = isCorrect ? '#22c55e' : '#ef4444';
+    fb.style.opacity = 1;
+
+    setTimeout(() => {
+        fb.style.opacity = 0;
+        
+        if (isCorrect) {
+            if (stage < 3) {
+                stage++;
+                showQuestionForCurrentStage();
+            } else {
+                closeModal(modals.trainer);
+                openModal(modals.completion);
+            }
+        } else {
+            showQuestionForCurrentStage();
+        }
+    }, 1400);
+};
+
+function startTrainer() {
+    stage = 1;
+    currentQuestion = null;
+    showQuestionForCurrentStage();
+}
+
+document.getElementById('resetTrainerBtn').onclick = () => {
+    closeModal(modals.completion);
+    startTrainer();
+    openModal(modals.trainer);
+};
+        });
+    </script>
+</body>
+</html>
