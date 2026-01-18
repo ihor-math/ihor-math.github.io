@@ -273,6 +273,108 @@
         gap: 10px;
       }
     }
+    /* Стилі для сучасної смужки прокрутки */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(30, 58, 138, 0.3);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #38bdf8, #4f46e5);
+  border-radius: 10px;
+  border: 2px solid rgba(30, 58, 138, 0.2);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #7dd3fc, #a78bfa);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Для Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #38bdf8 rgba(30, 58, 138, 0.3);
+}
+
+/* Плавна прокрутка */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Адаптивність для маленьких екранів */
+@media (max-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    border: 1px solid rgba(30, 58, 138, 0.2);
+  }
+  
+  /* Для мобільних пристроїв можна приховати скроллбар, але залишити функціональність */
+  body {
+    -webkit-overflow-scrolling: touch; /* Плавна прокрутка на iOS */
+  }
+  
+  /* Альтернатива: тонкий, непомітний скроллбар */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: rgba(30, 58, 138, 0.1);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: rgba(252, 211, 77, 0.5);
+  }
+}
+
+@media (max-width: 480px) {
+  /* На дуже маленьких екранах приховуємо скроллбар */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  
+  * {
+    scrollbar-width: none;
+  }
+  
+  body {
+    -ms-overflow-style: none;
+  }
+}
+
+/* Опціонально: стиль для конкретного контейнера, якщо потрібно обмежити висоту */
+.container {
+  max-height: 85vh; /* Можна змінити на потрібне значення */
+  overflow-y: auto; /* Додає вертикальну прокрутку лише для контейнера */
+}
+
+/* Стилі для скроллбара контейнера (якщо використовується overflow-y: auto) */
+.container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+.container::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #fcd34d, #38bdf8);
+  border-radius: 3px;
+}
   </style>
 </head>
 <body>
@@ -364,6 +466,7 @@
   </div>
 </body>
 </html>
+
 
 
 
