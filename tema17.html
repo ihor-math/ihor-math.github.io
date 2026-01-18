@@ -341,6 +341,38 @@
         gap: 10px;
       }
     }
+/* Сучасна стилізація скроллбару */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.8);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #34D399, #F472B6);
+  border-radius: 10px;
+  border: 3px solid rgba(15, 23, 42, 0.8);
+  transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #10B981, #EC4899);
+  border-width: 2px;
+}
+
+::-webkit-scrollbar-corner {
+  background: rgba(15, 23, 42, 0.8);
+}
+
+/* Для Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #34D399 rgba(15, 23, 42, 0.8);
+}
+  
   </style>
 </head>
 <body>
@@ -458,14 +490,16 @@
     </a>
 
     <a class="nav-button" href='zmist.html'>
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-      </svg>
-     До структури курсу
-    </a>
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+  <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+</svg>
+До структури курсу
+        </a>
+
   </div>
 </body>
 </html>
+
 
 
 
