@@ -331,6 +331,399 @@
         gap: 10px;
       }
     }
+    /* Стилі для сучасної смужки прокрутки */
+::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(15px);
+  border-radius: 10px;
+  border: 1px solid rgba(244, 114, 182, 0.2);
+  box-shadow: 
+    inset 0 0 20px rgba(0, 0, 0, 0.25),
+    0 0 15px rgba(109, 40, 217, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: conic-gradient(
+    from 0deg at 50% 50%,
+    #3B82F6 0deg,
+    #00BFFF 90deg,
+    #34D399 180deg,
+    #F59E0B 270deg,
+    #F472B6 360deg
+  );
+  border-radius: 10px;
+  border: 2px solid rgba(15, 23, 42, 0.5);
+  box-shadow: 
+    0 0 20px rgba(244, 114, 182, 0.7),
+    inset 0 0 20px rgba(252, 211, 77, 0.4),
+    0 0 0 2px rgba(255, 255, 255, 0.1);
+  animation: rotateCurve 8s linear infinite;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: conic-gradient(
+    from 180deg at 50% 50%,
+    #F472B6 0deg,
+    #F59E0B 90deg,
+    #34D399 180deg,
+    #00BFFF 270deg,
+    #3B82F6 360deg
+  );
+  box-shadow: 
+    0 0 30px rgba(244, 114, 182, 0.9),
+    inset 0 0 25px rgba(252, 211, 77, 0.6),
+    0 0 0 3px rgba(255, 255, 255, 0.2);
+  animation: rotateCurve 4s linear infinite;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: conic-gradient(
+    from 90deg at 50% 50%,
+    #1E3A8A 0deg,
+    #831843 90deg,
+    #064E3B 180deg,
+    #7C2D12 270deg,
+    #4C1D95 360deg
+  );
+  box-shadow: 
+    0 0 15px rgba(109, 40, 217, 0.6),
+    inset 0 0 15px rgba(252, 211, 77, 0.3);
+}
+
+::-webkit-scrollbar-corner {
+  background: radial-gradient(circle at bottom right, rgba(15, 23, 42, 0.8), rgba(109, 40, 217, 0.6));
+  border-radius: 0 0 10px 0;
+}
+
+/* Для Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #F472B6 rgba(15, 23, 42, 0.6);
+}
+
+/* Плавна прокрутка для всього документа */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Стиль для скроллбара при фокусі */
+:focus {
+  scrollbar-color: #FCD34D rgba(15, 23, 42, 0.8);
+}
+
+/* Додаткові ефекти для кривих другого порядку */
+.card:hover ~ ::-webkit-scrollbar-thumb,
+.card:focus ~ ::-webkit-scrollbar-thumb {
+  animation: pulseCurve 1s ease-in-out infinite;
+}
+
+/* Адаптивність для маленьких екранів */
+@media (max-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(244, 114, 182, 0.15);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    border: 1px solid rgba(15, 23, 42, 0.4);
+    box-shadow: 
+      0 0 15px rgba(244, 114, 182, 0.6),
+      inset 0 0 12px rgba(252, 211, 77, 0.3);
+  }
+  
+  /* Спрощений градієнт для мобільних */
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, 
+      #3B82F6, 
+      #00BFFF, 
+      #34D399,
+      #F59E0B,
+      #F472B6
+    );
+    animation: none;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(45deg, 
+      #F472B6, 
+      #F59E0B, 
+      #34D399,
+      #00BFFF,
+      #3B82F6
+    );
+  }
+  
+  /* Плавна прокрутка на мобільних */
+  body {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #F472B6 rgba(15, 23, 42, 0.5);
+  }
+}
+
+@media (max-width: 480px) {
+  /* На дуже маленьких екранах робимо скроллбар тоншим */
+  ::-webkit-scrollbar {
+    width: 7px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.5);
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, #F472B6, #FCD34D);
+    border: none;
+    border-radius: 4px;
+    box-shadow: 
+      0 0 12px rgba(244, 114, 182, 0.5),
+      inset 0 0 8px rgba(252, 211, 77, 0.2);
+    animation: none;
+  }
+  
+  /* Для екранів менше 400px - оптимізація */
+  @media (max-width: 400px) {
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.4);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: #FCD34D;
+      box-shadow: 0 0 10px rgba(244, 114, 182, 0.4);
+    }
+    
+    /* Мінімалістичний варіант для дуже маленьких екранів */
+    /*
+    ::-webkit-scrollbar {
+      display: none;
+    }
+    
+    * {
+      scrollbar-width: none;
+    }
+    */
+  }
+}
+
+/* Стиль для контейнера з кривими */
+.container {
+  /* Якщо потрібна окрема прокрутка:
+  max-height: 75vh;
+  overflow-y: auto; */
+}
+
+/* Спеціальні стилі для скроллбара контейнера */
+.container::-webkit-scrollbar {
+  width: 9px;
+}
+
+.container::-webkit-scrollbar-track {
+  background: rgba(76, 29, 149, 0.2);
+  border-radius: 8px;
+}
+
+.container::-webkit-scrollbar-thumb {
+  background: conic-gradient(
+    #3B82F6,
+    #F472B6,
+    #FCD34D,
+    #34D399,
+    #3B82F6
+  );
+  border-radius: 8px;
+  border: 1px solid rgba(76, 29, 149, 0.3);
+  box-shadow: 0 0 15px rgba(244, 114, 182, 0.5);
+  animation: rotateCurve 6s linear infinite;
+}
+
+/* Стилі для карток з різними кривими */
+.card-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.card-content::-webkit-scrollbar-track {
+  background: rgba(244, 114, 182, 0.05);
+  border-radius: 2px;
+}
+
+.card-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #F472B6, #FCD34D);
+  border-radius: 2px;
+}
+
+/* Анімації для кривих другого порядку */
+@keyframes rotateCurve {
+  0% {
+    transform: rotate(0deg);
+    background-position: 0% 50%;
+  }
+  100% {
+    transform: rotate(360deg);
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes pulseCurve {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 
+      0 0 20px rgba(244, 114, 182, 0.7),
+      inset 0 0 20px rgba(252, 211, 77, 0.4);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 
+      0 0 30px rgba(244, 114, 182, 0.9),
+      inset 0 0 25px rgba(252, 211, 77, 0.6);
+  }
+}
+
+@keyframes ellipseOrbit {
+  0% {
+    background-position: 0% 0%;
+    transform: scale(1);
+  }
+  25% {
+    background-position: 100% 0%;
+    transform: scale(1.05);
+  }
+  50% {
+    background-position: 100% 100%;
+    transform: scale(1);
+  }
+  75% {
+    background-position: 0% 100%;
+    transform: scale(0.95);
+  }
+  100% {
+    background-position: 0% 0%;
+    transform: scale(1);
+  }
+}
+
+/* Додаткові ефекти при прокрутці */
+body.scrolling::-webkit-scrollbar-thumb {
+  animation: 
+    rotateCurve 3s linear infinite,
+    pulseCurve 1.5s ease-in-out infinite;
+}
+
+/* Ефект при наведенні на навігаційні кнопки */
+.nav-button:hover + body::-webkit-scrollbar-thumb,
+.nav-button:focus + body::-webkit-scrollbar-thumb {
+  animation: 
+    rotateCurve 2s linear infinite,
+    pulseCurve 0.8s ease-in-out infinite;
+}
+
+/* Оптимізація для iOS Safari */
+@supports (-webkit-touch-callout: none) {
+  body {
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Безпечні відступи для iOS */
+  .container {
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .navigation-buttons {
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+  }
+  
+  /* Геометричний feedback для iOS */
+  ::-webkit-scrollbar-thumb:active {
+    animation: 
+      rotateCurve 1s linear infinite,
+      pulseCurve 0.3s ease-in-out infinite;
+    transform: scale(1.05);
+  }
+}
+
+/* Ефект для header при прокрутці */
+.scrolled .header-box {
+  box-shadow: 
+    0 4px 30px rgba(244, 114, 182, 0.6),
+    0 2px 20px rgba(109, 40, 217, 0.4);
+}
+
+.scrolled .header-box::after {
+  background: conic-gradient(#F472B6, #FCD34D, #3B82F6, #34D399, #F472B6);
+  box-shadow: 0 0 20px rgba(244, 114, 182, 0.5);
+  width: 80px;
+  height: 6px;
+  animation: rotateCurve 4s linear infinite;
+}
+
+/* Спеціальні стилі для різних кривих */
+.circle-curve ::-webkit-scrollbar-thumb {
+  border-radius: 50%;
+  background: radial-gradient(circle at center, #3B82F6, #00BFFF, #3B82F6);
+  animation: rotateCurve 10s linear infinite;
+}
+
+.ellipse-curve ::-webkit-scrollbar-thumb {
+  border-radius: 50% / 30%;
+  background: radial-gradient(ellipse at center, #F472B6, #F08080, #F472B6);
+  animation: ellipseOrbit 6s ease-in-out infinite;
+}
+
+.hyperbola-curve ::-webkit-scrollbar-thumb {
+  border-radius: 40% 40% 0 0;
+  background: linear-gradient(45deg, #34D399, #3CB371, #34D399);
+}
+
+.parabola-curve ::-webkit-scrollbar-thumb {
+  border-radius: 50% 50% 0 0;
+  background: linear-gradient(to bottom, #F59E0B, #FF8C00, #F59E0B);
+}
+
+/* Додаткові CSS змінні для кривих */
+:root {
+  --scrollbar-circle: #3B82F6;
+  --scrollbar-ellipse: #F472B6;
+  --scrollbar-hyperbola: #34D399;
+  --scrollbar-parabola: #F59E0B;
+  --scrollbar-accent: #FCD34D;
+  --scrollbar-bg: rgba(15, 23, 42, 0.7);
+  --scrollbar-glow-pink: rgba(244, 114, 182, 0.7);
+  --scrollbar-glow-gold: rgba(252, 211, 77, 0.4);
+}
+
+/* Використання змінних */
+::-webkit-scrollbar-thumb {
+  background: conic-gradient(
+    from 0deg at 50% 50%,
+    var(--scrollbar-circle) 0deg,
+    var(--scrollbar-circle) 90deg,
+    var(--scrollbar-hyperbola) 180deg,
+    var(--scrollbar-parabola) 270deg,
+    var(--scrollbar-ellipse) 360deg
+  );
+  box-shadow: 
+    0 0 20px var(--scrollbar-glow-pink),
+    inset 0 0 20px var(--scrollbar-glow-gold);
+}
   </style>
 </head>
 <body>
@@ -410,16 +803,17 @@
       </svg>
       До змістового модуля 4
     </a>
+<a class="nav-button" href='zmist.html'>
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+  <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+</svg>
+До структури курсу
+        </a>
 
-    <a class="nav-button" href='zmist.html'>
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-      </svg>
-      До структури курсу
-    </a>
   </div>
 </body>
 </html>
+
 
 
 
