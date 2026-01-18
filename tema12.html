@@ -351,6 +351,580 @@
         gap: 10px;
       }
     }
+
+  /* Стилі для сучасної смужки прокрутки - математична тема границі */
+::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+
+::-webkit-scrollbar-track {
+  background: linear-gradient(
+    to right,
+    rgba(15, 23, 42, 0.9) 0%,
+    rgba(30, 58, 138, 0.8) 50%,
+    rgba(15, 23, 42, 0.9) 100%
+  );
+  backdrop-filter: blur(15px);
+  border-radius: 10px;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  box-shadow: 
+    inset 0 0 30px rgba(0, 0, 0, 0.5),
+    0 0 25px rgba(219, 39, 119, 0.1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Математична сітка на фоні */
+::-webkit-scrollbar-track::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    linear-gradient(90deg, 
+      transparent calc(50% - 0.5px), 
+      rgba(59, 130, 246, 0.2) calc(50% - 0.5px), 
+      rgba(59, 130, 246, 0.2) calc(50% + 0.5px), 
+      transparent calc(50% + 0.5px)
+    ),
+    linear-gradient(0deg, 
+      transparent calc(50% - 0.5px), 
+      rgba(252, 211, 77, 0.2) calc(50% - 0.5px), 
+      rgba(252, 211, 77, 0.2) calc(50% + 0.5px), 
+      transparent calc(50% + 0.5px)
+    );
+  background-size: 20px 20px, 20px 20px;
+  background-position: center;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+::-webkit-scrollbar-thumb {
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 5px,
+    rgba(59, 130, 246, 0.3) 5px,
+    rgba(59, 130, 246, 0.3) 10px
+  ), linear-gradient(
+    135deg,
+    #1E3A8A 0%,
+    #3B82F6 25%,
+    #60A5FA 50%,
+    #3B82F6 75%,
+    #1E3A8A 100%
+  );
+  border-radius: 10px;
+  border: 2px solid rgba(15, 23, 42, 0.6);
+  box-shadow: 
+    0 0 30px rgba(59, 130, 246, 0.9),
+    inset 0 0 25px rgba(252, 211, 77, 0.6),
+    0 0 0 2px rgba(255, 255, 255, 0.1),
+    0 4px 12px rgba(0, 0, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+  animation: limitApproach 8s ease-in-out infinite;
+}
+
+/* Ефект наближення до границі */
+::-webkit-scrollbar-thumb::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(252, 211, 77, 0.4) 0%,
+    transparent 70%
+  );
+  animation: limitPulse 4s ease-in-out infinite;
+  border-radius: inherit;
+}
+
+::-webkit-scrollbar-thumb::after {
+  content: 'lim →';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: rgba(252, 211, 77, 0.9);
+  font-size: 10px;
+  font-weight: bold;
+  font-family: 'Inter', monospace;
+  text-shadow: 0 0 8px rgba(59, 130, 246, 0.8);
+  opacity: 0.7;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 5px,
+    rgba(219, 39, 119, 0.3) 5px,
+    rgba(219, 39, 119, 0.3) 10px
+  ), linear-gradient(
+    135deg,
+    #831843 0%,
+    #DB2777 25%,
+    #EC4899 50%,
+    #DB2777 75%,
+    #831843 100%
+  );
+  box-shadow: 
+    0 0 40px rgba(219, 39, 119, 0.9),
+    inset 0 0 30px rgba(252, 211, 77, 0.8),
+    0 0 0 3px rgba(255, 255, 255, 0.15),
+    0 6px 16px rgba(0, 0, 0, 0.5);
+  transform: scale(1.02);
+}
+
+::-webkit-scrollbar-thumb:hover::after {
+  content: 'lim x→∞';
+  color: rgba(252, 211, 77, 1);
+  opacity: 1;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 5px,
+    rgba(16, 185, 129, 0.3) 5px,
+    rgba(16, 185, 129, 0.3) 10px
+  ), linear-gradient(
+    135deg,
+    #064E3B 0%,
+    #10B981 25%,
+    #34D399 50%,
+    #10B981 75%,
+    #064E3B 100%
+  );
+  box-shadow: 
+    0 0 20px rgba(16, 185, 129, 0.7),
+    inset 0 0 20px rgba(252, 211, 77, 0.5),
+    0 0 0 2px rgba(255, 255, 255, 0.1);
+  transform: scale(0.98);
+}
+
+::-webkit-scrollbar-corner {
+  background: linear-gradient(135deg, 
+    rgba(15, 23, 42, 0.95),
+    rgba(30, 58, 138, 0.8),
+    rgba(15, 23, 42, 0.95)
+  );
+  border-radius: 0 0 10px 0;
+  box-shadow: 
+    inset 0 0 15px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(219, 39, 119, 0.1);
+}
+
+/* Для Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #3B82F6 rgba(15, 23, 42, 0.8);
+}
+
+/* Плавна прокрутка для всього документа */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Стиль для скроллбара при фокусі */
+:focus {
+  scrollbar-color: #FCD34D rgba(15, 23, 42, 0.9);
+}
+
+/* Додаткові ефекти для математичної теми */
+.card:hover ~ ::-webkit-scrollbar-thumb,
+.card:focus ~ ::-webkit-scrollbar-thumb {
+  animation: 
+    limitApproach 4s ease-in-out infinite,
+    limitConvergence 2s linear infinite;
+}
+
+/* Адаптивність для маленьких екранів */
+@media (max-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(59, 130, 246, 0.25);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    border: 1px solid rgba(15, 23, 42, 0.5);
+    box-shadow: 
+      0 0 25px rgba(59, 130, 246, 0.8),
+      inset 0 0 20px rgba(252, 211, 77, 0.5);
+  }
+  
+  ::-webkit-scrollbar-thumb::after {
+    font-size: 8px;
+  }
+  
+  /* Спрощений градієнт для мобільних */
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, 
+      #1E3A8A, 
+      #3B82F6, 
+      #FCD34D,
+      #3B82F6,
+      #1E3A8A
+    );
+    animation: none;
+  }
+  
+  ::-webkit-scrollbar-thumb::before {
+    display: none;
+  }
+  
+  /* Плавна прокрутка на мобільних */
+  body {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #3B82F6 rgba(15, 23, 42, 0.7);
+  }
+}
+
+@media (max-width: 480px) {
+  /* На дуже маленьких екранах робимо скроллбар тоншим */
+  ::-webkit-scrollbar {
+    width: 7px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.7);
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #3B82F6, #FCD34D);
+    border: none;
+    border-radius: 4px;
+    box-shadow: 
+      0 0 20px rgba(59, 130, 246, 0.7),
+      inset 0 0 15px rgba(252, 211, 77, 0.4);
+  }
+  
+  ::-webkit-scrollbar-thumb::after {
+    display: none;
+  }
+  
+  /* Для екранів менше 400px - оптимізація */
+  @media (max-width: 400px) {
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: #FCD34D;
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.6);
+    }
+    
+    /* Мінімалістичний варіант для дуже маленьких екранів */
+    /*
+    ::-webkit-scrollbar {
+      display: none;
+    }
+    
+    * {
+      scrollbar-width: none;
+    }
+    */
+  }
+}
+
+/* Стиль для контейнера з математичними поняттями */
+.container {
+  /* Якщо потрібна окрема прокрутка:
+  max-height: 80vh;
+  overflow-y: auto; */
+}
+
+/* Спеціальні стилі для скроллбара контейнера */
+.container::-webkit-scrollbar {
+  width: 9px;
+}
+
+.container::-webkit-scrollbar-track {
+  background: rgba(30, 58, 138, 0.25);
+  border-radius: 8px;
+}
+
+.container::-webkit-scrollbar-thumb {
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 5px,
+    rgba(252, 211, 77, 0.2) 5px,
+    rgba(252, 211, 77, 0.2) 10px
+  ), linear-gradient(135deg, 
+    #1E3A8A,
+    #3B82F6,
+    #FCD34D
+  );
+  border-radius: 8px;
+  border: 1px solid rgba(30, 58, 138, 0.4);
+  box-shadow: 0 0 25px rgba(59, 130, 246, 0.7);
+}
+
+/* Стилі для карток з математичним контентом */
+.card-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.card-content::-webkit-scrollbar-track {
+  background: rgba(59, 130, 246, 0.1);
+  border-radius: 2px;
+}
+
+.card-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #3B82F6, #FCD34D);
+  border-radius: 2px;
+}
+
+/* Анімації для теми границі */
+@keyframes limitApproach {
+  0%, 100% {
+    background-position: 0% 0%;
+    box-shadow: 
+      0 0 30px rgba(59, 130, 246, 0.9),
+      inset 0 0 25px rgba(252, 211, 77, 0.6);
+  }
+  25% {
+    background-position: 100% 0%;
+    box-shadow: 
+      0 0 35px rgba(59, 130, 246, 1),
+      inset 0 0 30px rgba(252, 211, 77, 0.8);
+  }
+  50% {
+    background-position: 100% 100%;
+    box-shadow: 
+      0 0 30px rgba(219, 39, 119, 0.9),
+      inset 0 0 25px rgba(252, 211, 77, 0.6);
+  }
+  75% {
+    background-position: 0% 100%;
+    box-shadow: 
+      0 0 35px rgba(219, 39, 119, 1),
+      inset 0 0 30px rgba(252, 211, 77, 0.8);
+  }
+}
+
+@keyframes limitPulse {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes limitConvergence {
+  0% {
+    transform: translateX(0) translateY(0);
+  }
+  25% {
+    transform: translateX(2px) translateY(-2px);
+  }
+  50% {
+    transform: translateX(0) translateY(0);
+  }
+  75% {
+    transform: translateX(-2px) translateY(2px);
+  }
+  100% {
+    transform: translateX(0) translateY(0);
+  }
+}
+
+@keyframes epsilonDelta {
+  0% {
+    background-position: 0% 50%;
+    opacity: 0.3;
+  }
+  50% {
+    background-position: 100% 50%;
+    opacity: 0.7;
+  }
+  100% {
+    background-position: 0% 50%;
+    opacity: 0.3;
+  }
+}
+
+/* Додаткові ефекти при прокрутці */
+body.scrolling::-webkit-scrollbar-thumb {
+  animation: 
+    limitApproach 3s ease-in-out infinite,
+    limitConvergence 1.5s linear infinite;
+}
+
+/* Ефект при наведенні на навігаційні кнопки */
+.nav-button:hover + body::-webkit-scrollbar-thumb,
+.nav-button:focus + body::-webkit-scrollbar-thumb {
+  animation: 
+    limitApproach 2s ease-in-out infinite,
+    limitConvergence 1s linear infinite;
+}
+
+/* Оптимізація для iOS Safari */
+@supports (-webkit-touch-callout: none) {
+  body {
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Безпечні відступи для iOS */
+  .container {
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .navigation-buttons {
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+  }
+  
+  /* Математичний feedback для iOS */
+  ::-webkit-scrollbar-thumb:active {
+    animation: 
+      limitApproach 0.5s ease-in-out infinite,
+      limitConvergence 0.3s linear infinite;
+    transform: scale(1.05);
+  }
+}
+
+/* Ефект для header при прокрутці */
+.scrolled .header-box {
+  box-shadow: 
+    0 4px 40px rgba(59, 130, 246, 0.8),
+    0 2px 30px rgba(219, 39, 119, 0.3);
+  transform: perspective(1000px) rotateX(1deg);
+}
+
+.scrolled .header-box::after {
+  background: linear-gradient(90deg, 
+    #3B82F6, 
+    #FCD34D, 
+    #DB2777,
+    #3B82F6
+  );
+  box-shadow: 0 0 30px rgba(59, 130, 246, 0.7);
+  width: 80px;
+  height: 6px;
+  animation: limitApproach 3s ease-in-out infinite;
+}
+
+/* Спеціальні стилі для різних типів границь */
+.limit-infinite ::-webkit-scrollbar-thumb {
+  border-radius: 5px 5px 0 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 5px,
+    rgba(219, 39, 119, 0.3) 5px,
+    rgba(219, 39, 119, 0.3) 10px
+  );
+}
+
+.limit-continuous ::-webkit-scrollbar-thumb {
+  border-radius: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 5px,
+    rgba(16, 185, 129, 0.3) 5px,
+    rgba(16, 185, 129, 0.3) 10px
+  );
+}
+
+.limit-break ::-webkit-scrollbar-thumb {
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 5px,
+    rgba(249, 168, 212, 0.3) 5px,
+    rgba(249, 168, 212, 0.3) 10px
+  );
+}
+
+/* Додаткові CSS змінні для математичної теми */
+:root {
+  --limit-blue-dark: #1E3A8A;
+  --limit-blue: #3B82F6;
+  --limit-pink: #DB2777;
+  --limit-green: #10B981;
+  --limit-yellow: #FCD34D;
+  --limit-bg: rgba(15, 23, 42, 0.85);
+  --limit-glow-blue: rgba(59, 130, 246, 0.9);
+  --limit-glow-yellow: rgba(252, 211, 77, 0.6);
+  --limit-grid-color: rgba(59, 130, 246, 0.2);
+}
+
+/* Використання змінних */
+::-webkit-scrollbar-track {
+  background: linear-gradient(
+    to right,
+    var(--limit-bg) 0%,
+    color-mix(in srgb, var(--limit-bg) 70%, var(--limit-blue) 30%) 100%
+  );
+  border: 1px solid color-mix(in srgb, var(--limit-blue), transparent 70%);
+}
+
+::-webkit-scrollbar-track::before {
+  background-image: 
+    linear-gradient(90deg, 
+      transparent calc(50% - 0.5px), 
+      var(--limit-grid-color) calc(50% - 0.5px), 
+      var(--limit-grid-color) calc(50% + 0.5px), 
+      transparent calc(50% + 0.5px)
+    ),
+    linear-gradient(0deg, 
+      transparent calc(50% - 0.5px), 
+      color-mix(in srgb, var(--limit-yellow), transparent 80%) calc(50% - 0.5px), 
+      color-mix(in srgb, var(--limit-yellow), transparent 80%) calc(50% + 0.5px), 
+      transparent calc(50% + 0.5px)
+    );
+}
+
+::-webkit-scrollbar-thumb {
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 5px,
+    color-mix(in srgb, var(--limit-blue), transparent 70%) 5px,
+    color-mix(in srgb, var(--limit-blue), transparent 70%) 10px
+  ), linear-gradient(
+    135deg,
+    var(--limit-blue-dark),
+    var(--limit-blue),
+    var(--limit-yellow),
+    var(--limit-blue),
+    var(--limit-blue-dark)
+  );
+  box-shadow: 
+    0 0 30px var(--limit-glow-blue),
+    inset 0 0 25px var(--limit-glow-yellow);
+}
   </style>
 </head>
 <body>
@@ -478,14 +1052,16 @@
       До змістового модуля 5
     </a>
 
-   <a class="nav-button" href='zmist.html'>
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-      </svg>
-     До структури курсу
-    </a>
+ <a class="nav-button" href='zmist.html'>
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+  <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+</svg>
+До структури курсу
+        </a>
+
   </div>
 </body>
 </html>
+
 
 
