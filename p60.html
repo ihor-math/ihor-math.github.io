@@ -1580,11 +1580,11 @@ mjx-container[jax="CHTML"][display="true"] {
     </div>
 
     <div class="navigation-buttons">
-       <a class="nav-button prev" href="{{ url_for('tema11') }}">
+       <a class="nav-button" href='tema11.html'>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
             До теми 11
         </a>
-        <a class="nav-button home" href="{{ url_for('zmist') }}">
+       <a class="nav-button" href='zmist.html'>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                 <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
@@ -1607,10 +1607,8 @@ mjx-container[jax="CHTML"][display="true"] {
                 <div class="details-content">
                     <p>Нехай пряма \(l\) проходить через дві точки: \(M_1 (x_1;y_1;z_1)\) та \(M_2 (x_2;y_2;z_2)\) (рис. 11.12).</p>
                     
-                    <div style="text-align: center; margin: 20px 0;">
-                        <img src="/static/рис.11.12.png" alt="Пряма через дві точки" style="max-width: 400px; width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
-                        <p style="font-style: italic; color: #99ddff; margin-top: 10px;">Рис. 11.12. Пряма через дві точки</p>
-                    </div>
+                     <img src="/static/figure11.12.jpg" alt="пряма через дві точки" style="max-width: 100%; display: block; margin: 20px auto;" loading="lazy">
+     
                     
                     <p>Візьмемо довільну точку \(M(x;y;z)\), яка належить цій прямій. Для знаходження рівняння прямої складемо два вектори:</p>
                     
@@ -2455,3 +2453,4 @@ document.getElementById('resetTrainerBtn').onclick = () => {
     </script>
 </body>
 </html>
+
