@@ -1631,18 +1631,12 @@ mjx-msub {
         } else if (currentQuestionNumber === 6) {
             currentQuestions = questionSet6;
        } else {
-    questionText.innerHTML = '<div class="completion-message">
-        <div class="completion-emoji"></div>
-       <h2>МІСІЯ ВИКОНАНА!</h2>
-     <p>Солдате, ти — гордість України!</p>
-    <p><strong>СЛАВА УКРАЇНІ!</strong></p>
-        <button class="reset-button" id="resetTrainerBtn">Повернутися на полігон!</button></div>';
+     questionText.innerHTML = '<div class="completion-message"><div class="completion-emoji"></div><h2>МІСІЯ ВИКОНАНА!</h2><p>Солдате, ти — гордість України!</p>    <p><strong>СЛАВА УКРАЇНІ!</strong></p><button class="reset-button" id="resetTrainerBtn">Повернутися на полігон!</button></div>';
     answerOptions.innerHTML = '';
     submitAnswerBtn.style.display = 'none';
     resultMessage.className = 'result-message';
     resultMessage.textContent = '';
     document.querySelector('.question-circle').style.display = 'none'; // Ховаємо кружечок
-    
     document.getElementById('resetTrainerBtn').addEventListener('click', () => {
         currentQuestionNumber = 1;
         shuffledQuestions = [];
@@ -1737,6 +1731,7 @@ mjx-msub {
 </script>
 </body>
 </html>
+
 
 
 
