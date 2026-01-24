@@ -2472,11 +2472,12 @@ buttons.submitAnswer.addEventListener('click', () => {
                 const heading = completionScreen.querySelector('.completion-message h2');
                 const paragraph = completionScreen.querySelector('.completion-message p');
                 if (emoji && heading && paragraph) {
-                    heading.textContent = 'Місія завершена!';
-                    paragraph.textContent = 'Молодець!';
-                    console.log('Completion screen updated', {
-                        heading: heading.textContent,
-                        paragraph: paragraph.textContent
+    heading.textContent = 'МІСІЯ ВИКОНАНА!';
+    paragraph.innerHTML = 'Солдате, точність — твоя зброя! Дії над матрицями засвоєно!';
+
+    console.log('Completion screen updated', {
+        heading: heading.textContent,
+        paragraph: paragraph.innerHTML
                     });
                 } else {
                     console.error('Completion screen elements missing', { emoji, heading, paragraph });
@@ -2620,6 +2621,7 @@ document.addEventListener('keydown', e => {
 </script>
 </body>
 </html>
+
 
 
 
