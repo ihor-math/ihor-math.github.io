@@ -529,8 +529,13 @@
         }
         /* === СТИЛІ ДЛЯ МЕДАЛІ З ТРИЗУБОМ === */
 .completion-emoji {
+      position: relative;
+    display: block; /* Змініть з inline-block на block */
+    width: clamp(56px, 12vw, 96px);
+    height: clamp(56px, 12vw, 96px);
+   
     position: relative;
-    display: inline-block;
+   
     width: clamp(56px, 12vw, 96px);
     height: clamp(56px, 12vw, 96px);
     vertical-align: middle;
@@ -604,8 +609,43 @@
         transform: translateY(0) rotate(0) scale(1);
     }
 }
+      @media (max-width: 768px) {
+    .completion-message h2 {
+        font-size: 1.5rem !important; /* Зменшено з 1.75rem */
+    }
+    
+    .completion-message p {
+        font-size: 1.25rem !important; /* Зменшено з 1.5rem */
+    }
+    
+    .completion-emoji {
+        width: clamp(48px, 10vw, 80px);
+        height: clamp(48px, 10vw, 80px);
+        margin-bottom: 20px; /* Фіксований відступ замість 3vw */
+    }
+}
 
-        }
+@media (max-width: 480px) {
+    .completion-message h2 {
+        font-size: 1.25rem !important;
+    }
+    
+    .completion-message p {
+        font-size: 1.1rem !important;
+    }
+    
+    .completion-emoji {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 15px;
+    }
+    
+    #resetTrainerBtn {
+        font-size: 16px;
+        padding: 10px 20px;
+    }
+}
+
         .completion-message {
             display: none;
             text-align: center;
@@ -1845,5 +1885,6 @@ document.addEventListener('DOMContentLoaded', function () {
     </script>
 </body>
 </html>
+
 
 
