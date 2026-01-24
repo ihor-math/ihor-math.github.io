@@ -307,26 +307,84 @@
             margin: 0;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
         }
-        .completion-emoji {
-            width: clamp(80px, 15vw, 120px);
-            height: clamp(80px, 15vw, 120px);
-            margin: 0 auto 3vw;
-            border-radius: 50%;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-            border: 2px dashed #ffff00;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .completion-emoji::after {
-            content: '🎉';
-            font-size: clamp(40px, 8vw, 60px);
-            color: #ffd700;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-        }
+        /* === СТИЛІ ДЛЯ МЕДАЛІ З ТРИЗУБОМ === */
+.completion-emoji {
+    position: relative;
+    display: inline-block;
+    width: clamp(56px, 12vw, 96px);
+    height: clamp(56px, 12vw, 96px);
+    vertical-align: middle;
+    margin: 0 auto 3vw;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1c2526, #2e3a3b);
+    border: 3px dashed #ffd700;
+    box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+    overflow: hidden;
+    animation: medalAppear 0.8s ease-out;
+}
+
+.completion-emoji::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'>\
+<defs>\
+<radialGradient id='goldShine' cx='40%' cy='35%' r='70%'>\
+<stop offset='0%' stop-color='%23fff59d'/>\
+<stop offset='40%' stop-color='%23ffeb3b'/>\
+<stop offset='100%' stop-color='%23f9a825'/>\
+</radialGradient>\
+<filter id='s' x='-50%' y='-50%' width='200%' height='200%'>\
+<feDropShadow dx='0' dy='2' stdDeviation='3' flood-color='%23000000' flood-opacity='0.4'/>\
+</filter>\
+</defs>\
+<rect x='30' y='0' width='60' height='40' rx='4' fill='%23007ACC'/>\
+<rect x='30' y='20' width='60' height='20' rx='4' fill='%23FFD700'/>\
+<g transform='translate(60,70)'>\
+<polygon points='0,-26 6,-6 26,-6 9,6 15,26 0,14 -15,26 -9,6 -26,-6 -6,-6' fill='url(%23goldShine)' filter='url(%23s)'/>\
+</g>\
+</svg>");
+    background-size: 75%;
+    background-repeat: no-repeat;
+    background-position: center 60%;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+    animation: medalBounce 1.2s ease-out 0.3s both;
+}
+
+/* Анімація появи кола */
+@keyframes medalAppear {
+    0% {
+        transform: scale(0.3) rotate(-180deg);
+        opacity: 0;
+    }
+    60% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Анімація медалі — падає і блимає */
+@keyframes medalBounce {
+    0% {
+        transform: translateY(-120px) rotate(-30deg) scale(0.4);
+        opacity: 0;
+    }
+    60% {
+        transform: translateY(15px) rotate(10deg) scale(1.15);
+        opacity: 1;
+    }
+    80% {
+        transform: translateY(-8px) rotate(-5deg) scale(1.05);
+    }
+    100% {
+        transform: translateY(0) rotate(0) scale(1);
+    }
+}
+
         .options-container {
             display: flex;
             flex-wrap: wrap;
@@ -1516,9 +1574,10 @@
             <div id="feedback" class="feedback"></div>
             <div id="completionBlock" class="completion-message hidden">
                 <div class="completion-emoji"></div>
-                <h2>Тренування завершено!</h2>
-                <p>Молодець!</p>
-                <button id="resetTrainerBtn">Спробувати ще раз</button>
+                <h2>МІСІЯ ВИКОНАНА!</h2>
+     <p>Солдате, фундамент закладено! Матриці та їх різновиди під контролем!</p>
+    <p><strong>СЛАВА УКРАЇНІ!</strong></p>
+    <button id="resetTrainerBtn">Повернутися на полігон!</button>
             </div>
         </div>
     </div>
@@ -2136,7 +2195,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         if (selectedOption === correctAnswer) {
-            showFeedback('✓ Правильно! Молодець!', true);
+            showFeedback('✅ ВІРНО! Ціль уражена!', true);
             setTimeout(() => {
                 currentQuestionIndex++;
                 if (currentQuestionIndex < questions.length) {
@@ -2156,7 +2215,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }, 2000);
         } else {
-            showFeedback('✗ Неправильно, спробуй ще раз!', false);
+            showFeedback('❌ Промах! Спробуй ще!', false);
             setTimeout(() => {
                 questions[currentQuestionIndex] = questionPool[currentQuestionIndex].generate();
                 displayQuestion();
@@ -2354,6 +2413,7 @@ document.addEventListener('DOMContentLoaded', function () {
     </script>
 </body>
 </html>
+
 
 
 
