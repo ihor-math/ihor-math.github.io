@@ -795,35 +795,65 @@ window.MathJax = {
             display: flex;
         }
         .completion-message h2 {
-            margin: 0;
-            font-size: 1.5rem;
-            color: #333;
-        }
-        .completion-message p {
-            margin: 10px 0;
-            font-size: 1rem;
-            color: #333;
-        }
-        .completion-message .completion-emoji {
-            width: clamp(100px, 18vw, 140px);
-            height: clamp(100px, 18vw, 140px);
-            margin: 0 auto 20px;
-            border-radius: 50%;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-            border: 3px dashed #b3372c;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .completion-message .completion-emoji::after {
-            content: '🎉';
-            font-size: clamp(50px, 10vw, 70px);
-            color: #c41e3a;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-        }
+    margin: 0;
+    font-size: 1.5rem;
+    color: #FFD700;
+}
+
+.completion-message p {
+    margin: 10px 0;
+    font-size: 1rem;
+    color: #FFD700;
+}
+
+/* === МЕДАЛЬ З ТРИЗУБОМ === */
+    .completion-emoji {
+        position: relative;
+        display: inline-block;
+        width: clamp(56px, 12vw, 96px);
+        height: clamp(56px, 12vw, 96px);
+        vertical-align: middle;
+        margin: 0 auto 3vw;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #2a2a2a, #3a454a);
+        border: 3px dashed #ffd700;
+        box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+        overflow: hidden;
+        animation: medalAppear 0.8s ease-out;
+    }
+    .completion-emoji::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><filter id='s' x='-50%' y='-50%' width='200%' height='200%'><feDropShadow dx='0' dy='2' stdDeviation='2' flood-color='%23000000' flood-opacity='0.25'/></filter></defs><rect x='30' y='0' width='60' height='40' rx='4' fill='%23007ACC'/><rect x='30' y='20' width='60' height='20' rx='4' fill='%23FFD700'/><g transform='translate(60,70)'><polygon points='0,-26 6,-6 26,-6 9,6 15,26 0,14 -15,26 -9,6 -26,-6 -6,-6' fill='%23FFD700' filter='url(%23s)'/></g></svg>");
+       background-size: 75%;
+        background-repeat: no-repeat;
+        background-position: center 60%;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+        animation: medalBounce 1.2s ease-out 0.3s both;
+    }
+    @keyframes medalAppear {
+        0% { transform: scale(0.3) rotate(-180deg); opacity: 0; }
+        60% { transform: scale(1.1); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes medalBounce {
+        0% { transform: translateY(-120px) rotate(-30deg) scale(0.4); opacity: 0; }
+        60% { transform: translateY(15px) rotate(10deg) scale(1.15); opacity: 1; }
+        80% { transform: translateY(-8px) rotate(-5deg) scale(1.05); }
+        100% { transform: translateY(0) rotate(0) scale(1); }
+    }
+
+    .completion-message {
+        background: linear-gradient(145deg, #2a2a2a, #3a454a);
+        border: 2.5px solid #ffffff;
+        border-radius: 15px;
+        padding: clamp(12px, 3vw, 18px);
+        box-shadow: 0 6px 12px rgba(92,184,240,0.4);
+        margin: 2vw auto;
+        max-width: 90%;
+        text-align: center;
+    }
         .completion-message button {
             padding: 10px 20px;
             background: #6b8e23;
@@ -2142,14 +2172,14 @@ x_1 + \frac{2 \cdot (5 - 13x_3 + 6x_4)}{9} = 5 - 3x_3 + x_4
                 <div class="trainer-feedback result-message" id="feedback"></div>
                 <div class="completion-message" id="completionMessage" style="display: none;">
                     <div class="completion-emoji"></div>
-<h2>Тренування завершено!</h2>
-<p style="font-weight:bold; color:#b7410e;">Молодець!</p>
-<button id="resetTrainerBtn" aria-label="Спробувати ще раз">Спробувати ще раз</button>
-
-                </div>
+<h2>МІСІЯ ВИКОНАНА!</h2>
+                <p>Метод Гауса — опановано. Лінійну алгебру взято під контроль!</p>
+                <p><strong>СЛАВА УКРАЇНІ!</strong></p>
+                 <button id="resetTrainerBtn" aria-label="Повернутися на полігон">Повернутися на полігон!</button>
             </div>
         </div>
     </div>
+</div>
 
   <script>
 
@@ -2651,10 +2681,10 @@ function matrixToLatex(matrix, isAugmented = false, constants = []) {
     const zeroConstantsMatrix = matrixToLatex([a1, a2, a3], true, [0, 0, 0]);
 
     const options = [
-        { text: correctMatrix.latex, plainText: correctMatrix.plainText, isCorrect: true, comment: '✓ Правильно! Молодець!' },
-        { text: mainMatrix.latex, plainText: mainMatrix.plainText, isCorrect: false, comment: '✗ Неправильно, спробуй ще раз!' },
-        { text: wrongSignMatrix.latex, plainText: wrongSignMatrix.plainText, isCorrect: false, comment: '✗ Неправильно, спробуй ще раз!' },
-        { text: zeroConstantsMatrix.latex, plainText: zeroConstantsMatrix.plainText, isCorrect: false, comment: '✗ Неправильно, спробуй ще раз!' }
+        { text: correctMatrix.latex, plainText: correctMatrix.plainText, isCorrect: true, comment: '✅ ВІРНО! Ціль уражена!' },
+        { text: mainMatrix.latex, plainText: mainMatrix.plainText, isCorrect: false, comment: '❌ Промах! Спробуй ще!' },
+        { text: wrongSignMatrix.latex, plainText: wrongSignMatrix.plainText, isCorrect: false, comment: '❌ Промах! Спробуй ще!' },
+        { text: zeroConstantsMatrix.latex, plainText: zeroConstantsMatrix.plainText, isCorrect: false, comment: '❌ Промах! Спробуй ще!' }
     ];
 
     return {
@@ -2854,10 +2884,10 @@ function gaussEliminationForQuestion3(system) {
         .join('\n');
 
     const options = [
-        { text: correctSystemLatex, plainText: correctSystemPlainText, isCorrect: true, comment: '✓ Правильно! Молодець!' },
-        { text: wrongSystem1Latex, plainText: wrongSystem1PlainText, isCorrect: false, comment: '✗ Неправильно, спробуй ще раз!' },
-        { text: wrongSystem2Latex, plainText: wrongSystem2PlainText, isCorrect: false, comment: '✗ Неправильно, спробуй ще раз!' },
-        { text: wrongSystem3Latex, plainText: wrongSystem3PlainText, isCorrect: false, comment: '✗ Неправильно, спробуй ще раз!' }
+        { text: correctSystemLatex, plainText: correctSystemPlainText, isCorrect: true, comment: '✅ ВІРНО! Ціль уражена!' },
+        { text: wrongSystem1Latex, plainText: wrongSystem1PlainText, isCorrect: false, comment: '❌ Промах! Спробуй ще!' },
+        { text: wrongSystem2Latex, plainText: wrongSystem2PlainText, isCorrect: false, comment: '❌ Промах! Спробуй ще!' },
+        { text: wrongSystem3Latex, plainText: wrongSystem3PlainText, isCorrect: false, comment: '❌ Промах! Спробуй ще!' }
     ];
 
     return {
@@ -2946,10 +2976,10 @@ function gaussEliminationForQuestion3(system) {
         .join('\n');
 
     const options = [
-        { text: correctSystemLatex, plainText: correctSystemPlainText, isCorrect: true, comment: '✓ Правильно! Молодець!' },
-        { text: wrongSystem1Latex, plainText: wrongSystem1PlainText, isCorrect: false, comment: '✗ Неправильно, спробуй ще раз!' },
-        { text: wrongSystem2Latex, plainText: wrongSystem2PlainText, isCorrect: false, comment: '✗ Неправильно, спробуй ще раз!' },
-        { text: wrongSystem3Latex, plainText: wrongSystem3PlainText, isCorrect: false, comment: '✗ Неправильно, спробуй ще раз!' }
+        { text: correctSystemLatex, plainText: correctSystemPlainText, isCorrect: true, comment: '✅ ВІРНО! Ціль уражена!' },
+        { text: wrongSystem1Latex, plainText: wrongSystem1PlainText, isCorrect: false, comment: '❌ Промах! Спробуй ще!' },
+        { text: wrongSystem2Latex, plainText: wrongSystem2PlainText, isCorrect: false, comment: '❌ Промах! Спробуй ще!' },
+        { text: wrongSystem3Latex, plainText: wrongSystem3PlainText, isCorrect: false, comment: '❌ Промах! Спробуй ще!' }
     ];
 
     return {
@@ -3009,10 +3039,10 @@ function gaussEliminationForQuestion3(system) {
     const wrongZ = formatSolution(x, y, -z);
 
     const options = [
-        { text: correctSol.latex, plainText: correctSol.plainText, isCorrect: true, comment: '✓ Правильно! Молодець!' },
-        { text: wrongY.latex, plainText: wrongY.plainText, isCorrect: false, comment: '✗ Неправильно, спробуй ще раз!' },
-        { text: wrongX.latex, plainText: wrongX.plainText, isCorrect: false, comment: '✗ Неправильно, спробуй ще раз!' },
-        { text: wrongZ.latex, plainText: wrongZ.plainText, isCorrect: false, comment: '✗ Неправильно, спробуй ще раз!' }
+        { text: correctSol.latex, plainText: correctSol.plainText, isCorrect: true, comment: '✅ ВІРНО! Ціль уражена!' },
+        { text: wrongY.latex, plainText: wrongY.plainText, isCorrect: false, comment: '❌ Промах! Спробуй ще!' },
+        { text: wrongX.latex, plainText: wrongX.plainText, isCorrect: false, comment: '❌ Промах! Спробуй ще!' },
+        { text: wrongZ.latex, plainText: wrongZ.plainText, isCorrect: false, comment: '❌ Промах! Спробуй ще!' }
     ];
 
     return {
@@ -3086,10 +3116,10 @@ function generateQuestion5() {
 
     // Варіанти відповідей
     const options = [
-        { text: correctMatrixLatex.latex, plainText: correctMatrixPlainText, isCorrect: true, comment: '✓ Правильно! Молодець!' },
-        { text: wrongMatrix1Latex.latex, plainText: wrongMatrix1Latex.plainText, isCorrect: false, comment: '✗ Неправильно, спробуй ще раз!' },
-        { text: wrongMatrix2Latex.latex, plainText: wrongMatrix2Latex.plainText, isCorrect: false, comment: '✗ Неправильно, спробуй ще раз!' },
-        { text: wrongMatrix3Latex.latex, plainText: wrongMatrix3Latex.plainText, isCorrect: false, comment: '✗ Неправильно, спробуй ще раз!' }
+        { text: correctMatrixLatex.latex, plainText: correctMatrixPlainText, isCorrect: true, comment: '✅ ВІРНО! Ціль уражена!' },
+        { text: wrongMatrix1Latex.latex, plainText: wrongMatrix1Latex.plainText, isCorrect: false, comment: '❌ Промах! Спробуй ще!' },
+        { text: wrongMatrix2Latex.latex, plainText: wrongMatrix2Latex.plainText, isCorrect: false, comment: '❌ Промах! Спробуй ще!' },
+        { text: wrongMatrix3Latex.latex, plainText: wrongMatrix3Latex.plainText, isCorrect: false, comment: '❌ Промах! Спробуй ще!' }
     ];
 
     // Формуємо LaTeX для розв’язку у питанні
@@ -3349,4 +3379,5 @@ if (elements.trainerModal) {
     </script>
 </body>
 </html>
+
 
