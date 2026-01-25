@@ -640,7 +640,7 @@
 }
 
 .trainer-feedback.wrong::before {
-    content: '✗ ';
+    content: '❌ ';
     font-size: 24px;
     vertical-align: middle;
 }
@@ -738,7 +738,7 @@
 }
 
 #successMessage::before {
-    content: '✓ ';
+    content: '✅ ';
     font-size: 24px;
     vertical-align: middle;
 }
@@ -2614,7 +2614,7 @@ if (elements.submitAnswer) {
 
         if (isCorrect) {
             fb.style.display = 'block';
-            fb.textContent = '✅ ВІРНО! Ціль уражена!';
+            fb.textContent = 'ВІРНО! Ціль уражена!';
             fb.className = 'trainer-feedback correct show';
             selectedBtn.classList.add('correct');
             setTimeout(() => {
@@ -2665,7 +2665,7 @@ if (elements.submitAnswer) {
             }, 2000);
         } else {
             fb.style.display = 'block';
-            fb.textContent = '❌ Промах! Спробуй ще!';
+            fb.textContent = 'Промах! Спробуй ще!';
             fb.className = 'trainer-feedback wrong show';
             selectedBtn.classList.add('wrong');
             setTimeout(() => {
@@ -2703,6 +2703,7 @@ generateQuestion();
     </script>
 </body>
 </html>
+
 
 
 
