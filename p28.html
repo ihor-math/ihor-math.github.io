@@ -3337,7 +3337,7 @@ if (elements.submitAnswerBtn) {
             const isCorrect = selectedAnswer === currentQuestion.correct;
             console.log('Question 1 - isCorrect:', isCorrect, 'Selected:', selectedAnswer, 'Correct:', currentQuestion.correct);
 
-            elements.resultMessage.textContent = isCorrect ? '✓ Правильно! Молодець!' : '✗ Неправильно. Спробуй ще раз!';
+            elements.resultMessage.textContent = isCorrect ? '✅ ВІРНО! Ціль уражена!' : '❌ Промах! Спробуй ще!';
             elements.resultMessage.className = `result-message ${isCorrect ? 'correct' : 'wrong'}`;
             elements.resultMessage.style.display = 'block';
             elements.resultMessage.style.opacity = '1';
@@ -3378,7 +3378,7 @@ if (elements.submitAnswerBtn) {
             }
 
             const isCorrect = checkVectorSum();
-            elements.resultMessage.textContent = isCorrect ? '✓ Правильно! Молодець!' : '✗ Неправильно. Спробуй ще раз!';
+            elements.resultMessage.textContent = isCorrect ? '✅ ВІРНО! Ціль уражена!' : '❌ Промах! Спробуй ще!';
             elements.resultMessage.className = `result-message ${isCorrect ? 'correct' : 'wrong'}`;
             elements.resultMessage.style.display = 'block';
             elements.resultMessage.style.opacity = '1';
@@ -3442,7 +3442,7 @@ if (elements.submitAnswerBtn) {
             }
 
             const isCorrect = checkVectorDifference();
-            elements.resultMessage.textContent = isCorrect ? '✓ Правильно! Молодець!' : '✗ Неправильно. Спробуй ще раз!';
+            elements.resultMessage.textContent = isCorrect ? '✅ ВІРНО! Ціль уражена!' : '❌ Промах! Спробуй ще!';
             elements.resultMessage.className = `result-message ${isCorrect ? 'correct' : 'wrong'}`;
             elements.resultMessage.style.display = 'block';
             elements.resultMessage.style.opacity = '1';
@@ -3506,7 +3506,7 @@ if (elements.submitAnswerBtn) {
             }
 
             const isCorrect = checkVectorParallelogram();
-            elements.resultMessage.textContent = isCorrect ? '✓ Правильно! Молодець!' : '✗ Неправильно. Спробуй ще раз!';
+            elements.resultMessage.textContent = isCorrect ? '✅ ВІРНО! Ціль уражена!' : '❌ Промах! Спробуй ще!';
             elements.resultMessage.className = `result-message ${isCorrect ? 'correct' : 'wrong'}`;
             elements.resultMessage.style.display = 'block';
             elements.resultMessage.style.opacity = '1';
@@ -3570,7 +3570,7 @@ if (elements.submitAnswerBtn) {
             }
 
             const isCorrect = checkCubeVectorSum();
-            elements.resultMessage.textContent = isCorrect ? '✓ Правильно! Молодець!' : '✗ Неправильно. Спробуй ще раз!';
+            elements.resultMessage.textContent = isCorrect ? '✅ ВІРНО! Ціль уражена!' : '❌ Промах! Спробуй ще!';
             elements.resultMessage.className = `result-message ${isCorrect ? 'correct' : 'wrong'}`;
             elements.resultMessage.style.display = 'block';
             elements.resultMessage.style.opacity = '1';
@@ -3745,6 +3745,7 @@ displayQuestion();
     </script>
 </body>
 </html>
+
 
 
 
