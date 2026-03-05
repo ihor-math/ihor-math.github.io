@@ -2080,7 +2080,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (currentQuestion.type === 'options') {
             isCorrect = selectedOption === currentQuestion.correct;
-            feedbackMessage = isCorrect ? '✅ ВІРНО! Ціль уражена!' : '✗ Неправильно, спробуй ще раз!';
+            feedbackMessage = isCorrect ? '✅ ВІРНО! Ціль уражена!' : '❌ Промах! Спробуй ще!';
             document.querySelectorAll('.option').forEach(opt => {
                 if (opt.getAttribute('data-option') === currentQuestion.correct) {
                     opt.classList.add('correct');
@@ -2092,7 +2092,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         } else if (currentQuestion.type === 'input') {
             isCorrect = selectedOption === currentQuestion.correct;
-            feedbackMessage = isCorrect ? '✅ ВІРНО! Ціль уражена!' : '✗ Неправильно, спробуй ще раз!';
+            feedbackMessage = isCorrect ? '✅ ВІРНО! Ціль уражена!' : '❌ Промах! Спробуй ще!';
         }
 
         showFeedback(feedbackMessage, isCorrect);
@@ -2320,6 +2320,7 @@ document.addEventListener('DOMContentLoaded', function () {
     
 </body>
 </html>
+
 
 
 
