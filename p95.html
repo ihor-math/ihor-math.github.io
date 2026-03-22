@@ -1168,7 +1168,7 @@ mjx-container[display="true"] {
 .example-answer {
     font-size: 1.1em !important;
 }
-        .formula-hr {
+       .formula-hr {
     width: 80%;
     margin: 20px auto 0 auto;
     height: 2px;
@@ -1176,6 +1176,15 @@ mjx-container[display="true"] {
     border: none;
     border-radius: 4px;
     box-shadow: 0 0 6px rgba(138,156,255,0.4);
+}
+
+/* Додаткове налаштування для дуже маленьких екранів */
+@media (max-width: 480px) {
+    .formula-hr {
+        width: 90%;           /* трохи ширше на малих екранах */
+        margin: 15px auto 0 auto;  /* менший відступ зверху */
+        height: 1.5px;       /* трохи тонша */
+    }
 }
 </style>
 </head>
