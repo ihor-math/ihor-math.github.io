@@ -1168,6 +1168,15 @@ mjx-container[display="true"] {
 .example-answer {
     font-size: 1.1em !important;
 }
+        .formula-hr {
+    width: 80%;
+    margin: 20px auto 0 auto;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #8a9cff, #5c6ce0, #8a9cff, transparent);
+    border: none;
+    border-radius: 4px;
+    box-shadow: 0 0 6px rgba(138,156,255,0.4);
+}
 </style>
 </head>
 <body>
@@ -1389,50 +1398,56 @@ S = \int\limits_a^b f(x)\,dx \quad \text{(16.1)}
                         
                         <p>Нехай \(f(x)\) і \(f_1(x), f_2(x)\) – неперервні функції на \([a;b]\), а \(C\) – стала. З урахуванням цих умов розглянемо основні властивості визначеного інтеграла:</p>
                         
-                         <div class="grid-3">
-                            <div class="card-deriv">
-                                <h4>1. Зміна меж</h4>
-                                <p>Визначений інтеграл змінює знак, коли міняють місцями його межі:</p>
-                                <div class="math-centered">
-                                    \[ \int\limits_a^b f(x)\,dx = -\int\limits_b^a f(x)\,dx \]
-                                </div>
-                            </div>
-
-                            <div class="card-deriv">
-                                <h4>2. Нульовий інтервал</h4>
-                                <p>Визначений інтеграл дорівнює нулю, якщо верхня та нижня межі інтегрування збігаються:</p>
-                                <div class="math-big">
-                                    \[ \int\limits_a^a f(x)\,dx = 0 \]
-                                </div>
-                            </div>
-</div>
-<div class="grid-3">
-                            <div class="card-deriv">
-                                <h4>3. Адитивність</h4>
-                                <p>Для будь-якого \(c \in [a;b]\) виконується рівність:</p>
-                                <div class="math-centered">
-                                    \[ \int\limits_a^b f(x)\,dx = \int\limits_a^c f(x)\,dx + \int\limits_c^b f(x)\,dx \]
-                                </div>
-                            </div>
-                        </div>
-
                         <div class="grid-3">
-                            <div class="card-deriv">
-                                <h4>4. Лінійність (сума)</h4>
-                                <p>Сума (різниця) інтегралів двох функцій дорівнює сумі (різниці) відповідних інтегралів:</p>
-                                <div class="math-centered">
-                                    \[ \int\limits_a^b [f_1(x) \pm f_2(x)]\,dx = \int\limits_a^b f_1(x)\,dx \pm \int\limits_a^b f_2(x)\,dx \]
-                                </div>
-                            </div>
+    <div class="card-deriv">
+        <h4>1. Зміна меж</h4>
+        <p>Визначений інтеграл змінює знак, коли міняють місцями його межі:</p>
+        <div class="math-centered">
+            \[ \int\limits_a^b f(x)\,dx = -\int\limits_b^a f(x)\,dx \]
+        </div>
+        <hr class="formula-hr">
+    </div>
 
-                            <div class="card-deriv">
-                                <h4>5. Лінійність (стала)</h4>
-                                <p>Сталий множник \(k\) можна виносити за знак інтеграла:</p>
-                                <div class="math-centered">
-                                    \[ \int\limits_a^b k f(x)\,dx = k \int\limits_a^b f(x)\,dx \]
-                                </div>
-                            </div>
-                        </div>
+    <div class="card-deriv">
+        <h4>2. Нульовий інтервал</h4>
+        <p>Визначений інтеграл дорівнює нулю, якщо верхня та нижня межі інтегрування збігаються:</p>
+        <div class="math-big">
+            \[ \int\limits_a^a f(x)\,dx = 0 \]
+        </div>
+        <hr class="formula-hr">
+    </div>
+</div>
+
+<div class="grid-3">
+    <div class="card-deriv">
+        <h4>3. Адитивність</h4>
+        <p>Для будь-якого \(c \in [a;b]\) виконується рівність:</p>
+        <div class="math-centered">
+            \[ \int\limits_a^b f(x)\,dx = \int\limits_a^c f(x)\,dx + \int\limits_c^b f(x)\,dx \]
+        </div>
+        <hr class="formula-hr">
+    </div>
+</div>
+
+<div class="grid-3">
+    <div class="card-deriv">
+        <h4>4. Лінійність (сума)</h4>
+        <p>Сума (різниця) інтегралів двох функцій дорівнює сумі (різниці) відповідних інтегралів:</p>
+        <div class="math-centered">
+            \[ \int\limits_a^b [f_1(x) \pm f_2(x)]\,dx = \int\limits_a^b f_1(x)\,dx \pm \int\limits_a^b f_2(x)\,dx \]
+        </div>
+        <hr class="formula-hr">
+    </div>
+
+    <div class="card-deriv">
+        <h4>5. Лінійність (стала)</h4>
+        <p>Сталий множник \(k\) можна виносити за знак інтеграла:</p>
+        <div class="math-centered">
+            \[ \int\limits_a^b k f(x)\,dx = k \int\limits_a^b f(x)\,dx \]
+        </div>
+        <hr class="formula-hr">
+    </div>
+</div>
 
                         <!-- Приклад 16.3 -->
                         <div class="example-full">
