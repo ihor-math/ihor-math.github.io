@@ -1985,8 +1985,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Функція для форматування комплексного числа у LaTeX
-    // Функція для форматування комплексного числа у LaTeX
-function formatComplexNumber(a, b) {
+   function formatComplexNumber(a, b) {
     // Перевіряємо крайові випадки
     if (a === 0 && b === 0) return '0';
     if (a === 0) {
@@ -2159,12 +2158,14 @@ function getRawComplexString(a, b) {
     }
 }
 
-    // Функція для генерації питання та варіантів відповідей
-  // Функція для генерації питання та варіантів відповідей
+   
+  // 4. ФУНКЦІЯ ГЕНЕРАЦІЇ ПИТАННЯ (ПОВНІСТЮ ВИПРАВЛЕНА)
+// ============================================================
 function generateQuestion(groupIndex) {
     let a = getRandomInt(-5, 5);
     let b = getRandomInt(-5, 5);
-    // Уникаємо тривіальних випадків (a = b, a = 0, b = 0) для питань 1–3
+    
+    // Уникаємо тривіальних випадків для питань 1–3
     if (groupIndex <= 2) {
         while (a === b || a === 0 || b === 0) {
             a = getRandomInt(-5, 5);
@@ -2180,63 +2181,88 @@ function generateQuestion(groupIndex) {
 
     console.log(`Generating question ${groupIndex + 1} with a=${a}, b=${b}`);
 
+    // ============================================================
+    // ПИТАННЯ 1: КООРДИНАТИ ТОЧКИ
+    // ============================================================
     if (groupIndex === 0) {
         const correctAnswer = `\\((${a}; ${b})\\)`;
         const optionsSet = new Set([correctAnswer]);
+        
         const possibleOptions = [
             `\\((${b}; ${a})\\)`,
             `\\((${a}; ${-b})\\)`,
             `\\((${-a}; ${b})\\)`
         ];
+        
         for (let opt of possibleOptions) {
             if (!optionsSet.has(opt)) {
                 optionsSet.add(opt);
             }
         }
+        
         const options = Array.from(optionsSet);
         shuffleArray(options);
+        
         return {
             type: 'multiple',
             question: `Задано комплексне число \\( z = ${formatComplexNumber(a, b)} \\). Знайти координати точки на площині \\( xOy \\), які відповідають числу \\( z \\).`,
             options: options,
             correct: correctAnswer
         };
-    } else if (groupIndex === 1) {
+    }
+    
+    // ============================================================
+    // ПИТАННЯ 2: КОМПЛЕКСНЕ ЧИСЛО ЗА ТОЧКОЮ
+    // ============================================================
+    else if (groupIndex === 1) {
         const correctAnswer = `\\(${formatComplexNumber(a, b)}\\)`;
         const optionsSet = new Set([correctAnswer]);
+        
         const possibleOptions = [
             `\\(${formatComplexNumber(b, a)}\\)`,
             `\\(${formatComplexNumber(a, -b)}\\)`,
             `\\(${formatComplexNumber(-a, b)}\\)`
         ];
+        
         for (let opt of possibleOptions) {
             if (!optionsSet.has(opt)) {
                 optionsSet.add(opt);
             }
         }
+        
         const options = Array.from(optionsSet);
         shuffleArray(options);
+        
         return {
             type: 'multiple',
             question: `Яке комплексне число відповідає точці \\( (${a}; ${b}) \\) на комплексній площині?`,
             options: options,
             correct: correctAnswer
         };
-    } else if (groupIndex === 2) {
+    }
+    
+    // ============================================================
+    // ПИТАННЯ 3: ТОЧКА НА РИСУНКУ
+    // ============================================================
+    else if (groupIndex === 2) {
         const correctAnswer = `\\(${formatComplexNumber(a, b)}\\)`;
         const optionsSet = new Set([correctAnswer]);
+        
         const possibleOptions = [
             `\\(${formatComplexNumber(b, a)}\\)`,
             `\\(${formatComplexNumber(a, -b)}\\)`,
             `\\(${formatComplexNumber(-a, b)}\\)`
         ];
+        
         for (let opt of possibleOptions) {
             if (!optionsSet.has(opt)) {
                 optionsSet.add(opt);
             }
         }
+        
         const options = Array.from(optionsSet);
         shuffleArray(options);
+        
         return {
             type: 'multiple',
             question: `Вказати, якому комплексному числу відповідає точка \\( M \\), зображена на рисунку:`,
@@ -2244,60 +2270,58 @@ function generateQuestion(groupIndex) {
             correct: correctAnswer,
             point: { x: a, y: b }
         };
-    } else if (groupIndex === 3) {
-        // Питання про суму z1 + z2
-        const c = getRandomInt(-3, 3);
-        const d = getRandomInt(-3, 3);
-        // Переконаємося, що z1 і z2 не є тривіальними
-        while ((c === 0 && d === 0) || (a === c && b === d)) {
-            const newC = getRandomInt(-3, 3);
-            const newD = getRandomInt(-3, 3);
-            if (newC !== 0 || newD !== 0) {
-                c = newC;
-                d = newD;
-                break;
-            }
-        }
-        const z1 = formatComplexNumber(c, d);
-        const z2 = formatComplexNumber(a - c, b - d); // z1 + z2 = a + bi
+    }
+    
+    // ============================================================
+    // ПИТАННЯ 4: СУМА ВЕКТОРІВ (z1 + z2)
+    // ============================================================
+    else if (groupIndex === 3) {
+        let c = getRandomInt(-3, 3);
+        let d = getRandomInt(-3, 3);
         
-        // Створюємо правильну відповідь
+        // Переконаємося, що z1 і z2 не є тривіальними
+        let attempts = 0;
+        while (((c === 0 && d === 0) || (a === c && b === d)) && attempts < 50) {
+            c = getRandomInt(-3, 3);
+            d = getRandomInt(-3, 3);
+            attempts++;
+        }
+        
+        const z1 = formatComplexNumber(c, d);
+        const z2 = formatComplexNumber(a - c, b - d);
+        
         const correctAnswer = `\\(z_1 = ${z1}, z_2 = ${z2}\\)`;
         const optionsSet = new Set([correctAnswer]);
+        const rawCorrect = getRawString(correctAnswer);
         
         // Генеруємо неправильні варіанти
-        const wrongOptions = [
-            `\\(z_1 = ${formatComplexNumber(c, d)}, z_2 = ${formatComplexNumber(-a + c, b - d)}\\)`,
-            `\\(z_1 = ${formatComplexNumber(c, d)}, z_2 = ${formatComplexNumber(a - c, -b + d)}\\)`,
-            `\\(z_1 = ${formatComplexNumber(-c, -d)}, z_2 = ${formatComplexNumber(-a + c, -b + d)}\\)`
+        const wrongCandidates = [
+            { ca: c, cb: d, wa: -a + c, wb: b - d },
+            { ca: c, cb: d, wa: a - c, wb: -b + d },
+            { ca: -c, cb: -d, wa: -a + c, wb: -b + d }
         ];
         
-        // Додаємо унікальні варіанти
-        for (let opt of wrongOptions) {
-            // Перевіряємо, чи не збігається з правильним (з урахуванням форматування)
-            const rawCorrect = correctAnswer.replace(/\\\(|\s*\\\)/g, '').replace(/\s+/g, '');
-            const rawOpt = opt.replace(/\\\(|\s*\\\)/g, '').replace(/\s+/g, '');
+        for (let w of wrongCandidates) {
+            const opt = `\\(z_1 = ${formatComplexNumber(w.ca, w.cb)}, z_2 = ${formatComplexNumber(w.wa, w.wb)}\\)`;
+            const rawOpt = getRawString(opt);
             if (rawOpt !== rawCorrect && !optionsSet.has(opt)) {
                 optionsSet.add(opt);
             }
         }
         
-        // Якщо менше 3 варіантів, додаємо ще
+        // Якщо менше 4 варіантів, додаємо ще
         while (optionsSet.size < 4) {
-            const extraA = getRandomInt(-3, 3);
-            const extraB = getRandomInt(-3, 3);
-            const extraOpt = `\\(z_1 = ${formatComplexNumber(c + extraA, d + extraB)}, z_2 = ${formatComplexNumber(a - c - extraA, b - d - extraB)}\\)`;
-            const rawExtra = extraOpt.replace(/\\\(|\s*\\\)/g, '').replace(/\s+/g, '');
-            const rawCorrect = correctAnswer.replace(/\\\(|\s*\\\)/g, '').replace(/\s+/g, '');
-            if (rawExtra !== rawCorrect && !optionsSet.has(extraOpt)) {
-                optionsSet.add(extraOpt);
+            const extraA = getRandomInt(-2, 2);
+            const extraB = getRandomInt(-2, 2);
+            const opt = `\\(z_1 = ${formatComplexNumber(c + extraA, d + extraB)}, z_2 = ${formatComplexNumber(a - c - extraA, b - d - extraB)}\\)`;
+            const rawOpt = getRawString(opt);
+            if (rawOpt !== rawCorrect && !optionsSet.has(opt)) {
+                optionsSet.add(opt);
             }
         }
         
         const options = Array.from(optionsSet);
         shuffleArray(options);
-        
-        console.log('Question 4 options:', options);
         
         return {
             type: 'multiple',
@@ -2306,55 +2330,58 @@ function generateQuestion(groupIndex) {
             correct: correctAnswer,
             vector: { x: a, y: b }
         };
-    } else {
-        // Питання про різницю z2 - z1
-        const c = getRandomInt(-3, 3);
-        const d = getRandomInt(-3, 3);
+    }
+    
+    // ============================================================
+    // ПИТАННЯ 5: РІЗНИЦЯ ВЕКТОРІВ (z2 - z1)
+    // ============================================================
+    else {
+        let c = getRandomInt(-3, 3);
+        let d = getRandomInt(-3, 3);
+        
         // Переконаємося, що z1 і z2 не є тривіальними
-        while ((c === 0 && d === 0) || (a === 0 && b === 0)) {
-            const newC = getRandomInt(-3, 3);
-            const newD = getRandomInt(-3, 3);
-            if (newC !== 0 || newD !== 0) {
-                c = newC;
-                d = newD;
-                break;
-            }
+        let attempts = 0;
+        while (((c === 0 && d === 0) || (a === 0 && b === 0)) && attempts < 50) {
+            c = getRandomInt(-3, 3);
+            d = getRandomInt(-3, 3);
+            attempts++;
         }
+        
         const z1 = formatComplexNumber(c, d);
-        const z2 = formatComplexNumber(a + c, b + d); // z2 - z1 = a + bi
+        const z2 = formatComplexNumber(a + c, b + d);
         
         const correctAnswer = `\\(z_1 = ${z1}, z_2 = ${z2}\\)`;
         const optionsSet = new Set([correctAnswer]);
+        const rawCorrect = getRawString(correctAnswer);
         
-        const wrongOptions = [
-            `\\(z_1 = ${formatComplexNumber(c, d)}, z_2 = ${formatComplexNumber(a + c, -b - d)}\\)`,
-            `\\(z_1 = ${formatComplexNumber(c, d)}, z_2 = ${formatComplexNumber(-a + c, b + d)}\\)`,
-            `\\(z_1 = ${formatComplexNumber(-c, -d)}, z_2 = ${formatComplexNumber(-a - c, -b - d)}\\)`
+        // Генеруємо неправильні варіанти
+        const wrongCandidates = [
+            { ca: c, cb: d, wa: a + c, wb: -b - d },
+            { ca: c, cb: d, wa: -a + c, wb: b + d },
+            { ca: -c, cb: -d, wa: -a - c, wb: -b - d }
         ];
         
-        for (let opt of wrongOptions) {
-            const rawCorrect = correctAnswer.replace(/\\\(|\s*\\\)/g, '').replace(/\s+/g, '');
-            const rawOpt = opt.replace(/\\\(|\s*\\\)/g, '').replace(/\s+/g, '');
+        for (let w of wrongCandidates) {
+            const opt = `\\(z_1 = ${formatComplexNumber(w.ca, w.cb)}, z_2 = ${formatComplexNumber(w.wa, w.wb)}\\)`;
+            const rawOpt = getRawString(opt);
             if (rawOpt !== rawCorrect && !optionsSet.has(opt)) {
                 optionsSet.add(opt);
             }
         }
         
+        // Якщо менше 4 варіантів, додаємо ще
         while (optionsSet.size < 4) {
-            const extraA = getRandomInt(-3, 3);
-            const extraB = getRandomInt(-3, 3);
-            const extraOpt = `\\(z_1 = ${formatComplexNumber(c + extraA, d + extraB)}, z_2 = ${formatComplexNumber(a + c + extraA, b + d + extraB)}\\)`;
-            const rawExtra = extraOpt.replace(/\\\(|\s*\\\)/g, '').replace(/\s+/g, '');
-            const rawCorrect = correctAnswer.replace(/\\\(|\s*\\\)/g, '').replace(/\s+/g, '');
-            if (rawExtra !== rawCorrect && !optionsSet.has(extraOpt)) {
-                optionsSet.add(extraOpt);
+            const extraA = getRandomInt(-2, 2);
+            const extraB = getRandomInt(-2, 2);
+            const opt = `\\(z_1 = ${formatComplexNumber(c + extraA, d + extraB)}, z_2 = ${formatComplexNumber(a + c + extraA, b + d + extraB)}\\)`;
+            const rawOpt = getRawString(opt);
+            if (rawOpt !== rawCorrect && !optionsSet.has(opt)) {
+                optionsSet.add(opt);
             }
         }
         
         const options = Array.from(optionsSet);
         shuffleArray(options);
-        
-        console.log('Question 5 options:', options);
         
         return {
             type: 'multiple',
