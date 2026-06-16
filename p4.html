@@ -1986,51 +1986,43 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Функція для форматування комплексного числа у LaTeX
    function formatComplexNumber(a, b) {
-    // Перевіряємо крайові випадки
-    if (a === 0 && b === 0) return '0';
-    if (a === 0) {
-        if (b === 1) return 'i';
-        if (b === -1) return '-i';
-        return `${b}i`;
-    }
-    if (b === 0) return `${a}`;
-    
-    // Основний випадок: a ≠ 0, b ≠ 0
-    let result = `${a}`;
-    
-    if (b === 1) {
-        result += ' + i';
-    } else if (b === -1) {
-        result += ' - i';
-    } else if (b > 0) {
-        result += ` + ${b}i`;
-    } else {
-        result += ` - ${Math.abs(b)}i`;
-    }
-    
-    return result;
-}
-    // Допоміжна функція для отримання "сирого" значення для порівняння
-function getRawComplexString(a, b) {
-    if (a === 0 && b === 0) return '0';
-    if (a === 0) {
-        if (b === 1) return 'i';
-        if (b === -1) return '-i';
-        return `${b}i`;
-    }
-    if (b === 0) return `${a}`;
-    if (b === 1) return `${a}+i`;
-    if (b === -1) return `${a}-i`;
-    return `${a}${b > 0 ? '+' : '-'}${Math.abs(b)}i`;
-}
-
-    // Функція для перемішування масиву
-    function shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
+            if (a === 0 && b === 0) return '0';
+            if (a === 0) {
+                if (b === 1) return 'i';
+                if (b === -1) return '-i';
+                return `${b}i`;
+            }
+            if (b === 0) return `${a}`;
+            
+            let result = `${a}`;
+            if (b === 1) {
+                result += ' + i';
+            } else if (b === -1) {
+                result += ' - i';
+            } else if (b > 0) {
+                result += ` + ${b}i`;
+            } else {
+                result += ` - ${Math.abs(b)}i`;
+            }
+            return result;
         }
-        return array;
+
+      function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function getRawString(formatted) {
+            return formatted.replace(/\\\(|\s*\\\)/g, '').replace(/\s+/g, '');
+        }
+
     }
 
     // Функція для малювання системи координат із точкою M
