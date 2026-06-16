@@ -1673,19 +1673,19 @@ body.loaded {
     </div>
 
     <div class="navigation-buttons">
-                <a class="nav-button" href='tema1.html'>
+        <a class="nav-button" href="{{ url_for('tema1') }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                 <path d="M15 18l-6-6 6-6"/>
             </svg>
             До теми 1
         </a>
-       <a class="nav-button" href='zmist.html'>
+       <a class="nav-button home" href="{{ url_for('zmist') }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-  <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-</svg>
+                <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
             До курсу
-
         </a>
+
     </div>
 
     <div id="theoryModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="theoryTitle">
@@ -1985,43 +1985,22 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Функція для форматування комплексного числа у LaTeX
-   function formatComplexNumber(a, b) {
-            if (a === 0 && b === 0) return '0';
-            if (a === 0) {
-                if (b === 1) return 'i';
-                if (b === -1) return '-i';
-                return `${b}i`;
-            }
-            if (b === 0) return `${a}`;
-            
-            let result = `${a}`;
-            if (b === 1) {
-                result += ' + i';
-            } else if (b === -1) {
-                result += ' - i';
-            } else if (b > 0) {
-                result += ` + ${b}i`;
-            } else {
-                result += ` - ${Math.abs(b)}i`;
-            }
-            return result;
-        }
+    function formatComplexNumber(a, b) {
+        if (b === 0) return `${a}`;
+        if (a === 0) return b === 1 ? `i` : b === -1 ? `-i` : `${b}i`;
+        if (b === 1) return `${a} + i`;
+        if (b === -1) return `${a} - i`;
+        return `${a} ${b > 0 ? '+' : '-'} ${Math.abs(b)}i`;
+    }
 
-      function getRandomInt(min, max) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
+    // Функція для перемішування масиву
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
         }
-
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
-        function getRawString(formatted) {
-            return formatted.replace(/\\\(|\s*\\\)/g, '').replace(/\s+/g, '');
-        }
+        return array;
+    }
 
     // Функція для малювання системи координат із точкою M
    function drawComplexPlane(canvasId, pointX, pointY, isVector = false) {
@@ -2148,14 +2127,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 }
 
-   
-  // 4. ФУНКЦІЯ ГЕНЕРАЦІЇ ПИТАННЯ (ПОВНІСТЮ ВИПРАВЛЕНА)
-// ============================================================
-function generateQuestion(groupIndex) {
+    // Функція для генерації питання та варіантів відповідей
+   function generateQuestion(groupIndex) {
     let a = getRandomInt(-5, 5);
     let b = getRandomInt(-5, 5);
-    
-    // Уникаємо тривіальних випадків для питань 1–3
+    // Уникаємо тривіальних випадків (a = b, a = 0, b = 0) для питань 1–3
     if (groupIndex <= 2) {
         while (a === b || a === 0 || b === 0) {
             a = getRandomInt(-5, 5);
@@ -2169,90 +2145,70 @@ function generateQuestion(groupIndex) {
         }
     }
 
+    // Лог для діагностики
     console.log(`Generating question ${groupIndex + 1} with a=${a}, b=${b}`);
 
-    // ============================================================
-    // ПИТАННЯ 1: КООРДИНАТИ ТОЧКИ
-    // ============================================================
     if (groupIndex === 0) {
         const correctAnswer = `\\((${a}; ${b})\\)`;
         const optionsSet = new Set([correctAnswer]);
-        
         const possibleOptions = [
             `\\((${b}; ${a})\\)`,
             `\\((${a}; ${-b})\\)`,
-            `\\((${-a}; ${b})\\)`
+            `\\(${a === 1 ? '(-1; ' : '(1; '}${b})\\)`
         ];
-        
+        // Додаємо унікальні варіанти
         for (let opt of possibleOptions) {
             if (!optionsSet.has(opt)) {
                 optionsSet.add(opt);
             }
         }
-        
         const options = Array.from(optionsSet);
+        console.log('Question 1 options:', options);
         shuffleArray(options);
-        
         return {
             type: 'multiple',
             question: `Задано комплексне число \\( z = ${formatComplexNumber(a, b)} \\). Знайти координати точки на площині \\( xOy \\), які відповідають числу \\( z \\).`,
             options: options,
             correct: correctAnswer
         };
-    }
-    
-    // ============================================================
-    // ПИТАННЯ 2: КОМПЛЕКСНЕ ЧИСЛО ЗА ТОЧКОЮ
-    // ============================================================
-    else if (groupIndex === 1) {
+    } else if (groupIndex === 1) {
         const correctAnswer = `\\(${formatComplexNumber(a, b)}\\)`;
         const optionsSet = new Set([correctAnswer]);
-        
         const possibleOptions = [
             `\\(${formatComplexNumber(b, a)}\\)`,
             `\\(${formatComplexNumber(a, -b)}\\)`,
             `\\(${formatComplexNumber(-a, b)}\\)`
         ];
-        
         for (let opt of possibleOptions) {
             if (!optionsSet.has(opt)) {
                 optionsSet.add(opt);
             }
         }
-        
         const options = Array.from(optionsSet);
+        console.log('Question 2 options:', options);
         shuffleArray(options);
-        
         return {
             type: 'multiple',
             question: `Яке комплексне число відповідає точці \\( (${a}; ${b}) \\) на комплексній площині?`,
             options: options,
             correct: correctAnswer
         };
-    }
-    
-    // ============================================================
-    // ПИТАННЯ 3: ТОЧКА НА РИСУНКУ
-    // ============================================================
-    else if (groupIndex === 2) {
+    } else if (groupIndex === 2) {
         const correctAnswer = `\\(${formatComplexNumber(a, b)}\\)`;
         const optionsSet = new Set([correctAnswer]);
-        
         const possibleOptions = [
             `\\(${formatComplexNumber(b, a)}\\)`,
             `\\(${formatComplexNumber(a, -b)}\\)`,
             `\\(${formatComplexNumber(-a, b)}\\)`
         ];
-        
         for (let opt of possibleOptions) {
             if (!optionsSet.has(opt)) {
                 optionsSet.add(opt);
             }
         }
-        
         const options = Array.from(optionsSet);
+        console.log('Question 3 options:', options);
         shuffleArray(options);
-        
         return {
             type: 'multiple',
             question: `Вказати, якому комплексному числу відповідає точка \\( M \\), зображена на рисунку:`,
@@ -2260,59 +2216,27 @@ function generateQuestion(groupIndex) {
             correct: correctAnswer,
             point: { x: a, y: b }
         };
-    }
-    
-    // ============================================================
-    // ПИТАННЯ 4: СУМА ВЕКТОРІВ (z1 + z2)
-    // ============================================================
-    else if (groupIndex === 3) {
-        let c = getRandomInt(-3, 3);
-        let d = getRandomInt(-3, 3);
-        
-        // Переконаємося, що z1 і z2 не є тривіальними
-        let attempts = 0;
-        while (((c === 0 && d === 0) || (a === c && b === d)) && attempts < 50) {
-            c = getRandomInt(-3, 3);
-            d = getRandomInt(-3, 3);
-            attempts++;
-        }
-        
+     } else if (groupIndex === 3) {
+        // Питання про суму z1 + z2
+        const c = getRandomInt(-3, 3);
+        const d = getRandomInt(-3, 3);
         const z1 = formatComplexNumber(c, d);
-        const z2 = formatComplexNumber(a - c, b - d);
-        
+        const z2 = formatComplexNumber(a - c, b - d); // z1 + z2 = a + bi
         const correctAnswer = `\\(z_1 = ${z1}, z_2 = ${z2}\\)`;
         const optionsSet = new Set([correctAnswer]);
-        const rawCorrect = getRawString(correctAnswer);
-        
-        // Генеруємо неправильні варіанти
-        const wrongCandidates = [
-            { ca: c, cb: d, wa: -a + c, wb: b - d },
-            { ca: c, cb: d, wa: a - c, wb: -b + d },
-            { ca: -c, cb: -d, wa: -a + c, wb: -b + d }
+        const possibleOptions = [
+            `\\(z_1 = ${formatComplexNumber(c, d)}, z_2 = ${formatComplexNumber(-a + c, b - d)}\\)` , // Дає (-a; b)
+            `\\(z_1 = ${formatComplexNumber(c, d)}, z_2 = ${formatComplexNumber(a - c, -b + d)}\\)` , // Дає (a; -b)
+            `\\(z_1 = ${formatComplexNumber(-c, -d)}, z_2 = ${formatComplexNumber(-a + c, -b + d)}\\)` // Дає (-a; -b)
         ];
-        
-        for (let w of wrongCandidates) {
-            const opt = `\\(z_1 = ${formatComplexNumber(w.ca, w.cb)}, z_2 = ${formatComplexNumber(w.wa, w.wb)}\\)`;
-            const rawOpt = getRawString(opt);
-            if (rawOpt !== rawCorrect && !optionsSet.has(opt)) {
+        for (let opt of possibleOptions) {
+            if (!optionsSet.has(opt)) {
                 optionsSet.add(opt);
             }
         }
-        
-        // Якщо менше 4 варіантів, додаємо ще
-        while (optionsSet.size < 4) {
-            const extraA = getRandomInt(-2, 2);
-            const extraB = getRandomInt(-2, 2);
-            const opt = `\\(z_1 = ${formatComplexNumber(c + extraA, d + extraB)}, z_2 = ${formatComplexNumber(a - c - extraA, b - d - extraB)}\\)`;
-            const rawOpt = getRawString(opt);
-            if (rawOpt !== rawCorrect && !optionsSet.has(opt)) {
-                optionsSet.add(opt);
-            }
-        }
-        
         const options = Array.from(optionsSet);
+        console.log('Question 4 options:', options);
         shuffleArray(options);
-        
         return {
             type: 'multiple',
             question: `На рисунку показано вектор, що відповідає сумі двох комплексних чисел. Оберіть правильну пару чисел, які при додаванні утворюють цей вектор:`,
@@ -2320,59 +2244,27 @@ function generateQuestion(groupIndex) {
             correct: correctAnswer,
             vector: { x: a, y: b }
         };
-    }
-    
-    // ============================================================
-    // ПИТАННЯ 5: РІЗНИЦЯ ВЕКТОРІВ (z2 - z1)
-    // ============================================================
-    else {
-        let c = getRandomInt(-3, 3);
-        let d = getRandomInt(-3, 3);
-        
-        // Переконаємося, що z1 і z2 не є тривіальними
-        let attempts = 0;
-        while (((c === 0 && d === 0) || (a === 0 && b === 0)) && attempts < 50) {
-            c = getRandomInt(-3, 3);
-            d = getRandomInt(-3, 3);
-            attempts++;
-        }
-        
+    } else {
+        // Питання про різницю z2 - z1
+        const c = getRandomInt(-3, 3);
+        const d = getRandomInt(-3, 3);
         const z1 = formatComplexNumber(c, d);
-        const z2 = formatComplexNumber(a + c, b + d);
-        
+        const z2 = formatComplexNumber(a + c, b + d); // z2 - z1 = a + bi
         const correctAnswer = `\\(z_1 = ${z1}, z_2 = ${z2}\\)`;
         const optionsSet = new Set([correctAnswer]);
-        const rawCorrect = getRawString(correctAnswer);
-        
-        // Генеруємо неправильні варіанти
-        const wrongCandidates = [
-            { ca: c, cb: d, wa: a + c, wb: -b - d },
-            { ca: c, cb: d, wa: -a + c, wb: b + d },
-            { ca: -c, cb: -d, wa: -a - c, wb: -b - d }
+        const possibleOptions = [
+            `\\(z_1 = ${formatComplexNumber(c, d)}, z_2 = ${formatComplexNumber(a + c, -b - d)}\\)` , // Дає (a; -b)
+            `\\(z_1 = ${formatComplexNumber(c, d)}, z_2 = ${formatComplexNumber(-a + c, b + d)}\\)` , // Дає (-a; b)
+            `\\(z_1 = ${formatComplexNumber(-c, -d)}, z_2 = ${formatComplexNumber(-a - c, -b - d)}\\)` // Дає (-a; -b)
         ];
-        
-        for (let w of wrongCandidates) {
-            const opt = `\\(z_1 = ${formatComplexNumber(w.ca, w.cb)}, z_2 = ${formatComplexNumber(w.wa, w.wb)}\\)`;
-            const rawOpt = getRawString(opt);
-            if (rawOpt !== rawCorrect && !optionsSet.has(opt)) {
+        for (let opt of possibleOptions) {
+            if (!optionsSet.has(opt)) {
                 optionsSet.add(opt);
             }
         }
-        
-        // Якщо менше 4 варіантів, додаємо ще
-        while (optionsSet.size < 4) {
-            const extraA = getRandomInt(-2, 2);
-            const extraB = getRandomInt(-2, 2);
-            const opt = `\\(z_1 = ${formatComplexNumber(c + extraA, d + extraB)}, z_2 = ${formatComplexNumber(a + c + extraA, b + d + extraB)}\\)`;
-            const rawOpt = getRawString(opt);
-            if (rawOpt !== rawCorrect && !optionsSet.has(opt)) {
-                optionsSet.add(opt);
-            }
-        }
-        
         const options = Array.from(optionsSet);
+        console.log('Question 5 options:', options);
         shuffleArray(options);
-        
         return {
             type: 'multiple',
             question: `На комплексній площині показано вектор різниці \\( z_2 - z_1 \\). Оберіть таку пару комплексних чисел, щоб їх різниця відповідала цьому вектору:`,
@@ -2682,24 +2574,24 @@ function generateQuestion(groupIndex) {
             toggleModal(elements.videoModal, true);
         });
 
-         elements.exercise1Btn?.addEventListener('click', () => {
+        elements.exercise1Btn?.addEventListener('click', () => {
             console.log('Перехід до vpr1.html');
-            window.location.href = 'vpr1.html';
+            window.location.href = "{{ url_for('vpr1') }}";
         });
 
         elements.exercise2Btn?.addEventListener('click', () => {
             console.log('Перехід до vpr2.html');
-            window.location.href = 'vpr2.html';
+            window.location.href = "{{ url_for('vpr2') }}";
         });
 
         elements.exercise3Btn?.addEventListener('click', () => {
             console.log('Перехід до vpr3.html');
-            window.location.href = 'vpr3.html';
+            window.location.href = "{{ url_for('vpr3') }}";
         });
 
         elements.exercise4Btn?.addEventListener('click', () => {
             console.log('Перехід до vpr4.html');
-            window.location.href = 'vpr4.html';
+            window.location.href = "{{ url_for('vpr4') }}";
         });
 
         elements.modalOverlay?.addEventListener('click', () => {
@@ -2774,3 +2666,7 @@ function generateQuestion(groupIndex) {
 </script>
 </body>
 </html>
+
+
+
+                
